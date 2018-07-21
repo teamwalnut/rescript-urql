@@ -27,16 +27,6 @@ let unwrapMutation = (~m: option(mutationMap)) =>
   };
 
 /* Render prop types */
-/* [@bs.deriving abstract]
-type errorObject = {
-  message: string
-};
-
-[@bs.deriving accessors]
-type error =
-  | ErrorStr(string)
-  | ErrorObj(errorObject)
-  | Empty; */
 [@bs.deriving abstract]
 type error = {
   message: string,
