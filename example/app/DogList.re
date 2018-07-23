@@ -1,9 +1,9 @@
 let component = ReasonReact.statelessComponent("DogList");
 
 let query: Query.urqlQuery =
-   Query.query(
-     ~query=
-       {|
+  Query.query(
+    ~query=
+      {|
     query {
       dogs {
         name
@@ -15,11 +15,13 @@ let query: Query.urqlQuery =
       }
     }
  |},
-     (),
-   );
+    (),
+  );
 
-let likeDog: Mutation.urqlMutation = Mutation.mutation(
-  ~query={|
+let likeDog: Mutation.urqlMutation =
+  Mutation.mutation(
+    ~query=
+      {|
     mutation likeDog($key: ID!) {
       likeDog(key: $key) {
         name
@@ -28,10 +30,12 @@ let likeDog: Mutation.urqlMutation = Mutation.mutation(
         likes
       }
     }
-  |}, ()
-);
+  |},
+    (),
+  );
 
 let mutationMap: Connect.mutationMap = Js.Dict.empty();
+
 Js.Dict.set(mutationMap, "likeDog", likeDog);
 
 [@bs.deriving abstract]
@@ -40,51 +44,78 @@ type dog = {
   key: string,
   description: string,
   likes: int,
-  imageUrl: string
+  imageUrl: string,
 };
 
 [@bs.deriving abstract]
-type dogs = {
-  dogs: array(dog)
-};
+type dogs = {dogs: array(dog)};
 
-[@bs.send] external likeDog : Connect.renderArgs(dogs) => {. "key": string} => unit = "";
+[@bs.send]
+external likeDog : (Connect.renderArgs(dogs), {. "key": string}) => unit =
+  "";
 
-let make = (_children) => {
+let make = _children => {
   ...component,
-  render: _ => <Connect
-    query={`Query(query)}
-    mutation={mutationMap}
-    renderProp={(~result: Connect.renderArgs(dogs)) => {
-      let loaded = result |. Connect.loaded;
-      let data = result |. Connect.data;
-      let error = result |. Connect.error |> Js.Nullable.toOption;
-
-      switch (error) {
-      | Some(obj) => <div>(ReasonReact.string(obj |. Connect.message))</div>
-      | None => {
-        switch (loaded) {
-          | false => <div>(ReasonReact.string("Loading"))</div>
-          | true => <div style=(
-                ReactDOMRe.Style.make(~display="grid", ~gridTemplateColumns="1fr 1fr 1fr", ())
-              )>(
-                Array.map((dog) => {
-                  let key = dog |. key;
-                  <Dog
-                    key={j|$key|j}
-                    description={dog |. description}
-                    id={key}
-                    imageUrl={dog |. imageUrl}
-                    name={dog |. name}
-                    likes={dog |. likes}
-                    onClick={result |. likeDog}
-                  />
-                }, data |. dogs)
-                |> ReasonReact.array
-              )</div>
-          } 
+  render: _self =>
+    <Connect
+      query=(`Query(query))
+      mutation=mutationMap
+      renderProp=(
+        (~result: Connect.renderArgs(dogs)) => {
+          let loaded = result |. Connect.loaded;
+          let data = result |. Connect.data;
+          let error = Connect.convertJsErrorToReason(result |. Connect.error);
+          switch (error) {
+          | Some(obj) =>
+            <div
+              style=(
+                ReactDOMRe.Style.make(
+                  ~display="flex",
+                  ~padding="20px",
+                  ~background="#f37fbf",
+                  ~color="#900e56",
+                  ~margin="20px",
+                  ~fontFamily="Space Mono",
+                  ~fontSize="20px",
+                  (),
+                )
+              )>
+              (ReasonReact.string("Error: " ++ (obj |. Connect.message)))
+            </div>
+          | None =>
+            switch (loaded) {
+            | false => <div> (ReasonReact.string("Loading")) </div>
+            | true =>
+              <div
+                style=(
+                  ReactDOMRe.Style.make(
+                    ~display="grid",
+                    ~gridTemplateColumns="1fr 1fr 1fr",
+                    (),
+                  )
+                )>
+                (
+                  Array.map(
+                    dog => {
+                      let key = dog |. key;
+                      <Dog
+                        key={j|$key|j}
+                        description=(dog |. description)
+                        id=key
+                        imageUrl=(dog |. imageUrl)
+                        name=(dog |. name)
+                        likes=(dog |. likes)
+                        onClick=(result |. likeDog)
+                      />;
+                    },
+                    data |. dogs,
+                  )
+                  |> ReasonReact.array
+                )
+              </div>
+            }
+          };
         }
-      }
-    }
-  }/>
+      )
+    />,
 };

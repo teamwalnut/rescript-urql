@@ -9,7 +9,13 @@ external toJsUnsafe : 'a => jsUnsafe = "%identity";
 
 let unwrapQuery =
     (
-      ~q: option([ | `Query(Query.urqlQuery) | `QueryArray(array(Query.urqlQuery))]),
+      ~q:
+         option(
+           [
+             | `Query(Query.urqlQuery)
+             | `QueryArray(array(Query.urqlQuery))
+           ],
+         ),
     ) =>
   switch (q) {
   | Some(`Query(q)) => toJsUnsafe(q)
@@ -28,15 +34,18 @@ let unwrapMutation = (~m: option(mutationMap)) =>
 
 /* Render prop types */
 [@bs.deriving abstract]
-type error = {
-  message: string,
-};
+type error = {message: string};
+
+/* Helper function to convert Urql errors to option */
+let convertJsErrorToReason = (err: Js.Nullable.t(error)) =>
+  err |> Js.Nullable.toOption;
 
 [@bs.deriving abstract]
 type skipFetch = {
   [@bs.optional]
   skipFetch: bool,
 };
+
 type refetch = (~options: skipFetch, ~initial: bool=?) => unit;
 
 type refreshAllFromCache = unit => unit;
@@ -48,25 +57,37 @@ type renderArgs('data) = {
   data: 'data,
   error: Js.Nullable.t(error),
   refetch,
-  refreshAllFromCache
+  refreshAllFromCache,
 };
 
 type siRes;
+
 type siData;
 
-type shouldInvalidate = option((~changedTypes: array(string), ~typenames: array(string), ~response: siRes, ~data: siData) => bool);
+type shouldInvalidate =
+  option(
+    (
+      ~changedTypes: array(string),
+      ~typenames: array(string),
+      ~response: siRes,
+      ~data: siData
+    ) =>
+    bool,
+  );
 
 let component = ReasonReact.statelessComponent("Connect");
 
 let make =
     (
-      ~query: option([
-         | `Query(Query.urqlQuery)
-         | `QueryArray(array(Query.urqlQuery))
-       ])=?,
+      ~query:
+         option(
+           [
+             | `Query(Query.urqlQuery)
+             | `QueryArray(array(Query.urqlQuery))
+           ],
+         )=?,
       ~mutation: option(mutationMap)=?,
-      ~renderProp:
-         (~result: renderArgs('data)) => ReasonReact.reactElement,
+      ~renderProp: (~result: renderArgs('data)) => ReasonReact.reactElement,
       ~cache: bool=true,
       ~typeInvalidation: bool=true,
       ~shouldInvalidate: shouldInvalidate=?,

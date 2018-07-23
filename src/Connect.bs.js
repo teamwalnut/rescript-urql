@@ -20,6 +20,14 @@ function unwrapMutation(m) {
   }
 }
 
+function convertJsErrorToReason(err) {
+  if (err == null) {
+    return /* None */0;
+  } else {
+    return [err];
+  }
+}
+
 var component = ReasonReact.statelessComponent("Connect");
 
 function make(query, mutation, renderProp, $staropt$star, $staropt$star$1, shouldInvalidate, _children) {
@@ -37,6 +45,7 @@ function make(query, mutation, renderProp, $staropt$star, $staropt$star$1, shoul
 
 exports.unwrapQuery = unwrapQuery;
 exports.unwrapMutation = unwrapMutation;
+exports.convertJsErrorToReason = convertJsErrorToReason;
 exports.component = component;
 exports.make = make;
 /* component Not a pure module */

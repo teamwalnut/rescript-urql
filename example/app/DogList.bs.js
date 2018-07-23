@@ -36,26 +36,34 @@ function make() {
                               ]], /* Some */[mutationMap], (function (result) {
                                 var loaded = result.loaded;
                                 var data = result.data;
-                                var error = result.error;
-                                if (error == null) {
-                                  if (loaded) {
-                                    return React.createElement("div", {
-                                                style: {
-                                                  display: "grid",
-                                                  gridTemplateColumns: "1fr 1fr 1fr"
-                                                }
-                                              }, $$Array.map((function (dog) {
-                                                      var key = dog.key;
-                                                      return ReasonReact.element(/* Some */["" + (String(key) + "")], /* None */0, Dog$ReactTemplate.make(dog.description, key, dog.imageUrl, dog.name, dog.likes, (function (param) {
-                                                                        result.likeDog(param);
-                                                                        return /* () */0;
-                                                                      }), /* array */[]));
-                                                    }), data.dogs));
-                                  } else {
-                                    return React.createElement("div", undefined, "Loading");
-                                  }
+                                var error = Connect$ReactTemplate.convertJsErrorToReason(result.error);
+                                if (error) {
+                                  return React.createElement("div", {
+                                              style: {
+                                                background: "#f37fbf",
+                                                color: "#900e56",
+                                                display: "flex",
+                                                fontFamily: "Space Mono",
+                                                fontSize: "20px",
+                                                margin: "20px",
+                                                padding: "20px"
+                                              }
+                                            }, "Error: " + error[0].message);
+                                } else if (loaded) {
+                                  return React.createElement("div", {
+                                              style: {
+                                                display: "grid",
+                                                gridTemplateColumns: "1fr 1fr 1fr"
+                                              }
+                                            }, $$Array.map((function (dog) {
+                                                    var key = dog.key;
+                                                    return ReasonReact.element(/* Some */["" + (String(key) + "")], /* None */0, Dog$ReactTemplate.make(dog.description, key, dog.imageUrl, dog.name, dog.likes, (function (param) {
+                                                                      result.likeDog(param);
+                                                                      return /* () */0;
+                                                                    }), /* array */[]));
+                                                  }), data.dogs));
                                 } else {
-                                  return React.createElement("div", undefined, error.message);
+                                  return React.createElement("div", undefined, "Loading");
                                 }
                               }), /* None */0, /* None */0, /* None */0, /* array */[]));
             }),
