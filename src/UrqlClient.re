@@ -15,10 +15,10 @@ external client : urqlClientConfig('fetchOptions) => urqlClient = "Client";
 
 [@bs.send]
 external executeQuery :
-  (urqlClient, Query.urqlQuery, bool) => Js.Promise.t('a) =
+  (urqlClient, UrqlQuery.urqlQuery, bool) => Js.Promise.t('a) =
   "";
 
 [@bs.send]
 external executeMutation :
-  (urqlClient, Mutation.urqlMutation) => Js.Promise.t('a) =
+  (urqlClient, UrqlMutation.urqlMutation) => Js.Promise.t('a) =
   "";

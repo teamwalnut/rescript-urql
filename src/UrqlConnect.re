@@ -12,8 +12,8 @@ let unwrapQuery =
       ~q:
          option(
            [
-             | `Query(Query.urqlQuery)
-             | `QueryArray(array(Query.urqlQuery))
+             | `Query(UrqlQuery.urqlQuery)
+             | `QueryArray(array(UrqlQuery.urqlQuery))
            ],
          ),
     ) =>
@@ -24,7 +24,7 @@ let unwrapQuery =
   };
 
 /* Mutation types */
-type mutationMap = Js.Dict.t(Mutation.urqlMutation);
+type mutationMap = Js.Dict.t(UrqlMutation.urqlMutation);
 
 let unwrapMutation = (~m: option(mutationMap)) =>
   switch (m) {
@@ -82,8 +82,8 @@ let make =
       ~query:
          option(
            [
-             | `Query(Query.urqlQuery)
-             | `QueryArray(array(Query.urqlQuery))
+             | `Query(UrqlQuery.urqlQuery)
+             | `QueryArray(array(UrqlQuery.urqlQuery))
            ],
          )=?,
       ~mutation: option(mutationMap)=?,
