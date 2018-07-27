@@ -1,7 +1,7 @@
 let component = ReasonReact.statelessComponent("DogList");
 
-let query: Query.urqlQuery =
-  Query.query(
+let query: ReasonUrql.Query.urqlQuery =
+  ReasonUrql.Query.query(
     ~query=
       {|
     query {
@@ -18,8 +18,8 @@ let query: Query.urqlQuery =
     (),
   );
 
-let likeDog: Mutation.urqlMutation =
-  Mutation.mutation(
+let likeDog: ReasonUrql.Mutation.urqlMutation =
+  ReasonUrql.Mutation.mutation(
     ~query=
       {|
     mutation likeDog($key: ID!) {
@@ -34,7 +34,7 @@ let likeDog: Mutation.urqlMutation =
     (),
   );
 
-let mutationMap: Connect.mutationMap = Js.Dict.empty();
+let mutationMap: ReasonUrql.Connect.mutationMap = Js.Dict.empty();
 
 Js.Dict.set(mutationMap, "likeDog", likeDog);
 
@@ -51,20 +51,24 @@ type dog = {
 type dogs = {dogs: array(dog)};
 
 [@bs.send]
-external likeDog : (Connect.renderArgs(dogs), {. "key": string}) => unit =
+external likeDog :
+  (ReasonUrql.Connect.renderArgs(dogs), {. "key": string}) => unit =
   "";
 
 let make = _children => {
   ...component,
   render: _self =>
-    <Connect
+    <ReasonUrql.Connect
       query=(`Query(query))
       mutation=mutationMap
       renderProp=(
-        (~result: Connect.renderArgs(dogs)) => {
-          let loaded = result |. Connect.loaded;
-          let data = result |. Connect.data;
-          let error = Connect.convertJsErrorToReason(result |. Connect.error);
+        (~result: ReasonUrql.Connect.renderArgs(dogs)) => {
+          let loaded = result |. ReasonUrql.Connect.loaded;
+          let data = result |. ReasonUrql.Connect.data;
+          let error =
+            ReasonUrql.Connect.convertJsErrorToReason(
+              result |. ReasonUrql.Connect.error,
+            );
           switch (error) {
           | Some(obj) =>
             <div
@@ -80,7 +84,11 @@ let make = _children => {
                   (),
                 )
               )>
-              (ReasonReact.string("Error: " ++ (obj |. Connect.message)))
+              (
+                ReasonReact.string(
+                  "Error: " ++ (obj |. ReasonUrql.Connect.message),
+                )
+              )
             </div>
           | None =>
             switch (loaded) {
