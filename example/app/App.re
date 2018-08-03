@@ -1,6 +1,3 @@
-/* let read = (~query) => Js.Promise.make((~resolve, ~reject as _) => resolve(. { "blah": 2 }));
-   let write = (~query, ~data) => Js.Promise.make((~resolve, ~reject as _) => resolve(. 4));
-   let cache: Client.urqlCache = Client.urqlCache(~read=read, ~write=write); */
 /* Setup the config for the client. */
 let config: ReasonUrql.Client.urqlClientConfig({.}) =
   ReasonUrql.Client.urqlClientConfig(~url="http://localhost:3001", ());
