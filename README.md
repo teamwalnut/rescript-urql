@@ -12,8 +12,14 @@ ReasonML bindings for Formidable's Universal React Query Library (`urql`) https:
 - [Building `reason-urql`](#building-reason-urql)
 - [API](#api)
   - [`Client`](#client)
+    - [`Remaining Todos`](#remaining-todos)
   - [`Provider`](#provider)
   - [`Connect`](#connect)
+    - [`Handling Errors`](#handling-errors)
+    - [`Mutations and Connect`](#mutations-and-connect)
+  - [`Query`](#query)
+  - [`Mutation`](#mutation)
+- [`Getting Involved`](#getting-involved)
 
 ## What is `reason-urql`?
 
@@ -38,7 +44,7 @@ You should now be able to edit the example freely, and refresh the page to see c
 
 ## Installation
 
-These bindings have not yet been published to `npm`. Check back soon for updates!
+These bindings have not yet been published to `npm`. Check back soon for updates! In the meantime, you can always clone locally and play with the example.
 
 ## Bulding `reason-urql`
 
@@ -60,15 +66,15 @@ This will replace `build/Index.js` with an optimized build.
 `urql`'s `Client` API takes a config object containing values for `url`, `cache`, `initialCache`, and `fetchOptions`. We model this config as a `[@bs.deriving abstract]`, BuckleScript's [implementation for JavaScript objects](https://bucklescript.github.io/docs/en/object#record-mode). Note that using `[@bs.deriving abstract]` gives us both a `type` for `urqlClientConfig` and a function for generating the config object (also called `urqlClientConfig`). To create a new `Client` in `reason-urql`, first create the config:
 
 ```re
-let config: ReasonUrql.Client.urqlClientConfig(Js.t({.})) = ReasonUrql.Client.urqlClientConfig(~url="https://myapi.com", ());
+let config: ReasonUrql.Client.urqlClientConfig({.}) = ReasonUrql.Client.urqlClientConfig(~url="https://myapi.com", ());
 ```
 
 The type argument passed to `Client.urqlClientConfig` allows you to specify the structure of your `fetchOptions` argument. This argument can be either an object or a function that returns an object. In Reason, we model this using a polymorphic variant:
 
 ```re
 fetchOptions: [
-  | `FetchObj(Js.t('fetchOptions))
-  | `FetchFunc(unit => Js.t('fetchOptions))
+  | `FetchObj('fetchOptions)
+  | `FetchFunc(unit => 'fetchOptions)
 ]
 ```
 
@@ -77,11 +83,11 @@ To pass something like a custom header to your `fetch` calls, for example, you'd
 ```re
 /* Define the type matching the structure of your `fetchOptions`. */
 type fetchOptions = {.
-  "custom-header": string
-}
+  "X-Reason-App": string
+};
 
 /* Use the polymorphic variant `FetchObj to mark `fetchOptions` as a plain object. */
-let fetchOptions = `FetchObj({. "custom-header": "my-custom-header" });
+let fetchOptions = `FetchObj({. "X-Reason-App": "my-custom-header" });
 
 /* We can take advantage of Reason punning to pass `fetchOptions` implictly. */
 let config: ReasonUrql.Client.urqlClientConfig(fetchOptions) = ReasonUrql.Client.urqlClientConfig(~url="https://myapi.com", ~fetchOptions, ());
@@ -98,10 +104,11 @@ let client = ReasonUrql.Client.client(config);
 Once the `Client` is instantiated, we get access to its methods `executeQuery` and `executeMutation`. Since these APIs are `Promise`-based on the JS side of things, you'll need to use [Reason's `Promise` syntax](https://reasonml.github.io/docs/en/promise) to use them. For example:
 
 ```
-let exampleQuery = ReasonUrql.Query.urqlQuery(
+let exampleQuery = ReasonUrql.Query.query(
   ~query={|
     query {
       dogs {
+        key
         name
         breed
         description
@@ -111,7 +118,7 @@ let exampleQuery = ReasonUrql.Query.urqlQuery(
   ()
 );
 
-Client.executeQuery(client, exampleQuery, false)
+ReasonUrql.Client.executeQuery(client, exampleQuery, false)
 |>  Js.Promise.then_(value => {
     let dogs = value##data##dogs;
     Js.log(dogs);
@@ -167,7 +174,7 @@ To use the `Connect` component in Reason to execute a simple query and render UI
 
 ```re
 /* Define a GraphQL query with urql's query API (see below) */
-let exampleQuery = ReasonUrql.Query.urqlQuery(
+let exampleQuery = ReasonUrql.Query.query(
   ~query={|
     query {
       dogs {
@@ -181,7 +188,7 @@ let exampleQuery = ReasonUrql.Query.urqlQuery(
   ()
 );
 
-/* Define the shape of data to pass as a type parameter to Connect.renderArgs. We require
+/* Define the shape of data to pass as a type parameter to ReasonUrql.Connect.renderArgs. We require
 you to type your data, providing type safety at compile time. */
 [@bs.deriving abstract]
 type dog = {
@@ -232,7 +239,42 @@ let make = (_children) => {
 
 Awesome! We get the power of `Connect`'s render prop convention to connect our UI to a GraphQL query, all while maintaining type saftey with Reason 🚀.
 
-#### Mutation
+#### Handling Errors
+
+You may have noticed the `error` key on the object passed to `Connect`'s render prop. We bind to the error `urql`'s `Connect` API provides as a `Js.Nullable.t` and provide a simple converter function (`convertJsErrorToReason`) to transform this into a Reason `option` variant.
+
+```re
+let error =
+  ReasonUrql.Connect.convertJsErrorToReason(
+    result |. ReasonUrql.Connect.error,
+  );
+```
+
+The result (`Some(error) | None`), if it evaluates to `Some(error)`, will provide you an object with a `message` key. With this, you can then render error specific UI in your components. For example, in your render prop function:
+
+```re
+let error =
+  ReasonUrql.Connect.convertJsErrorToReason(
+    result |. ReasonUrql.Connect.error,
+  );
+
+switch (error) {
+  | Some(obj) =>
+    <div>
+      (
+        ReasonReact.string(
+          "Error: " ++ (obj |. ReasonUrql.Connect.message),
+        )
+      )
+    </div>
+  | None =>
+    switch (loaded) => {
+      | false => <div>(ReasonReact.string("Loading"))</div>
+      | true => /* render your component */
+    }
+```
+
+#### Mutations and Connect
 
 `urql` does a pretty nifty thing to support mutations on the `Connect` component. It takes a user-supplied `mutation` map and turns each mutation into a function accessible on the object passed to `Connect`'s render prop. It accomplishes this through props spreading, [a technique that Reason does not support](https://reasonml.github.io/reason-react/docs/en/props-spread). Props spreading can be modeled easily on the TypeScript side using intersection types. It gets a bit trickier to model this behavior on the Reason end while still maintaining robust type safety. We can't intersect a set of known types (the render prop argument) with unknown, user-supplied types (mutations) behind the scenes – only the user can know what they need and how it's typed.
 
@@ -280,11 +322,11 @@ Then, to use it in your component:
 ```re
 let make = (_children) => {
   ...component,
-  render: _ => <Connect
+  render: _ => <ReasonUrql.Connect
     mutation={mutationMap}
-    renderProp={(result: Connect.renderArgs(dogs)) => {
-      let loaded = result |. Connect.loaded;
-      let data = result |. Connect.data;
+    renderProp={(result: ReasonUrql.Connect.renderArgs(dogs)) => {
+      let loaded = result |. ReasonUrql.Connect.loaded;
+      let data = result |. ReasonUrql.Connect.data;
       switch (loaded) {
       | false => <div>(ReasonReact.string("Loading"))</div>
       | true => {
@@ -316,7 +358,7 @@ Ultimately, the use of `[@bs.send]` here is a workaround to support a proper bin
 
 ### Query
 
-**Before reading this section, read the docs on `urql`'s native JS [`Query` API](https://github.com/FormidableLabs/urql#query).**
+**Before reading this section, read the docs on `urql`'s [`Query` API](https://github.com/FormidableLabs/urql#query).**
 
 Binding to `urql`'s `query` API is fairly simple. The JS implementation is just a function that accepts a `query` string argument (your GraphQL query) and, optionally, a `variables` argument and returns an object of the shape:
 
@@ -330,7 +372,7 @@ Binding to `urql`'s `query` API is fairly simple. The JS implementation is just 
 To use `reason-urql's` `query` API simply do something like the following:
 
 ```re
-let exampleQuery = Query.urqlQuery(
+let exampleQuery = ReasonUrql.Query.query(
   ~query={|
     query {
       dogs {
@@ -348,7 +390,7 @@ let exampleQuery = Query.urqlQuery(
 Adding variables is as simple as adding the second named argument.
 
 ```re
-let exampleQuery: Query.urqlQuery = Query.query(
+let exampleQuery = ReasonUrql.Query.query(
   ~query={|
     query getDog(key: ID!) {
       dog(key: $key) {
@@ -369,12 +411,12 @@ We currently _don't_ typecheck the `variables` argument – the binding accepts 
 
 ### Mutation
 
-**Before reading this section, read the docs on `urql`'s native JS [`Mutation` API](https://github.com/FormidableLabs/urql#mutation).**
+**Before reading this section, read the docs on `urql`'s [`Mutation` API](https://github.com/FormidableLabs/urql#mutation).**
 
 The bindings for `reason-urql`'s `mutation` API is very similar to that of `query`. Just call the `mutation` function from the `Mutation` module.
 
 ```re
-let likeDog: Mutation.urqlMutation = Mutation.mutation(
+let likeDog = ReasonUrql.Mutation.mutation(
   ~query={|
     mutation likeDog($key: ID!) {
       likeDog(key: $key) {
@@ -393,3 +435,7 @@ let likeDog: Mutation.urqlMutation = Mutation.mutation(
 ```
 
 Typically, you'll set up your `queries` and `mutations` like the above examples and pass them as `props` to your `Connect`ed components.
+
+## Getting Involved
+
+This project is currently under development. Please help out by [opening an issue](https://github.com/parkerziegler/reason-urql/issues) or [filing a PR](https://github.com/parkerziegler/reason-urql/pulls).
