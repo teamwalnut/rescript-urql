@@ -1,7 +1,9 @@
+open ReasonUrql;
+
 let component = ReasonReact.statelessComponent("Header");
 
-let likeAllDogs: ReasonUrql.Mutation.urqlMutation =
-  ReasonUrql.Mutation.mutation(
+let likeAllDogs: Mutation.urqlMutation =
+  Mutation.mutation(
     ~query=
       {|
     mutation likeAllDogs {
@@ -14,20 +16,20 @@ let likeAllDogs: ReasonUrql.Mutation.urqlMutation =
     (),
   );
 
-let mutationMap: ReasonUrql.Connect.mutationMap = Js.Dict.empty();
+let mutationMap: Connect.mutationMap = Js.Dict.empty();
 
 Js.Dict.set(mutationMap, "likeAllDogs", likeAllDogs);
 
 [@bs.send]
-external likeAllDogs : (ReasonUrql.Connect.renderArgs({.}), unit) => unit = "";
+external likeAllDogs : (Connect.renderArgs({.}), unit) => unit = "";
 
 let make = _children => {
   ...component,
   render: _self =>
-    <ReasonUrql.Connect
+    <Connect
       mutation=mutationMap
       renderProp=(
-        (~result: ReasonUrql.Connect.renderArgs({.})) =>
+        (~result: Connect.renderArgs({.})) =>
           <header
             style=(
               ReactDOMRe.Style.make(
