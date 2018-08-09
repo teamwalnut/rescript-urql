@@ -1,7 +1,9 @@
+open ReasonUrql;
+
 let component = ReasonReact.statelessComponent("DogList");
 
-let query: ReasonUrql.Query.urqlQuery =
-  ReasonUrql.Query.query(
+let query: Query.urqlQuery =
+  Query.query(
     ~query=
       {|
     query {
@@ -18,8 +20,8 @@ let query: ReasonUrql.Query.urqlQuery =
     (),
   );
 
-let likeDog: ReasonUrql.Mutation.urqlMutation =
-  ReasonUrql.Mutation.mutation(
+let likeDog: Mutation.urqlMutation =
+  Mutation.mutation(
     ~query=
       {|
     mutation likeDog($key: ID!) {
@@ -34,7 +36,7 @@ let likeDog: ReasonUrql.Mutation.urqlMutation =
     (),
   );
 
-let mutationMap: ReasonUrql.Connect.mutationMap = Js.Dict.empty();
+let mutationMap: Connect.mutationMap = Js.Dict.empty();
 
 Js.Dict.set(mutationMap, "likeDog", likeDog);
 
@@ -52,22 +54,22 @@ type dogs = {dogs: array(dog)};
 
 [@bs.send]
 external likeDog :
-  (ReasonUrql.Connect.renderArgs(dogs), {. "key": string}) => unit =
+  (Connect.renderArgs(dogs), {. "key": string}) => unit =
   "";
 
 let make = _children => {
   ...component,
   render: _self =>
-    <ReasonUrql.Connect
+    <Connect
       query=(`Query(query))
       mutation=mutationMap
       renderProp=(
-        (~result: ReasonUrql.Connect.renderArgs(dogs)) => {
-          let loaded = result |. ReasonUrql.Connect.loaded;
-          let data = result |. ReasonUrql.Connect.data;
+        (~result: Connect.renderArgs(dogs)) => {
+          let loaded = result |. Connect.loaded;
+          let data = result |. Connect.data;
           let error =
-            ReasonUrql.Connect.convertJsErrorToReason(
-              result |. ReasonUrql.Connect.error,
+            Connect.convertJsErrorToReason(
+              result |. Connect.error,
             );
           switch (error) {
           | Some(obj) =>
@@ -86,7 +88,7 @@ let make = _children => {
               )>
               (
                 ReasonReact.string(
-                  "Error: " ++ (obj |. ReasonUrql.Connect.message),
+                  "Error: " ++ (obj |. Connect.message),
                 )
               )
             </div>
@@ -105,11 +107,10 @@ let make = _children => {
                 (
                   Array.map(
                     dog => {
-                      let key = dog |. key;
                       <Dog
-                        key={j|$key|j}
+                        key=(dog |. key)
                         description=(dog |. description)
-                        id=key
+                        id=(dog |. key)
                         imageUrl=(dog |. imageUrl)
                         name=(dog |. name)
                         likes=(dog |. likes)
