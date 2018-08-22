@@ -12,7 +12,7 @@ Reason bindings for Formidable's Universal React Query Library (`urql`) https://
 - [Building `reason-urql`](#building-reason-urql)
 - [API](#api)
   - [`Client`](#client)
-    - [`Remaining Todos`](#remaining-todos)
+    - [Remaining Todos](#remaining-todos)
   - [`Provider`](#provider)
   - [`Connect`](#connect)
     - [Handling Errors](#handling-errors)
@@ -273,7 +273,7 @@ switch (error) {
     }
 ```
 
-#### Mutations and Connect
+#### Mutations and `Connect`
 
 `urql` does a pretty nifty thing to support mutations on the `Connect` component. It takes a user-supplied `mutation` map and turns each mutation into a function accessible on the object passed to `Connect`'s render prop. It accomplishes this through props spreading, [a technique that Reason does not support](https://reasonml.github.io/reason-react/docs/en/props-spread). Props spreading can be modeled easily on the TypeScript side using intersection types. It gets a bit trickier to model this behavior on the Reason end while still maintaining robust type safety. We can't intersect a set of known types (the render prop argument) with unknown, user-supplied types (mutations) behind the scenes – only the user can know what they need and how it's typed.
 

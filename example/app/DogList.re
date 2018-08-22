@@ -2,43 +2,40 @@ open ReasonUrql;
 
 let component = ReasonReact.statelessComponent("DogList");
 
-let query: Query.urqlQuery =
-  Query.query(
-    ~query=
-      {|
-    query dogs {
-      dogs {
-        name
-        key
-        breed
-        description
-        imageUrl
-        likes
-      }
+module AllDogsQuery = [%graphql
+  {|
+  query {
+    dogs {
+      name
+      key
+      breed
+      description
+      imageUrl
+      likes
     }
- |},
-    (),
-  );
+  }
+|}
+];
 
-let likeDog: Mutation.urqlMutation =
-  Mutation.mutation(
-    ~query=
-      {|
-    mutation likeDog($key: ID!) {
-      likeDog(key: $key) {
-        name
-        key
-        breed
-        likes
-      }
+module GetDogs = Query.CreateQuery(AllDogsQuery);
+
+module DogMutation = [%graphql
+  {|
+  mutation likeDog($key: ID!) {
+    likeDog(key: $key) {
+      name
+      key
+      breed
+      likes
     }
-  |},
-    (),
-  );
+  }
+|}
+];
+
+module LikeDog = Mutation.CreateMutation(DogMutation);
 
 let mutationMap: Connect.mutationMap = Js.Dict.empty();
-
-Js.Dict.set(mutationMap, "likeDog", likeDog);
+LikeDog.addMutationToMap(~dict=mutationMap, ~key="likeDog");
 
 [@bs.deriving abstract]
 type dog = {
@@ -60,7 +57,7 @@ let make = _children => {
   ...component,
   render: _self =>
     <Connect
-      query=(`Query(query))
+      query=(`Query(GetDogs.query))
       mutation=mutationMap
       renderProp=(
         (~result: Connect.renderArgs(dogs)) => {
