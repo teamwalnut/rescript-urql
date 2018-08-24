@@ -15,11 +15,11 @@ Reason bindings for Formidable's Universal React Query Library (`urql`) https://
     - [`Remaining Todos`](#remaining-todos)
   - [`Provider`](#provider)
   - [`Connect`](#connect)
-    - [`Handling Errors`](#handling-errors)
-    - [`Mutations and Connect`](#mutations-and-connect)
+    - [Handling Errors](#handling-errors)
+    - [Mutations and `Connect`](#mutations-and-connect)
   - [`Query`](#query)
   - [`Mutation`](#mutation)
-- [`Getting Involved`](#getting-involved)
+- [Getting Involved](#getting-involved)
 
 ## What is `reason-urql`?
 
@@ -33,11 +33,14 @@ The example project is a simple app for viewing and liking Formidable dogs. To g
 # in one terminal, start the GraphQL server
 yarn start-demo-server
 
-# in another terminal, build the example and start webpack for the app
-yarn build
+# in a second terminal, compile the app in watch mode
+yarn start
+
+# in another terminal, start webpack for the app
 yarn start-demo-app
 
-# then, in a third terminal
+# open up the app either by clicking the index.html file in your file browser
+# or calling it from the command line
 open example/app/index.html
 ```
 
@@ -64,84 +67,85 @@ This will replace `build/Index.js` with an optimized build.
 
 **Before reading this section, read the docs on `urql`'s [`Client` API](https://github.com/FormidableLabs/urql#client).**
 
-`urql`'s `Client` API takes a config object containing values for `url`, `cache`, `initialCache`, and `fetchOptions`. We model this config as a `[@bs.deriving abstract]`, BuckleScript's [implementation for JavaScript objects](https://bucklescript.github.io/docs/en/object#record-mode). Note that using `[@bs.deriving abstract]` gives us both a `type` for `urqlClientConfig` and a function for generating the config object (also called `urqlClientConfig`). To create a new `Client` in `reason-urql`, first create the config:
+`urql`'s `Client` API takes a config object containing values for `url`, `cache`, `initialCache`, and `fetchOptions`. We model this config as a `[@bs.deriving abstract]`, BuckleScript's [implementation for JavaScript objects](https://bucklescript.github.io/docs/en/object#record-mode). To create a new `Client` using `reason-urql`, simply call the `make` function from the `Client` module:
 
 ```reason
 open ReasonUrql;
 
-let config: Client.urqlClientConfig({.}) = Client.urqlClientConfig(~url="https://myapi.com", ());
+let client = Client.make(~url="https://myapi.com/graphql", ());
 ```
 
-The type argument passed to `Client.urqlClientConfig` allows you to specify the structure of your `fetchOptions` argument. This argument can be either an object or a function that returns an object. In Reason, we model this using a polymorphic variant:
-
-```reason
-fetchOptions: [
-  | `FetchObj('fetchOptions)
-  | `FetchFunc(unit => 'fetchOptions)
-]
-```
-
-To pass something like a custom header to your `fetch` calls, for example, you'd do the following:
+In order to pass `fetchOptions` to your `Client`, you'll need to create them using the `Fetch.RequestInit.make()` function from [`bs-fetch`](https://github.com/reasonml-community/bs-fetch). Using this function guarantees that the options you are passing to `urql`'s `fetch` calls are valid and type safe. To set this up with `reason-urql`, do something like the following:
 
 ```reason
 open ReasonUrql;
 
-/* Define the type matching the structure of your `fetchOptions`. */
-type fetchOptions = {.
-  "X-Reason-App": string
-};
+let makeFetchOptions =
+  Fetch.RequestInit.make(
+    ~method_=Post,
+    ~headers=Fetch.HeadersInit.make({"Content-Type": "application/json"}),
+    (),
+  );
 
-/* Use the polymorphic variant `FetchObj to mark `fetchOptions` as a plain object. */
-let fetchOptions = `FetchObj({. "X-Reason-App": "my-custom-header" });
+/* Wrap your fetchOptions in the fetchOptions variant, which accepts the Cient.FetchObj or Client.FetchFn constructor. */
+let fetchOptions = Client.FetchObj(makeFetchOptions);
 
-/* We can take advantage of Reason punning to pass `fetchOptions` implictly. */
-let config: Client.urqlClientConfig(fetchOptions) = Client.urqlClientConfig(~url="https://myapi.com", ~fetchOptions, ());
+let client = Client.make(~url="http://localhost:3001", ~fetchOptions, ());
 ```
 
-This allows you to get type safety for your `fetchOptions` argument. The compiler will also alert you if you alter the shape of `fetchOptions` without updating the type appropriately.
+In `urql`, your `fetchOptions` argument can either be an object or a function returning an object: `RequestInit | () => RequestInit`. We use variants to model this in `reason-urql`.
 
-Now that we have a config, creating the `Client` is easy:
+```reason
+type fetchOptions =
+  | FetchObj(Fetch.requestInit)
+  | FetchFn(unit => Fetch.requestInit);
+```
+
+Once the `Client` is instantiated, you get access to its methods `executeQuery` and `executeMutation`. Since these APIs are `Promise`-based on the JS side of things, you'll need to use [Reason's `Promise` syntax](https://reasonml.github.io/docs/en/promise) to use them. For example:
 
 ```reason
 open ReasonUrql;
 
-let client = Client.client(config);
+let query =
+  Query.query(
+    ~query={|
+query dogs {
+  dogs {
+    name
+    breed
+    description
+  }
+}
+|},
+    (),
+  );
+
+let client = Client.make(~url="http://localhost:3001", ());
+
+Client.executeQuery(~client, ~query, ~skipCache=false)
+|> Js.Promise.then_(value => {
+     let dogs = value##data##dogs;
+     Js.log(dogs);
+     Js.Promise.resolve(dogs);
+   })
+|> Js.Promise.catch(err => {
+     Js.log2("Something went wrong!", err);
+     Js.Promise.resolve(err);
+   });
 ```
 
-Once the `Client` is instantiated, we get access to its methods `executeQuery` and `executeMutation`. Since these APIs are `Promise`-based on the JS side of things, you'll need to use [Reason's `Promise` syntax](https://reasonml.github.io/docs/en/promise) to use them. For example:
+#### Current API
 
-```reason
-open ReasonUrql;
-
-let exampleQuery = Query.query(
-  ~query={|
-    query {
-      dogs {
-        key
-        name
-        breed
-        description
-      }
-    }
-  |},
-  ()
-);
-
-Client.executeQuery(client, exampleQuery, false)
-|>  Js.Promise.then_(value => {
-    let dogs = value##data##dogs;
-    Js.log(dogs);
-    Js.Promise.resolve(dogs);
-});
-```
+| Name              | Type                                                                             | Description                               |
+| ----------------- | -------------------------------------------------------------------------------- | ----------------------------------------- |
+| `make`            | (~url: string, ~?fetchOptions: option(fetchOptions), unit)                       | Creates an `urql` Client.                 |
+| `executeQuery`    | (~client: client, ~query: Query.urqlQuery, ~skipCache: bool) => Js.Promise.t('a) | Executes a `query` using the `client`.    |
+| `executeMutation` | (~client: client, ~mutation: Mutation.urqlMutation) => Js.Promise.t('a)          | Executes a `mutation` using the `client`. |
 
 #### Remaining Todos
 
-- [ ] Support properly typed custom `cache` implementations. Tracked in [#6](https://github.com/parkerziegler/reason-urql/issues/6).
-- [ ] Potentially require type parameters to properly type the results of `executeQuery` and `executeMutation` rather than leaving them abstract.
 - [ ] Add `graphql_ppx` for proper GraphQL schema validation. Tracked in [#5](https://github.com/parkerziegler/reason-urql/issues/5).
-
-PRs are encouraged! Thanks for helping out!
+- [ ] Support properly typed custom `cache` implementations. Tracked in [#6](https://github.com/parkerziegler/reason-urql/issues/6).
 
 ### Provider
 

@@ -6,3 +6,4 @@ npm-debug.log
 /node_modules/
 *.bs.js
 example/build/
+/.graphql_ppx_cache/
