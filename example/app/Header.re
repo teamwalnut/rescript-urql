@@ -20,8 +20,7 @@ let mutationMap: Connect.mutationMap = Js.Dict.empty();
 
 Js.Dict.set(mutationMap, "likeAllDogs", likeAllDogs);
 
-[@bs.send]
-external likeAllDogs : (Connect.renderArgs({.}), unit) => unit = "";
+[@bs.send] external likeAllDogs : (Connect.renderArgs({.}), unit) => unit = "";
 
 let make = _children => {
   ...component,

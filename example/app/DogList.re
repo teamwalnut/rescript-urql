@@ -6,7 +6,7 @@ let query: Query.urqlQuery =
   Query.query(
     ~query=
       {|
-    query {
+    query dogs {
       dogs {
         name
         key
@@ -53,8 +53,7 @@ type dog = {
 type dogs = {dogs: array(dog)};
 
 [@bs.send]
-external likeDog :
-  (Connect.renderArgs(dogs), {. "key": string}) => unit =
+external likeDog : (Connect.renderArgs(dogs), {. "key": string}) => unit =
   "";
 
 let make = _children => {
@@ -67,10 +66,7 @@ let make = _children => {
         (~result: Connect.renderArgs(dogs)) => {
           let loaded = result |. Connect.loaded;
           let data = result |. Connect.data;
-          let error =
-            Connect.convertJsErrorToReason(
-              result |. Connect.error,
-            );
+          let error = Connect.convertJsErrorToReason(result |. Connect.error);
           switch (error) {
           | Some(obj) =>
             <div
@@ -86,11 +82,7 @@ let make = _children => {
                   (),
                 )
               )>
-              (
-                ReasonReact.string(
-                  "Error: " ++ (obj |. Connect.message),
-                )
-              )
+              (ReasonReact.string("Error: " ++ (obj |. Connect.message)))
             </div>
           | None =>
             switch (loaded) {
@@ -106,7 +98,7 @@ let make = _children => {
                 )>
                 (
                   Array.map(
-                    dog => {
+                    dog =>
                       <Dog
                         key=(dog |. key)
                         description=(dog |. description)
@@ -115,8 +107,7 @@ let make = _children => {
                         name=(dog |. name)
                         likes=(dog |. likes)
                         onClick=(result |. likeDog)
-                      />;
-                    },
+                      />,
                     data |. dogs,
                   )
                   |> ReasonReact.array
