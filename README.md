@@ -70,12 +70,16 @@ This will replace `build/Index.js` with an optimized build.
 `urql`'s `Client` API takes a config object containing values for `url`, `cache`, `initialCache`, and `fetchOptions`. We model this config as a `[@bs.deriving abstract]`, BuckleScript's [implementation for JavaScript objects](https://bucklescript.github.io/docs/en/object#record-mode). To create a new `Client` using `reason-urql`, simply call the `make` function from the `Client` module:
 
 ```reason
+open ReasonUrql;
+
 let client = Client.make(~url="https://myapi.com/graphql", ());
 ```
 
-In order to pass `fetchOptions` to your `Client`, you'll need to create them using the `Fetch.RequestInit.make()` function from [`bs-fetch`](https://github.com/reasonml-community/bs-fetch). Using this function gives guaranteed safety that the options you are passing to `urql`'s `fetch` calls are semantically correct and type safe. To set this up with `reason-urql`, do something like the following:
+In order to pass `fetchOptions` to your `Client`, you'll need to create them using the `Fetch.RequestInit.make()` function from [`bs-fetch`](https://github.com/reasonml-community/bs-fetch). Using this function guarantees that the options you are passing to `urql`'s `fetch` calls are valid and type safe. To set this up with `reason-urql`, do something like the following:
 
 ```reason
+open ReasonUrql;
+
 let makeFetchOptions =
   Fetch.RequestInit.make(
     ~method_=Post,
@@ -83,14 +87,13 @@ let makeFetchOptions =
     (),
   );
 
-/* Wrap your fetchOptions in the fetchOptions variant, which accepts either
-Cient.FetchObj or Client.FetchFn */
+/* Wrap your fetchOptions in the fetchOptions variant, which accepts the Cient.FetchObj or Client.FetchFn constructor. */
 let fetchOptions = Client.FetchObj(makeFetchOptions);
 
 let client = Client.make(~url="http://localhost:3001", ~fetchOptions, ());
 ```
 
-In `urql`, your `fetchOptions` argument can either be an object or a function returning an object: `RequestInit | () => RequestInit`. We use variants to model this in Reason.
+In `urql`, your `fetchOptions` argument can either be an object or a function returning an object: `RequestInit | () => RequestInit`. We use variants to model this in `reason-urql`.
 
 ```reason
 type fetchOptions =
