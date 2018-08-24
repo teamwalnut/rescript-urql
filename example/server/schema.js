@@ -1,14 +1,6 @@
-const { makeExecutableSchema } = require('graphql-tools');
-require('isomorphic-fetch');
-require('es6-promise').polyfill();
+"use strict";
 
-let dogs;
-fetch('https://rawgit.com/FormidableLabs/dogs/master/dogs.json')
-  .then(res => res.json())
-  .then((res) => {
-    dogs = res.map(dog => Object.assign({}, dog, { likes: 0 }))
-  })
-  .catch(err => console.log(err));
+const { makeExecutableSchema } = require("graphql-tools");
 
 const typeDefs = `
   type Query {
@@ -30,17 +22,13 @@ const typeDefs = `
   }
 `;
 
-const resolvers = {
+const resolvers = dogs => ({
   Query: {
-    dogs: (root, args, context) => {
-      return dogs;
-    },
-    dog: (roots, args, context) => {
-      return dogs.find(a => a.key === args.key);
-    }
+    dogs: (root, args) => dogs,
+    dog: (root, args) => dogs.find(a => a.key === args.key)
   },
   Mutation: {
-    likeDog: (root, args, context) => {
+    likeDog: (root, args) => {
       const dog = dogs.find(a => a.key === args.key);
       const idx = dogs.indexOf(dog);
       const liked = {
@@ -50,24 +38,19 @@ const resolvers = {
       dogs.splice(idx, 1, liked);
       return liked;
     },
-    likeAllDogs: (root, args, context) => {
+    likeAllDogs: (root, args) => {
       dogs.forEach(dog => {
-        dog.likes = dog.likes + 1;
+        dog.likes += 1;
       });
       return dogs;
     }
   }
-};
+});
 
 module.exports = {
-  schema: makeExecutableSchema({
-    typeDefs,
-    resolvers,
-  }),
-  context: (headers, secrets) => {
-    return {
-      headers,
-      secrets,
-    };
-  },
+  schema: dogs =>
+    makeExecutableSchema({
+      typeDefs,
+      resolvers: resolvers(dogs)
+    })
 };
