@@ -1,5 +1,3 @@
-open UrqlInterfaces;
-
 [@bs.deriving abstract]
 type urqlQuery = {
   query: string,
@@ -8,9 +6,15 @@ type urqlQuery = {
 };
 
 [@bs.module "urql"]
-external query : (~query: string, ~variables: Js.Json.t=?, unit) => urqlQuery =
-  "";
+external query: (~query: string, ~variables: Js.Json.t) => urqlQuery = "";
 
-module CreateQuery = (Query: GraphQLPPXInterface) => {
-  let query: urqlQuery = query(~query=Query.query, ());
-};
+let make =
+    (
+      gqlModule: {
+        .
+        "query": string,
+        "variables": Js.Json.t,
+        "parse": Js.Json.t => 'a,
+      },
+    ) =>
+  query(~query=gqlModule##query, ~variables=gqlModule##variables);

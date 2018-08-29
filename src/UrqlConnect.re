@@ -1,11 +1,11 @@
 /* Urql's <Connect /> component, which takes a render prop argument. */
-[@bs.module "urql"] external connect : ReasonReact.reactClass = "Connect";
+[@bs.module "urql"] external connect: ReasonReact.reactClass = "Connect";
 
 /* The pattern below allows us to type the query prop as a polymorphic variant,
    which can be either a single Urql query or an array of Urql queries. */
 type jsUnsafe;
 
-external toJsUnsafe : 'a => jsUnsafe = "%identity";
+external toJsUnsafe: 'a => jsUnsafe = "%identity";
 
 let unwrapQuery =
     (
@@ -33,8 +33,8 @@ let unwrapMutation = (~m: option(mutationMap)) =>
   };
 
 /* Render prop types */
-[@bs.deriving abstract]
-type error = {message: string};
+/* [@bs.deriving abstract] */
+type error = {. "message": string};
 
 /* Helper function to convert Urql errors to option */
 let convertJsErrorToReason = (err: Js.Nullable.t(error)) =>
@@ -50,14 +50,50 @@ type refetch = (~options: skipFetch, ~initial: bool=?) => unit;
 
 type refreshAllFromCache = unit => unit;
 
-[@bs.deriving abstract]
+type response('data) =
+  | Loading
+  | Data('data)
+  | Error(error);
+
+/* [@bs.deriving abstract] */
 type renderArgs('data) = {
-  fetching: bool,
-  loaded: bool,
-  data: 'data,
-  error: Js.Nullable.t(error),
-  refetch,
-  refreshAllFromCache,
+  .
+  "response": response('data),
+  "fetching": bool,
+  "loaded": bool,
+  "data": Js.Nullable.t('data),
+  "error": Js.Nullable.t(error),
+  "refetch": refetch,
+  "refreshAllFromCache": refreshAllFromCache,
+};
+
+/* [@bs.deriving abstract] */
+type renderArgsJs('data) = {
+  .
+  "fetching": bool,
+  "loaded": bool,
+  "data": Js.Nullable.t('data),
+  "error": Js.Nullable.t(error),
+  "refetch": refetch,
+  "refreshAllFromCache": refreshAllFromCache,
+};
+
+let urqlDataToVariant = (urqlData: renderArgsJs('data)) => {
+  Js.log2("error", urqlData##error);
+  Js.log2("data", urqlData##data);
+  let response =
+    switch (
+      urqlData##fetching,
+      urqlData##data |> Js.Nullable.toOption,
+      urqlData##error |> Js.Nullable.toOption,
+    ) {
+    | (true, _, _) => Loading
+    | (false, Some(data), _) => Data(data)
+    | (false, _, Some(error)) => Error(error)
+    | (false, None, None) => Error({"message": "No data"})
+    };
+
+  Js.Obj.assign(urqlData, {"response": response});
 };
 
 type siRes;
@@ -87,7 +123,7 @@ let make =
            ],
          )=?,
       ~mutation: option(mutationMap)=?,
-      ~renderProp: (~result: renderArgs('data)) => ReasonReact.reactElement,
+      ~render: renderArgs('data) => ReasonReact.reactElement,
       ~cache: bool=true,
       ~typeInvalidation: bool=true,
       ~shouldInvalidate: shouldInvalidate=?,
@@ -101,7 +137,7 @@ let make =
       "cache": cache,
       "typeInvalidation": typeInvalidation,
       "shouldInvalidate": shouldInvalidate,
-      "children": renderProp,
+      "children": result => result |> urqlDataToVariant |> render,
     },
     _children,
   );

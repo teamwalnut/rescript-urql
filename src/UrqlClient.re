@@ -21,16 +21,16 @@ type clientConfig = {
 type client;
 
 [@bs.new] [@bs.module "urql"]
-external createClient : clientConfig => client = "Client";
+external createClient: clientConfig => client = "Client";
 
 [@bs.send]
-external executeQuery :
+external executeQuery:
   (~client: client, ~query: UrqlQuery.urqlQuery, ~skipCache: bool) =>
   Js.Promise.t('a) =
   "";
 
 [@bs.send]
-external executeMutation :
+external executeMutation:
   (~client: client, ~mutation: UrqlMutation.urqlMutation) => Js.Promise.t('a) =
   "";
 
