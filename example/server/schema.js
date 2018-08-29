@@ -4,21 +4,21 @@ const { makeExecutableSchema } = require("graphql-tools");
 
 const typeDefs = `
   type Query {
-    dogs: [Dog]
-    dog(key: ID!): Dog
+    dogs: [Dog]!
+    dog(key: ID!): Dog!
   }
   type Mutation {
-    likeDog(key: ID!): Dog
-    likeAllDogs: [Dog]
+    likeDog(key: ID!): Dog!
+    likeAllDogs: [Dog]!
   }
   type Dog {
-    key: String
-    name: String
-    breed: String
-    color: String
-    imageUrl: String
-    description: String
-    likes: Int
+    key: String!
+    name: String!
+    breed: String!
+    color: String!
+    imageUrl: String!
+    description: String!
+    likes: Int!
   }
 `;
 
