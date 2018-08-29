@@ -2,35 +2,33 @@ open ReasonUrql;
 
 let component = ReasonReact.statelessComponent("Header");
 
-let likeAllDogs: Mutation.urqlMutation =
-  Mutation.mutation(
-    ~query=
-      {|
-    mutation likeAllDogs {
-      likeAllDogs {
-        key
-        likes
-      }
+module LikeAllDogs = [%graphql
+  {|
+  mutation likeAllDogs {
+    likeAllDogs {
+      key
+      likes
     }
-  |},
-    (),
-  );
+  }
+|}
+];
+
+module LikeAllDogsMutation = Mutation.Make(LikeAllDogs);
 
 let mutationMap: Connect.mutationMap = Js.Dict.empty();
+LikeAllDogsMutation.addMutationToMap(~dict=mutationMap, ~key="likeAllDogs");
 
-Js.Dict.set(mutationMap, "likeAllDogs", likeAllDogs);
-
-[@bs.send] external likeAllDogs : (Connect.renderArgs({.}), unit) => unit = "";
+[@bs.send] external likeAllDogs: (Connect.renderArgs({.}), unit) => unit = "";
 
 let make = _children => {
   ...component,
   render: _self =>
     <Connect
       mutation=mutationMap
-      renderProp=(
-        (~result: Connect.renderArgs({.})) =>
+      render={
+        (result: Connect.renderArgs({.})) =>
           <header
-            style=(
+            style={
               ReactDOMRe.Style.make(
                 ~minHeight="15%",
                 ~background="#a1a1a1",
@@ -40,22 +38,22 @@ let make = _children => {
                 ~fontFamily="Space Mono",
                 (),
               )
-            )>
+            }>
             <img
               src="../../assets/formidable-logo.svg"
-              onClick=(_e => result |. likeAllDogs())
+              onClick={_e => result->(likeAllDogs())}
             />
             <span
-              style=(
+              style={
                 ReactDOMRe.Style.make(
                   ~fontSize="25px",
                   ~marginLeft="10px",
                   (),
                 )
-              )>
-              (ReasonReact.string("Dogs"))
+              }>
+              {ReasonReact.string("Dogs")}
             </span>
           </header>
-      )
+      }
     />,
 };
