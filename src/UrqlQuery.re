@@ -6,15 +6,26 @@ type urqlQuery = {
 };
 
 [@bs.module "urql"]
-external query: (~query: string, ~variables: Js.Json.t) => urqlQuery = "";
+external makeQuery:
+  (~query: string, ~variables: Js.Json.t=?, unit) => urqlQuery =
+  "query";
 
-let make =
+let query =
     (
-      gqlModule: {
+      gqlQuery: {
         .
         "query": string,
         "variables": Js.Json.t,
         "parse": Js.Json.t => 'a,
       },
     ) =>
-  query(~query=gqlModule##query, ~variables=gqlModule##variables);
+  makeQuery(~query=gqlQuery##query, ~variables=gqlQuery##variables, ());
+
+module type GraphQLPPXInterface = {
+  type t;
+  let query: string;
+};
+
+module Make = (Query: GraphQLPPXInterface) => {
+  let query = makeQuery(~query=Query.query, ());
+};

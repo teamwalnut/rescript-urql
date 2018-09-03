@@ -1,5 +1,3 @@
-open UrqlInterfaces;
-
 [@bs.deriving abstract]
 type urqlMutation = {
   query: string,
@@ -8,24 +6,34 @@ type urqlMutation = {
 };
 
 [@bs.module "urql"]
-external mutation:
+external makeMutation:
   (~query: string, ~variables: Js.Json.t=?, unit) => urqlMutation =
-  "";
+  "mutation";
 
-module Make = (Mutation: GraphQLPPXInterface) => {
-  let query = Mutation.query;
-  let moduleMutation: urqlMutation = mutation(~query, ());
-  let addMutationToMap = (~dict: Js.Dict.t(urqlMutation), ~key: string) =>
-    Js.Dict.set(dict, key, moduleMutation);
-};
-
-let make =
+/* Expose a function that can make a mutation from a graphql_ppx module when variables
+   argument is known before runtime. */
+let mutation =
     (
-      gqlModule: {
+      gqlMutation: {
         .
         "query": string,
         "variables": Js.Json.t,
         "parse": Js.Json.t => 'a,
       },
     ) =>
-  mutation(~query=gqlModule##query, ~variables=gqlModule##variables);
+  makeMutation(
+    ~query=gqlMutation##query,
+    ~variables=gqlMutation##variables,
+    (),
+  );
+
+/* Also expose a functor that can make a mutation from a graphql_ppx module when variables
+   argument is not known before runtime. */
+module type GraphQLPPXInterface = {
+  type t;
+  let query: string;
+};
+
+module Make = (Mutation: GraphQLPPXInterface) => {
+  let mutation = makeMutation(~query=Mutation.query, ());
+};
