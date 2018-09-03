@@ -11,14 +11,18 @@ Reason bindings for Formidable's Universal React Query Library (`urql`) https://
 - [Installation](#installation)
 - [Building `reason-urql`](#building-reason-urql)
 - [API](#api)
+  - [`Query`](#query)
+    - [`Query` API](#query-api)
+  - [`Mutation`](#mutation)
+    - [`Mutation` API](#mutation-api)
   - [`Client`](#client)
+    - [`Client` API](#client-api)
     - [Remaining Todos](#remaining-todos)
   - [`Provider`](#provider)
+    - [`Provider` `props`](#provider-props)
   - [`Connect`](#connect)
-    - [Handling Errors](#handling-errors)
+    - [Pattern Matching with `response`](#handling-errors)
     - [Mutations and `Connect`](#mutations-and-connect)
-  - [`Query`](#query)
-  - [`Mutation`](#mutation)
 - [Getting Involved](#getting-involved)
 
 ## What is `reason-urql`?
@@ -63,6 +67,142 @@ This will replace `build/Index.js` with an optimized build.
 
 ## API
 
+### Query
+
+**Before reading this section, read the docs on `urql`'s [`Query` API](https://github.com/FormidableLabs/urql#query).**
+
+The `Query` `module` provides the core building block for genertaing queries in `reason-urql`. We use the power of [`graphql_ppx`](https://github.com/mhallin/graphql_ppx) to support well-typed GraphQL queries that will validate against your schema _at compile time_. 🎉
+
+To generate a query, simply write your GraphQL query and call `reason-urql`s `query` function.
+
+```reason
+open ReasonUrql;
+
+module GetAllDogs = [%graphql
+  {|
+query dogs {
+  dogs {
+    key
+    name
+    breed
+  }
+}|}
+];
+
+let query = Query.query(GetAllDogs.make());
+```
+
+Adding variables to your queries is as simple as passing them as named arguments to your `graphql_ppx` `module`'s `make` function.
+
+```reason
+open ReasonUrql;
+
+module GetDog = [%graphql
+  {|
+query dog($key: ID!) {
+  dog(key: $key) {
+    key
+    name
+    breed
+  }
+}|}
+];
+
+let query = Query.query(GetDog.make(~key="VmeRTX7j-", ()));
+```
+
+In addition, there may be situations where you want to make a query but don't know the value of your variables ahead of time. To support this use case, we supply a [functor](https://reasonml.github.io/docs/en/module#module-functions-functors) in the `Query` module, simply called `Make`. It accepts a query module and returns a new module with your `urql` query attached. For example:
+
+```reason
+module GetDog = [%graphql
+  {|
+query dog($key: ID!) {
+  dog(key: $key) {
+    key
+    name
+    breed
+  }
+}|}
+];
+
+module GetDogQuery = Query.Make(GetDog);
+
+/* This will return the urql query object. */
+let queryObject = GetDogQuery.query;
+
+/* This will return the raw query string. */
+let rawQuery = GetDogQuery.query -> Query.queryGet;
+```
+
+#### `Query` API
+
+| Name                                        | Type                                                                      | Description                                                                                        |
+| ------------------------------------------- | ------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| `query`                                     | `{. "parse": Js.Json.t => 'a, "query": string, "variables": Js.Json.t} => |
+| urqlQuery`| Creates an`urql``query` object. |
+| `Make`                                      | `Module => Module` (functor)                                              | Accepts a graphql query module and returns a module with the `urql` `query` object attached to it. |
+
+### Mutation
+
+**Before reading this section, read the docs on `urql`'s [`Mutation` API](https://github.com/FormidableLabs/urql#mutation).**
+
+The bindings for `reason-urql`'s `mutation` API is very similar to that of `query` and also uses `graphql_ppx` under the hood.
+
+To generate a mutation, simply write your GraphQL mutation and call `reason-urql`s `mutation` function.
+
+```reason
+open ReasonUrql;
+
+module LikeDog = [%graphql
+  {|
+  mutation likeDog($key: ID!) {
+    likeDog(key: $key) {
+      key
+      name
+      breed
+      likes
+    }
+  }
+|}
+];
+
+let mutation = Mutation.mutation(LikeDog.make(~key="VmeRTX7j-", ()));
+```
+
+Just like the `Query` `module`, we also provide a functor called `Make` to support situations where you may not know the values of your variables when you need to construct your mutation.
+
+```reason
+open ReasonUrql;
+
+module LikeDog = [%graphql
+  {|
+  mutation likeDog($key: ID!) {
+    likeDog(key: $key) {
+      key
+      name
+      breed
+      likes
+    }
+  }
+|}
+];
+
+module LikeDogMutation = Mutation.Make(LikeDog);
+
+/* This will return the urql mutation object. */
+let mutationObject = LikeDogMutation.mutation;
+```
+
+This comes in very handy when wiring multiple mutations up to `Connect`. Check the example project for a sample use case.
+
+#### `Mutation` API
+
+| Name                                           | Type                                                                      | Description                                                                                              |
+| ---------------------------------------------- | ------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| `mutation`                                     | `{. "parse": Js.Json.t => 'a, "query": string, "variables": Js.Json.t} => |
+| urqlQuery`| Creates an`urql``mutation` object. |
+| `Make`                                         | `Module => Module` (functor)                                              | Accepts a graphql mutation module and returns a module with the `urql` `mutation` object attached to it. |
+
 ### `Client`
 
 **Before reading this section, read the docs on `urql`'s [`Client` API](https://github.com/FormidableLabs/urql#client).**
@@ -106,23 +246,21 @@ Once the `Client` is instantiated, you get access to its methods `executeQuery` 
 ```reason
 open ReasonUrql;
 
-let query =
-  Query.query(
-    ~query={|
+module GetAllDogs = [%graphql
+  {|
 query dogs {
   dogs {
     name
     breed
     description
   }
-}
-|},
-    (),
-  );
+}|}
+];
+let queryAllDogs = Query.query(GetAllDogs.make());
 
 let client = Client.make(~url="http://localhost:3001", ());
 
-Client.executeQuery(~client, ~query, ~skipCache=false)
+Client.executeQuery(~client, ~query=queryAllDogs, ~skipCache=false)
 |> Js.Promise.then_(value => {
      let dogs = value##data##dogs;
      Js.log(dogs);
@@ -134,17 +272,16 @@ Client.executeQuery(~client, ~query, ~skipCache=false)
    });
 ```
 
-#### Current API
+#### `Client` API
 
-| Name              | Type                                                                             | Description                               |
-| ----------------- | -------------------------------------------------------------------------------- | ----------------------------------------- |
-| `make`            | (~url: string, ~?fetchOptions: option(fetchOptions), unit)                       | Creates an `urql` Client.                 |
-| `executeQuery`    | (~client: client, ~query: Query.urqlQuery, ~skipCache: bool) => Js.Promise.t('a) | Executes a `query` using the `client`.    |
-| `executeMutation` | (~client: client, ~mutation: Mutation.urqlMutation) => Js.Promise.t('a)          | Executes a `mutation` using the `client`. |
+| Name              | Type                                                                               | Description                               |
+| ----------------- | ---------------------------------------------------------------------------------- | ----------------------------------------- |
+| `make`            | `(~url: string, ~?fetchOptions: option(fetchOptions), unit)`                       | Creates an `urql` Client.                 |
+| `executeQuery`    | `(~client: client, ~query: Query.urqlQuery, ~skipCache: bool) => Js.Promise.t('a)` | Executes a `query` using the `client`.    |
+| `executeMutation` | `(~client: client, ~mutation: Mutation.urqlMutation) => Js.Promise.t('a)`          | Executes a `mutation` using the `client`. |
 
 #### Remaining Todos
 
-- [ ] Add `graphql_ppx` for proper GraphQL schema validation. Tracked in [#5](https://github.com/parkerziegler/reason-urql/issues/5).
 - [ ] Support properly typed custom `cache` implementations. Tracked in [#6](https://github.com/parkerziegler/reason-urql/issues/6).
 
 ### Provider
@@ -159,11 +296,19 @@ open ReasonUrql;
 /* After instantiating our client (see above), we can wrap our app in the `Provider` component */
 let component = ReasonReact.statelessComponent("App");
 
+let client = Client.make(~url="http://localhost:3001", ());
+
 let make = _children => {
   ...component,
   render: _self => <Provider client> <Header /> <Layout /> </Provider>,
 };
 ```
+
+#### `Provider` `props`
+
+| Name     | Type            | Description                                                     |
+| -------- | --------------- | --------------------------------------------------------------- |
+| `client` | `Client.client` | The `client` instance that the `Provider` component should use. |
 
 ### Connect
 
@@ -171,107 +316,87 @@ let make = _children => {
 
 Once you've wrapped your app in the `Provider` component, you can use `urql`'s `Connect` component to wire up UI to queries, mutations, and your cache. `Connect` uses the [render prop](https://reactjs.org/docs/render-props.html) pattern.
 
-While `urql` names its render prop `children`, we opt to name it `renderProp` on the Reason side because `children` is a reserved keyword for ReasonReact components – naming a prop `children` will result in compiler errors. `Connect` provides an object to `renderProp`, which contains a set of known fields and a set of user-supplied mutations, provided in the `mutation` prop. The known fields are modeled as a `[bs.deriving abstract]`.
+While `urql` names its render prop `children`, we opt to name it `render` on the Reason side because `children` is a reserved keyword for ReasonReact components – naming a prop `children` will result in compiler errors. `Connect` provides a `Js.t` object to `render`, which contains a set of known fields and a set of user-supplied mutations, provided in the `mutation` prop. We use a simple `Js.t` object and `Js.Obj.assign` to grab the user-supplied mutations from `urql`.
 
 ```reason
-/* Types for the `renderProp` object. Notice that it accepts a type parameter `'data`, which requires the user to supply the structure of their data up front. */
-[@bs.deriving abstract]
+/* Types for the object supplied to `render`. User-supplied mutations will be spread into this object and available as functions. */
 type renderArgs('data) = {
-  fetching: bool,
-  loaded: bool,
-  data: 'data,
-  error: Js.Nullable.t(error),
-  refetch,
-  refreshAllFromCache
+  .
+  "response": response('data),
+  "fetching": bool,
+  "loaded": bool,
+  "data": option('data),
+  "error": option(error),
+  "refetch": refetch,
+  "refreshAllFromCache": refreshAllFromCache,
 };
 ```
 
-To use the `Connect` component in Reason to execute a simple query and render UI with the results of that query, you can do the following:
+The render prop accepts a type argument `('data)` to type the data returned from your GraphQL API. With our `graphql_ppx` integration, this is as simple as grabbing the `t` type off of your query module. Let's look at an example:
 
 ```reason
 open ReasonUrql;
 
-/* Define the shape of data to pass as a type parameter to ReasonUrql.Connect.renderArgs. We require
-you to type your data, providing type safety at compile time. */
-[@bs.deriving abstract]
-type dog = {
-  key: string,
-  name: string,
-  breed: string,
-  description: string
-};
+/* Define a GraphQL query using graphql_ppx module. */
+module GetAllDogs = [%graphql
+  {|
+query dogs {
+  dogs {
+    key
+    name
+    breed
+    description
+    imageUrl
+    likes
+  }
+}|}
+];
 
-[@bs.deriving abstract]
-type dogs = {
-  dogs: array(dog)
-};
+/* Format the query for urql. */
+let query = Query.query(GetAllDogs.make());
 
-/* An example make function for a ReasonReact component */
+/* Pass the type from the GetAllDogs module to Connect.renderArgs. This will properly type your data. */
 let make = (_children) => {
   ...component,
   render: _ => <Connect
-    query={`Query(exampleQuery)}
-    renderProp={(result: Connect.renderArgs(dogs)) => {
-
-      /* We can use the fast pipe operator to access entries like `loaded`. */
-      let loaded = result |. Connect.loaded;
-
-      /* Now we can pattern match on the loaded variable and render UI. */
-      switch (loaded) {
-      | false => <div>(ReasonReact.string("Loading"))</div>
-      | true => {
-          <div>(
-            Array.map((dog) => {
-              <Dog
-                key=(dog |. key)
-                name=(dog |. name)
-                breed=(dog |. breed)
-                description=(dog |. description)
-              />
-            }, result |. Connect.data |. dogs)
+    query={`Query(query)}
+    render={(result: Connect.renderArgs(GetAllDogs.t)) =>
+      switch (result##response) {
+      | Loading => <Loading />
+      | Data(data) =>
+        <div>
+          {
+            Array.map(
+              dog =>
+                switch (dog) {
+                | Some(dog) =>
+                  <Dog
+                    key=dog##key
+                    description=dog##description
+                    id=dog##key
+                    imageUrl=dog##imageUrl
+                    name=dog##name
+                    likes=dog##likes
+                  />
+                | None => <div />
+                },
+              data##dogs,
+            )
             |> ReasonReact.array
-          )</div>
-        }
+          }
+        </div>
+      | Error(error) => <Error />
       }
-    }}
+    }
   />
 }
 ```
 
 Awesome! We get the power of `Connect`'s render prop convention to connect our UI to a GraphQL query, all while maintaining type saftey with Reason 🚀.
 
-#### Handling Errors
+#### Pattern Matching with `response`
 
-You may have noticed the `error` key on the object passed to `Connect`'s render prop. We bind to the error `urql`'s `Connect` API provides as a `Js.Nullable.t` and provide a simple converter function (`convertJsErrorToReason`) to transform this into a Reason `option` variant.
-
-```reason
-open ReasonUrql;
-
-let error = Connect.convertJsErrorToReason(result |. Connect.error);
-```
-
-The result (`Some(error) | None`), if it evaluates to `Some(error)`, will provide you a `[@bs.deriving abstract]` with a `message` key. With this, you can render error specific UI in your components. For example, in your render prop function:
-
-```reason
-open ReasonUrql;
-
-let error = Connect.convertJsErrorToReason(result |. Connect.error);
-
-switch (error) {
-  | Some(obj) =>
-    <div>
-      (
-        ReasonReact.string(
-          "Error: " ++ (obj |. Connect.message),
-        )
-      )
-    </div>
-  | None =>
-    switch (loaded) => {
-      | false => <div>(ReasonReact.string("Loading"))</div>
-      | true => /* render your component */
-    }
-```
+You may have noticed in the above example that `result##response` returns a variant containing three constructors, `Loading`, `Data(data)`, and `Error(error)`. This makes rendering conditional UI a breeze in ReasonReact. Each constructor will be passed the proper payload, whether that is `data` matching the user-supplied `'data` type or `error` of the form `{. "message": string })`.
 
 #### Mutations and `Connect`
 
@@ -291,25 +416,29 @@ To set up a mutation map, you can do the following:
 open ReasonUrql;
 
 /* Define a GraphQL mutation. */
-let likeDog = Mutation.mutation(
-  ~query={|
-    mutation likeDog($key: ID!) {
-      likeDog(key: $key) {
-        name
-        key
-        breed
-        likes
-      }
+module LikeDog = [%graphql
+  {|
+  mutation likeDog($key: ID!) {
+    likeDog(key: $key) {
+      name
+      key
+      breed
+      likes
     }
-  |},
-  ()
-);
+  }
+|}
+];
+
+module LikeDogMutation = Mutation.Make(LikeDog);
+
+let mutationMap: Connect.mutationMap = Js.Dict.empty();
+Js.Dict.set(mutationMap, "likeDog", LikeDogMutation.mutation);
 
 let mutationMap = Js.Dict.empty();
 Js.Dict.set(mutationMap, "likeDog", likeDog);
 
 /* On your Connect component, pass it as the mutation prop. */
-<Connect mutation={mutationMap} />
+<Connect mutation={mutationMap} render={(result) => /* Your UI here! */} />
 ```
 
 Then, to use the mutation in your component, you'll need to let `Connect` know that it is an available field on the render prop object argument. To do this, use `[@bs.send]`.
@@ -323,26 +452,34 @@ let make = (_children) => {
   ...component,
   render: _ => <Connect
     mutation={mutationMap}
-    renderProp={(result: Connect.renderArgs(dogs)) => {
-      let loaded = result |. Connect.loaded;
-      let data = result |. Connect.data;
-      switch (loaded) {
-      | false => <div>(ReasonReact.string("Loading"))</div>
-      | true => {
-          <div style=(
-            ReactDOMRe.Style.make(~display="grid", ~gridTemplateColumns="1fr 1fr 1fr", ())
-          )>(
-            Array.map((dog) => {
-              <Dog
-                key=(result |. key)
-                /* Look here! likeDog is now accessible on result because of our [@bs.send]. We can
-                pass it as a callback to our child component! */
-                onClick=(result |. likeDog)
-              />
-            }, data |. dogs)
+    renderProp={(result: Connect.renderArgs(GetAllDogs.t)) => {
+      switch (result##response) {
+      | Loading => <Loading />
+      | Data(data) => {
+          <div>
+          {
+            Array.map(
+              dog =>
+                switch (dog) {
+                | Some(dog) =>
+                  <Dog
+                    key=dog##key
+                    description=dog##description
+                    id=dog##key
+                    imageUrl=dog##imageUrl
+                    name=dog##name
+                    likes=dog##likes
+                    onClick=result->likeDog
+                  />
+                | None => <div />
+                },
+              data##dogs,
+            )
             |> ReasonReact.array
-          )</div>
+          }
+          </div>
         }
+      | Error(error) => <Error />
       }
     }}
   />
@@ -351,92 +488,18 @@ let make = (_children) => {
 
 Ultimately, the use of `[@bs.send]` here is a workaround to support a proper binding of `urql`'s API and appropriate compilation by the BuckleScript compiler. It maintains type safety by allowing the user to specify the exact shape of each `mutation` they pass to `Connect`.
 
-### Query
-
-**Before reading this section, read the docs on `urql`'s [`Query` API](https://github.com/FormidableLabs/urql#query).**
-
-To use `reason-urql's` `query` API simply do something like the following:
-
-```reason
-open ReasonUrql;
-
-let exampleQuery = Query.query(
-  ~query={|
-    query {
-      dogs {
-        key
-        name
-        breed
-        description
-      }
-    }
-  |},
-  ()
-);
-```
-
-Adding variables is as simple as adding the second named argument.
-
-```reason
-open ReasonUrql;
-
-let exampleQuery = Query.query(
-  ~query={|
-    query getDog(key: ID!) {
-      dog(key: $key) {
-        name
-        breed
-        description
-      }
-    }
-  |},
-  ~variables={
-    "key": "12345"
-  },
-  ()
-);
-```
-
-We currently _don't_ typecheck the `variables` argument – the binding accepts a type parameter that allows `variables` to be of whatever type the user provided argument is. This may change in upcoming versions of `reason-urql`.
-
-`Connect` allows you to pass either a single query or an array of queries as the `query` prop. To support this, we model the `query` prop in `Connect` as a polymorphic variant.
-
-```reason
-[
-  | `Query(q)
-  | `QueryArray(qa)
-]
-```
-
-### Mutation
-
-**Before reading this section, read the docs on `urql`'s [`Mutation` API](https://github.com/FormidableLabs/urql#mutation).**
-
-The bindings for `reason-urql`'s `mutation` API is very similar to that of `query`. Just call the `mutation` function from the `Mutation` module.
-
-```reason
-open ReasonUrql;
-
-let likeDog = Mutation.mutation(
-  ~query={|
-    mutation likeDog($key: ID!) {
-      likeDog(key: $key) {
-        name
-        key
-        breed
-        likes
-      }
-    }
-  |},
-  ~variables={
-    "key": "12345"
-  },
-  ()
-);
-```
-
 Typically, you'll set up your `queries` and `mutations` like the above examples and pass them as `props` to your `Connect`ed components.
+
+#### `Connect` `props`
+
+| Name               | Type                                                                           | Description                                                                                 |
+| ------------------ | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------- |
+| `query`            | `option([Query(UrqlQuery.urqlQuery) | QueryArray(array(UrqlQuery.urqlQuery))]` | An `urql` `query` object or array of `query` objects.                                       |
+| `mutation`         | `option(mutationMap)`                                                          | A map of user-supplied `mutations`. These will be spread on the object passed to `render`.  |
+| `render`           | `renderArgs('data) => ReasonReact.reactElement`                                | A render prop for rendering UI with the result of executing supplied queries and mutations. |
+| `cache`            | `bool`                                                                         | Instruct `Connect` to cache queries. Defaults to `true`.                                    |
+| `typeInvalidation` | `bool`                                                                         | Instruct `Connect` to invalidate the cache using `typeNames`. Defaults to `true`.           |
 
 ## Getting Involved
 
-This project is currently under development. Please help out by [opening an issue](https://github.com/parkerziegler/reason-urql/issues) or [filing a PR](https://github.com/parkerziegler/reason-urql/pulls).
+This project is currently under active development. Please help out by [opening an issue](https://github.com/parkerziegler/reason-urql/issues) or [filing a PR](https://github.com/parkerziegler/reason-urql/pulls).
