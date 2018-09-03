@@ -13,10 +13,10 @@ module LikeAllDogs = [%graphql
 |}
 ];
 
-module LikeAllDogsMutation = Mutation.Make(LikeAllDogs);
+let likeAllDogs = Mutation.mutation(LikeAllDogs.make());
 
 let mutationMap: Connect.mutationMap = Js.Dict.empty();
-LikeAllDogsMutation.addMutationToMap(~dict=mutationMap, ~key="likeAllDogs");
+Js.Dict.set(mutationMap, "likeAllDogs", likeAllDogs);
 
 [@bs.send] external likeAllDogs: (Connect.renderArgs({.}), unit) => unit = "";
 

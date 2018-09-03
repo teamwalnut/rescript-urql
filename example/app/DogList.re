@@ -16,7 +16,7 @@ query dogs {
 }|}
 ];
 
-let query = Query.make(GetAllDogs.make());
+let query = Query.query(GetAllDogs.make());
 
 module LikeDog = [%graphql
   {|
@@ -34,7 +34,7 @@ module LikeDog = [%graphql
 module LikeDogMutation = Mutation.Make(LikeDog);
 
 let mutationMap: Connect.mutationMap = Js.Dict.empty();
-LikeDogMutation.addMutationToMap(~dict=mutationMap, ~key="likeDog");
+Js.Dict.set(mutationMap, "likeDog", LikeDogMutation.mutation);
 
 [@bs.send]
 external likeDog:
@@ -48,8 +48,7 @@ let make = _children => {
       query={`Query(query)}
       mutation=mutationMap
       render={
-        (result: Connect.renderArgs(GetAllDogs.t)) => {
-          Js.log2("result", result);
+        (result: Connect.renderArgs(GetAllDogs.t)) =>
           switch (result##response) {
           | Loading => <div> {ReasonReact.string("Loading")} </div>
           | Data(data) =>
@@ -98,8 +97,7 @@ let make = _children => {
               }>
               {ReasonReact.string("Error: " ++ error##message)}
             </div>
-          };
-        }
+          }
       }
     />,
 };

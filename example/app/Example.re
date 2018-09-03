@@ -10,7 +10,7 @@ query dogs {
   }
 }|}
 ];
-let queryAllDogs = Query.make(GetAllDogs.make());
+let queryAllDogs = Query.query(GetAllDogs.make());
 
 module GetDog = [%graphql
   {|
@@ -22,7 +22,7 @@ query dog($key: ID!) {
 }
 |}
 ];
-let queryOneDog = Query.make(GetDog.make(~key="VmeRTX7j-", ()));
+let queryOneDog = Query.query(GetDog.make(~key="VmeRTX7j-", ()));
 
 let makeFetchOptions =
   Fetch.RequestInit.make(
