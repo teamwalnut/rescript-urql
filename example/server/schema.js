@@ -12,13 +12,13 @@ const typeDefs = `
     likeAllDogs: [Dog]
   }
   type Dog {
-    key: String
-    name: String
-    breed: String
-    color: String
-    imageUrl: String
-    description: String
-    likes: Int
+    key: String!
+    name: String!
+    breed: String!
+    color: String!
+    imageUrl: String!
+    description: String!
+    likes: Int!
   }
 `;
 
