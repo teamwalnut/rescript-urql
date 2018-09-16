@@ -36,10 +36,7 @@ Reason bindings for Formidable's Universal React Query Library (`urql`) https://
 The example project is a simple app for viewing and liking Formidable dogs. To get the example running locally:
 
 ```sh
-# in one terminal, start the GraphQL server
-yarn start-demo-server
-
-# in a second terminal, compile the app in watch mode
+# in one terminal, compile the app in watch mode
 yarn start
 
 # in another terminal, start webpack for the app

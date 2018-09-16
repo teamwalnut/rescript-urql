@@ -34,7 +34,8 @@ let makeFetchOptions =
 let fetchOptions = Client.FetchObj(makeFetchOptions);
 
 /* Instantiate the client instance. */
-let client = Client.make(~url="http://localhost:3001", ~fetchOptions, ());
+let client =
+  Client.make(~url="https://formidadog-ql.now.sh", ~fetchOptions, ());
 
 Client.executeQuery(~client, ~query=queryAllDogs, ~skipCache=false)
 |> Js.Promise.then_(value => {
