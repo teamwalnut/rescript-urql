@@ -22,6 +22,7 @@
   "suffix": ".bs.js",
   "namespace": true,
   "bs-dependencies": ["reason-react", "bs-fetch"],
+  "bs-dev-dependencies": ["@glennsl/bs-json", "@glennsl/bs-jest"],
   "refmt": 3,
   "warnings": {
     "error": "+5"
