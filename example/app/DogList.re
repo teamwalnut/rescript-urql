@@ -52,7 +52,7 @@ let make = _children => {
       query
       mutation=mutationMap
       render={
-        result =>
+        (result: Connect.renderArgs(GetAllDogs.t, 'queryData, 'store)) =>
           switch (result##response) {
           | Loading => <div> {ReasonReact.string("Loading")} </div>
           | Data(data) =>

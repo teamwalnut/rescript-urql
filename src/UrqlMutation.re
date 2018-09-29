@@ -36,4 +36,6 @@ module type GraphQLPPXInterface = {
 
 module Make = (Mutation: GraphQLPPXInterface) => {
   let mutation = makeMutation(~query=Mutation.query, ());
+
+  let mutationFn = makeMutation(~query=Mutation.query);
 };

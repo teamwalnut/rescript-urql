@@ -23,6 +23,15 @@ query dog($key: ID!) {
 |}
 ];
 let queryOneDog = Query.query(GetDog.make(~key="VmeRTX7j-", ()));
+Js.log2("queryOneDog", queryOneDog);
+
+module QuerySolo = Query.Make(GetDog);
+let queryFinal =
+  QuerySolo.queryFn(
+    ~variables=Json.Encode.(object_([("key", string("VmeRTX7j-"))])),
+    (),
+  );
+Js.log2("queryFinal", queryFinal);
 
 let makeFetchOptions =
   Fetch.RequestInit.make(
@@ -33,10 +42,12 @@ let makeFetchOptions =
 
 let fetchOptions = Client.FetchObj(makeFetchOptions);
 
+let store = Js.Dict.empty();
+
 let write = (~hash, ~data) =>
   Js.Promise.make((~resolve, ~reject) => {
     switch (Js.Json.stringifyAny(data)) {
-    | Some(res) => Dom.Storage.(localStorage |> setItem(hash, res))
+    | Some(res) => Js.Dict.set(store, hash, res)
     | None => reject(. Js.Exn.raiseError({j|Unable to stringify $data|j}))
     };
 
@@ -44,7 +55,7 @@ let write = (~hash, ~data) =>
   });
 let read = (~hash) =>
   Js.Promise.make((~resolve, ~reject) =>
-    switch (Dom.Storage.(localStorage |> getItem(hash))) {
+    switch (Js.Dict.get(store, hash)) {
     | Some(res) =>
       switch (Js.Json.parseExn(res) |> Js.Json.decodeObject) {
       | Some(json) => resolve(. Some(json))
@@ -56,36 +67,36 @@ let read = (~hash) =>
   );
 let invalidate = (~hash: string) =>
   Js.Promise.make((~resolve, ~reject as _) => {
-    Dom.Storage.(localStorage |> removeItem(hash));
+    Js.Dict.unsafeDeleteKey(. store, hash);
     resolve(. (): 'a);
   });
 let invalidateAll = () =>
   Js.Promise.make((~resolve, ~reject as _) => {
-    Dom.Storage.(localStorage |> clear);
+    Array.iter(
+      hash => Js.Dict.unsafeDeleteKey(. store, hash),
+      Js.Dict.keys(store),
+    );
     resolve(. (): 'a);
   });
 
 let update = (~callback) =>
   Js.Promise.make((~resolve, ~reject as _) => {
-    let length = Dom.Storage.(localStorage |> length);
-    for (i in 0 to length) {
-      let hash = Dom.Storage.(localStorage |> key(i));
-      switch (hash) {
-      | Some(h) =>
-        switch (Dom.Storage.(localStorage |> getItem(h))) {
+    Array.iter(
+      hash =>
+        switch (Js.Dict.get(store, hash)) {
         | Some(res) =>
           switch (Js.Json.parseExn(res) |> Js.Json.decodeObject) {
-          | Some(json) => callback(Dom.Storage.localStorage, h, Some(json))
+          | Some(json) => callback(store, hash, Some(json))
           | None => ()
           }
         | None => ()
-        }
-      | None => ()
-      };
-    };
+        },
+      Js.Dict.keys(store),
+    );
     resolve(. (): 'a);
   });
-let cache: Client.cache('a, Dom.Storage.t) = {
+
+let cache: Client.cache(option(Js.Dict.t(Js.Json.t)), Js.Dict.t(string)) = {
   write,
   read,
   invalidate,
@@ -94,7 +105,7 @@ let cache: Client.cache('a, Dom.Storage.t) = {
 };
 
 let client =
-  Client.make(~url="https://formidadog-ql.now.sh", ~fetchOptions, ());
+  Client.make(~url="https://formidadog-ql.now.sh", ~cache, ~fetchOptions, ());
 
 Client.executeQuery(~client, ~query=queryAllDogs, ~skipCache=false)
 |> Js.Promise.then_(value => {

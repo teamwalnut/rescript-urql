@@ -28,4 +28,5 @@ module type GraphQLPPXInterface = {
 
 module Make = (Query: GraphQLPPXInterface) => {
   let query = makeQuery(~query=Query.query, ());
+  let queryFn = makeQuery(~query=Query.query);
 };

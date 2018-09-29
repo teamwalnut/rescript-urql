@@ -34,16 +34,16 @@ type cacheJs('queryData, 'store) = {
   "read": read('queryData),
   "invalidate": invalidate,
   "invalidateAll": invalidateAll,
-  "update": update('store, 'queryData),
+  "update": update('queryData, 'store),
 };
 
 [@bs.deriving abstract]
-type clientConfig('initialCache, 'queryData, 'store) = {
+type clientConfig('queryData, 'store) = {
   url: string,
   [@bs.optional]
   cache: cacheJs('queryData, 'store),
   [@bs.optional]
-  initialCache: 'initialCache,
+  initialCache: 'store,
   [@bs.optional]
   fetchOptions: Fetch.requestInit,
 };
@@ -51,9 +51,7 @@ type clientConfig('initialCache, 'queryData, 'store) = {
 type client;
 
 [@bs.new] [@bs.module "urql"]
-external createClient:
-  clientConfig('queryData, 'initialCache, 'store) => client =
-  "Client";
+external createClient: clientConfig('queryData, 'store) => client = "Client";
 
 [@bs.send]
 external executeQuery:
@@ -70,7 +68,7 @@ let make =
     (
       ~url: string,
       ~cache=?,
-      ~initialCache: 'initialCache=?,
+      ~initialCache=?,
       ~fetchOptions=FetchObj(Fetch.RequestInit.make()),
       (),
     ) => {

@@ -90,7 +90,8 @@ let make =
     (
       ~query: option(UrqlQuery.urqlQuery)=?,
       ~mutation: option(mutationMap)=?,
-      ~render: renderArgs('data, 'a, 'store) => ReasonReact.reactElement,
+      ~render:
+         renderArgs('data, 'queryData, 'store) => ReasonReact.reactElement,
       ~cache: bool=true,
       ~typeInvalidation: bool=true,
       ~shouldInvalidate: shouldInvalidate('mutationResponse, 'data)=?,
