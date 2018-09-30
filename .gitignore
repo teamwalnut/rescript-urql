@@ -7,3 +7,5 @@ npm-debug.log
 *.bs.js
 example/build/
 /.graphql_ppx_cache/
+/.vscode/
+/build/
