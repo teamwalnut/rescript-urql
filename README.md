@@ -2,14 +2,13 @@
 
 Reason bindings for Formidable's Universal React Query Library (`urql`) https://github.com/FormidableLabs/urql
 
-> Warning: These bindings are in a WiP state. Do not use in production (yet) 😉.
+> Warning: These bindings are in an experimental state. Do not use in production (yet) 😉.
 
 ## Table of Contents
 
 - [What is `reason-urql`?](#what-is-reason-urql?)
 - [Run the Example Project](#run-the-example-project)
 - [Installation](#installation)
-- [Building `reason-urql`](#building-reason-urql)
 - [API](#api)
   - [`Query`](#query)
     - [`Query` API](#query-api)
@@ -21,7 +20,7 @@ Reason bindings for Formidable's Universal React Query Library (`urql`) https://
   - [`Provider`](#provider)
     - [`Provider` `props`](#provider-props)
   - [`Connect`](#connect)
-    - [Pattern Matching with `response`](#handling-errors)
+    - [Pattern Matching with `response`](#pattern-matching-with-response)
     - [Mutations and `Connect`](#mutations-and-connect)
     - [`Connect` `props`](#connect-props)
       - [`Connect`'s `render` `prop`](#connects-render-prop)
@@ -74,17 +73,6 @@ yarn send-introspection-query https://mygraphqlapi.org/graphql
 ```
 
 See the [docs for `graphql_ppx`](https://github.com/mhallin/graphql_ppx) for more assistance.
-
-## Bulding `reason-urql`
-
-To build a production version of `reason-urql`:
-
-```sh
-yarn run build
-yarn run webpack:production
-```
-
-This will replace `build/Index.js` with an optimized build.
 
 ## API
 
@@ -179,20 +167,17 @@ let myQuery = GetAllDogsQuery.query;
 
 #### `Query` API
 
-**`query`** – a function for generating an `urql` query object, given an instance of a GraphQL query.
+**`query`**
 
-`({. "parse": Js.Json.t => 'a, "query": string, "variables": Js.Json.t}) => urqlQuery`, equivalent to:
-`(GraphQLQuery.make()) => urqlQuery`
+**type** – `({. "parse": Js.Json.t => 'a, "query": string, "variables": Js.Json.t}) => urqlQuery`. This is equivalent to: `(GraphQLQuery.make()) => urqlQuery`.
 
-**`Make`** – a functor for generating a `module` with your GraphQL query. Provides both `queryFn`, a curried function for generating an `urql` query object with `variables`, and `query`, the `urql` query object with no `variables` applied.
+**description** – a function for generating an `urql` query object, given an instance of a GraphQL query.
 
-```
-({. "parse": Js.Json.t => 'a, "query": string, "variables": Js.Json.t}) =>
-  module type {
-    let query: urqlQuery;
-    let queryFn: (~variables: option(Js.Json.t)) => urqlQuery;
-  }
-```
+**`Make`**
+
+**type** – `module type { let query: string } => module type { let query: urqlQuery; let queryFn: (~variables: option(Js.Json.t)) => urqlQuery; }`
+
+**description** – a functor for generating a `module` with your GraphQL query. Provides both `queryFn`, a curried function for generating an `urql` query object with `variables`, and `query`, the `urql` query object with no `variables` applied.
 
 ### Mutation
 
@@ -251,20 +236,17 @@ This comes in very handy when wiring multiple mutations up to `Connect` where yo
 
 #### `Mutation` API
 
-**`mutation`** – a function for generating an `urql` mutation object, given an instance of a GraphQL mutation.
+**`mutation`**
 
-`({. "parse": Js.Json.t => 'a, "query": string, "variables": Js.Json.t}) => urqlMutation`, equivalent to:
-`(GraphQLQuery.make()) => urqlMutation`
+**type** – `({. "parse": Js.Json.t => 'a, "query": string, "variables": Js.Json.t}) => urqlMutation`. This is equivalent to: `(GraphQLMutation.make()) => urqlMutation`.
 
-**`Make`** – a functor for generating a `module` with your GraphQL query. Provides both `mutationFn`, a curried function for generating an `urql` mutation object with `variables`, and `mutation`, the `urql` mutation object with no `variables` applied.
+**description** – a function for generating an `urql` mutation object, given an instance of a GraphQL mutation.
 
-```
-({. "parse": Js.Json.t => 'a, "query": string, "variables": Js.Json.t}) =>
-  module type {
-    let mutation: urqlMutation;
-    let mutationFn: (~variables: option(Js.Json.t)) => urqlMutation;
-  }
-```
+**`Make`**
+
+**type** – `module type { let query: string } => module type { let mutation: urqlMutation; let mutationFn: (~variables: option(Js.Json.t)) => urqlMutation; }`
+
+**description** – a functor for generating a `module` with your GraphQL mutation. Provides both `mutationFn`, a curried function for generating an `urql` mutation object with `variables`, and `mutation`, the `urql` mutation object with no `variables` applied.
 
 ### `Client`
 
@@ -374,29 +356,35 @@ All of these functions, except for `write`, will be passed to any `Connect`ed co
 
 **`make`** – create an `urqlClient`.
 
-```
-(
-  ~url: string,
-  ~?cache: option(cache('queryData, 'store)),
-  ~?initialCache: option('store),
-  ~?fetchOptions: option(fetchOptions),
-  unit
-) => client
-```
+**type** – `(~url: string, cache: option(cache('queryData, 'store))=?, initialCache=option('store)=?, fetchOptions=fetchOptions?, unit) => client`
 
-**`executeQuery`** – execute a GraphQL query given an `urql` query object.
+**description** – creates an instance of an `urql` `client`, which may be passed to `Provider`. `make` accepts 1 required argument, `url`, and 3 optional arguments, `cache`, `initialCache`, and `fetchOptions`.
 
-`(~client: client, ~query: Query.urqlQuery, ~skipCache: bool) => Js.Promise.t('a)`
+`url` – `string`, required. Your GraphQL endpoint.
 
-**`executeMutation`** – execute a GraphQL mutation given an `urql` mutation object.
+`cache` – `cache('queryData, 'store)`, optional. A Reason record with keys for `write`, `read`, `invalidate`, `invalidateAll`, and `update`. Allows management of your own cache. `urql`'s default cache will be used if no cache is provided. Takes two type parameters, `'queryData` for typing the structure of data stored in the cache, and `'store`, for typing the structure of the cache itself.
 
-`(~client: client, ~mutation: Mutation.urqlMutation) => Js.Promise.t('a)`
+`initialCache` – `'store`, optional. The data structure for storing cache data. If none is provided, `urql`'s default cache of type `Js.t({..})` will be used.
+
+`fetchOptions` – `FetchObj(Fetch.requestInit) | FetchFn(unit => Fetch.requestInit)`, optional. A variant constructor that accepts either an instance of `Fetch.requestInit` or a function returning an instance of `Fetch.requestInit`. To see valid options for `Fetch.requestInit`, check out [`bs-fetch`](https://github.com/reasonml-community/bs-fetch).
+
+**`executeQuery`**
+
+**type** – `(~client: client, ~query: Query.urqlQuery, ~skipCache: bool) => Js.Promise.t('a)`.
+
+**description** – execute a GraphQL query given an `urql` query object.
+
+**`executeMutation`**
+
+**type** – `(~client: client, ~mutation: Mutation.urqlMutation) => Js.Promise.t('a)`.
+
+**description** – execute a GraphQL mutation given an `urql` mutation object.
 
 ### Provider
 
 **Before reading this section, read the docs on `urql`'s [`Provider` API](https://github.com/FormidableLabs/urql#provider).**
 
-To support the `Provider` component in ReasonReact, we take advantage of ReasonReact's excellent [`wrapJSForReason` helper](https://reasonml.github.io/reason-react/docs/en/interop#reasonreact-using-reactjs). `Provider` accepts a single `prop`, `client`. `client` accepts an instance of `Client.client` (see previous section). For example:
+To support the `Provider` component in ReasonReact, we take advantage of ReasonReact's excellent [`wrapJSForReason` helper](https://reasonml.github.io/reason-react/docs/en/interop#reasonreact-using-reactjs). `Provider` accepts a single `prop`, `client`. `client` is an instance of an `urql` `client` (see previous section). For example:
 
 ```reason
 open ReasonUrql;
@@ -414,9 +402,11 @@ let make = _children => {
 
 #### `Provider` `props`
 
-| Name     | Type            | Description                                                     |
-| -------- | --------------- | --------------------------------------------------------------- |
-| `client` | `Client.client` | The `client` instance that the `Provider` component should use. |
+**`client`**
+
+**type** – `Client.client`.
+
+**description** – an instance of an `urql` `client`. To create a client, simply call the `Client.make` function.
 
 ### Connect
 
@@ -601,28 +591,94 @@ Typically, you'll set up your `queries` and `mutations` like the above examples 
 
 #### `Connect` `props`
 
-| Name               | Type                                                                           | Description                                                                                 |
-| ------------------ | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------- |
-| `query`            | `option([Query(UrqlQuery.urqlQuery) | QueryArray(array(UrqlQuery.urqlQuery))]` | An `urql` `query` object or array of `query` objects.                                       |
-| `mutation`         | `option(mutationMap)`                                                          | A map of user-supplied `mutations`. These will be spread on the object passed to `render`.  |
-| `render`           | `renderArgs('data) => ReasonReact.reactElement`                                | A render prop for rendering UI with the result of executing supplied queries and mutations. |
-| `cache`            | `bool`                                                                         | Instruct `Connect` to cache queries. Defaults to `true`.                                    |
-| `typeInvalidation` | `bool`                                                                         | Instruct `Connect` to invalidate the cache using `typeNames`. Defaults to `true`.           |
+**`query`**
+
+**type** – `option(Query.urqlQuery)`.
+
+**description** – an instance of an `urql` query object.
+
+**`mutation`**
+
+**type** – `option(Js.Dict.t(Mutation.urqlMutation))`.
+
+**description** – a `Js.Dict` mapping `urql` mutation objects to key names. Each `mutation` gets converted to a function under the hood by `urql` that is accessible on the object passed to `render`.
+
+**`render`**
+
+**type** - `renderArgs('data, 'queryData, 'store) => ReasonReact.reactElement`.
+
+**description** – the render prop. Allows you to render UI with the results of `query`. All mutations supplied in `mutation` are available on the argument passed to `render`. `renderArgs` takes three type parameters:
+
+`'data` – the structure of data expected to be returned by `query`. You can usually grab the `t` type of the GraphQL module used to create your `urql` query object.
+
+`'queryData` – the structure of data stored in your cache. No need to define this if you don't plan on accessing any of your cache methods in your UI.
+
+`'store` – the structure of your cache. No need to define this if you don't need to reference the cache in your UI.
+
+**`cache`**
+
+**type** – `bool`.
+
+**description** – instruct `Connect` whether to cache query results. Default to `true`.
+
+**`typeInvalidation`**
+
+**type** - `bool`.
+
+**description** - instruct `Connect` whether to use `typeNames` for cache invalidation. Defaults to `true`.
 
 ##### `Connect`'s `render` `prop`
 
-`Connect`'s `render` `prop` is provided a `Js.t` object of type: `renderArgs('data)`. This type has the following fields:
+`Connect`'s `render` `prop` is provided a `Js.t` object of type: `renderArgs('data, 'queryData, 'store)`. This object has the following fields:
 
-| Name                  | Type                                                                                                                                                                                                                                                     | Description                                                                                                                                |
-| --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| `response`            | `variant` with constructors `Loading`, `Data(data)`, `Error(error)`                                                                                                                                                                                      | Returns the state of the request, which can be pattern matched using `switch`.                                                             |
-| `fetching`            | `bool`                                                                                                                                                                                                                                                   | Indicates if the `urql` is fetching data from the GraphQL API.                                                                             |
-| `loaded`              | `bool`                                                                                                                                                                                                                                                   | Indicates if `urql` has successfully loaded the `response` (either `Data(data)` or `Error(error)`).                                        |
-| `data`                | `option(Data(data))`                                                                                                                                                                                                                                     | The data returned by the GraphQL query, if any. The `data` argument matches the the type parameter passed to `renderArgs`.                 |
-| `error`               | `option(Error(error))` – equivalent to `Error({. "message": string })`                                                                                                                                                                                   | The error returned by the GraphQL query, if any.                                                                                           |
-| `refetch`             | `(~options: refetchOptions, ~initial: bool=?) => unit`                                                                                                                                                                                                   | A function for refetching the `query`. Use `~options=refetchOptions(~skipCache=true, ())` to skip the `cache` and hit the server directly. |
-| `refreshAllFromCache` | `unit => unit`                                                                                                                                                                                                                                           | A function to refetch all queries from the cache.                                                                                          |
-| `cache`               | `{ invalidate: UrqlQuery.urqlQuery => UrqlClient.invalidate, invalidateAll: unit => UrqlClient.invalidateAll, read: UrqlQuery.urqlQuery => UrqlClient.read('queryData), update: ('store, string, 'queryData) => UrqlClient.update('queryData, 'store) }` | Functions for interacting with the cache.                                                                                                  |
+**`response`**
+
+**type** – `Loading | Data('data) | Error(error)`.
+
+**description** – provides the state of your component and it's query as a variant. You can pattern match on these variant constructors to render different UI in each case.
+
+**`fetching`**
+
+**type** – `bool`.
+
+**description** – indicates whether `urql` is fetching data from the GraphQL API.
+
+**`loaded`** – `bool`.
+
+**type** – `bool`.
+
+**description** – indicates that `urql` has successfully loaded the response (either `Data('data)` or `Error(error)`).
+
+**`data`**
+
+**type** – `'data`.
+
+**description** – the data returned by the GraphQL query, if any. `data` must match the the type parameter passed to `renderArgs`.
+
+\*\*`error`
+
+**type** – `{. "message": string })`.
+
+**description** – the error returned by the GraphQL query, if any.
+
+**`refetch`**
+
+**type** – `(~options: refetchOptions, ~initial: bool=?) => unit`.
+
+**description** – a function for refetching `query`. Use `~options=refetchOptions(~skipCache=true, ())` to skip the `cache` and hit the server directly.
+
+**`refreshAllFromCache`**
+
+**type** - `unit => unit`.
+
+**description** – A function to refetch all queries from the cache.
+
+**`cache`**
+_Warning: experimental._
+
+**type** – `{ invalidate: Query.urqlQuery => Client.invalidate, invalidateAll: unit => Client.invalidateAll, read: Query.urqlQuery => Client.read('queryData), update: ('store, string, 'queryData) => Client.update('queryData, 'store) }`.
+
+**description** – functions for interacting with the cache.
 
 ## Getting Involved
 

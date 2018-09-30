@@ -1,5 +1,6 @@
 open ReasonUrql;
 
+/* Setup a GraphQL query to get all dogs from our API. */
 module GetAllDogs = [%graphql
   {|
 query dogs {
@@ -12,27 +13,23 @@ query dogs {
 ];
 let queryAllDogs = Query.query(GetAllDogs.make());
 
-module GetDog = [%graphql
+/* Setup a GraphQL mutation to increment a dog's likes. */
+module LikeDog = [%graphql
   {|
-query dog($key: ID!) {
-  dog(key: $key) {
-    name
-    breed
+  mutation likeDog($key: ID!) {
+    likeDog(key: $key) {
+      name
+      key
+      breed
+      likes
+    }
   }
-}
 |}
 ];
-let queryOneDog = Query.query(GetDog.make(~key="VmeRTX7j-", ()));
-Js.log2("queryOneDog", queryOneDog);
 
-module QuerySolo = Query.Make(GetDog);
-let queryFinal =
-  QuerySolo.queryFn(
-    ~variables=Json.Encode.(object_([("key", string("VmeRTX7j-"))])),
-    (),
-  );
-Js.log2("queryFinal", queryFinal);
+let likeDog = Mutation.mutation(LikeDog.make(~key="VmeRTX7j-", ()));
 
+/* Setup some standard fetch options for the client. */
 let makeFetchOptions =
   Fetch.RequestInit.make(
     ~method_=Post,
@@ -42,6 +39,9 @@ let makeFetchOptions =
 
 let fetchOptions = Client.FetchObj(makeFetchOptions);
 
+/* Create a custom cache! Our cache will simply store all query data as JSON in
+   a local object store. Then, when reading from the cache, we'll simply decode the
+   JSON using bs-json. */
 let store = Js.Dict.empty();
 
 let write = (~hash, ~data) =>
@@ -104,9 +104,17 @@ let cache: Client.cache(option(Js.Dict.t(Js.Json.t)), Js.Dict.t(string)) = {
   update,
 };
 
+/* Set up our client. */
 let client =
-  Client.make(~url="https://formidadog-ql.now.sh", ~cache, ~fetchOptions, ());
+  Client.make(
+    ~url="https://formidadog-ql.now.sh",
+    ~cache,
+    ~initialCache=store,
+    ~fetchOptions,
+    (),
+  );
 
+/* Let's execute a query and a mutation! */
 Client.executeQuery(~client, ~query=queryAllDogs, ~skipCache=false)
 |> Js.Promise.then_(value => {
      let dogs = value##data##dogs;
@@ -118,11 +126,11 @@ Client.executeQuery(~client, ~query=queryAllDogs, ~skipCache=false)
      Js.Promise.resolve(err);
    });
 
-Client.executeQuery(~client, ~query=queryOneDog, ~skipCache=false)
+Client.executeMutation(~client, ~mutation=likeDog)
 |> Js.Promise.then_(value => {
-     let dog = value##data##dog;
-     Js.log2("Dog", dog);
-     Js.Promise.resolve(dog);
+     let likeDog = value##likeDog;
+     Js.log2("Like Dog", likeDog);
+     Js.Promise.resolve(likeDog);
    })
 |> Js.Promise.catch(err => {
      Js.log2("Something went wrong!", err);
