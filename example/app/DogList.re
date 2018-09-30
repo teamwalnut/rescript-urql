@@ -38,17 +38,21 @@ Js.Dict.set(mutationMap, "likeDog", LikeDogMutation.mutation);
 
 [@bs.send]
 external likeDog:
-  (Connect.renderArgs(GetAllDogs.t), {. "key": string}) => unit =
+  (
+    Connect.renderArgs(GetAllDogs.t, 'queryData, 'store),
+    {. "key": string}
+  ) =>
+  unit =
   "";
 
 let make = _children => {
   ...component,
   render: _self =>
     <Connect
-      query={`Query(query)}
+      query
       mutation=mutationMap
       render={
-        (result: Connect.renderArgs(GetAllDogs.t)) =>
+        (result: Connect.renderArgs(GetAllDogs.t, 'queryData, 'store)) =>
           switch (result##response) {
           | Loading => <div> {ReasonReact.string("Loading")} </div>
           | Data(data) =>

@@ -1,32 +1,7 @@
-/* Urql's <Connect /> component, which takes a render prop argument. */
 [@bs.module "urql"] external connect: ReasonReact.reactClass = "Connect";
 let component = ReasonReact.statelessComponent("Connect");
 
-/* The pattern below allows us to type the query prop as a polymorphic variant,
-   which can be either a single Urql query or an array of Urql queries. */
-type t;
-type jsUnsafe;
-
-external toJsUnsafe: 'a => jsUnsafe = "%identity";
-
-/* Query helpers */
-let unwrapQuery =
-    (
-      q:
-        option(
-          [
-            | `Query(UrqlQuery.urqlQuery)
-            | `QueryArray(array(UrqlQuery.urqlQuery))
-          ],
-        ),
-    ) =>
-  switch (q) {
-  | Some(`Query(q)) => toJsUnsafe(q)
-  | Some(`QueryArray(qa)) => toJsUnsafe(qa)
-  | None => toJsUnsafe(None)
-  };
-
-/* Mutation helpers */
+/* Mutation helpers. */
 type mutationMap = Js.Dict.t(UrqlMutation.urqlMutation);
 
 let unwrapMutation = (m: option(mutationMap)) =>
@@ -35,37 +10,37 @@ let unwrapMutation = (m: option(mutationMap)) =>
   | None => Js.Dict.empty()
   };
 
-/* Cache helpers on the render prop */
+/* Render prop types and helpers. */
+[@bs.deriving abstract]
 type error = {. "message": string};
 
 [@bs.deriving abstract]
 type refetchOptions = {
   [@bs.optional]
-  skipFetch: bool,
+  skipCache: bool,
 };
 
 type refetch = (~options: refetchOptions, ~initial: bool=?) => unit;
 
 type refreshAllFromCache = unit => unit;
 
-/* Response variant on the render prop */
+/* Response variant on the render prop. */
 type response('data) =
   | Loading
   | Data('data)
   | Error(error);
 
-/* Render prop conversion types */
-type renderArgsJs('data) = {
-  .
-  "fetching": bool,
-  "loaded": bool,
-  "data": Js.Nullable.t('data),
-  "error": Js.Nullable.t(error),
-  "refetch": refetch,
-  "refreshAllFromCache": refreshAllFromCache,
+/* Render prop conversion types. */
+[@bs.deriving jsConverter]
+type cache('queryData, 'store) = {
+  invalidate: UrqlQuery.urqlQuery => UrqlClient.invalidate,
+  invalidateAll: unit => UrqlClient.invalidateAll,
+  read: UrqlQuery.urqlQuery => UrqlClient.read('queryData),
+  update:
+    ('store, string, 'queryData) => UrqlClient.update('queryData, 'store),
 };
 
-type renderArgs('data) = {
+type renderArgs('data, 'queryData, 'store) = {
   .
   "response": response('data),
   "fetching": bool,
@@ -74,6 +49,7 @@ type renderArgs('data) = {
   "error": option(error),
   "refetch": refetch,
   "refreshAllFromCache": refreshAllFromCache,
+  "cache": cache('queryData, 'store),
 };
 
 let urqlDataToVariant = urqlData => {
@@ -90,18 +66,21 @@ let urqlDataToVariant = urqlData => {
     };
   Js.Obj.assign(
     urqlData,
-    {"response": response, "data": data, "error": error},
+    {
+      "response": response,
+      "data": data,
+      "error": error,
+      "cache": urqlData##cache |> cacheFromJs,
+    },
   );
 };
 
-type siRes;
-
-type shouldInvalidate('data) =
+type shouldInvalidate('mutationResponse, 'data) =
   option(
     (
       ~changedTypes: array(string),
       ~typenames: array(string),
-      ~response: siRes,
+      ~response: 'mutationResponse,
       ~data: 'data
     ) =>
     bool,
@@ -109,24 +88,19 @@ type shouldInvalidate('data) =
 
 let make =
     (
-      ~query:
-         option(
-           [
-             | `Query(UrqlQuery.urqlQuery)
-             | `QueryArray(array(UrqlQuery.urqlQuery))
-           ],
-         )=?,
+      ~query: option(UrqlQuery.urqlQuery)=?,
       ~mutation: option(mutationMap)=?,
-      ~render: renderArgs('data) => ReasonReact.reactElement,
+      ~render:
+         renderArgs('data, 'queryData, 'store) => ReasonReact.reactElement,
       ~cache: bool=true,
       ~typeInvalidation: bool=true,
-      ~shouldInvalidate: shouldInvalidate('data)=?,
+      ~shouldInvalidate: shouldInvalidate('mutationResponse, 'data)=?,
       _children,
     ) =>
   ReasonReact.wrapJsForReason(
     ~reactClass=connect,
     ~props={
-      "query": unwrapQuery(query),
+      "query": query,
       "mutation": unwrapMutation(mutation),
       "cache": cache,
       "typeInvalidation": typeInvalidation,

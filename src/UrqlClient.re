@@ -1,9 +1,9 @@
+/* Model fetchOptions as a variant, and unwrap the user supplied prop to an object
+   to pass directly to urql. */
 type fetchOptions =
   | FetchObj(Fetch.requestInit)
   | FetchFn(unit => Fetch.requestInit);
 
-/* `urql` does this typecheck as well, but it's more elegant on the Reason end.
-   We'll do it here and always pass an object (Js.t). */
 let unwrapFetchOptions: fetchOptions => Fetch.requestInit =
   (opts: fetchOptions) =>
     switch (opts) {
@@ -11,9 +11,39 @@ let unwrapFetchOptions: fetchOptions => Fetch.requestInit =
     | FetchFn(fn) => fn()
     };
 
+type data;
+type write = (~hash: string, ~data: data) => Js.Promise.t(unit);
+type read('queryData) = (~hash: string) => Js.Promise.t('queryData);
+type invalidate = (~hash: string) => Js.Promise.t(unit);
+type invalidateAll = unit => Js.Promise.t(unit);
+type update('queryData, 'store) =
+  (~callback: ('store, string, 'queryData) => unit) => Js.Promise.t(unit);
+
+[@bs.deriving jsConverter]
+type cache('queryData, 'store) = {
+  write,
+  read: read('queryData),
+  invalidate,
+  invalidateAll,
+  update: update('queryData, 'store),
+};
+
+type cacheJs('queryData, 'store) = {
+  .
+  "write": write,
+  "read": read('queryData),
+  "invalidate": invalidate,
+  "invalidateAll": invalidateAll,
+  "update": update('queryData, 'store),
+};
+
 [@bs.deriving abstract]
-type clientConfig = {
+type clientConfig('queryData, 'store) = {
   url: string,
+  [@bs.optional]
+  cache: cacheJs('queryData, 'store),
+  [@bs.optional]
+  initialCache: 'store,
   [@bs.optional]
   fetchOptions: Fetch.requestInit,
 };
@@ -21,7 +51,7 @@ type clientConfig = {
 type client;
 
 [@bs.new] [@bs.module "urql"]
-external createClient: clientConfig => client = "Client";
+external createClient: clientConfig('queryData, 'store) => client = "Client";
 
 [@bs.send]
 external executeQuery:
@@ -35,10 +65,32 @@ external executeMutation:
   "";
 
 let make =
-    (~url: string, ~fetchOptions=FetchObj(Fetch.RequestInit.make()), ()) => {
+    (
+      ~url: string,
+      ~cache=?,
+      ~initialCache=?,
+      ~fetchOptions=FetchObj(Fetch.RequestInit.make()),
+      (),
+    ) => {
   /* Generate the client config */
   let config =
-    clientConfig(~url, ~fetchOptions=unwrapFetchOptions(fetchOptions), ());
+    switch (cache) {
+    | Some(c) =>
+      clientConfig(
+        ~url,
+        ~cache=c |> cacheToJs,
+        ~initialCache?,
+        ~fetchOptions=unwrapFetchOptions(fetchOptions),
+        (),
+      )
+    | None =>
+      clientConfig(
+        ~url,
+        ~initialCache?,
+        ~fetchOptions=unwrapFetchOptions(fetchOptions),
+        (),
+      )
+    };
 
   createClient(config);
 };

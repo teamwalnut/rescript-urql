@@ -17,6 +17,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "@glennsl/bs-json": "^3.0.0",
     "bs-fetch": "^0.3.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
@@ -24,6 +25,7 @@
     "urql": "^0.2.1"
   },
   "devDependencies": {
+    "@glennsl/bs-jest": "^0.4.4",
     "bs-platform": "^4.0.0",
     "cors": "^2.8.4",
     "es6-promise": "^4.2.4",
