@@ -1,5 +1,5 @@
 {
-  "name": "urql-reason",
+  "name": "reason-urql",
   "version": "0.1.0",
   "scripts": {
     "build": "bsb -make-world",
@@ -8,20 +8,21 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "webpack": "webpack -w",
     "webpack:production": "NODE_ENV=production webpack",
-    "start-demo-server": "node example/server/index.js",
-    "start-demo-app": "webpack -w --config webpack.example.config.js"
+    "start:demo:server": "node example/server/index.js",
+    "start:demo": "webpack -w --config webpack.example.config.js"
   },
   "keywords": [
-    "BuckleScript"
+    "reason",
+    "reasonml",
+    "bucklescript",
+    "graphql",
+    "urql"
   ],
-  "author": "",
+  "author": "Parker Ziegler",
   "license": "MIT",
   "dependencies": {
     "@glennsl/bs-json": "^3.0.0",
     "bs-fetch": "^0.3.0",
-    "react": "^16.2.0",
-    "react-dom": "^16.2.0",
-    "reason-react": ">=0.3.4",
     "urql": "^0.2.1"
   },
   "devDependencies": {
@@ -35,7 +36,22 @@
     "graphql-tools": "^3.0.2",
     "graphql_ppx": "^0.2.7",
     "isomorphic-fetch": "^2.2.1",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "reason-react": ">=0.3.4",
     "webpack": "^4.0.1",
-    "webpack-cli": "^2.0.10"
-  }
+    "webpack-cli": "^3.1.1"
+  },
+  "peerDependencies": {
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "reason-react": ">=0.3.4"
+  },
+  "files": [
+    "src",
+    "lib",
+    "LICENSE",
+    "README.md",
+    "bsconfig.json"
+  ]
 }
