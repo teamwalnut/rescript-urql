@@ -1,0 +1,9 @@
+src/*.bs.js
+lib
+/example/
+/assets/
+/.graphql_ppx_cache/
+webpack.config.js
+webpack.example.config.js
+graphql_schema.json
+.merlin

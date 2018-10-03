@@ -1,6 +1,6 @@
 {
   "name": "reason-urql",
-  "version": "0.1.0",
+  "version": "0.1.0-alpha",
   "scripts": {
     "build": "bsb -make-world",
     "start": "bsb -make-world -w",
@@ -46,12 +46,5 @@
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "reason-react": ">=0.3.4"
-  },
-  "files": [
-    "src",
-    "lib",
-    "LICENSE",
-    "README.md",
-    "bsconfig.json"
-  ]
+  }
 }
