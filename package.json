@@ -1,6 +1,6 @@
 {
   "name": "reason-urql",
-  "version": "0.1.0-alpha",
+  "version": "0.1.0-alpha-2",
   "scripts": {
     "build": "bsb -make-world",
     "start": "bsb -make-world -w",
@@ -21,9 +21,7 @@
   "author": "Parker Ziegler",
   "license": "MIT",
   "dependencies": {
-    "@glennsl/bs-json": "^3.0.0",
-    "bs-fetch": "^0.3.0",
-    "urql": "^0.2.1"
+    "bs-fetch": "^0.3.0"
   },
   "devDependencies": {
     "@glennsl/bs-jest": "^0.4.4",
@@ -39,12 +37,15 @@
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "reason-react": ">=0.3.4",
+    "urql": "^0.2.1",
     "webpack": "^4.0.1",
     "webpack-cli": "^3.1.1"
   },
   "peerDependencies": {
+    "graphql_ppx": "^0.2.7",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
-    "reason-react": ">=0.3.4"
+    "reason-react": ">=0.3.4",
+    "urql": "^0.2.1"
   }
 }
