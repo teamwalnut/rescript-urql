@@ -1,6 +1,6 @@
 {
   "name": "reason-urql",
-  "version": "0.1.0-alpha-2",
+  "version": "0.1.0-beta",
   "scripts": {
     "build": "bsb -make-world",
     "start": "bsb -make-world -w",
@@ -9,7 +9,9 @@
     "webpack": "webpack -w",
     "webpack:production": "NODE_ENV=production webpack",
     "start:demo:server": "node example/server/index.js",
-    "start:demo": "webpack -w --config webpack.example.config.js"
+    "start:demo": "webpack -w --config webpack.example.config.js",
+    "contributors:add": "all-contributors add",
+    "contributors:generate": "all-contributors generate"
   },
   "keywords": [
     "reason",
@@ -25,6 +27,7 @@
   },
   "devDependencies": {
     "@glennsl/bs-jest": "^0.4.4",
+    "all-contributors-cli": "^5.4.0",
     "bs-platform": "^4.0.0",
     "cors": "^2.8.4",
     "es6-promise": "^4.2.4",

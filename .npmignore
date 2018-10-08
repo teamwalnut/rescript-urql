@@ -2,6 +2,8 @@ src/*.bs.js
 /example/
 /assets/
 /.graphql_ppx_cache/
-webpack.example.config.js
+webpack.*.js
 graphql_schema.json
 lib/bs/example
+.merlin
+/build/

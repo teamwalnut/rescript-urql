@@ -1,8 +1,9 @@
 # reason-urql
 
-Reason bindings for Formidable's Universal React Query Library (`urql`) https://github.com/FormidableLabs/urql
+![npm](https://img.shields.io/npm/v/reason-urql.svg)
+[![All Contributors](https://img.shields.io/badge/all_contributors-3-orange.svg)](#contributors)
 
-> Warning: These bindings are in an experimental state. Do not use in production (yet) 😉.
+Reason bindings for Formidable's Universal React Query Library, `urql` – https://github.com/FormidableLabs/urql.
 
 ## Table of Contents
 
@@ -46,22 +47,22 @@ yarn start:demo
 open example/app/index.html
 ```
 
-You should now be able to edit the example freely, and refresh the page to see changes take effect. We're working on getting hot reloading into the example soon! The server may take a second to warm up (it's a deployed Now instance). If you want to run your the server locally: `yarn start:demo:server` and update the GraphQL endpoint in the `Client` to `localhost:3001/graphql`.
+You should now be able to edit the example freely, and refresh the page to see changes take effect. We're working on getting hot reloading into the example soon! _The server may take a second to warm up from a cold start (it's a deployed Now instance), so be patient._ If you want to run the server locally instead: `yarn start:demo:server` and update the GraphQL endpoint in the `Client` to point at `localhost:3001/graphql`.
 
 ## Installation
 
-These bindings have not yet been published to `npm`. Check back soon for updates! In the meantime, you can always clone locally and play with the example.
-
-One important thing to note: this project uses `graphql_ppx` to type check your GraphQL queries and mutations. You'll need to add it as a dev dependency.
+Install `reason-urql` along with its `peerDependencies`. One important thing to note – this project uses `graphql_ppx` to type check your GraphQL queries and mutations. You'll need to add it as a dev dependency.
 
 ```sh
+yarn add reason-urql urql
 yarn add graphql_ppx --dev
 ```
 
-And set it in your `ppx_flags` in `bsconfig.json`.
+Then, make sure to update your `bs-dependencies` and `ppx_flags` in `bsconfig.json`.
 
 ```json
 {
+  "bs-dependencies": ["reason-urql"],
   "ppx-flags": ["graphql_ppx/ppx"]
 }
 ```
@@ -120,7 +121,7 @@ query dog($key: ID!) {
 let myQuery = Query.query(GetDog.make(~key="VmeRTX7j-", ()));
 ```
 
-In addition, there may be situations where you want to make a query but don't know the value of your variables ahead of time; this can be true if you want to pass queries around your application to different `Connect` components. To support this use case, we supply a [functor](https://reasonml.github.io/docs/en/module#module-functions-functors) in the `Query` `module`, simply called `Make`. It accepts a query `module` and returns a new `module` with a curried function called `queryFn`. `queryFn` has your GraphQL query applied to it and accepts a `variables` argument, of type `Js.Json.t`; it returns an `urql` query object. Here's how you'd use it in action.
+In addition, there may be rare situations where you want to make a query but don't know the value of your variables ahead of time; this can be true if you want to pass queries around your application to different `Connect` components. To support this use case, we supply a [functor](https://reasonml.github.io/docs/en/module#module-functions-functors) in the `Query` `module`, simply called `Make`. It accepts a query `module` and returns a new `module` with a curried function called `queryFn`. `queryFn` has your GraphQL query applied to it and accepts a `variables` argument, of type `Js.Json.t`; it returns an `urql` query object. Here's how you'd use it in action.
 
 ```reason
 open ReasonUrql;
@@ -655,7 +656,7 @@ Typically, you'll set up your `queries` and `mutations` like the above examples 
 
 **description** – the data returned by the GraphQL query, if any. `data` must match the the type parameter passed to `renderArgs`.
 
-\*\*`error`
+**`error`**
 
 **type** – `{. "message": string })`.
 
@@ -683,3 +684,14 @@ _Warning: experimental._
 ## Getting Involved
 
 This project is currently under active development. Please help out by [opening an issue](https://github.com/parkerziegler/reason-urql/issues) or [filing a PR](https://github.com/parkerziegler/reason-urql/pulls).
+
+## Contributors
+
+This project follows the [all contributors spec](https://github.com/kentcdodds/all-contributors). Thanks to these wonderful folks for contributing ([Emoji Key](https://github.com/kentcdodds/all-contributors#emoji-key)):
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore -->
+| [<img src="https://avatars0.githubusercontent.com/u/19421190?v=4" width="100px;"/><br /><sub><b>Parker Ziegler</b></sub>](http://parkerziegler.com/)<br />[💻](https://github.com/parkerziegler/reason-urql/commits?author=parkerziegler "Code") [📖](https://github.com/parkerziegler/reason-urql/commits?author=parkerziegler "Documentation") [👀](#review-parkerziegler "Reviewed Pull Requests") [🤔](#ideas-parkerziegler "Ideas, Planning, & Feedback") | [<img src="https://avatars2.githubusercontent.com/u/3049054?v=4" width="100px;"/><br /><sub><b>Khoa Nguyen</b></sub>](https://khoanguyen.me)<br />[💻](https://github.com/parkerziegler/reason-urql/commits?author=thangngoc89 "Code") [📖](https://github.com/parkerziegler/reason-urql/commits?author=thangngoc89 "Documentation") | [<img src="https://avatars0.githubusercontent.com/u/2041385?v=4" width="100px;"/><br /><sub><b>Phil Plückthun</b></sub>](https://twitter.com/_philpl)<br />[🤔](#ideas-kitten "Ideas, Planning, & Feedback") |
+| :---: | :---: | :---: |
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->

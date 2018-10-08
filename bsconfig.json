@@ -1,5 +1,5 @@
 {
-  "name": "react-template",
+  "name": "reason-urql",
   "reason": {
     "react-jsx": 2
   },
@@ -21,7 +21,7 @@
     }
   ],
   "suffix": ".bs.js",
-  "namespace": true,
+  "namespace": false,
   "bs-dependencies": ["reason-react", "bs-fetch"],
   "bs-dev-dependencies": ["@glennsl/bs-jest"],
   "refmt": 3,
