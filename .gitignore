@@ -9,3 +9,4 @@ example/build/
 /.graphql_ppx_cache/
 /.vscode/
 /build/
+/coverage/
