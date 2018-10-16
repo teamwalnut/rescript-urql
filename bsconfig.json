@@ -12,6 +12,10 @@
       "dir": "example",
       "subdirs": true,
       "type": "dev"
+    },
+    {
+      "dir": "__tests__",
+      "type": "dev"
     }
   ],
   "package-specs": [
