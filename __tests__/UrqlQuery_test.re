@@ -57,4 +57,47 @@ describe("UrqlQuery", () => {
       )
     );
   });
+
+  describe("Make functor", () => {
+    module TestQuery = [%graphql
+      {|
+        query dog($key: ID!) {
+          dog(key: $key) {
+            name
+            breed
+            description
+          }
+        }|}
+    ];
+
+    module MyQuery = Query.Make(TestQuery);
+    let expectedQuery = "query dog($key: ID!)  {\ndog(key: $key)  {\nname  \nbreed  \ndescription  \n}\n\n}\n";
+    let variables = Js.Dict.empty();
+    Js.Dict.set(variables, "key", Js.Json.string("12345"));
+
+    test("should return a valid urql query string", () =>
+      Expect.(
+        expect(MyQuery.query->Query.queryGet) |> toEqual(expectedQuery)
+      )
+    );
+
+    test("should return an empty JS object", () =>
+      Expect.(
+        expect(MyQuery.query->Query.variablesGet)
+        |> toEqual(Some(Js.Json.object_(Js.Dict.empty())))
+      )
+    );
+
+    test(
+      "should return queryFn – a function that can be invoked with variables",
+      () =>
+      Expect.(
+        expect(
+          MyQuery.queryFn(~variables=Js.Json.object_(variables), ())
+          ->Query.variablesGet,
+        )
+        |> toEqual(Some(Js.Json.object_(variables)))
+      )
+    );
+  });
 });
