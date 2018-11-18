@@ -1,0 +1,11 @@
+language: node_js
+
+node_js:
+  - "8"
+
+script:
+  - yarn test
+  - yarn coverage
+  # Upload to coveralls, but don't _fail_ if coveralls is down.
+  - cat coverage/lcov.info | node_modules/.bin/coveralls || echo "Coveralls upload failed"
+  - yarn build

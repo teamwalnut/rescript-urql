@@ -15,13 +15,40 @@ describe("Connect", () => {
       }|}
   ];
 
-  let testQuery = Query.query(TestQuery.make());
-  let testRender = (result: Connect.renderArgs('a, 'b, 'c)) => <div />;
-  let setup = (~query=testQuery, ~render=testRender, ()) =>
-    Enzyme.shallow(<Connect render query />);
+  module TestMutation = [%graphql
+    {|
+      mutation likeDog($key: ID!) {
+        likeDog(key: $key) {
+          name
+          key
+          breed
+          likes
+        }
+      }
+    |}
+  ];
 
-  test("should render", () => {
-    let wrapper = setup();
+  let testQuery = Query.query(TestQuery.make());
+  let testMutation =
+    Mutation.mutation(TestMutation.make(~key="VmeRTX7j-", ()));
+  let testRender = (result: Connect.renderArgs('a, 'b, 'c)) =>
+    <div> {ReasonReact.string("reason-urql rules!")} </div>;
+
+  test("should render given a query and a function for the render prop", () => {
+    let wrapper =
+      Enzyme.shallow(<Connect render=testRender query=testQuery />);
+    Expect.(expect(wrapper) |> toMatchSnapshot);
+  });
+
+  test(
+    "should render given a mutation map and a function for the render prop", () => {
+    let mutationMap = Js.Dict.empty();
+    Js.Dict.set(mutationMap, "testMutation", testMutation);
+    let wrapper =
+      Enzyme.shallow(
+        <Connect render=testRender query=testQuery mutation=mutationMap />,
+      );
+
     Expect.(expect(wrapper) |> toMatchSnapshot);
   });
 });
