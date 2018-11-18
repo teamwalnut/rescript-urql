@@ -75,6 +75,21 @@ describe("UrqlClient", () => {
            )
       )
     );
+
+    test("should unwrap fetchOptions wrapped as FetchObj", () =>
+      Expect.(
+        expect(Client.unwrapFetchOptions(makeFetchOptions))
+        |> toEqual(fetchOptions)
+      )
+    );
+
+    test("should unwrap fetchOptions unwrapped as FetchFn", () => {
+      let makeFetchOptions = Client.FetchFn(() => fetchOptions);
+      Expect.(
+        expect(Client.unwrapFetchOptions(makeFetchOptions))
+        |> toEqual(fetchOptions)
+      );
+    });
   });
 
   describe("Client with initialCache provided", () => {
@@ -110,22 +125,20 @@ describe("UrqlClient", () => {
   });
 
   describe("Client with cache provided", () => {
-    let store = Js.Dict.empty();
-
     /* Mock out cache functions with noops for brevity. */
-    let write = (~hash, ~data) =>
-      Js.Promise.make((~resolve, ~reject) => resolve(. (): 'a));
+    let write = (~hash as _, ~data as _) =>
+      Js.Promise.make((~resolve, ~reject as _) => resolve(. (): 'a));
 
     let read = (~hash) =>
-      Js.Promise.make((~resolve, ~reject) => resolve(. "read"));
+      Js.Promise.make((~resolve, ~reject as _) => resolve(. hash));
 
-    let invalidate = (~hash: string) =>
+    let invalidate = (~hash as _) =>
       Js.Promise.make((~resolve, ~reject as _) => resolve(. (): 'a));
 
     let invalidateAll = () =>
       Js.Promise.make((~resolve, ~reject as _) => resolve(. (): 'a));
 
-    let update = (~callback) =>
+    let update = (~callback as _) =>
       Js.Promise.make((~resolve, ~reject as _) => resolve(. (): 'a));
 
     let cache: Client.cache(string, Js.Dict.t(string)) = {
@@ -141,5 +154,19 @@ describe("UrqlClient", () => {
     test("should instantiate a client instance with cache", () =>
       Expect.(expect(client) |> toMatchSnapshot)
     );
+
+    test("should convert a cache record to a Js.t", () => {
+      let cacheJs = Client.cacheToJs(cache);
+      ExpectJs.(
+        expect(cacheJs)
+        |> toContainProperties([|
+             "read",
+             "write",
+             "invalidate",
+             "invalidateAll",
+             "update",
+           |])
+      );
+    });
   });
 });

@@ -28,8 +28,10 @@
   "devDependencies": {
     "@glennsl/bs-jest": "^0.4.4",
     "all-contributors-cli": "^5.4.0",
+    "bs-enzyme": "^0.5.3",
     "bs-platform": "^4.0.0",
     "cors": "^2.8.4",
+    "enzyme-adapter-react-16": "^1.7.0",
     "es6-promise": "^4.2.4",
     "express": "^4.16.3",
     "express-graphql": "^0.6.12",
