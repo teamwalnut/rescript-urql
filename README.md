@@ -1,6 +1,8 @@
 # reason-urql
 
 ![npm](https://img.shields.io/npm/v/reason-urql.svg)
+[![Build Status](https://travis-ci.org/parkerziegler/reason-urql.svg?branch=master)](https://travis-ci.org/parkerziegler/reason-urql)
+[![Coverage Status](https://coveralls.io/repos/github/parkerziegler/reason-urql/badge.svg?branch=master)](https://coveralls.io/github/parkerziegler/reason-urql?branch=master)
 [![All Contributors](https://img.shields.io/badge/all_contributors-3-orange.svg)](#contributors)
 
 Reason bindings for Formidable's Universal React Query Library, `urql` – https://github.com/FormidableLabs/urql.
