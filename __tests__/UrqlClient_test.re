@@ -125,38 +125,19 @@ describe("UrqlClient", () => {
   });
 
   describe("Client with cache provided", () => {
-    /* Mock out cache functions with noops for brevity. */
-    let write = (~hash as _, ~data as _) =>
-      Js.Promise.make((~resolve, ~reject as _) => resolve(. (): 'a));
-
-    let read = (~hash) =>
-      Js.Promise.make((~resolve, ~reject as _) => resolve(. hash));
-
-    let invalidate = (~hash as _) =>
-      Js.Promise.make((~resolve, ~reject as _) => resolve(. (): 'a));
-
-    let invalidateAll = () =>
-      Js.Promise.make((~resolve, ~reject as _) => resolve(. (): 'a));
-
-    let update = (~callback as _) =>
-      Js.Promise.make((~resolve, ~reject as _) => resolve(. (): 'a));
-
-    let cache: Client.cache(string, Js.Dict.t(string)) = {
-      write,
-      read,
-      invalidate,
-      invalidateAll,
-      update,
-    };
-
-    let client = Client.make(~url="https://localhost:3000", ~cache, ());
+    let client =
+      Client.make(
+        ~url="https://localhost:3000",
+        ~cache=TestUtils.testCache,
+        (),
+      );
 
     test("should instantiate a client instance with cache", () =>
       Expect.(expect(client) |> toMatchSnapshot)
     );
 
     test("should convert a cache record to a Js.t", () => {
-      let cacheJs = Client.cacheToJs(cache);
+      let cacheJs = Client.cacheToJs(TestUtils.testCache);
       ExpectJs.(
         expect(cacheJs)
         |> toContainProperties([|

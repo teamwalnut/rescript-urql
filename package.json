@@ -7,10 +7,7 @@
     "clean": "bsb -clean-world",
     "test": "jest",
     "coverage": "yarn test --coverage",
-    "webpack": "webpack -w",
-    "webpack:production": "NODE_ENV=production webpack",
-    "start:demo:server": "node example/server/index.js",
-    "start:demo": "webpack -w --config webpack.example.config.js",
+    "start:demo": "webpack-dev-server --hot --config webpack.config.js",
     "contributors:add": "all-contributors add",
     "contributors:generate": "all-contributors generate"
   },
@@ -44,9 +41,11 @@
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "reason-react": ">=0.3.4",
+    "url-loader": "^1.1.2",
     "urql": "^0.2.1",
     "webpack": "^4.0.1",
-    "webpack-cli": "^3.1.1"
+    "webpack-cli": "^3.1.1",
+    "webpack-dev-server": "^3.1.10"
   },
   "peerDependencies": {
     "graphql_ppx": "^0.2.7",
@@ -54,5 +53,13 @@
     "react-dom": "^16.2.0",
     "reason-react": ">=0.3.4",
     "urql": "^0.2.1"
+  },
+  "jest": {
+    "testMatch": [
+      "<rootDir>/__tests__/*_test.bs.js"
+    ],
+    "coveragePathIgnorePatterns": [
+      "<rootDir>/__tests__/utils/TestUtils.bs.js"
+    ]
   }
 }

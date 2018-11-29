@@ -86,7 +86,7 @@ let update = (~callback) =>
         switch (Js.Dict.get(store, hash)) {
         | Some(res) =>
           switch (Js.Json.parseExn(res) |> Js.Json.decodeObject) {
-          | Some(json) => callback(store, hash, Some(json))
+          | Some(json) => callback(~store, ~key=hash, ~value=Some(json))
           | None => ()
           }
         | None => ()
@@ -96,7 +96,7 @@ let update = (~callback) =>
     resolve(. (): 'a);
   });
 
-let cache: Client.cache(option(Js.Dict.t(Js.Json.t)), Js.Dict.t(string)) = {
+let cache: Client.cache(Js.Dict.t(string), option(Js.Dict.t(Js.Json.t))) = {
   write,
   read,
   invalidate,

@@ -1,19 +1,15 @@
 [@bs.module "urql"] external connect: ReasonReact.reactClass = "Connect";
 let component = ReasonReact.statelessComponent("Connect");
 
-/* Mutation helpers. */
+/* Mutation map. */
 type mutationMap = Js.Dict.t(UrqlMutation.urqlMutation);
 
-let unwrapMutation = (m: option(mutationMap)) =>
-  switch (m) {
-  | Some(o) => o
-  | None => Js.Dict.empty()
-  };
-
-/* Render prop types and helpers. */
+/* Error type and No Data error. */
 [@bs.deriving abstract]
-type error = {. "message": string};
+type error = {message: string};
+let noData = error(~message="No Data");
 
+/* Refetch types. */
 [@bs.deriving abstract]
 type refetchOptions = {
   [@bs.optional]
@@ -21,7 +17,6 @@ type refetchOptions = {
 };
 
 type refetch = (~options: refetchOptions, ~initial: bool=?) => unit;
-
 type refreshAllFromCache = unit => unit;
 
 /* Response variant on the render prop. */
@@ -32,15 +27,17 @@ type response('data) =
 
 /* Render prop conversion types. */
 [@bs.deriving jsConverter]
-type cache('queryData, 'store) = {
-  invalidate: UrqlQuery.urqlQuery => UrqlClient.invalidate,
-  invalidateAll: unit => UrqlClient.invalidateAll,
-  read: UrqlQuery.urqlQuery => UrqlClient.read('queryData),
+type cache('store, 'value) = {
+  invalidate: (~query: UrqlQuery.urqlQuery=?) => Js.Promise.t(unit),
+  invalidateAll: unit => Js.Promise.t(unit),
+  read: (~query: UrqlQuery.urqlQuery) => Js.Promise.t('value),
   update:
-    ('store, string, 'queryData) => UrqlClient.update('queryData, 'store),
+    (~callback: (~store: 'store, ~key: string, ~value: 'value) => unit) =>
+    Js.Promise.t(unit),
 };
 
-type renderArgs('data, 'queryData, 'store) = {
+/* Arguments passed to the render prop. */
+type renderArgs('data, 'store, 'value) = {
   .
   "response": response('data),
   "fetching": bool,
@@ -49,7 +46,7 @@ type renderArgs('data, 'queryData, 'store) = {
   "error": option(error),
   "refetch": refetch,
   "refreshAllFromCache": refreshAllFromCache,
-  "cache": cache('queryData, 'store),
+  "cache": cache('store, 'value),
 };
 
 let urqlDataToVariant = urqlData => {
@@ -62,7 +59,7 @@ let urqlDataToVariant = urqlData => {
     | (true, Some(data), _) => Data(data)
     | (false, _, Some(error)) => Error(error)
     | (true, _, Some(error)) => Error(error)
-    | (true, None, None) => Error({"message": "No data"})
+    | (true, None, None) => Error(noData)
     };
   Js.Obj.assign(
     urqlData,
@@ -75,12 +72,12 @@ let urqlDataToVariant = urqlData => {
   );
 };
 
-type shouldInvalidate('mutationResponse, 'data) =
+type shouldInvalidate('mutation, 'data) =
   option(
     (
       ~changedTypes: array(string),
       ~typenames: array(string),
-      ~response: 'mutationResponse,
+      ~response: 'mutation,
       ~data: 'data
     ) =>
     bool,
@@ -89,19 +86,18 @@ type shouldInvalidate('mutationResponse, 'data) =
 let make =
     (
       ~query: option(UrqlQuery.urqlQuery)=?,
-      ~mutation: option(mutationMap)=?,
-      ~render:
-         renderArgs('data, 'queryData, 'store) => ReasonReact.reactElement,
+      ~mutation: mutationMap=Js.Dict.empty(),
+      ~render: renderArgs('data, 'store, 'value) => ReasonReact.reactElement,
       ~cache: bool=true,
       ~typeInvalidation: bool=true,
-      ~shouldInvalidate: shouldInvalidate('mutationResponse, 'data)=?,
+      ~shouldInvalidate: shouldInvalidate('mutation, 'data)=?,
       _children,
     ) =>
   ReasonReact.wrapJsForReason(
     ~reactClass=connect,
     ~props={
       "query": query,
-      "mutation": unwrapMutation(mutation),
+      "mutation": mutation,
       "cache": cache,
       "typeInvalidation": typeInvalidation,
       "shouldInvalidate": shouldInvalidate,
