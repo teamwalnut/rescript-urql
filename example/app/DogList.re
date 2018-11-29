@@ -99,7 +99,7 @@ let make = _children => {
                   (),
                 )
               }>
-              {ReasonReact.string("Error: " ++ error##message)}
+              {ReasonReact.string("Error: " ++ error->Connect.messageGet)}
             </div>
           }
       }

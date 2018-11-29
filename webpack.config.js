@@ -1,14 +1,25 @@
-const path = require('path');
-const outputDir = path.join(__dirname, "build/");
+const path = require("path");
 
-const isProd = process.env.NODE_ENV === 'production';
+const isProd = process.env.NODE_ENV === "production";
 
 module.exports = {
-  entry: './src/Index.bs.js',
-  mode: isProd ? 'production' : 'development',
+  entry: path.join(__dirname, "example/app/Example.bs.js"),
+  mode: isProd ? "production" : "development",
   output: {
-    path: outputDir,
-    publicPath: outputDir,
-    filename: 'Index.js',
+    path: path.resolve(__dirname, "example/build"),
+    publicPath: "/public/",
+    filename: "Index.js"
   },
+  devServer: {
+    open: true,
+    contentBase: path.resolve(__dirname, "example/public")
+  },
+  module: {
+    rules: [
+      {
+        test: /\.svg$/,
+        loader: "url-loader"
+      }
+    ]
+  }
 };

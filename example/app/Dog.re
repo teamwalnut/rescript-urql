@@ -15,7 +15,12 @@ let make =
     <div
       key=id
       style={
-        ReactDOMRe.Style.make(~padding="10px", ~fontFamily="Space Mono", ())
+        ReactDOMRe.Style.make(
+          ~padding="10px",
+          ~fontFamily="Space Mono",
+          ~cursor="pointer",
+          (),
+        )
       }
       onClick={_e => onClick({"key": id})}>
       <img

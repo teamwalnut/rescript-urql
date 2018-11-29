@@ -3,18 +3,7 @@ open ReasonUrql;
 
 describe("UrqlQuery", () => {
   describe("UrqlQuery with only query specified", () => {
-    module TestQuery = [%graphql
-      {|
-        query dogs {
-          dogs {
-            name
-            breed
-            description
-          }
-        }|}
-    ];
-
-    let myQuery = Query.query(TestQuery.make());
+    let myQuery = Query.query(TestUtils.TestQuery.make());
     let expectedQuery = "query dogs  {\ndogs  {\nname  \nbreed  \ndescription  \n}\n\n}\n";
 
     test("should return a valid urql query string", () =>
@@ -30,18 +19,8 @@ describe("UrqlQuery", () => {
   });
 
   describe("UrqlQuery with variables", () => {
-    module TestQuery = [%graphql
-      {|
-        query dog($key: ID!) {
-          dog(key: $key) {
-            name
-            breed
-            description
-          }
-        }|}
-    ];
-
-    let myQuery = Query.query(TestQuery.make(~key="12345", ()));
+    let myQuery =
+      Query.query(TestUtils.TestQueryWithVariable.make(~key="12345", ()));
     let expectedQuery = "query dog($key: ID!)  {\ndog(key: $key)  {\nname  \nbreed  \ndescription  \n}\n\n}\n";
     let variables = Js.Dict.empty();
     Js.Dict.set(variables, "key", Js.Json.string("12345"));
@@ -59,18 +38,7 @@ describe("UrqlQuery", () => {
   });
 
   describe("Make functor", () => {
-    module TestQuery = [%graphql
-      {|
-        query dog($key: ID!) {
-          dog(key: $key) {
-            name
-            breed
-            description
-          }
-        }|}
-    ];
-
-    module MyQuery = Query.Make(TestQuery);
+    module MyQuery = Query.Make(TestUtils.TestQueryWithVariable);
     let expectedQuery = "query dog($key: ID!)  {\ndog(key: $key)  {\nname  \nbreed  \ndescription  \n}\n\n}\n";
     let variables = Js.Dict.empty();
     Js.Dict.set(variables, "key", Js.Json.string("12345"));
@@ -81,7 +49,7 @@ describe("UrqlQuery", () => {
       )
     );
 
-    test("should return an empty JS object", () =>
+    test("should return an empty JS object for variables", () =>
       Expect.(
         expect(MyQuery.query->Query.variablesGet)
         |> toEqual(Some(Js.Json.object_(Js.Dict.empty())))

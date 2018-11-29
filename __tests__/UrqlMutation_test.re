@@ -3,18 +3,7 @@ open ReasonUrql;
 
 describe("UrqlMutation", () => {
   describe("UrqlMutation with only query specified", () => {
-    module TestMutation = [%graphql
-      {|
-      mutation likeAllDogs {
-        likeAllDogs {
-          key
-          likes
-        }
-      }
-    |}
-    ];
-
-    let myMutation = Mutation.mutation(TestMutation.make());
+    let myMutation = Mutation.mutation(TestUtils.TestMutation.make());
     let expectedMutation = "mutation likeAllDogs  {\nlikeAllDogs  {\nkey  \nlikes  \n}\n\n}\n";
 
     test("should return a valid urql mutation string", () =>
@@ -32,19 +21,11 @@ describe("UrqlMutation", () => {
   });
 
   describe("UrqlMutation with variables", () => {
-    module TestMutation = [%graphql
-      {|
-        mutation likeDog($key: ID!) {
-          likeDog(key: $key) {
-            key
-            likes
-          }
-        }
-      |}
-    ];
-
-    let myMutation = Mutation.mutation(TestMutation.make(~key="12345", ()));
-    let expectedMutation = "mutation likeDog($key: ID!)  {\nlikeDog(key: $key)  {\nkey  \nlikes  \n}\n\n}\n";
+    let myMutation =
+      Mutation.mutation(
+        TestUtils.TestMutationWithVariable.make(~key="12345", ()),
+      );
+    let expectedMutation = "mutation likeDog($key: ID!)  {\nlikeDog(key: $key)  {\nname  \nkey  \nbreed  \nlikes  \n}\n\n}\n";
     let variables = Js.Dict.empty();
     Js.Dict.set(variables, "key", Js.Json.string("12345"));
 
@@ -63,19 +44,8 @@ describe("UrqlMutation", () => {
   });
 
   describe("Make functor", () => {
-    module TestMutation = [%graphql
-      {|
-        mutation likeDog($key: ID!) {
-          likeDog(key: $key) {
-            key
-            likes
-          }
-        }
-      |}
-    ];
-
-    module MyMutation = Mutation.Make(TestMutation);
-    let expectedQuery = "mutation likeDog($key: ID!)  {\nlikeDog(key: $key)  {\nkey  \nlikes  \n}\n\n}\n";
+    module MyMutation = Mutation.Make(TestUtils.TestMutationWithVariable);
+    let expectedQuery = "mutation likeDog($key: ID!)  {\nlikeDog(key: $key)  {\nname  \nkey  \nbreed  \nlikes  \n}\n\n}\n";
     let variables = Js.Dict.empty();
     Js.Dict.set(variables, "key", Js.Json.string("12345"));
 

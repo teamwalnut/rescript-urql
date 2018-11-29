@@ -13,35 +13,36 @@ let unwrapFetchOptions: fetchOptions => Fetch.requestInit =
 
 type data;
 type write = (~hash: string, ~data: data) => Js.Promise.t(unit);
-type read('queryData) = (~hash: string) => Js.Promise.t('queryData);
+type read('value) = (~hash: string) => Js.Promise.t('value);
 type invalidate = (~hash: string) => Js.Promise.t(unit);
 type invalidateAll = unit => Js.Promise.t(unit);
-type update('queryData, 'store) =
-  (~callback: ('store, string, 'queryData) => unit) => Js.Promise.t(unit);
+type update('store, 'value) =
+  (~callback: (~store: 'store, ~key: string, ~value: 'value) => unit) =>
+  Js.Promise.t(unit);
 
 [@bs.deriving jsConverter]
-type cache('queryData, 'store) = {
+type cache('store, 'value) = {
   write,
-  read: read('queryData),
+  read: read('value),
   invalidate,
   invalidateAll,
-  update: update('queryData, 'store),
+  update: update('store, 'value),
 };
 
-type cacheJs('queryData, 'store) = {
+type cacheJs('store, 'value) = {
   .
   "write": write,
-  "read": read('queryData),
+  "read": read('value),
   "invalidate": invalidate,
   "invalidateAll": invalidateAll,
-  "update": update('queryData, 'store),
+  "update": update('store, 'value),
 };
 
 [@bs.deriving abstract]
-type clientConfig('queryData, 'store) = {
+type clientConfig('store, 'value) = {
   url: string,
   [@bs.optional]
-  cache: cacheJs('queryData, 'store),
+  cache: cacheJs('store, 'value),
   [@bs.optional]
   initialCache: 'store,
   [@bs.optional]
@@ -51,7 +52,7 @@ type clientConfig('queryData, 'store) = {
 type client;
 
 [@bs.new] [@bs.module "urql"]
-external createClient: clientConfig('queryData, 'store) => client = "Client";
+external createClient: clientConfig('store, 'value) => client = "Client";
 
 [@bs.send]
 external executeQuery:

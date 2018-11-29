@@ -1,5 +1,9 @@
 open ReasonUrql;
 
+[@bs.module] external formidableLogo: string = "./assets/formidable-logo.svg";
+
+Js.log(formidableLogo);
+
 let component = ReasonReact.statelessComponent("Header");
 
 module LikeAllDogs = [%graphql
@@ -43,8 +47,9 @@ let make = _children => {
               )
             }>
             <img
-              src="../../assets/formidable-logo.svg"
+              src=formidableLogo
               onClick={_e => result->(likeAllDogs())}
+              style={ReactDOMRe.Style.make(~cursor="pointer", ())}
             />
             <span
               style={
