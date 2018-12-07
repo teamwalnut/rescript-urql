@@ -31,25 +31,7 @@ describe("Connect", () => {
   });
 
   describe("urqlDataToVariant", () => {
-    let urqlData = {
-      "loaded": true,
-      "data":
-        Js.Nullable.return({
-          "dogs": [|
-            {"key": "VmeRTX7j-", "name": "Dixie", "breed": "Pit Bull"},
-          |],
-        }),
-      "error": Js.Nullable.null,
-      "cache": {
-        "invalidateAll": () =>
-          Js.Promise.make((~resolve, ~reject as _) => resolve(. (): 'a)),
-        "invalidate": (~query: option(UrqlQuery.urqlQuery)=?) =>
-          Js.Promise.make((~resolve, ~reject as _) => resolve(. (): 'a)),
-        "update": TestUtils.update,
-        "read": (~query as _: UrqlQuery.urqlQuery) =>
-          Js.Promise.make((~resolve, ~reject as _) => resolve(. "data")),
-      },
-    };
+    let urqlData = TestUtils.urqlData;
 
     test(
       "should convert the supplied urql data to our variant constructors", () =>

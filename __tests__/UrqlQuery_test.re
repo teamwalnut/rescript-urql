@@ -38,20 +38,18 @@ describe("UrqlQuery", () => {
   });
 
   describe("Make functor", () => {
-    module MyQuery = Query.Make(TestUtils.TestQueryWithVariable);
+    module GetDog = Query.Make(TestUtils.TestQueryWithVariable);
     let expectedQuery = "query dog($key: ID!)  {\ndog(key: $key)  {\nname  \nbreed  \ndescription  \n}\n\n}\n";
     let variables = Js.Dict.empty();
     Js.Dict.set(variables, "key", Js.Json.string("12345"));
 
     test("should return a valid urql query string", () =>
-      Expect.(
-        expect(MyQuery.query->Query.queryGet) |> toEqual(expectedQuery)
-      )
+      Expect.(expect(GetDog.query->Query.queryGet) |> toEqual(expectedQuery))
     );
 
     test("should return an empty JS object for variables", () =>
       Expect.(
-        expect(MyQuery.query->Query.variablesGet)
+        expect(GetDog.query->Query.variablesGet)
         |> toEqual(Some(Js.Json.object_(Js.Dict.empty())))
       )
     );
@@ -61,7 +59,7 @@ describe("UrqlQuery", () => {
       () =>
       Expect.(
         expect(
-          MyQuery.queryFn(~variables=Js.Json.object_(variables), ())
+          GetDog.queryFn(~variables=Js.Json.object_(variables), ())
           ->Query.variablesGet,
         )
         |> toEqual(Some(Js.Json.object_(variables)))

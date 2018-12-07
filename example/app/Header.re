@@ -2,8 +2,6 @@ open ReasonUrql;
 
 [@bs.module] external formidableLogo: string = "./assets/formidable-logo.svg";
 
-Js.log(formidableLogo);
-
 let component = ReasonReact.statelessComponent("Header");
 
 module LikeAllDogs = [%graphql
@@ -24,7 +22,7 @@ Js.Dict.set(mutationMap, "likeAllDogs", likeAllDogs);
 
 [@bs.send]
 external likeAllDogs:
-  (Connect.renderArgs('data, 'queryData, 'store), unit) => unit =
+  (Connect.renderArgs('data, 'store, 'value), unit) => unit =
   "";
 
 let make = _children => {
