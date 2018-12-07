@@ -44,21 +44,20 @@ describe("UrqlMutation", () => {
   });
 
   describe("Make functor", () => {
-    module MyMutation = Mutation.Make(TestUtils.TestMutationWithVariable);
+    module LikeDog = Mutation.Make(TestUtils.TestMutationWithVariable);
     let expectedQuery = "mutation likeDog($key: ID!)  {\nlikeDog(key: $key)  {\nname  \nkey  \nbreed  \nlikes  \n}\n\n}\n";
     let variables = Js.Dict.empty();
     Js.Dict.set(variables, "key", Js.Json.string("12345"));
 
     test("should return a valid urql query string", () =>
       Expect.(
-        expect(MyMutation.mutation->Mutation.queryGet)
-        |> toEqual(expectedQuery)
+        expect(LikeDog.mutation->Mutation.queryGet) |> toEqual(expectedQuery)
       )
     );
 
     test("should return an empty JS object", () =>
       Expect.(
-        expect(MyMutation.mutation->Mutation.variablesGet)
+        expect(LikeDog.mutation->Mutation.variablesGet)
         |> toEqual(Some(Js.Json.object_(Js.Dict.empty())))
       )
     );
@@ -68,7 +67,7 @@ describe("UrqlMutation", () => {
       () =>
       Expect.(
         expect(
-          MyMutation.mutationFn(~variables=Js.Json.object_(variables), ())
+          LikeDog.mutationFn(~variables=Js.Json.object_(variables), ())
           ->Mutation.variablesGet,
         )
         |> toEqual(Some(Js.Json.object_(variables)))

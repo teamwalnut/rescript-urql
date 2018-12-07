@@ -1,10 +1,8 @@
 const path = require("path");
 
-const isProd = process.env.NODE_ENV === "production";
-
 module.exports = {
   entry: path.join(__dirname, "example/app/Example.bs.js"),
-  mode: isProd ? "production" : "development",
+  mode: "development",
   output: {
     path: path.resolve(__dirname, "example/build"),
     publicPath: "/public/",
