@@ -1,69 +1,149 @@
 open Jest;
 open ReasonUrql;
+open TestUtils;
 
 describe("UrqlQuery", () => {
-  describe("UrqlQuery with only query specified", () => {
-    let myQuery = Query.query(TestUtils.TestQuery.make());
-    let expectedQuery = "query dogs  {\ndogs  {\nname  \nbreed  \ndescription  \n}\n\n}\n";
+  describe("UrqlQuery without variables", () => {
+    /* Define the urqlQuery. */
+    let query = Query.query(TestQuery.make());
+
+    /* Setup the expected query string and urqlQuery object. */
+    let expectedQueryString = "query dogs  {\ndogs  {\nname  \nbreed  \ndescription  \n}\n\n}\n";
+    let expectedQuery =
+      Query.urqlQuery(
+        ~query=expectedQueryString,
+        ~variables=Js.Json.object_(Js.Dict.empty()),
+        (),
+      );
 
     test("should return a valid urql query string", () =>
-      Expect.(expect(myQuery->Query.queryGet) |> toEqual(expectedQuery))
+      Expect.(expect(query->Query.queryGet) |> toEqual(expectedQueryString))
     );
 
-    test("should return an empty JS object if no variables provided", () =>
+    test(
+      "should pass an empty JS object to the urql query object if no variables are provided",
+      () =>
       Expect.(
-        expect(myQuery->Query.variablesGet)
+        expect(query->Query.variablesGet)
         |> toEqual(Some(Js.Json.object_(Js.Dict.empty())))
       )
+    );
+
+    test("should return a valid urql query object", () =>
+      Expect.(expect(query) |> toEqual(expectedQuery))
     );
   });
 
   describe("UrqlQuery with variables", () => {
-    let myQuery =
-      Query.query(TestUtils.TestQueryWithVariable.make(~key="12345", ()));
-    let expectedQuery = "query dog($key: ID!)  {\ndog(key: $key)  {\nname  \nbreed  \ndescription  \n}\n\n}\n";
-    let variables = Js.Dict.empty();
-    Js.Dict.set(variables, "key", Js.Json.string("12345"));
+    /* Define the urqlQuery with variables. */
+    let query = Query.query(TestQueryWithVariable.make(~key="12345", ()));
+
+    /* Setup the expected query string, variables, and urqlQuery object. */
+    let expectedQueryString = "query dog($key: ID!)  {\ndog(key: $key)  {\nname  \nbreed  \ndescription  \n}\n\n}\n";
+    let expectedVariables = Js.Dict.empty();
+    Js.Dict.set(expectedVariables, "key", Js.Json.string("12345"));
+    let expectedQuery =
+      Query.urqlQuery(
+        ~query=expectedQueryString,
+        ~variables=Js.Json.object_(expectedVariables),
+        (),
+      );
 
     test("should return a valid urql query string", () =>
-      Expect.(expect(myQuery->Query.queryGet) |> toEqual(expectedQuery))
+      Expect.(expect(query->Query.queryGet) |> toEqual(expectedQueryString))
     );
 
-    test("should return the variables passed to the query", () =>
+    test("should pass the supplied variables to the urql query object", () =>
       Expect.(
-        expect(myQuery->Query.variablesGet)
-        |> toEqual(Some(Js.Json.object_(variables)))
+        expect(query->Query.variablesGet)
+        |> toEqual(Some(Js.Json.object_(expectedVariables)))
       )
+    );
+
+    test("should return a valid urql query object", () =>
+      Expect.(expect(query) |> toEqual(expectedQuery))
     );
   });
 
   describe("Make functor", () => {
-    module GetDog = Query.Make(TestUtils.TestQueryWithVariable);
-    let expectedQuery = "query dog($key: ID!)  {\ndog(key: $key)  {\nname  \nbreed  \ndescription  \n}\n\n}\n";
-    let variables = Js.Dict.empty();
-    Js.Dict.set(variables, "key", Js.Json.string("12345"));
+    describe("UrqlQuery without variables", () => {
+      /* Define the urqlQuery. */
+      module GetDogs = Query.Make(TestQuery);
 
-    test("should return a valid urql query string", () =>
-      Expect.(expect(GetDog.query->Query.queryGet) |> toEqual(expectedQuery))
-    );
+      /* Setup the expected query string and urqlQuery object. */
+      let expectedQueryString = "query dogs  {\ndogs  {\nname  \nbreed  \ndescription  \n}\n\n}\n";
+      let expectedQuery =
+        Query.urqlQuery(
+          ~query=expectedQueryString,
+          ~variables=Js.Json.object_(Js.Dict.empty()),
+          (),
+        );
 
-    test("should return an empty JS object for variables", () =>
-      Expect.(
-        expect(GetDog.query->Query.variablesGet)
-        |> toEqual(Some(Js.Json.object_(Js.Dict.empty())))
-      )
-    );
+      test("should return a valid urql query object", () =>
+        Expect.(expect(GetDogs.query) |> toEqual(expectedQuery))
+      );
 
-    test(
-      "should return queryFn – a function that can be invoked with variables",
-      () =>
-      Expect.(
-        expect(
-          GetDog.queryFn(~variables=Js.Json.object_(variables), ())
-          ->Query.variablesGet,
+      test(
+        "should return an urql query object when queryFn is invoked with no variables",
+        () =>
+        Expect.(expect(GetDogs.queryFn()) |> toEqual(expectedQuery))
+      );
+    });
+
+    describe("UrqlQuery with variables", () => {
+      /* Define the urqlQuery. */
+      module GetDog = Query.Make(TestQueryWithVariable);
+
+      /* Setup the expected query string and urqlQuery object. */
+      let expectedQueryString = "query dog($key: ID!)  {\ndog(key: $key)  {\nname  \nbreed  \ndescription  \n}\n\n}\n";
+      let expectedVariables = Js.Dict.empty();
+      Js.Dict.set(expectedVariables, "key", Js.Json.string("12345"));
+      let expectedQuery =
+        Query.urqlQuery(
+          ~query=expectedQueryString,
+          ~variables=Js.Json.object_(expectedVariables),
+          (),
+        );
+
+      test("should return a valid urql query string", () =>
+        Expect.(
+          expect(GetDog.query->Query.queryGet)
+          |> toEqual(expectedQueryString)
         )
-        |> toEqual(Some(Js.Json.object_(variables)))
-      )
-    );
+      );
+
+      test(
+        "should pass an empty JS object for variables if accessing the query object",
+        () =>
+        Expect.(
+          expect(GetDog.query->Query.variablesGet)
+          |> toEqual(Some(Js.Json.object_(Js.Dict.empty())))
+        )
+      );
+
+      test(
+        "should return queryFn – a function that can be invoked with variables",
+        () =>
+        Expect.(
+          expect(
+            GetDog.queryFn(~variables=Js.Json.object_(expectedVariables), ())
+            ->Query.variablesGet,
+          )
+          |> toEqual(Some(Js.Json.object_(expectedVariables)))
+        )
+      );
+
+      test("queryFn should return a valid urql query object", () =>
+        Expect.(
+          expect(
+            GetDog.queryFn(
+              ~variables=Js.Json.object_(expectedVariables),
+              (),
+            ),
+          )
+          |> toEqual(expectedQuery)
+        )
+      );
+    });
   });
 });

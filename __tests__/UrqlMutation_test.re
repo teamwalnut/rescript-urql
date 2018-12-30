@@ -1,77 +1,161 @@
 open Jest;
 open ReasonUrql;
+open TestUtils;
 
 describe("UrqlMutation", () => {
-  describe("UrqlMutation with only query specified", () => {
-    let myMutation = Mutation.mutation(TestUtils.TestMutation.make());
-    let expectedMutation = "mutation likeAllDogs  {\nlikeAllDogs  {\nkey  \nlikes  \n}\n\n}\n";
+  describe("UrqlMutation without variables", () => {
+    /* Define the urqlMutation. */
+    let mutation = Mutation.mutation(TestMutation.make());
 
-    test("should return a valid urql mutation string", () =>
-      Expect.(
-        expect(myMutation->Mutation.queryGet) |> toEqual(expectedMutation)
-      )
-    );
-
-    test("should return an empty JS object if no variables provided", () =>
-      Expect.(
-        expect(myMutation->Mutation.variablesGet)
-        |> toEqual(Some(Js.Json.object_(Js.Dict.empty())))
-      )
-    );
-  });
-
-  describe("UrqlMutation with variables", () => {
-    let myMutation =
-      Mutation.mutation(
-        TestUtils.TestMutationWithVariable.make(~key="12345", ()),
+    /* Setup the expected mutation string and urqlMutation object. */
+    let expectedMutationString = "mutation likeAllDogs  {\nlikeAllDogs  {\nkey  \nlikes  \n}\n\n}\n";
+    let expectedMutation =
+      Mutation.urqlMutation(
+        ~query=expectedMutationString,
+        ~variables=Js.Json.object_(Js.Dict.empty()),
+        (),
       );
-    let expectedMutation = "mutation likeDog($key: ID!)  {\nlikeDog(key: $key)  {\nname  \nkey  \nbreed  \nlikes  \n}\n\n}\n";
-    let variables = Js.Dict.empty();
-    Js.Dict.set(variables, "key", Js.Json.string("12345"));
 
     test("should return a valid urql mutation string", () =>
       Expect.(
-        expect(myMutation->Mutation.queryGet) |> toEqual(expectedMutation)
-      )
-    );
-
-    test("should return the variables passed to the mutation", () =>
-      Expect.(
-        expect(myMutation->Mutation.variablesGet)
-        |> toEqual(Some(Js.Json.object_(variables)))
-      )
-    );
-  });
-
-  describe("Make functor", () => {
-    module LikeDog = Mutation.Make(TestUtils.TestMutationWithVariable);
-    let expectedQuery = "mutation likeDog($key: ID!)  {\nlikeDog(key: $key)  {\nname  \nkey  \nbreed  \nlikes  \n}\n\n}\n";
-    let variables = Js.Dict.empty();
-    Js.Dict.set(variables, "key", Js.Json.string("12345"));
-
-    test("should return a valid urql query string", () =>
-      Expect.(
-        expect(LikeDog.mutation->Mutation.queryGet) |> toEqual(expectedQuery)
-      )
-    );
-
-    test("should return an empty JS object", () =>
-      Expect.(
-        expect(LikeDog.mutation->Mutation.variablesGet)
-        |> toEqual(Some(Js.Json.object_(Js.Dict.empty())))
+        expect(mutation->Mutation.queryGet)
+        |> toEqual(expectedMutationString)
       )
     );
 
     test(
-      "should return mutationFn – a function that can be invoked with variables",
+      "should pass an empty JS object to the urql mutation object if no variables are provided",
       () =>
       Expect.(
-        expect(
-          LikeDog.mutationFn(~variables=Js.Json.object_(variables), ())
-          ->Mutation.variablesGet,
-        )
-        |> toEqual(Some(Js.Json.object_(variables)))
+        expect(mutation->Mutation.variablesGet)
+        |> toEqual(Some(Js.Json.object_(Js.Dict.empty())))
       )
     );
+
+    test("should return a valid urql mutation mutation", () =>
+      Expect.(expect(mutation) |> toEqual(expectedMutation))
+    );
+  });
+
+  describe("UrqlMutation with variables", () => {
+    /* Define the urqlMutation with variables. */
+    let mutation =
+      Mutation.mutation(TestMutationWithVariable.make(~key="12345", ()));
+
+    /* Setup the expected query string, variables, and urqlMutation object. */
+    let expectedMutationString = "mutation likeDog($key: ID!)  {\nlikeDog(key: $key)  {\nname  \nkey  \nbreed  \nlikes  \n}\n\n}\n";
+    let expectedVariables = Js.Dict.empty();
+    Js.Dict.set(expectedVariables, "key", Js.Json.string("12345"));
+    let expectedMutation =
+      Mutation.urqlMutation(
+        ~query=expectedMutationString,
+        ~variables=Js.Json.object_(expectedVariables),
+        (),
+      );
+
+    test("should return a valid urql mutation string", () =>
+      Expect.(
+        expect(mutation->Mutation.queryGet)
+        |> toEqual(expectedMutationString)
+      )
+    );
+
+    test("should pass the supplied variables to the urql mutation object", () =>
+      Expect.(
+        expect(mutation->Mutation.variablesGet)
+        |> toEqual(Some(Js.Json.object_(expectedVariables)))
+      )
+    );
+
+    test("should return a valid urql mutation object", () =>
+      Expect.(expect(mutation) |> toEqual(expectedMutation))
+    );
+  });
+
+  describe("Make functor", () => {
+    describe("UrqlMutation without variables", () => {
+      /* Define the urqlMutation. */
+      module LikeAllDogs = Mutation.Make(TestMutation);
+
+      /* Setup the expected query string and urqlMutation object. */
+      let expectedMutationString = "mutation likeAllDogs  {\nlikeAllDogs  {\nkey  \nlikes  \n}\n\n}\n";
+      let expectedMutation =
+        Mutation.urqlMutation(
+          ~query=expectedMutationString,
+          ~variables=Js.Json.object_(Js.Dict.empty()),
+          (),
+        );
+
+      test("should return a valid urql mutation object", () =>
+        Expect.(expect(LikeAllDogs.mutation) |> toEqual(expectedMutation))
+      );
+
+      test(
+        "should return an urql mutation object when mutationFn is invoked with no variables",
+        () =>
+        Expect.(
+          expect(LikeAllDogs.mutationFn()) |> toEqual(expectedMutation)
+        )
+      );
+    });
+
+    describe("UrqlMutation with variables", () => {
+      /* Define the urqlMutation. */
+      module LikeDog = Mutation.Make(TestMutationWithVariable);
+
+      /* Setup the expected mutation string, variables, and urqlMutation object. */
+      let expectedMutationString = "mutation likeDog($key: ID!)  {\nlikeDog(key: $key)  {\nname  \nkey  \nbreed  \nlikes  \n}\n\n}\n";
+      let expectedVariables = Js.Dict.empty();
+      Js.Dict.set(expectedVariables, "key", Js.Json.string("12345"));
+      let expectedMutation =
+        Mutation.urqlMutation(
+          ~query=expectedMutationString,
+          ~variables=Js.Json.object_(expectedVariables),
+          (),
+        );
+
+      test("should return a valid urql muation string", () =>
+        Expect.(
+          expect(LikeDog.mutation->Mutation.queryGet)
+          |> toEqual(expectedMutationString)
+        )
+      );
+
+      test(
+        "should pass an empty JS object for variables if accessing the mutation object",
+        () =>
+        Expect.(
+          expect(LikeDog.mutation->Mutation.variablesGet)
+          |> toEqual(Some(Js.Json.object_(Js.Dict.empty())))
+        )
+      );
+
+      test(
+        "should return mutationFn – a function that can be invoked with variables",
+        () =>
+        Expect.(
+          expect(
+            LikeDog.mutationFn(
+              ~variables=Js.Json.object_(expectedVariables),
+              (),
+            )
+            ->Mutation.variablesGet,
+          )
+          |> toEqual(Some(Js.Json.object_(expectedVariables)))
+        )
+      );
+
+      test("mutationFn should return a valid urql mutation object", () =>
+        Expect.(
+          expect(
+            LikeDog.mutationFn(
+              ~variables=Js.Json.object_(expectedVariables),
+              (),
+            ),
+          )
+          |> toEqual(expectedMutation)
+        )
+      );
+    });
   });
 });
