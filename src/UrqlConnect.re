@@ -28,7 +28,7 @@ type response('data) =
 /* Render prop conversion types. */
 [@bs.deriving jsConverter]
 type cache('store, 'value) = {
-  invalidate: (~query: UrqlQuery.urqlQuery=?) => Js.Promise.t(unit),
+  invalidate: (~query: UrqlQuery.urqlQuery=?, unit) => Js.Promise.t(unit),
   invalidateAll: unit => Js.Promise.t(unit),
   read: (~query: UrqlQuery.urqlQuery) => Js.Promise.t('value),
   update:

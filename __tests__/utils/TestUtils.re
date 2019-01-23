@@ -78,6 +78,14 @@ let testCache: UrqlClient.cache(Js.Dict.t(string), string) = {
   update,
 };
 
+let testCacheJs: UrqlClient.cacheJs(Js.Dict.t(string), string) = {
+  "write": write,
+  "read": read,
+  "invalidate": invalidate,
+  "invalidateAll": invalidateAll,
+  "update": update,
+};
+
 /* Sample data provided by urql's render prop. */
 let urqlData = {
   "loaded": true,
@@ -89,7 +97,7 @@ let urqlData = {
   "cache": {
     "invalidateAll": () =>
       Js.Promise.make((~resolve, ~reject as _) => resolve(. (): 'a)),
-    "invalidate": (~query: option(UrqlQuery.urqlQuery)=?) =>
+    "invalidate": (~query as _: option(UrqlQuery.urqlQuery)=?, ()) =>
       Js.Promise.make((~resolve, ~reject as _) => resolve(. (): 'a)),
     "update":
       (
