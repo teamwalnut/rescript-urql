@@ -96,7 +96,7 @@ describe("UrqlClient", () => {
     let initialCache = Js.Dict.empty();
     Js.Dict.set(
       initialCache,
-      "12345",
+      "VmeRTX7j-",
       "{ name: Dixie, likes: 1000, breed: Pit Bull }",
     );
 
@@ -148,6 +148,31 @@ describe("UrqlClient", () => {
              "update",
            |])
       );
+    });
+
+    test("should expose a method to convert a cache from Js.t to record", () => {
+      let cache = Client.cacheFromJs(TestUtils.testCacheJs);
+
+      Expect.(expect(cache) |> toEqual(TestUtils.testCache));
+    });
+
+    test("should use an initialCache if provided", () => {
+      let initialCache = Js.Dict.empty();
+      Js.Dict.set(
+        initialCache,
+        "VmeRTX7j-",
+        "{ name: Dixie, likes: 1000, breed: Pit Bull }",
+      );
+
+      let client =
+        Client.make(
+          ~url="https://localhost:3000",
+          ~cache=TestUtils.testCache,
+          ~initialCache,
+          (),
+        );
+
+      Expect.(expect(client) |> toMatchSnapshot);
     });
   });
 });

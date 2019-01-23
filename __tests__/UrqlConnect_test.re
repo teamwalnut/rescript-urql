@@ -36,7 +36,7 @@ describe("Connect", () => {
     test(
       "should convert the supplied urql data to our variant constructors", () =>
       Expect.(
-        expect(urqlData |> Connect.urqlDataToVariant)
+        expect(Connect.urqlDataToVariant(urqlData))
         |> toEqual(
              Js.Obj.assign(
                urqlData,
