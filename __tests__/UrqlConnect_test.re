@@ -89,4 +89,18 @@ describe("Connect", () => {
       },
     );
   });
+
+  describe("cache operations", () => {
+    test("should convert cache operations from a Js.t to a record", () => {
+      let cache = Connect.cacheFromJs(TestUtils.testCacheConnectJs);
+
+      Expect.(expect(cache) |> toEqual(TestUtils.testCacheConnect));
+    });
+
+    test("should convert cache operations as record to a Js.t", () => {
+      let cacheJs = Connect.cacheToJs(TestUtils.testCacheConnect);
+
+      Expect.(expect(cacheJs) |> toEqual(TestUtils.testCacheConnectJs));
+    });
+  });
 });

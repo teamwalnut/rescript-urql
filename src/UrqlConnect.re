@@ -36,6 +36,16 @@ type cache('store, 'value) = {
     Js.Promise.t(unit),
 };
 
+type cacheJs('store, 'value) = {
+  .
+  "invalidate": (~query: UrqlQuery.urqlQuery=?, unit) => Js.Promise.t(unit),
+  "invalidateAll": unit => Js.Promise.t(unit),
+  "read": (~query: UrqlQuery.urqlQuery) => Js.Promise.t('value),
+  "update":
+    (~callback: (~store: 'store, ~key: string, ~value: 'value) => unit) =>
+    Js.Promise.t(unit),
+};
+
 /* Arguments passed to the render prop. */
 type renderArgs('data, 'store, 'value) = {
   .
