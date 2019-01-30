@@ -1,8 +1,8 @@
 # reason-urql
 
 ![npm](https://img.shields.io/npm/v/reason-urql.svg)
-[![Travis (.org)](https://img.shields.io/travis/parkerziegler/reason-urql.svg)](https://travis-ci.org/parkerziegler/reason-urql)
-[![Coveralls github](https://img.shields.io/coveralls/github/parkerziegler/reason-urql.svg)](https://coveralls.io/github/parkerziegler/reason-urql?branch=master)
+[![Travis (.org)](https://img.shields.io/travis/FormidableLabs/reason-urql.svg)](https://travis-ci.org/FormidableLabs/reason-urql)
+[![Coveralls github](https://img.shields.io/coveralls/github/FormidableLabs/reason-urql.svg)](https://coveralls.io/github/FormidableLabs/reason-urql?branch=master)
 [![All Contributors](https://img.shields.io/badge/all_contributors-3-blue.svg)](#contributors)
 
 Reason bindings for Formidable's Universal React Query Library, [`urql`](https://github.com/FormidableLabs/urql).
@@ -652,7 +652,7 @@ Functions for interacting with the cache.
 
 ## Getting Involved
 
-This project is currently under active development. Please help out by [opening an issue](https://github.com/parkerziegler/reason-urql/issues) or [filing a PR](https://github.com/parkerziegler/reason-urql/pulls).
+This project is currently under active development. Please help out by [opening an issue](https://github.com/FormidableLabs/reason-urql/issues) or [filing a PR](https://github.com/FormidableLabs/reason-urql/pulls).
 
 ## Contributors
 
@@ -660,7 +660,7 @@ This project follows the [all contributors spec](https://github.com/kentcdodds/a
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore -->
-| [<img src="https://avatars0.githubusercontent.com/u/19421190?v=4" width="100px;"/><br /><sub><b>Parker Ziegler</b></sub>](http://parkerziegler.com/)<br />[💻](https://github.com/parkerziegler/reason-urql/commits?author=parkerziegler "Code") [📖](https://github.com/parkerziegler/reason-urql/commits?author=parkerziegler "Documentation") [👀](#review-parkerziegler "Reviewed Pull Requests") [🤔](#ideas-parkerziegler "Ideas, Planning, & Feedback") | [<img src="https://avatars2.githubusercontent.com/u/3049054?v=4" width="100px;"/><br /><sub><b>Khoa Nguyen</b></sub>](https://khoanguyen.me)<br />[💻](https://github.com/parkerziegler/reason-urql/commits?author=thangngoc89 "Code") [📖](https://github.com/parkerziegler/reason-urql/commits?author=thangngoc89 "Documentation") | [<img src="https://avatars0.githubusercontent.com/u/2041385?v=4" width="100px;"/><br /><sub><b>Phil Plückthun</b></sub>](https://twitter.com/_philpl)<br />[🤔](#ideas-kitten "Ideas, Planning, & Feedback") |
+| [<img src="https://avatars0.githubusercontent.com/u/19421190?v=4" width="100px;"/><br /><sub><b>Parker Ziegler</b></sub>](http://parkerziegler.com/)<br />[💻](https://github.com/FormidableLabs/reason-urql/commits?author=parkerziegler "Code") [📖](https://github.com/FormidableLabs/reason-urql/commits?author=parkerziegler "Documentation") [👀](#review-parkerziegler "Reviewed Pull Requests") [🤔](#ideas-parkerziegler "Ideas, Planning, & Feedback") | [<img src="https://avatars2.githubusercontent.com/u/3049054?v=4" width="100px;"/><br /><sub><b>Khoa Nguyen</b></sub>](https://khoanguyen.me)<br />[💻](https://github.com/FormidableLabs/reason-urql/commits?author=thangngoc89 "Code") [📖](https://github.com/FormidableLabs/reason-urql/commits?author=thangngoc89 "Documentation") | [<img src="https://avatars0.githubusercontent.com/u/2041385?v=4" width="100px;"/><br /><sub><b>Phil Plückthun</b></sub>](https://twitter.com/_philpl)<br />[🤔](#ideas-kitten "Ideas, Planning, & Feedback") |
 | :---: | :---: | :---: |
 
 <!-- ALL-CONTRIBUTORS-LIST:END -->
