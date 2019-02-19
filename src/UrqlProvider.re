@@ -1,4 +1,4 @@
-[@bs.module "urql"] external provider : ReasonReact.reactClass = "Provider";
+[@bs.module "urql"] external provider: ReasonReact.reactClass = "Provider";
 
 let component = ReasonReact.statelessComponent("Provider");
 
