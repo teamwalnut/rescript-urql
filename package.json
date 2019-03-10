@@ -21,7 +21,8 @@
   "author": "Parker Ziegler",
   "license": "MIT",
   "dependencies": {
-    "bs-fetch": "^0.3.0"
+    "bs-fetch": "^0.3.0",
+    "wonka": "^2.0.1"
   },
   "devDependencies": {
     "@glennsl/bs-jest": "^0.4.4",
