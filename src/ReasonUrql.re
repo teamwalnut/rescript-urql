@@ -1,6 +1,6 @@
 module Client = UrqlClient;
 
-module Connect = UrqlConnect;
+module Provider = UrqlProvider;
 
 module Query = UrqlQuery;
 

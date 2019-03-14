@@ -1,0 +1,23 @@
+{
+  "name": "1-execute-query-mutation",
+  "version": "0.1.0",
+  "description": "An example of how to execute one off queries and mutations using reason-urql.",
+  "main": "index.bs.js",
+  "author": "Parker Ziegler <parker.ziegler@formidable.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "bsb -make-world -w",
+    "clean": "bsb -clean-world",
+    "start:demo": "webpack-dev-server --hot"
+  },
+  "dependencies": {
+    "bs-css": "^8.0.2",
+    "reason-urql": "file:../../"
+  },
+  "devDependencies": {
+    "bs-platform": "^4.0.18",
+    "webpack": "^4.29.6",
+    "webpack-cli": "^3.2.3",
+    "webpack-dev-server": "^3.2.1"
+  }
+}
