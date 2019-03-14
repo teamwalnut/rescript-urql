@@ -7,7 +7,6 @@
     "clean": "bsb -clean-world",
     "test": "jest",
     "coverage": "yarn test --coverage",
-    "start:demo": "webpack-dev-server --hot --config webpack.config.js",
     "contributors:add": "all-contributors add",
     "contributors:generate": "all-contributors generate"
   },

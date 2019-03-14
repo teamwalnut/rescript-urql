@@ -1,0 +1,13 @@
+{
+  "name": "examples",
+  "version": "0.1.0",
+  "description": "Examples demonstrating how to use reason-urql.",
+  "main": "index.js",
+  "author": "Parker Ziegler <parker.ziegler@formidable.com>",
+  "license": "MIT",
+  "private": true,
+  "workspaces": [
+    "1-execute-query-mutation",
+    "2-mutation"
+  ]
+}

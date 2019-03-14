@@ -47,35 +47,6 @@ module TestMutationWithVariable = [%graphql
   |}
 ];
 
-/* Simple, no-op cache functions passed to Connect. */
-/* Mock out cache functions with no-ops for brevity. */
-let readConnect = (~query as _) =>
-  Js.Promise.make((~resolve, ~reject as _) => resolve(. "data"));
-let invalidateConnect = (~query as _: option(UrqlQuery.urqlQuery)=?, ()) =>
-  Js.Promise.make((~resolve, ~reject as _) => resolve(. (): 'a));
-let invalidateAllConnect = () =>
-  Js.Promise.make((~resolve, ~reject as _) => resolve(. (): 'a));
-let updateConnect =
-    (
-      ~callback as
-        _: (~store: Js.Dict.t(string), ~key: string, ~value: string) => unit,
-    ) =>
-  Js.Promise.make((~resolve, ~reject as _) => resolve(. (): 'a));
-
-let testCacheConnect: UrqlConnect.cache(Js.Dict.t(string), string) = {
-  read: readConnect,
-  invalidate: invalidateConnect,
-  invalidateAll: invalidateAllConnect,
-  update: updateConnect,
-};
-
-let testCacheConnectJs: UrqlConnect.cacheJs(Js.Dict.t(string), string) = {
-  "read": readConnect,
-  "invalidate": invalidateConnect,
-  "invalidateAll": invalidateAllConnect,
-  "update": updateConnect,
-};
-
 /* Sample data provided by urql's render prop. */
 let urqlData = {
   "loaded": true,
