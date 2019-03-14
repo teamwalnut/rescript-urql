@@ -144,7 +144,7 @@ let make = _children => {
     <div className=Styles.page>
       <div className=Styles.side>
         <section className=Styles.section>
-          <div className=Styles.title> "Query"->ReasonReact.string </div>
+          <span className=Styles.title> "Query"->ReasonReact.string </span>
           <div className={"48a9dc"->Styles.code}>
             {|query dogs {
   dogs {
@@ -165,7 +165,7 @@ let make = _children => {
          | 0 => ReasonReact.null
          | _ =>
            <section className=Styles.section>
-             <div className=Styles.title> "Result"->ReasonReact.string </div>
+             <span className=Styles.title> "Result"->ReasonReact.string </span>
              <div className={"48a9dc"->Styles.code}>
                self.state.query->ReasonReact.string
              </div>
@@ -179,7 +179,7 @@ let make = _children => {
       </div>
       <div className=Styles.side>
         <section className=Styles.section>
-          <div className=Styles.title> "Mutation"->ReasonReact.string </div>
+          <span className=Styles.title> "Mutation"->ReasonReact.string </span>
           <div className={"db4d3f"->Styles.code}>
             {|mutation likeDog($key: ID!) {
   likeDog(key: $key) {
