@@ -6,7 +6,7 @@ type mutationRenderPropsJs('a) = {
   "fetching": bool,
   "data": Js.Nullable.t('a),
   "error": Js.Nullable.t(UrqlError.t),
-  "executeMutation": Js.Json.t => unit,
+  "executeMutation": Js.Json.t => Js.Promise.t('a),
 };
 
 type response('a) =
@@ -19,7 +19,7 @@ type mutationRenderProps('a) = {
   fetching: bool,
   data: option('a),
   error: option(UrqlError.t),
-  executeMutation: Js.Json.t => unit,
+  executeMutation: Js.Json.t => Js.Promise.t('a),
   response: response('a),
 };
 
