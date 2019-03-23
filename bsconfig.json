@@ -9,10 +9,6 @@
       "subdirs": true
     },
     {
-      "dir": "examples",
-      "type": "dev"
-    },
-    {
       "dir": "__tests__",
       "subdirs": true,
       "type": "dev"
@@ -27,7 +23,7 @@
   "suffix": ".bs.js",
   "namespace": false,
   "bs-dependencies": ["reason-react", "bs-fetch", "wonka"],
-  "bs-dev-dependencies": ["@glennsl/bs-jest", "bs-enzyme"],
+  "bs-dev-dependencies": ["@glennsl/bs-jest"],
   "refmt": 3,
   "warnings": {
     "error": "+5"

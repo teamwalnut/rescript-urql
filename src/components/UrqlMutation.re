@@ -1,20 +1,20 @@
-open UrqlTypes
+open UrqlTypes;
 
-[@bs.module "urql"] external mutation: ReasonReact.reactClass = "Mutation";
-let component = ReasonReact.statelessComponent("Mutation");
+[@bs.module "urql"]
+external mutationComponent: ReasonReact.reactClass = "Mutation";
 
 type mutationRenderPropsJs('a) = {
   .
   "fetching": bool,
   "data": Js.Nullable.t('a),
-  "error": Js.Nullable.t(UrqlError.t),
+  "error": Js.Nullable.t(UrqlCombinedError.t),
   "executeMutation": Js.Json.t => Js.Promise.t('a),
 };
 
 type mutationRenderProps('a) = {
   fetching: bool,
   data: option('a),
-  error: option(UrqlError.t),
+  error: option(UrqlCombinedError.t),
   executeMutation: Js.Json.t => Js.Promise.t('a),
   response: response('a),
 };
@@ -46,6 +46,6 @@ let make =
       children: mutationRenderProps('a) => ReasonReact.reactElement,
     ) =>
   ReasonReact.wrapJsForReason(
-    ~reactClass=mutation, ~props={"query": query}, result =>
+    ~reactClass=mutationComponent, ~props={"query": query}, result =>
     children(result->urqlDataToRecord)
   );

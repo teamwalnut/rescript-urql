@@ -91,6 +91,7 @@ module Styles = {
       maxHeight(px(200)),
       overflow(`auto),
       minWidth(px(300)),
+      maxWidth(px(500))
     ]);
 };
 

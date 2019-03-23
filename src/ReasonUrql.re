@@ -9,3 +9,5 @@ module Mutation = UrqlMutation;
 module Types = UrqlTypes;
 
 module Request = UrqlRequest;
+
+module Error = UrqlCombinedError;
