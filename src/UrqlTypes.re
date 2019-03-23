@@ -17,5 +17,5 @@ type graphqlRequest = {
 type response('a) =
   | Fetching
   | Data('a)
-  | Error(UrqlError.t)
+  | Error(UrqlCombinedError.t)
   | NotFound;
