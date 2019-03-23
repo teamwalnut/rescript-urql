@@ -6,14 +6,14 @@ type queryRenderPropsJs('a) = {
   .
   "fetching": bool,
   "data": Js.Nullable.t('a),
-  "error": Js.Nullable.t(UrqlError.t),
+  "error": Js.Nullable.t(UrqlCombinedError.t),
   "executeQuery": Js.Json.t => Js.Promise.t('a),
 };
 
 type queryRenderProps('a) = {
   fetching: bool,
   data: option('a),
-  error: option(UrqlError.t),
+  error: option(UrqlCombinedError.t),
   executeQuery: Js.Json.t => Js.Promise.t('a),
   response: response('a),
 };
