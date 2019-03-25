@@ -13,3 +13,9 @@ type graphqlRequest = {
   [@bs.optional]
   variables: Js.Json.t,
 };
+
+type response('a) =
+  | Fetching
+  | Data('a)
+  | Error(UrqlError.t)
+  | NotFound;
