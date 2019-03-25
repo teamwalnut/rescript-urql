@@ -1,3 +1,5 @@
+open UrqlTypes
+
 [@bs.module "urql"] external mutation: ReasonReact.reactClass = "Mutation";
 let component = ReasonReact.statelessComponent("Mutation");
 
@@ -8,12 +10,6 @@ type mutationRenderPropsJs('a) = {
   "error": Js.Nullable.t(UrqlError.t),
   "executeMutation": Js.Json.t => Js.Promise.t('a),
 };
-
-type response('a) =
-  | Fetching
-  | Data('a)
-  | Error(UrqlError.t)
-  | NotFound;
 
 type mutationRenderProps('a) = {
   fetching: bool,
