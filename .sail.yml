@@ -1,0 +1,19 @@
+tasks:
+  install:
+    image: "node:carbon"
+    command:
+      - yarn
+    args:
+      - install
+  build:
+    image: "node:carbon"
+    command:
+      - yarn
+    args:
+      - build
+  test:
+    image: "node:carbon"
+    command: 
+      - yarn
+    args:
+      - test
