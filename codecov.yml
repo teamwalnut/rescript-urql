@@ -1,0 +1,3 @@
+codecov:
+  ci:
+    - app.sail.ci

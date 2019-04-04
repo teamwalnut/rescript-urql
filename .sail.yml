@@ -13,7 +13,22 @@ tasks:
       - build
   test:
     image: "node:carbon"
-    command: 
+    command:
       - yarn
     args:
       - test
+  coverage:
+    image: "node:carbon"
+    command:
+      - yarn
+    args:
+      - coverage
+  codecov:
+    image: "node:carbon"
+    env:
+      - CODECOV_TOKEN
+    command:
+      - yarn
+    args:
+      - codecov
+      - --token=$(CODECOV_TOKEN)
