@@ -7,6 +7,7 @@
     "clean": "bsb -clean-world",
     "test": "jest",
     "coverage": "yarn test --coverage",
+    "codecov": "codecov",
     "contributors:add": "all-contributors add",
     "contributors:generate": "all-contributors generate"
   },
@@ -27,6 +28,7 @@
     "@glennsl/bs-jest": "^0.4.8",
     "all-contributors-cli": "^5.4.0",
     "bs-platform": "^4.0.18",
+    "codecov": "^3.3.0",
     "coveralls": "^3.0.2",
     "graphql": "^14.1.1",
     "graphql_ppx": "^0.2.7",
