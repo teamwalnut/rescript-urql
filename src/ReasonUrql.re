@@ -11,3 +11,5 @@ module Types = UrqlTypes;
 module Request = UrqlRequest;
 
 module Error = UrqlCombinedError;
+
+module Exchanges = UrqlClient.UrqlExchanges;

@@ -1,5 +1,3 @@
-open UrqlTypes;
-
 [@bs.module "urql"]
 external mutationComponent: ReasonReact.reactClass = "Mutation";
 
@@ -16,14 +14,14 @@ type mutationRenderProps('a) = {
   data: option('a),
   error: option(UrqlCombinedError.t),
   executeMutation: Js.Json.t => Js.Promise.t('a),
-  response: response('a),
+  response: UrqlTypes.response('a),
 };
 
 let urqlDataToRecord = (result: mutationRenderPropsJs('a)) => {
   let data = result##data |> Js.Nullable.toOption;
   let error = result##error |> Js.Nullable.toOption;
 
-  let response: response('a) =
+  let response: UrqlTypes.response('a) =
     switch (result##fetching, data, error) {
     | (true, _, _) => Fetching
     | (false, Some(data), _) => Data(data)

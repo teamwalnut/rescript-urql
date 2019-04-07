@@ -1,5 +1,3 @@
-open UrqlTypes;
-
 [@bs.module "urql"] external queryComponent: ReasonReact.reactClass = "Query";
 
 type queryRenderPropsJs('a) = {
@@ -15,14 +13,14 @@ type queryRenderProps('a) = {
   data: option('a),
   error: option(UrqlCombinedError.t),
   executeQuery: Js.Json.t => Js.Promise.t('a),
-  response: response('a),
+  response: UrqlTypes.response('a),
 };
 
 let urqlDataToRecord = (result: queryRenderPropsJs('a)) => {
   let data = result##data |> Js.Nullable.toOption;
   let error = result##error |> Js.Nullable.toOption;
 
-  let response: response('a) =
+  let response: UrqlTypes.response('a) =
     switch (result##fetching, data, error) {
     | (true, _, _) => Fetching
     | (false, Some(data), _) => Data(data)
@@ -54,7 +52,7 @@ let make = (~query, ~variables, ~requestPolicy=`CacheFirst, children) =>
       jsProps(
         ~query,
         ~variables,
-        ~requestPolicy=requestPolicyToJs(requestPolicy),
+        ~requestPolicy=UrqlTypes.requestPolicyToJs(requestPolicy),
       ),
     result =>
     children(result->urqlDataToRecord)

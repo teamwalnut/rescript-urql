@@ -22,24 +22,21 @@
   "license": "MIT",
   "dependencies": {
     "bs-fetch": "^0.3.0",
-    "wonka": "^2.0.1"
+    "graphql": "^14.1.1",
+    "wonka": "^2.0.1",
+    "urql": "^1.0.4"
   },
   "devDependencies": {
     "@glennsl/bs-jest": "^0.4.8",
     "all-contributors-cli": "^5.4.0",
     "bs-platform": "^4.0.18",
-    "codecov": "^3.3.0",
-    "coveralls": "^3.0.2",
-    "graphql": "^14.1.1",
+    "codecov": "3.2.0",
     "graphql_ppx": "^0.2.7",
-    "reason-react": ">=0.3.4",
-    "urql": "^1.0.0"
+    "reason-react": ">=0.3.4"
   },
   "peerDependencies": {
-    "graphql": "^14.1.1",
     "graphql_ppx": "^0.2.7",
-    "reason-react": ">=0.3.4",
-    "urql": "^1.0.0"
+    "reason-react": ">=0.3.4"
   },
   "jest": {
     "testMatch": [
