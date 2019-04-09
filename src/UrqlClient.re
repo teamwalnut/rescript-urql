@@ -64,6 +64,9 @@ module UrqlExchanges = {
   [@bs.module "urql"] external fallbackExchangeIO: exchangeIO = "";
   [@bs.module "urql"] external fetchExchange: exchange = "";
   [@bs.module "urql"] external subscriptionExchange: exchange = "";
+  [@bs.module "urql"]
+  external composeExchanges: array(exchange) => exchange = "";
+  [@bs.module "urql"] external defaultExchanges: array(exchange) = "";
 };
 
 [@bs.deriving abstract]
