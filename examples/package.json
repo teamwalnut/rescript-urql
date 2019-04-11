@@ -8,6 +8,7 @@
   "private": true,
   "workspaces": [
     "1-execute-query-mutation",
-    "2-mutation"
+    "2-mutation",
+    "4-exchanges"
   ]
 }
