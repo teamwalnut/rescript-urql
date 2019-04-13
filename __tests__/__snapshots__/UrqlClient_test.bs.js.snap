@@ -1,5 +1,26 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`UrqlClient Client with exchanges provided should instantiate a client with exchanges 1`] = `
+Client {
+  "activeOperations": Object {},
+  "createOperationContext": [Function],
+  "createRequestOperation": [Function],
+  "dispatchOperation": [Function],
+  "exchange": [Function],
+  "executeMutation": [Function],
+  "executeQuery": [Function],
+  "executeSubscription": [Function],
+  "fetchOptions": Object {
+    "integrity": "",
+    "referrerPolicy": "",
+  },
+  "operations$": [Function],
+  "reexecuteOperation": [Function],
+  "results$": [Function],
+  "url": "https://localhost:3000",
+}
+`;
+
 exports[`UrqlClient Client with fetchOptions provided should instantiate a client instance with fetchOptions provided as FetchFn 1`] = `
 Client {
   "activeOperations": Object {},

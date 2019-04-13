@@ -14,6 +14,14 @@ type graphqlRequest = {
   variables: Js.Json.t,
 };
 
+[@bs.deriving abstract]
+type executionResult('a) = {
+  [@bs.optional]
+  errors: array(UrqlCombinedError.graphqlError),
+  [@bs.optional]
+  data: 'a,
+};
+
 type response('a) =
   | Fetching
   | Data('a)
