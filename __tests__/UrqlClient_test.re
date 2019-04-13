@@ -54,4 +54,17 @@ describe("UrqlClient", () => {
       Expect.(expect(client) |> toMatchSnapshot);
     });
   });
+
+  describe("Client with exchanges provided", () =>
+    it("should instantiate a client with exchanges", () => {
+      let client =
+        Client.make(
+          ~url="https://localhost:3000",
+          ~exchanges=[|Exchanges.debugExchange|],
+          (),
+        );
+
+      Expect.(expect(client) |> toMatchSnapshot);
+    })
+  );
 });

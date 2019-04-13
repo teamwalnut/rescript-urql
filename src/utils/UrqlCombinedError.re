@@ -34,12 +34,12 @@ type positions = array(int);
 type originalError = Js.Exn.t;
 
 /* Extension fields to add to the formatted error. */
-type extensions('a) = Js.t({..} as 'a);
+type extension;
 
 /* A simple binding to the GraphQL error type exposed by graphql-js. See:
     https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/graphql/error/GraphQLError.d.ts.
    */
-type graphqlError('a) = {
+type graphqlError = {
   .
   "message": Js.Nullable.t(message),
   "locations": Js.Nullable.t(locations),
@@ -48,15 +48,15 @@ type graphqlError('a) = {
   "source": Js.Nullable.t(source),
   "positions": Js.Nullable.t(positions),
   "originalError": Js.Nullable.t(originalError),
-  "extensions": Js.Nullable.t(extensions('a)),
+  "extensions": Js.Nullable.t(Js.Dict.t(extension)),
 };
 
-type combinedError('a, 'b) = {
+type combinedError('a) = {
   .
   "networkError": Js.Nullable.t(Js.Exn.t),
-  "graphqlErrors": Js.Nullable.t(array(graphqlError('a))),
-  "response": Js.Nullable.t('b),
+  "graphqlErrors": Js.Nullable.t(array(graphqlError)),
+  "response": Js.Nullable.t('a),
 };
 
 [@bs.new] [@bs.module "urql"]
-external combinedError: combinedError('a, 'b) => t = "CombinedError";
+external combinedError: combinedError('a) => t = "CombinedError";

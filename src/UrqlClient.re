@@ -63,10 +63,42 @@ module UrqlExchanges = {
   [@bs.module "urql"] external dedupExchange: exchange = "";
   [@bs.module "urql"] external fallbackExchangeIO: exchangeIO = "";
   [@bs.module "urql"] external fetchExchange: exchange = "";
-  [@bs.module "urql"] external subscriptionExchange: exchange = "";
   [@bs.module "urql"]
   external composeExchanges: array(exchange) => exchange = "";
   [@bs.module "urql"] external defaultExchanges: array(exchange) = "";
+
+  [@bs.deriving abstract]
+  type observerLike('a) = {
+    next: 'a => unit,
+    error: Js.Exn.t => unit,
+    complete: unit => unit,
+  };
+
+  [@bs.deriving abstract]
+  type observableLike('a) = {
+    subscribe: observerLike('a) => {. "unsubscribe": unit => unit},
+  };
+
+  [@bs.deriving abstract]
+  type subscriptionOperation = {
+    query: string,
+    [@bs.optional]
+    variables: Js.Json.t,
+    key: string,
+    context: operationContext,
+  };
+
+  type subscriptionForwarder('a) =
+    subscriptionOperation => observableLike(UrqlTypes.executionResult('a));
+
+  [@bs.deriving abstract]
+  type subscriptionExchangeOpts('a) = {
+    forwardSubscription: subscriptionForwarder('a),
+  };
+
+  [@bs.module "urql"]
+  external subscriptionExchange: subscriptionExchangeOpts('a) => exchange =
+    "";
 };
 
 [@bs.deriving abstract]
