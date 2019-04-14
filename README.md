@@ -7,6 +7,10 @@
 
 Reason bindings for Formidable's Universal React Query Library, [`urql`](https://github.com/FormidableLabs/urql).
 
+## Maintenance Status: Experimental
+
+This project is quite new. We're not sure what our ongoing maintenance plan for this project will be. Bug reports, feature requests and pull requests are welcome. If you like this project, let us know!
+
 ## Table of Contents
 
 - [What is `reason-urql`?](#what-is-reason-urql?)
