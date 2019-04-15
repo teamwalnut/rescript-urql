@@ -4,12 +4,10 @@
 [![Travis (.org)](https://img.shields.io/travis/FormidableLabs/reason-urql.svg)](https://travis-ci.org/FormidableLabs/reason-urql)
 [![Coveralls github](https://img.shields.io/coveralls/github/FormidableLabs/reason-urql.svg)](https://coveralls.io/github/FormidableLabs/reason-urql?branch=master)
 [![All Contributors](https://img.shields.io/badge/all_contributors-4-orange.svg?style=flat-square)](#contributors)
+[![Maintenance Status][maintenance-image]](#maintenance-status)
+
 
 Reason bindings for Formidable's Universal React Query Library, [`urql`](https://github.com/FormidableLabs/urql).
-
-## Maintenance Status: Experimental
-
-This project is quite new. We're not sure what our ongoing maintenance plan for this project will be. Bug reports, feature requests and pull requests are welcome. If you like this project, let us know!
 
 ## Table of Contents
 
@@ -667,3 +665,12 @@ This project follows the [all contributors spec](https://github.com/kentcdodds/a
 <table><tr><td align="center"><a href="http://parkerziegler.com/"><img src="https://avatars0.githubusercontent.com/u/19421190?v=4" width="100px;" alt="Parker Ziegler"/><br /><sub><b>Parker Ziegler</b></sub></a><br /><a href="https://github.com/FormidableLabs/reason-urql/commits?author=parkerziegler" title="Code">💻</a> <a href="https://github.com/FormidableLabs/reason-urql/commits?author=parkerziegler" title="Documentation">📖</a> <a href="#review-parkerziegler" title="Reviewed Pull Requests">👀</a> <a href="#ideas-parkerziegler" title="Ideas, Planning, & Feedback">🤔</a></td><td align="center"><a href="https://khoanguyen.me"><img src="https://avatars2.githubusercontent.com/u/3049054?v=4" width="100px;" alt="Khoa Nguyen"/><br /><sub><b>Khoa Nguyen</b></sub></a><br /><a href="https://github.com/FormidableLabs/reason-urql/commits?author=thangngoc89" title="Code">💻</a> <a href="https://github.com/FormidableLabs/reason-urql/commits?author=thangngoc89" title="Documentation">📖</a></td><td align="center"><a href="https://twitter.com/_philpl"><img src="https://avatars0.githubusercontent.com/u/2041385?v=4" width="100px;" alt="Phil Plückthun"/><br /><sub><b>Phil Plückthun</b></sub></a><br /><a href="#ideas-kitten" title="Ideas, Planning, & Feedback">🤔</a></td><td align="center"><a href="https://github.com/kiraarghy"><img src="https://avatars2.githubusercontent.com/u/21056165?v=4" width="100px;" alt="Kara Stubbs"/><br /><sub><b>Kara Stubbs</b></sub></a><br /><a href="https://github.com/FormidableLabs/reason-urql/commits?author=kiraarghy" title="Code">💻</a> <a href="https://github.com/FormidableLabs/reason-urql/commits?author=kiraarghy" title="Tests">⚠️</a></td></tr></table>
 
 <!-- ALL-CONTRIBUTORS-LIST:END -->
+
+
+## Maintenance Status
+
+**Experimental:** This project is quite new. We're not sure what our ongoing maintenance plan for this project will be. Bug reports, feature requests and pull requests are welcome. If you like this project, let us know!
+
+[maintenance-image]: https://img.shields.io/badge/maintenance-experimental-blueviolet.svg
+
+
