@@ -5,14 +5,16 @@ type queryRenderPropsJs('a) = {
   "fetching": bool,
   "data": Js.Nullable.t('a),
   "error": Js.Nullable.t(UrqlCombinedError.t),
-  "executeQuery": Js.Json.t => Js.Promise.t('a),
+  "executeQuery":
+    Js.Json.t => Js.Promise.t(UrqlClient.UrqlExchanges.operationResult),
 };
 
 type queryRenderProps('a) = {
   fetching: bool,
   data: option('a),
   error: option(UrqlCombinedError.t),
-  executeQuery: Js.Json.t => Js.Promise.t('a),
+  executeQuery:
+    Js.Json.t => Js.Promise.t(UrqlClient.UrqlExchanges.operationResult),
   response: UrqlTypes.response('a),
 };
 
@@ -55,5 +57,5 @@ let make = (~query, ~variables, ~requestPolicy=`CacheFirst, children) =>
         ~requestPolicy=UrqlTypes.requestPolicyToJs(requestPolicy),
       ),
     result =>
-    children(result->urqlDataToRecord)
+    result |> urqlDataToRecord |> children
   );
