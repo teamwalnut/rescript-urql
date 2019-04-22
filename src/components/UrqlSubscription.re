@@ -30,7 +30,8 @@ let urqlDataToRecord = (result: subscriptionRenderPropsJs('a)) => {
   {fetching: result##fetching, data, error, response};
 };
 
-type handler('a, 'b) = ('a, 'b) => 'a;
+type handler('a, 'b) =
+  (~prevSubscriptions: option('a), ~subscription: 'b) => 'a;
 
 [@bs.deriving abstract]
 type jsProps('a, 'b) = {
