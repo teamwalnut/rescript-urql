@@ -6,6 +6,8 @@ module Query = UrqlQuery;
 
 module Mutation = UrqlMutation;
 
+module Subscription = UrqlSubscription;
+
 module Types = UrqlTypes;
 
 module Request = UrqlRequest;

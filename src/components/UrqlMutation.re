@@ -6,14 +6,16 @@ type mutationRenderPropsJs('a) = {
   "fetching": bool,
   "data": Js.Nullable.t('a),
   "error": Js.Nullable.t(UrqlCombinedError.t),
-  "executeMutation": Js.Json.t => Js.Promise.t('a),
+  "executeMutation":
+    Js.Json.t => Js.Promise.t(UrqlClient.UrqlExchanges.operationResult),
 };
 
 type mutationRenderProps('a) = {
   fetching: bool,
   data: option('a),
   error: option(UrqlCombinedError.t),
-  executeMutation: Js.Json.t => Js.Promise.t('a),
+  executeMutation:
+    Js.Json.t => Js.Promise.t(UrqlClient.UrqlExchanges.operationResult),
   response: UrqlTypes.response('a),
 };
 
@@ -38,12 +40,15 @@ let urqlDataToRecord = (result: mutationRenderPropsJs('a)) => {
   };
 };
 
+[@bs.deriving abstract]
+type jsProps = {query: string};
+
 let make =
     (
       ~query: string,
       children: mutationRenderProps('a) => ReasonReact.reactElement,
     ) =>
   ReasonReact.wrapJsForReason(
-    ~reactClass=mutationComponent, ~props={"query": query}, result =>
-    children(result->urqlDataToRecord)
+    ~reactClass=mutationComponent, ~props=jsProps(~query), result =>
+    result |> urqlDataToRecord |> children
   );
