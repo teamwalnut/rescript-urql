@@ -1,0 +1,25 @@
+{
+  "name": "5-subscription",
+  "reason": {
+    "react-jsx": 2
+  },
+  "sources": [
+    {
+      "dir": "src",
+      "type": "dev"
+    }
+  ],
+  "package-specs": [
+    {
+      "module": "commonjs",
+      "in-source": true
+    }
+  ],
+  "suffix": ".bs.js",
+  "bs-dependencies": ["reason-urql", "wonka", "reason-react", "bs-css"],
+  "refmt": 3,
+  "warnings": {
+    "error": "+5"
+  },
+  "ppx-flags": ["graphql_ppx/ppx"]
+}
