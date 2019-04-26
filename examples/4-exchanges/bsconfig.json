@@ -16,7 +16,7 @@
     }
   ],
   "suffix": ".bs.js",
-  "bs-dependencies": ["reason-urql", "wonka"],
+  "bs-dependencies": ["reason-urql", "wonka", "reason-react", "bs-css"],
   "refmt": 3,
   "warnings": {
     "error": "+5"

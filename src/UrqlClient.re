@@ -1,4 +1,6 @@
 type t;
+
+/* Helpers for supporting polymorphic fetchOptions. */
 type fetchOptions =
   | FetchObj(Fetch.requestInit)
   | FetchFn(unit => Fetch.requestInit);
@@ -9,46 +11,12 @@ let unwrapFetchOptions = fetchOptions =>
   | FetchFn(fn) => fn()
   };
 
+/* A module for binding exchange types and urql's exposed exchanges. Since this module references UrqlClient and UrqlClient references
+   this module, they need to be co-located to avoid a cyclic dependency error. */
 module UrqlExchanges = {
-  [@bs.deriving jsConverter]
-  type operationType = [
-    | [@bs.as "subscription"] `Subscription
-    | [@bs.as "query"] `Query
-    | [@bs.as "mutation"] `Mutation
-    | [@bs.as "teardown"] `Teardown
-  ];
-
-  [@bs.deriving abstract]
-  type operationContext = {
-    [@bs.optional]
-    fetchOptions: Fetch.requestInit,
-    requestPolicy: UrqlTypes.requestPolicy,
-    url: string,
-  };
-
-  [@bs.deriving abstract]
-  type operation = {
-    [@bs.optional]
-    variables: Js.Json.t,
-    key: int,
-    query: string,
-    operationName: operationType,
-    context: operationContext,
-  };
-
-  type operationData;
-
-  [@bs.deriving abstract]
-  type operationResult = {
-    operation,
-    [@bs.optional]
-    data: operationData,
-    [@bs.optional]
-    error: UrqlCombinedError.t,
-  };
-
   type exchangeIO =
-    Wonka.Types.sourceT(operation) => Wonka.Types.sourceT(operationResult);
+    Wonka.Types.sourceT(UrqlTypes.operation) =>
+    Wonka.Types.sourceT(UrqlTypes.operationResult);
 
   [@bs.deriving abstract]
   type exchangeInput = {
@@ -67,6 +35,7 @@ module UrqlExchanges = {
   external composeExchanges: array(exchange) => exchange = "";
   [@bs.module "urql"] external defaultExchanges: array(exchange) = "";
 
+  /* Specific types for the subscriptionExchange. */
   [@bs.deriving abstract]
   type observerLike('a) = {
     next: 'a => unit,
@@ -76,7 +45,8 @@ module UrqlExchanges = {
 
   [@bs.deriving abstract]
   type observableLike('a) = {
-    subscribe: observerLike('a) => {. "unsubscribe": unit => unit},
+    subscribe:
+      observerLike('a) => {. [@bs.meth] "unsubscribe": unit => unit},
   };
 
   [@bs.deriving abstract]
@@ -85,7 +55,7 @@ module UrqlExchanges = {
     [@bs.optional]
     variables: Js.Json.t,
     key: string,
-    context: operationContext,
+    context: UrqlTypes.operationContext,
   };
 
   type subscriptionForwarder('a) =
@@ -114,12 +84,35 @@ type clientOptions = {
 
 [@bs.send]
 external executeQuery:
-  (~client: t, ~query: UrqlTypes.graphqlRequest) => Wonka.Types.sourceT('a) =
+  (
+    ~client: t,
+    ~query: UrqlTypes.graphqlRequest,
+    ~opts: option(UrqlTypes.partialOperationContext)=?,
+    unit
+  ) =>
+  Wonka.Types.sourceT('a) =
   "";
 
 [@bs.send]
 external executeMutation:
-  (~client: t, ~mutation: UrqlTypes.graphqlRequest) => Wonka.Types.sourceT('a) =
+  (
+    ~client: t,
+    ~mutation: UrqlTypes.graphqlRequest,
+    ~opts: UrqlTypes.partialOperationContext=?,
+    unit
+  ) =>
+  Wonka.Types.sourceT('a) =
+  "";
+
+[@bs.send]
+external executeSubscription:
+  (
+    ~client: t,
+    ~subscription: UrqlTypes.graphqlRequest,
+    ~opts: option(UrqlTypes.partialOperationContext)=?,
+    unit
+  ) =>
+  Wonka.Types.sourceT('a) =
   "";
 /*
    `make` is equivalent to urql's `createClient`.

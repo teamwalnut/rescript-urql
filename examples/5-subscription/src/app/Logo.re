@@ -1,25 +1,28 @@
-let component = ReasonReact.statelessComponent("Logo");
-
 module Styles = {
   open Css;
-  let container =
-    style([display(`flex), flexDirection(column), alignItems(center)]);
+
+  let wrapper =
+    style([display(flexBox), flexDirection(column), alignItems(center)]);
+
   let title =
     style([
       fontFamily("'Marck Script', cursive"),
       fontSize(rem(3.5)),
       margin(px(0)),
     ]);
+
   let logo = style([transform(scale(0.5, 0.5))]);
 };
+
+let str = ReasonReact.string;
+
+let component = ReasonReact.statelessComponent("Logo");
 
 let make = _children => {
   ...component,
   render: _self => {
-    <div className=Styles.container>
-      <h3 className=Styles.title>
-        "Words of Wisdom from"->ReasonReact.string
-      </h3>
+    <div className=Styles.wrapper>
+      <h3 className=Styles.title> "Words of Wisdom from"->str </h3>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="1000"

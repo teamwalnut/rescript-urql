@@ -29,6 +29,7 @@ module LikeDog = [%graphql
 ];
 
 let mutation = LikeDog.make(~key="VmeRTX7j-", ());
+
 let mutationRequest =
   Request.createRequest(
     ~query=mutation##query,
@@ -39,22 +40,13 @@ let mutationRequest =
 module Styles = {
   open Css;
 
-  let page =
-    style([
-      display(flexBox),
-      top(px(0)),
-      left(px(0)),
-      bottom(px(0)),
-      right(px(0)),
-      position(absolute),
-    ]);
+  let wrapper = style([display(flexBox), padding(px(20))]);
 
   let side =
     style([
       display(flexBox),
       flexDirection(column),
       alignItems(center),
-      justifyContent(center),
       flexBasis(pct(50.)),
     ]);
 
@@ -74,8 +66,8 @@ module Styles = {
       backgroundColor(white),
       fontSize(rem(1.2)),
       margin(px(10)),
-      borderRadius(px(10)),
-      padding(px(5)),
+      borderRadius(px(15)),
+      padding(px(10)),
       cursor(`pointer),
     ]);
 
@@ -90,10 +82,18 @@ module Styles = {
       borderRadius(px(5)),
       maxHeight(px(200)),
       overflow(`auto),
-      minWidth(px(300)),
-      maxWidth(px(500)),
+      width(vw(30.)),
     ]);
+
+  type colors = {
+    query: string,
+    mutation: string,
+  };
+
+  let colors = {query: "48a9dc", mutation: "db4d3f"};
 };
+
+let str = ReasonReact.string;
 
 type state = {
   query: string,
@@ -108,7 +108,7 @@ type action =
   | SetMutation(string)
   | ClearMutation;
 
-let component = ReasonReact.reducerComponent("Example");
+let component = ReasonReact.reducerComponent("Previewer");
 
 let make = _children => {
   ...component,
@@ -118,7 +118,7 @@ let make = _children => {
     | ExecuteQuery =>
       ReasonReact.SideEffects(
         self =>
-          Client.executeQuery(~client, ~query=queryRequest)
+          Client.executeQuery(~client, ~query=queryRequest, ())
           |> Wonka.forEach((. response) =>
                self.send(
                  SetQuery(Js.Json.stringifyWithSpace(response##data, 2)),
@@ -130,7 +130,7 @@ let make = _children => {
     | ExecuteMutation =>
       ReasonReact.SideEffects(
         self =>
-          Client.executeMutation(~client, ~mutation=mutationRequest)
+          Client.executeMutation(~client, ~mutation=mutationRequest, ())
           |> Wonka.forEach((. response) =>
                self.send(
                  SetMutation(Js.Json.stringifyWithSpace(response##data, 2)),
@@ -142,45 +142,44 @@ let make = _children => {
     };
   },
   render: self => {
-    <div className=Styles.page>
+    <div className=Styles.wrapper>
       <div className=Styles.side>
         <section className=Styles.section>
-          <span className=Styles.title> "Query"->ReasonReact.string </span>
-          <div className={"48a9dc"->Styles.code}>
+          <span className=Styles.title> "Query"->str </span>
+          <div className={Styles.colors.query->Styles.code}>
             {|query dogs {
   dogs {
     name
     breed
     likes
   }
-}|}
-            ->ReasonReact.string
+}|}->str
           </div>
           <button
-            className={"48a9dc"->Styles.button}
+            className={Styles.colors.query->Styles.button}
             onClick={_event => self.send(ExecuteQuery)}>
-            "Execute Query"->ReasonReact.string
+            "Execute Query"->str
           </button>
         </section>
         {switch (String.length(self.state.query)) {
          | 0 => ReasonReact.null
          | _ =>
            <section className=Styles.section>
-             <span className=Styles.title> "Result"->ReasonReact.string </span>
-             <div className={"48a9dc"->Styles.code}>
-               self.state.query->ReasonReact.string
+             <span className=Styles.title> "Result"->str </span>
+             <div className={Styles.colors.query->Styles.code}>
+               self.state.query->str
              </div>
              <button
-               className={"48a9dc"->Styles.button}
+               className={Styles.colors.query->Styles.button}
                onClick={_event => self.send(ClearQuery)}>
-               "Clear Query"->ReasonReact.string
+               "Clear Query"->str
              </button>
            </section>
          }}
       </div>
       <div className=Styles.side>
         <section className=Styles.section>
-          <span className=Styles.title> "Mutation"->ReasonReact.string </span>
+          <span className=Styles.title> "Mutation"->str </span>
           <div className={"db4d3f"->Styles.code}>
             {|mutation likeDog($key: ID!) {
   likeDog(key: $key) {
@@ -189,26 +188,26 @@ let make = _children => {
     likes
   }
 }|}
-            ->ReasonReact.string
+            ->str
           </div>
           <button
             className={"db4d3f"->Styles.button}
             onClick={_event => self.send(ExecuteMutation)}>
-            "Execute Mutation"->ReasonReact.string
+            "Execute Mutation"->str
           </button>
         </section>
         {switch (String.length(self.state.mutation)) {
          | 0 => ReasonReact.null
          | _ =>
            <section className=Styles.section>
-             <span className=Styles.title> "Result"->ReasonReact.string </span>
+             <span className=Styles.title> "Result"->str </span>
              <div className={"db4d3f"->Styles.code}>
-               self.state.mutation->ReasonReact.string
+               self.state.mutation->str
              </div>
              <button
                className={"db4d3f"->Styles.button}
                onClick={_event => self.send(ClearMutation)}>
-               "Clear Mutation"->ReasonReact.string
+               "Clear Mutation"->str
              </button>
            </section>
          }}

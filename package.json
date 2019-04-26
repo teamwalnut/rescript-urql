@@ -29,7 +29,7 @@
   "devDependencies": {
     "@glennsl/bs-jest": "^0.4.8",
     "all-contributors-cli": "^5.4.0",
-    "bs-platform": "^4.0.18",
+    "bs-platform": "^5.0.3",
     "codecov": "3.2.0",
     "graphql_ppx": "^0.2.7",
     "reason-react": ">=0.3.4"

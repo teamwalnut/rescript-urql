@@ -3,20 +3,19 @@ open ReasonUrql;
 /* This is the native debugExchange that ships with `urql`, re-implemented in Reason.
      Typically, you'd just add Exchanges.debugExchange to the Client's exchange array.
    */
-let debugExchange: Exchanges.exchange =
-  exchangeInput => {
-    let forward = Exchanges.forwardGet(exchangeInput);
+let debugExchange = exchangeInput => {
+  let forward = Exchanges.forwardGet(exchangeInput);
 
-    ops =>
-      ops
-      |> Wonka.tap((. op) =>
-           Js.log2("[Exchange debug]: Incoming operation: ", op)
-         )
-      |> forward
-      |> Wonka.tap((. res) =>
-           Js.log2("[Exchange debug]: Completed operation: ", res)
-         );
-  };
+  ops =>
+    ops
+    |> Wonka.tap((. op) =>
+         Js.log2("[debugExchange]: Incoming operation: ", op)
+       )
+    |> forward
+    |> Wonka.tap((. res) =>
+         Js.log2("[debugExchange]: Completed operation: ", res)
+       );
+};
 
 let client =
   Client.make(
@@ -51,7 +50,7 @@ module LikeDog = [%graphql
   |}
 ];
 
-Client.executeQuery(~client, ~query=queryRequest)
+Client.executeQuery(~client, ~query=queryRequest, ())
 |> Wonka.subscribe((. response) => {
      let dogs = response##data##dogs;
 
@@ -68,7 +67,7 @@ Client.executeQuery(~client, ~query=queryRequest)
              (),
            );
 
-         Client.executeMutation(~client, ~mutation=mutationRequest)
+         Client.executeMutation(~client, ~mutation=mutationRequest, ())
          |> Wonka.subscribe((. response) => Js.log(response))
          |> ignore;
        },
@@ -76,3 +75,5 @@ Client.executeQuery(~client, ~query=queryRequest)
      )
      |> ignore;
    });
+
+ReactDOMRe.renderToElementWithId(<Console />, "root");
