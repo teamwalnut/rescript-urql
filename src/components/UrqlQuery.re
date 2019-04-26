@@ -5,16 +5,14 @@ type queryRenderPropsJs('a) = {
   "fetching": bool,
   "data": Js.Nullable.t('a),
   "error": Js.Nullable.t(UrqlCombinedError.t),
-  "executeQuery":
-    Js.Json.t => Js.Promise.t(UrqlClient.UrqlExchanges.operationResult),
+  "executeQuery": Js.Json.t => Js.Promise.t(UrqlTypes.operationResult),
 };
 
 type queryRenderProps('a) = {
   fetching: bool,
   data: option('a),
   error: option(UrqlCombinedError.t),
-  executeQuery:
-    Js.Json.t => Js.Promise.t(UrqlClient.UrqlExchanges.operationResult),
+  executeQuery: Js.Json.t => Js.Promise.t(UrqlTypes.operationResult),
   response: UrqlTypes.response('a),
 };
 

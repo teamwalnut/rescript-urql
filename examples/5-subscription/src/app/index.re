@@ -23,26 +23,7 @@ let urqlClient =
     (),
   );
 
-module Styles = {
-  open Css;
-
-  let container =
-    style([
-      display(`flex),
-      flexDirection(column),
-      alignItems(center),
-      justifyContent(center),
-      position(absolute),
-      top(px(0)),
-      left(px(0)),
-      right(px(0)),
-      bottom(px(0)),
-    ]);
-};
-
 ReactDOMRe.renderToElementWithId(
-  <Provider value=urqlClient>
-    <div className=Styles.container> <Logo /> <Messages /> </div>
-  </Provider>,
+  <Provider value=urqlClient> <App /> </Provider>,
   "root",
 );

@@ -11,11 +11,12 @@
     "start:demo": "webpack-dev-server --hot"
   },
   "dependencies": {
+    "bs-css": "^8.0.4",
     "reason-react": ">=0.3.4",
-    "reason-urql": "file:../../"
+    "reason-urql": "link:../../"
   },
   "devDependencies": {
-    "bs-platform": "^4.0.18",
+    "bs-platform": "^5.0.3",
     "graphql_ppx": "^0.2.8",
     "webpack": "^4.29.6",
     "webpack-cli": "^3.2.3",

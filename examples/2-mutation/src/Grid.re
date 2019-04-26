@@ -107,25 +107,31 @@ module BellyscratchDog = [%graphql
 module Styles = {
   open Css;
 
-  let container =
+  let wrapper =
     style([
       position(absolute),
+      top(px(0)),
+      bottom(px(0)),
+      left(px(0)),
+      right(px(0)),
       display(grid),
       gridTemplateRows([`fr(1.), `fr(1.), `fr(1.)]),
       gridTemplateColumns([`fr(1.), `fr(1.), `fr(1.), `fr(1.)]),
-      height(pct(100.)),
-      width(pct(100.)),
     ]);
 
   let button = shade =>
     style([
-      alignSelf(`center),
-      border(px(3), `solid, hex(shade)),
+      height(px(150)),
+      width(px(150)),
+      alignSelf(center),
+      justifySelf(center),
+      border(px(3), solid, hex(shade)),
       color(hex(shade)),
       fontSize(rem(1.25)),
       margin(px(10)),
       cursor(`pointer),
-      borderRadius(px(10)),
+      borderRadius(pct(50.)),
+      padding(px(10)),
       hover([backgroundColor(hex(shade)), color(white)]),
     ]);
 
@@ -140,7 +146,23 @@ module Styles = {
 
   let highlight = shade =>
     style([animationName(shade->fadeInOut), animationDuration(1000)]);
+
+  type colors = {
+    like: string,
+    pat: string,
+    treat: string,
+    bellyscratch: string,
+  };
+
+  let colors = {
+    like: "48a9dc",
+    pat: "db4d3f",
+    treat: "Styles.colors.pat",
+    bellyscratch: "1bda2a",
+  };
 };
+
+let str = ReasonReact.string;
 
 type highlight = (string, string);
 
@@ -155,7 +177,7 @@ type action =
   | HighlightDog(highlight)
   | DehighlightDog;
 
-let component = ReasonReact.reducerComponent("Example");
+let component = ReasonReact.reducerComponent("Grid");
 
 let make = (~client: Client.t, _children) => {
   ...component,
@@ -165,7 +187,7 @@ let make = (~client: Client.t, _children) => {
     | ExecuteQuery =>
       ReasonReact.SideEffects(
         self =>
-          Client.executeQuery(~client, ~query=queryRequest)
+          Client.executeQuery(~client, ~query=queryRequest, ())
           |> Wonka.forEach((. response) => {
                let data = response##data->parse;
                switch (data##dogs) {
@@ -200,52 +222,46 @@ let make = (~client: Client.t, _children) => {
     Js.Dict.set(variables, "key", Js.Json.string(key));
     let payload = Js.Json.object_(variables);
 
-    <div className=Styles.container>
+    <div className=Styles.wrapper>
       <Mutation query=mutationLikeDog>
         ...{({executeMutation}: Mutation.mutationRenderProps(LikeDog.t)) =>
           <button
-            className={"48a9dc"->Styles.button}
+            className={Styles.colors.like->Styles.button}
             onClick={_event => {
               executeMutation(payload) |> ignore;
-              self.send(HighlightDog((key, "48a9dc")));
+              self.send(HighlightDog((key, Styles.colors.like)));
             }}>
-            "Give a Dog a Like!"->ReasonReact.string
+            "Give a Dog a Like!"->str
             <br />
-            <span className=Styles.emoji>
-              {js|👍|js}->ReasonReact.string
-            </span>
+            <span className=Styles.emoji> {js|👍|js}->str </span>
           </button>
         }
       </Mutation>
       <Mutation query=mutationPatDog>
         ...{({executeMutation}: Mutation.mutationRenderProps(PatDog.t)) =>
           <button
-            className={"db4d3f"->Styles.button}
+            className={Styles.colors.pat->Styles.button}
             onClick={_event => {
               executeMutation(payload) |> ignore;
-              self.send(HighlightDog((key, "db4d3f")));
+              self.send(HighlightDog((key, Styles.colors.pat)));
             }}>
-            "Give a Dog a Pat!"->ReasonReact.string
+            "Give a Dog a Pat!"->str
             <br />
-            <span className=Styles.emoji>
-              {js|✋|js}->ReasonReact.string
-            </span>
+            <span className=Styles.emoji> {js|✋|js}->str </span>
           </button>
         }
       </Mutation>
       <Mutation query=mutationTreatDog>
         ...{({executeMutation}: Mutation.mutationRenderProps(TreatDog.t)) =>
           <button
-            className={"BD11E7"->Styles.button}
+            className={Styles.colors.pat->Styles.button}
             onClick={_event => {
               executeMutation(payload) |> ignore;
-              self.send(HighlightDog((key, "BD11E7")));
+              self.send(HighlightDog((key, Styles.colors.pat)));
             }}>
-            "Throw a Dog a Bone!"->ReasonReact.string
+            "Throw a Dog a Bone!"->str
             <br />
-            <span className=Styles.emoji>
-              {js|🍖|js}->ReasonReact.string
-            </span>
+            <span className=Styles.emoji> {js|🍖|js}->str </span>
           </button>
         }
       </Mutation>
@@ -254,16 +270,14 @@ let make = (~client: Client.t, _children) => {
           {executeMutation}: Mutation.mutationRenderProps(BellyscratchDog.t),
         ) =>
           <button
-            className={"1BDA2A"->Styles.button}
+            className={Styles.colors.bellyscratch->Styles.button}
             onClick={_event => {
               executeMutation(payload) |> ignore;
-              self.send(HighlightDog((key, "1BDA2A")));
+              self.send(HighlightDog((key, Styles.colors.bellyscratch)));
             }}>
-            "Give a Dog a Bellyscratch!"->ReasonReact.string
+            "Give a Dog a Bellyscratch!"->str
             <br />
-            <span className=Styles.emoji>
-              {js|🐾|js}->ReasonReact.string
-            </span>
+            <span className=Styles.emoji> {js|🐾|js}->str </span>
           </button>
         }
       </Mutation>
@@ -278,8 +292,8 @@ let make = (~client: Client.t, _children) => {
              treats={dog.treats}
              bellyscratches={dog.bellyscratches}
              className={
-               dog.key === fst(self.state.highlight) ?
-                 snd(self.state.highlight)->Styles.highlight : ""
+               dog.key === fst(self.state.highlight)
+                 ? snd(self.state.highlight)->Styles.highlight : ""
              }
            />,
          self.state.dogs,

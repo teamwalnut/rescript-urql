@@ -5,8 +5,9 @@
   },
   "sources": [
     {
-      "dir": "src",
-      "type": "dev"
+      "dir": "src/app",
+      "type": "dev",
+      "subdirs": true
     }
   ],
   "package-specs": [

@@ -14,9 +14,9 @@ module SubscribeHPMessages = [%graphql
 module Styles = {
   open Css;
 
-  let container =
+  let wrapper =
     style([
-      display(`flex),
+      display(flexBox),
       flexDirection(column),
       alignItems(center),
       justifyContent(center),
@@ -31,26 +31,17 @@ module Styles = {
   let message =
     style([
       background(linearGradient(turn(0.25), [(0, red), (100, orange)])),
-      listStyle(`none, `outside, none),
+      listStyle(none, `outside, none),
       padding(px(5)),
       margin(px(10)),
       borderRadius(px(5)),
       fontSize(rem(2.)),
       fontFamily("'PT Serif Caption', serif"),
       width(pct(50.)),
-      display(`flex),
+      display(flexBox),
       alignItems(center),
       justifyContent(center),
-      animations([
-        animation(~duration=500, ~fillMode=both, fadeIn),
-        animation(
-          ~duration=500,
-          ~fillMode=both,
-          ~direction=reverse,
-          fadeIn,
-          ~delay=4000,
-        ),
-      ]),
+      animation(~duration=500, ~fillMode=both, fadeIn),
     ]);
 
   let gradientBlock =
@@ -61,6 +52,8 @@ module Styles = {
       borderRadius(px(5)),
     ]);
 };
+
+let str = ReasonReact.string;
 
 let subscription = SubscribeHPMessages.make();
 let query = subscription##query;
@@ -73,17 +66,17 @@ let make = _children => {
     <Subscription query>
       ...{({response}) =>
         switch (response) {
-        | Fetching => <div> "Loading"->ReasonReact.string </div>
+        | Fetching => <div> "Loading"->str </div>
         | Data(d) =>
-          <div className=Styles.container>
+          <div className=Styles.wrapper>
             <div key=d##newMessage##id className=Styles.message>
               <span className=Styles.gradientBlock>
-                {d##newMessage##message->ReasonReact.string}
+                {d##newMessage##message->str}
               </span>
             </div>
           </div>
-        | Error(_e) => <div> "Error"->ReasonReact.string </div>
-        | NotFound => <div> "Not Found"->ReasonReact.string </div>
+        | Error(_e) => <div> "Error"->str </div>
+        | NotFound => <div> "Not Found"->str </div>
         }
       }
     </Subscription>,

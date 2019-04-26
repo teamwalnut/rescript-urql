@@ -18,6 +18,10 @@ describe("UrqlClient", () => {
     it("should expose an executeMutation operation", () =>
       ExpectJs.(expect(Client.executeMutation) |> toBeTruthy)
     );
+
+    it("should expose an executeSubscription operation", () =>
+      ExpectJs.(expect(Client.executeSubscription) |> toBeTruthy)
+    );
   });
 
   describe("Client with fetchOptions provided", () => {
@@ -55,7 +59,7 @@ describe("UrqlClient", () => {
     });
   });
 
-  describe("Client with exchanges provided", () =>
+  describe("Client with exchanges provided", () => {
     it("should instantiate a client with exchanges", () => {
       let client =
         Client.make(
@@ -65,6 +69,35 @@ describe("UrqlClient", () => {
         );
 
       Expect.(expect(client) |> toMatchSnapshot);
-    })
-  );
+    });
+
+    it("should allow a user to compose exchanges into a single exchange", () =>
+      Expect.(
+        expect(() =>
+          [|
+            Exchanges.debugExchange,
+            Exchanges.cacheExchange,
+            Exchanges.fetchExchange,
+          |]
+          |> Exchanges.composeExchanges
+        )
+        |> not
+        |> toThrow
+      )
+    );
+
+    it("should return a single exchange from compose exchanges", () =>
+      Expect.(
+        expect([|
+          [|
+            Exchanges.debugExchange,
+            Exchanges.cacheExchange,
+            Exchanges.fetchExchange,
+          |]
+          |> Exchanges.composeExchanges,
+        |])
+        |> toHaveLength(1)
+      )
+    );
+  });
 });
