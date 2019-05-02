@@ -45,6 +45,13 @@ yarn add reason-urql urql
 yarn add graphql_ppx --dev
 ```
 
+If using npm, please use the following commands instead.
+
+```sh
+npm install -s reason-urql urql@0.2.1
+npm install -D graphql_ppx
+```
+
 Then, make sure to update your `bs-dependencies` and `ppx_flags` in `bsconfig.json`.
 
 ```json
