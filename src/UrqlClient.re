@@ -114,6 +114,53 @@ external executeSubscription:
   ) =>
   Wonka.Types.sourceT('a) =
   "";
+
+[@bs.send]
+external executeRequestOperation:
+  (~client: t, ~operation: UrqlTypes.operation) =>
+  Wonka.Types.sourceT(UrqlTypes.operationResult) =
+  "";
+
+[@bs.send]
+external reexecuteOperation:
+  (~client: t, ~operation: UrqlTypes.operation) => unit =
+  "";
+
+[@bs.send]
+external createRequestOperationJs:
+  (
+    ~client: t,
+    ~operationType: string,
+    ~request: UrqlTypes.graphqlRequest,
+    ~opts: option(UrqlTypes.partialOperationContext)=?,
+    unit
+  ) =>
+  UrqlTypes.operation =
+  "createRequestOperation";
+
+let createRequestOperation =
+    (
+      ~client: t,
+      ~operationType: UrqlTypes.operationType,
+      ~request: UrqlTypes.graphqlRequest,
+      ~opts: option(UrqlTypes.partialOperationContext)=?,
+      (),
+    ) => {
+  let type_ = UrqlTypes.operationTypeToJs(operationType);
+  createRequestOperationJs(
+    ~client,
+    ~operationType=type_,
+    ~request,
+    ~opts,
+    (),
+  );
+};
+
+[@bs.send]
+external dispatchOperation:
+  (~client: t, ~operation: UrqlTypes.operation) => unit =
+  "";
+
 /*
    `make` is equivalent to urql's `createClient`.
    We opt to use `make` here to adhere to standards in the Reason community.
