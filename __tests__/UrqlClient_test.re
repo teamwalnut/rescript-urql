@@ -11,16 +11,32 @@ describe("UrqlClient", () => {
       Expect.(expect(client) |> toMatchSnapshot)
     );
 
-    it("should expose an executeQuery operation", () =>
+    it("should expose an executeQuery method", () =>
       ExpectJs.(expect(Client.executeQuery) |> toBeTruthy)
     );
 
-    it("should expose an executeMutation operation", () =>
+    it("should expose an executeMutation method", () =>
       ExpectJs.(expect(Client.executeMutation) |> toBeTruthy)
     );
 
-    it("should expose an executeSubscription operation", () =>
+    it("should expose an executeSubscription method", () =>
       ExpectJs.(expect(Client.executeSubscription) |> toBeTruthy)
+    );
+
+    it("should expose an executeRequestOperation method", () =>
+      ExpectJs.(expect(Client.executeRequestOperation) |> toBeTruthy)
+    );
+
+    it("should expose an reexecuteOperation method", () =>
+      ExpectJs.(expect(Client.reexecuteOperation) |> toBeTruthy)
+    );
+
+    it("should expose an createRequestOperation method", () =>
+      ExpectJs.(expect(Client.createRequestOperation) |> toBeTruthy)
+    );
+
+    it("should expose an dispatchOperation method", () =>
+      ExpectJs.(expect(Client.dispatchOperation) |> toBeTruthy)
     );
   });
 
