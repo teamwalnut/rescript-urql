@@ -228,7 +228,7 @@ let make = (~client: Client.t, _children) => {
           <button
             className={Styles.colors.like->Styles.button}
             onClick={_event => {
-              executeMutation(payload) |> ignore;
+              executeMutation(Some(payload)) |> ignore;
               self.send(HighlightDog((key, Styles.colors.like)));
             }}>
             "Give a Dog a Like!"->str
@@ -242,7 +242,7 @@ let make = (~client: Client.t, _children) => {
           <button
             className={Styles.colors.pat->Styles.button}
             onClick={_event => {
-              executeMutation(payload) |> ignore;
+              executeMutation(Some(payload)) |> ignore;
               self.send(HighlightDog((key, Styles.colors.pat)));
             }}>
             "Give a Dog a Pat!"->str
@@ -256,7 +256,7 @@ let make = (~client: Client.t, _children) => {
           <button
             className={Styles.colors.pat->Styles.button}
             onClick={_event => {
-              executeMutation(payload) |> ignore;
+              executeMutation(Some(payload)) |> ignore;
               self.send(HighlightDog((key, Styles.colors.pat)));
             }}>
             "Throw a Dog a Bone!"->str
@@ -272,7 +272,7 @@ let make = (~client: Client.t, _children) => {
           <button
             className={Styles.colors.bellyscratch->Styles.button}
             onClick={_event => {
-              executeMutation(payload) |> ignore;
+              executeMutation(Some(payload)) |> ignore;
               self.send(HighlightDog((key, Styles.colors.bellyscratch)));
             }}>
             "Give a Dog a Bellyscratch!"->str

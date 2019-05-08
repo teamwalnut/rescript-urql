@@ -5,14 +5,15 @@ type queryRenderPropsJs('a) = {
   "fetching": bool,
   "data": Js.Nullable.t('a),
   "error": Js.Nullable.t(UrqlCombinedError.t),
-  "executeQuery": Js.Json.t => Js.Promise.t(UrqlTypes.operationResult),
+  "executeQuery":
+    option(Js.Json.t) => Js.Promise.t(UrqlTypes.operationResult),
 };
 
 type queryRenderProps('a) = {
   fetching: bool,
   data: option('a),
   error: option(UrqlCombinedError.t),
-  executeQuery: Js.Json.t => Js.Promise.t(UrqlTypes.operationResult),
+  executeQuery: option(Js.Json.t) => Js.Promise.t(UrqlTypes.operationResult),
   response: UrqlTypes.response('a),
 };
 
@@ -45,15 +46,25 @@ type jsProps = {
   requestPolicy: string,
 };
 
-let make = (~query, ~variables, ~requestPolicy=`CacheFirst, children) =>
-  ReasonReact.wrapJsForReason(
-    ~reactClass=queryComponent,
-    ~props=
+let make = (~query, ~variables=?, ~requestPolicy=`CacheFirst, children) => {
+  let props =
+    switch (variables) {
+    | Some(v) =>
       jsProps(
         ~query,
-        ~variables,
+        ~variables=v,
         ~requestPolicy=UrqlTypes.requestPolicyToJs(requestPolicy),
-      ),
-    result =>
+        (),
+      )
+    | None =>
+      jsProps(
+        ~query,
+        ~requestPolicy=UrqlTypes.requestPolicyToJs(requestPolicy),
+        (),
+      )
+    };
+
+  ReasonReact.wrapJsForReason(~reactClass=queryComponent, ~props, result =>
     result |> urqlDataToRecord |> children
   );
+};
