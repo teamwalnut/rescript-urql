@@ -1,9 +1,9 @@
 {
-  "name": "2-mutation",
+  "name": "2-query",
   "version": "0.1.0",
-  "description": "An example of how to use the Mutation component in reason-urql.",
+  "description": "An example of how to use queries in reason-urql.",
   "main": "index.bs.js",
-  "author": "Parker Ziegler <parker.ziegler@formidable.com>",
+  "author": "Kara Stubbs <kara.stubbs@formidable.com>",
   "license": "MIT",
   "scripts": {
     "start": "bsb -make-world -w",
@@ -11,7 +11,7 @@
     "start:demo": "webpack-dev-server --hot"
   },
   "dependencies": {
-    "bs-css": "^8.0.2",
+    "bs-css": "^8.0.4",
     "reason-react": ">=0.3.4",
     "reason-urql": "link:../../"
   },
