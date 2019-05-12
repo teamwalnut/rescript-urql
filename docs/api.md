@@ -144,6 +144,53 @@ The `Subscription` component allows you to subscribe to GraphQL subscriptions em
 | `error`    | `CombinedError.t`    | The error(s), if any, returned by the GraphQL operation.                                                                                |
 | `response` | `Types.response('a)` | A variant containing constructors for `Data`, `Error`, `Fetching` and `NotFound`. Useful for pattern matching to render conditional UI. |
 
+#### Example
+
+```reason
+open ReasonUrql;
+
+/* You'll need to create your own subscription client here. Check out examples/5-subscription
+to see an example using subscription-transport-ws, which is the protocol used by apollo-server. */
+let forwardSubscription = operation => /* Send operation to your subscription client. */
+let subscriptionExchangeOpts = Exchanges.subscriptionExchangeOpts(~forwardSubscription);
+
+let client = Client.make(
+  ~url="https://localhost:3000/graphql",
+  ~exchanges=[|Exchanges.subscriptionExchange(subscriptionExchangeOpts)|],
+  ()
+);
+
+module SubscribeMessages = [%graphql
+  {|
+  subscription subscribeMessages {
+    newMessage {
+      id
+      message
+    }
+  }
+|}
+];
+
+let query = SubscribeMessages.make()##query;
+
+let component = ReasonReact.statelessComponent("Messages");
+
+let make = _children => {
+  ...component,
+  render: _self =>
+    <Subscription query>
+      ...{({response}) =>
+        switch (response) {
+          | Fetching => /* Render loading UI. */
+          | Data(d) => /* Render UI with subscription data. */
+          | Error(e) => /* Render error handling UI. */
+          | NotFound => /* Render fallback UI. This may occur if your GraphQL server is not running. */
+        }
+      }
+    </Subscription>,
+};
+```
+
 ### `Provider`
 
 The `Provider`'s responsibility is to pass the `urql` client instance down to `Query`, `Mutation`, and `Subscription` components through context. Wrap the root of your application with `Provider`.
@@ -188,14 +235,18 @@ Instantiate an `urql` client instance.
   ~fetchOptions: option(fetchOptions)=?,
   ~exchanges: option(array(Exchanges.exchange))=?,
   unit
-) => t
+) => Client.t
 ```
+
+#### Arguments
 
 | Argument       | Type                                  | Description                                       |
 | -------------- | ------------------------------------- | ------------------------------------------------- |
 | `url`          | `string`                              | The url of your GraphQL API.                      |
 | `fetchOptions` | `option(fetchOptions)=?`              | Optional fetch options to be used by your client. |
 | `exchanges`    | `option(array(Exchanges.exchange))=?` | The array of exchanges to be used by your client. |
+
+#### Examples
 
 **Create a client with just a `url`.**
 
@@ -232,14 +283,18 @@ let client = Client.make(
     Exchanges.dedupExchange,
     Exchanges.cacheExchange,
     Exchanges.debugExchange
-  |], ());
+  |],
+  ()
+);
 ```
 
-#### `Client.executeQuery` - execute a GraphQL query operation.
+### `Client.executeQuery`
+
+Imperatively execute a GraphQL query operation.
 
 ```reason
 (
-  ~client: t,
+  ~client: Client.t,
   ~query: Types.graphqlRequest,
   ~opts: option(Types.partialOperationContext)=?,
   unit
@@ -254,7 +309,7 @@ Wonka.Types.sourceT('a) =
 | `query`  | `Types.graphqlRequest`                    | The GraphQL query request object, consisting of a `query` string and, optionally, a `variables` `Js.Json.t`. |
 | `opts`   | `option(Types.partialOperationContext)=?` | Additional options to pass to the operation.                                                                 |
 
-**Execute a GraphQL query.**
+#### Example
 
 ```reason
 open ReasonUrql;
@@ -281,7 +336,9 @@ Client.executeQuery(~client, ~query, ())
   });
 ```
 
-#### `Client.executeMutation` - execute a GraphQL mutation operation.
+#### `Client.executeMutation`
+
+Execute a GraphQL mutation operation.
 
 ```reason
 (
@@ -300,7 +357,7 @@ Wonka.Types.sourceT('a) =
 | `mutation` | `Types.graphqlRequest`                    | The GraphQL mutation request object, consisting of a `query` string and, optionally, a `variables` `Js.Json.t`. |
 | `opts`     | `option(Types.partialOperationContext)=?` | Additional options to pass to the operation.                                                                    |
 
-**Execute a GraphQL mutation.**
+#### Example
 
 ```reason
 open ReasonUrql;
@@ -334,7 +391,9 @@ Client.executeQuery(~client, ~mutation=mutationRequest, ())
   });
 ```
 
-#### `Client.executeSubscription` - execute a GraphQL subscription operation.
+#### `Client.executeSubscription`
+
+Execute a GraphQL subscription operation.
 
 ```reason
 (
@@ -353,12 +412,21 @@ Wonka.Types.sourceT('a) =
 | `subscription` | `Types.graphqlRequest`                    | The GraphQL subscription request object, consisting of a `query` string and, optionally, a `variables` `Js.Json.t`. |
 | `opts`         | `option(Types.partialOperationContext)=?` | Additional options to pass to the operation.                                                                        |
 
-**Execute a GraphQL subscription.**
+#### Example
 
 ```reason
-open ReasonUrql;
+open ReasonUrql;'
 
-let client = Client.make(~url="https://localhost:3000/graphql", ());
+/* You'll need to create your own subscription client here. Check out examples/5-subscription
+to see an example using subscription-transport-ws, which is the protocol used by apollo-server. */
+let forwardSubscription = operation => /* Send operation to your subscription client. */
+let subscriptionExchangeOpts = Exchanges.subscriptionExchangeOpts(~forwardSubscription);
+
+let client = Client.make(
+  ~url="https://localhost:3000/graphql",
+  ~exchanges=[|Exchanges.subscriptionExchange(subscriptionExchangeOpts)|],
+  ()
+);
 
 module SubscribeMessages = [%graphql
   {|
@@ -371,7 +439,8 @@ module SubscribeMessages = [%graphql
 |}
 ];
 
-let subscription = Request.createRequest(~query=SubscribeMessages.make()##query, ());
+let query = SubscribeMessages.make()##query;
+let subscription = Request.createRequest(~query, ());
 
 Client.executeSubscription(~client, ~subscription, ())
   |> Wonka.subscribe((. result) => {
