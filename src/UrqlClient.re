@@ -2,12 +2,12 @@ type t;
 
 /* Helpers for supporting polymorphic fetchOptions. */
 type fetchOptions =
-  | FetchObj(Fetch.requestInit)
+  | FetchOpts(Fetch.requestInit)
   | FetchFn(unit => Fetch.requestInit);
 
 let unwrapFetchOptions = fetchOptions =>
   switch (fetchOptions) {
-  | FetchObj(obj) => obj
+  | FetchOpts(opts) => opts
   | FetchFn(fn) => fn()
   };
 
@@ -168,7 +168,7 @@ external dispatchOperation:
 let make =
     (
       ~url,
-      ~fetchOptions=FetchObj(Fetch.RequestInit.make()),
+      ~fetchOptions=FetchOpts(Fetch.RequestInit.make()),
       ~exchanges=[|
                    UrqlExchanges.dedupExchange,
                    UrqlExchanges.cacheExchange,

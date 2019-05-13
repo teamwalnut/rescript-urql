@@ -49,12 +49,12 @@ describe("UrqlClient", () => {
       );
 
     it(
-      "should instantiate a client instance with fetchOptions provided as FetchObj",
+      "should instantiate a client instance with fetchOptions provided as FetchOpts",
       () => {
       let client =
         Client.make(
           ~url="https://localhost:3000",
-          ~fetchOptions=Client.FetchObj(fetchOptions),
+          ~fetchOptions=Client.FetchOpts(fetchOptions),
           (),
         );
 

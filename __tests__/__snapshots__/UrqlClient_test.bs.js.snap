@@ -46,7 +46,7 @@ Client {
 }
 `;
 
-exports[`UrqlClient Client with fetchOptions provided should instantiate a client instance with fetchOptions provided as FetchObj 1`] = `
+exports[`UrqlClient Client with fetchOptions provided should instantiate a client instance with fetchOptions provided as FetchOpts 1`] = `
 Client {
   "activeOperations": Object {},
   "createOperationContext": [Function],
