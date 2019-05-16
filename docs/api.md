@@ -1,6 +1,6 @@
 # API
 
-This document provides all of the API documentation for `reason-urql`. For more on how to get started, check out our [Getting Started](/docs/getting-started.md) guide.
+This document provides all of the API documentation for `reason-urql`.
 
 ## Components
 
@@ -190,6 +190,8 @@ let make = _children => {
     </Subscription>,
 };
 ```
+
+**Check out the `35-subscription` example in the `examples` directory to learn more about using the `Subscription` component.**
 
 ### `Provider`
 
