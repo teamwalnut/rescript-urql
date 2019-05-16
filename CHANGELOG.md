@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.0-beta] - 🎉 v1 (Beta) - 2019-05-16
+
+This represents the beta release of v1, which provides support for [`urql` v1](https://github.com/FormidableLabs/urql/tree/v1.0.5).
+
+### Added
+
+- Bindings for `Query`, `Mutation`, and `Subscription` components.
+- Bindings for `Client` with support for **exchanges**.
+- Bindings for `Provider`.
+- Bindings for `urql`'s type interfaces, utils, and helpers.
+- Examples for `Query`, `Mutation`, `Subscription`, exposed exchanges, custom exchanges, and imperative `Client` methods.
+- First tests for `UrqlClient`.
+
+#### Diff
+
+https://github.com/parkerziegler/reason-urql/compare/v0.1.1...v1.0.0-beta
+
 ## [0.1.1] - Coverage 💅 - 2019-01-29
 
 ### Added
