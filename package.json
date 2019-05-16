@@ -7,7 +7,6 @@
     "clean": "bsb -clean-world",
     "test": "jest",
     "coverage": "yarn test --coverage",
-    "codecov": "codecov",
     "contributors:add": "all-contributors add",
     "contributors:generate": "all-contributors generate"
   },
@@ -18,19 +17,21 @@
     "graphql",
     "urql"
   ],
-  "author": "Parker Ziegler",
+  "author": "Parker Ziegler <parker.ziegler@formidable.com>",
+  "contributors": [
+    "Kara Stubbs <kara.stubbs@formidable.com>"
+  ],
   "license": "MIT",
   "dependencies": {
     "bs-fetch": "^0.3.0",
     "graphql": "^14.1.1",
-    "wonka": "^2.0.1",
-    "urql": "^1.0.4"
+    "urql": "^1.0.4",
+    "wonka": "^2.0.1"
   },
   "devDependencies": {
     "@glennsl/bs-jest": "^0.4.8",
     "all-contributors-cli": "^5.4.0",
     "bs-platform": "^5.0.3",
-    "codecov": "3.2.0",
     "graphql_ppx": "^0.2.7",
     "reason-react": ">=0.3.4"
   },

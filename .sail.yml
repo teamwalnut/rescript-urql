@@ -23,12 +23,3 @@ tasks:
       - yarn
     args:
       - coverage
-  codecov:
-    image: "node:carbon"
-    env:
-      - CODECOV_TOKEN
-    command:
-      - yarn
-    args:
-      - codecov
-      - --token=$(CODECOV_TOKEN)
