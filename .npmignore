@@ -1,14 +1,11 @@
-src/*.bs.js
-/example/
-/assets/
-/.graphql_ppx_cache/
-webpack.*.js
-graphql_schema.json
-lib/bs/example
-.merlin
-/build/
-/__tests__/
-/coverage/
-/lib/bs/__tests__/
-.travis.yml
-.all-contributorsrc
+/*
+!src
+!docs/*.md
+!LICENSE
+!README.md
+!CHANGELOG.md
+!CONTRIBUTING.md
+!bsconfig.json
+!package.json
+# exclude BuckleScript output
+src/**/*.bs.js

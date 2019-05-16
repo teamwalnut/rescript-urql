@@ -3,10 +3,14 @@
 .bsb.lock
 npm-debug.log
 /lib/bs/
+/lib/ocaml/
 /node_modules/
 *.bs.js
 example/build/
-/.graphql_ppx_cache/
+.graphql_ppx_cache
 /.vscode/
 /build/
 /coverage/
+/examples/node_modules/
+/examples/**/node_modules/
+/examples/**/lib/

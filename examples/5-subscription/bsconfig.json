@@ -1,17 +1,13 @@
 {
-  "name": "reason-urql",
+  "name": "5-subscription",
   "reason": {
     "react-jsx": 2
   },
   "sources": [
     {
-      "dir": "src",
+      "dir": "src/app",
+      "type": "dev",
       "subdirs": true
-    },
-    {
-      "dir": "__tests__",
-      "subdirs": true,
-      "type": "dev"
     }
   ],
   "package-specs": [
@@ -21,9 +17,7 @@
     }
   ],
   "suffix": ".bs.js",
-  "namespace": false,
-  "bs-dependencies": ["reason-react", "bs-fetch", "wonka"],
-  "bs-dev-dependencies": ["@glennsl/bs-jest"],
+  "bs-dependencies": ["reason-urql", "wonka", "reason-react", "bs-css"],
   "refmt": 3,
   "warnings": {
     "error": "+5"

@@ -1,97 +1,187 @@
-/* Model fetchOptions as a variant, and unwrap the user supplied prop to an object
-   to pass directly to urql. */
+type t;
+
+/* Helpers for supporting polymorphic fetchOptions. */
 type fetchOptions =
-  | FetchObj(Fetch.requestInit)
+  | FetchOpts(Fetch.requestInit)
   | FetchFn(unit => Fetch.requestInit);
 
-let unwrapFetchOptions: fetchOptions => Fetch.requestInit =
-  (opts: fetchOptions) =>
-    switch (opts) {
-    | FetchObj(obj) => obj
-    | FetchFn(fn) => fn()
-    };
+let unwrapFetchOptions = fetchOptions =>
+  switch (fetchOptions) {
+  | FetchOpts(opts) => opts
+  | FetchFn(fn) => fn()
+  };
 
-type data;
-type write = (~hash: string, ~data: data) => Js.Promise.t(unit);
-type read('value) = (~hash: string) => Js.Promise.t('value);
-type invalidate = (~hash: string) => Js.Promise.t(unit);
-type invalidateAll = unit => Js.Promise.t(unit);
-type update('store, 'value) =
-  (~callback: (~store: 'store, ~key: string, ~value: 'value) => unit) =>
-  Js.Promise.t(unit);
+/* A module for binding exchange types and urql's exposed exchanges. Since this module references UrqlClient and UrqlClient references
+   this module, they need to be co-located to avoid a cyclic dependency error. */
+module UrqlExchanges = {
+  type exchangeIO =
+    Wonka.Types.sourceT(UrqlTypes.operation) =>
+    Wonka.Types.sourceT(UrqlTypes.operationResult);
 
-[@bs.deriving jsConverter]
-type cache('store, 'value) = {
-  write,
-  read: read('value),
-  invalidate,
-  invalidateAll,
-  update: update('store, 'value),
-};
+  [@bs.deriving abstract]
+  type exchangeInput = {
+    forward: exchangeIO,
+    client: t,
+  };
 
-type cacheJs('store, 'value) = {
-  .
-  "write": write,
-  "read": read('value),
-  "invalidate": invalidate,
-  "invalidateAll": invalidateAll,
-  "update": update('store, 'value),
+  type exchange = exchangeInput => exchangeIO;
+
+  [@bs.module "urql"] external cacheExchange: exchange = "";
+  [@bs.module "urql"] external debugExchange: exchange = "";
+  [@bs.module "urql"] external dedupExchange: exchange = "";
+  [@bs.module "urql"] external fallbackExchangeIO: exchangeIO = "";
+  [@bs.module "urql"] external fetchExchange: exchange = "";
+  [@bs.module "urql"]
+  external composeExchanges: array(exchange) => exchange = "";
+  [@bs.module "urql"] external defaultExchanges: array(exchange) = "";
+
+  /* Specific types for the subscriptionExchange. */
+  [@bs.deriving abstract]
+  type observerLike('a) = {
+    next: 'a => unit,
+    error: Js.Exn.t => unit,
+    complete: unit => unit,
+  };
+
+  [@bs.deriving abstract]
+  type observableLike('a) = {
+    subscribe:
+      observerLike('a) => {. [@bs.meth] "unsubscribe": unit => unit},
+  };
+
+  [@bs.deriving abstract]
+  type subscriptionOperation = {
+    query: string,
+    [@bs.optional]
+    variables: Js.Json.t,
+    key: string,
+    context: UrqlTypes.operationContext,
+  };
+
+  type subscriptionForwarder('a) =
+    subscriptionOperation => observableLike(UrqlTypes.executionResult('a));
+
+  [@bs.deriving abstract]
+  type subscriptionExchangeOpts('a) = {
+    forwardSubscription: subscriptionForwarder('a),
+  };
+
+  [@bs.module "urql"]
+  external subscriptionExchange: subscriptionExchangeOpts('a) => exchange =
+    "";
 };
 
 [@bs.deriving abstract]
-type clientConfig('store, 'value) = {
+type clientOptions = {
   url: string,
   [@bs.optional]
-  cache: cacheJs('store, 'value),
-  [@bs.optional]
-  initialCache: 'store,
-  [@bs.optional]
   fetchOptions: Fetch.requestInit,
+  [@bs.optional]
+  exchanges: array(UrqlExchanges.exchange),
 };
 
-type client;
-
-[@bs.new] [@bs.module "urql"]
-external createClient: clientConfig('store, 'value) => client = "Client";
+[@bs.new] [@bs.module "urql"] external client: clientOptions => t = "Client";
 
 [@bs.send]
 external executeQuery:
-  (~client: client, ~query: UrqlQuery.urqlQuery, ~skipCache: bool) =>
-  Js.Promise.t('a) =
+  (
+    ~client: t,
+    ~query: UrqlTypes.graphqlRequest,
+    ~opts: option(UrqlTypes.partialOperationContext)=?,
+    unit
+  ) =>
+  Wonka.Types.sourceT('a) =
   "";
 
 [@bs.send]
 external executeMutation:
-  (~client: client, ~mutation: UrqlMutation.urqlMutation) => Js.Promise.t('a) =
+  (
+    ~client: t,
+    ~mutation: UrqlTypes.graphqlRequest,
+    ~opts: UrqlTypes.partialOperationContext=?,
+    unit
+  ) =>
+  Wonka.Types.sourceT('a) =
   "";
 
-let make =
+[@bs.send]
+external executeSubscription:
+  (
+    ~client: t,
+    ~subscription: UrqlTypes.graphqlRequest,
+    ~opts: option(UrqlTypes.partialOperationContext)=?,
+    unit
+  ) =>
+  Wonka.Types.sourceT('a) =
+  "";
+
+[@bs.send]
+external executeRequestOperation:
+  (~client: t, ~operation: UrqlTypes.operation) =>
+  Wonka.Types.sourceT(UrqlTypes.operationResult) =
+  "";
+
+[@bs.send]
+external reexecuteOperation:
+  (~client: t, ~operation: UrqlTypes.operation) => unit =
+  "";
+
+[@bs.send]
+external createRequestOperationJs:
+  (
+    ~client: t,
+    ~operationType: string,
+    ~request: UrqlTypes.graphqlRequest,
+    ~opts: option(UrqlTypes.partialOperationContext)=?,
+    unit
+  ) =>
+  UrqlTypes.operation =
+  "createRequestOperation";
+
+let createRequestOperation =
     (
-      ~url: string,
-      ~cache=?,
-      ~initialCache=?,
-      ~fetchOptions=FetchObj(Fetch.RequestInit.make()),
+      ~client: t,
+      ~operationType: UrqlTypes.operationType,
+      ~request: UrqlTypes.graphqlRequest,
+      ~opts: option(UrqlTypes.partialOperationContext)=?,
       (),
     ) => {
-  /* Generate the client config */
-  let config =
-    switch (cache) {
-    | Some(c) =>
-      clientConfig(
-        ~url,
-        ~cache=c |> cacheToJs,
-        ~initialCache?,
-        ~fetchOptions=unwrapFetchOptions(fetchOptions),
-        (),
-      )
-    | None =>
-      clientConfig(
-        ~url,
-        ~initialCache?,
-        ~fetchOptions=unwrapFetchOptions(fetchOptions),
-        (),
-      )
-    };
+  let type_ = UrqlTypes.operationTypeToJs(operationType);
+  createRequestOperationJs(
+    ~client,
+    ~operationType=type_,
+    ~request,
+    ~opts,
+    (),
+  );
+};
 
-  createClient(config);
+[@bs.send]
+external dispatchOperation:
+  (~client: t, ~operation: UrqlTypes.operation) => unit =
+  "";
+
+/*
+   `make` is equivalent to urql's `createClient`.
+   We opt to use `make` here to adhere to standards in the Reason community.
+ */
+let make =
+    (
+      ~url,
+      ~fetchOptions=FetchOpts(Fetch.RequestInit.make()),
+      ~exchanges=[|
+                   UrqlExchanges.dedupExchange,
+                   UrqlExchanges.cacheExchange,
+                   UrqlExchanges.fetchExchange,
+                 |],
+      (),
+    ) => {
+  let options =
+    clientOptions(
+      ~url,
+      ~fetchOptions=unwrapFetchOptions(fetchOptions),
+      ~exchanges,
+      (),
+    );
+  client(options);
 };

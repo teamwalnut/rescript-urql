@@ -1,0 +1,37 @@
+{
+  "name": "5-subscription",
+  "version": "0.1.0",
+  "description": "An example of how to use the Subscription component in reason-urql.",
+  "main": "index.bs.js",
+  "author": "Parker Ziegler <parker.ziegler@formidable.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "bsb -make-world -w",
+    "clean": "bsb -clean-world",
+    "webpack": "webpack-dev-server --hot",
+    "server": "node src/server/index.js",
+    "start:demo": "run-p server webpack"
+  },
+  "dependencies": {
+    "bs-css": "^8.0.2",
+    "reason-react": ">=0.3.4",
+    "reason-urql": "link:../../"
+  },
+  "devDependencies": {
+    "apollo-server-express": "^2.4.8",
+    "bs-platform": "^5.0.3",
+    "cors": "^2.8.5",
+    "express": "^4.16.4",
+    "faker": "^4.1.0",
+    "fakergem": "^1.0.2",
+    "graphql": "^14.2.1",
+    "graphql-subscriptions": "^1.1.0",
+    "graphql-tag": "^2.10.1",
+    "graphql_ppx": "^0.2.8",
+    "npm-run-all": "^4.1.5",
+    "subscriptions-transport-ws": "^0.9.16",
+    "webpack": "^4.29.6",
+    "webpack-cli": "^3.2.3",
+    "webpack-dev-server": "^3.2.1"
+  }
+}

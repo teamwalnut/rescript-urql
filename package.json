@@ -7,7 +7,6 @@
     "clean": "bsb -clean-world",
     "test": "jest",
     "coverage": "yarn test --coverage",
-    "start:demo": "webpack-dev-server --hot --config webpack.config.js",
     "contributors:add": "all-contributors add",
     "contributors:generate": "all-contributors generate"
   },
@@ -18,48 +17,31 @@
     "graphql",
     "urql"
   ],
-  "author": "Parker Ziegler",
+  "author": "Parker Ziegler <parker.ziegler@formidable.com>",
+  "contributors": [
+    "Kara Stubbs <kara.stubbs@formidable.com>"
+  ],
   "license": "MIT",
   "dependencies": {
-    "bs-fetch": "^0.3.0"
+    "bs-fetch": "^0.3.0",
+    "graphql": "^14.1.1",
+    "urql": "^1.0.4",
+    "wonka": "^2.0.1"
   },
   "devDependencies": {
-    "@glennsl/bs-jest": "^0.4.4",
+    "@glennsl/bs-jest": "^0.4.8",
     "all-contributors-cli": "^5.4.0",
-    "bs-enzyme": "^0.5.3",
-    "bs-platform": "^4.0.0",
-    "cors": "^2.8.4",
-    "coveralls": "^3.0.2",
-    "enzyme-adapter-react-16": "^1.7.0",
-    "es6-promise": "^4.2.4",
-    "express": "^4.16.3",
-    "express-graphql": "^0.6.12",
-    "graphql": "^0.13.2",
-    "graphql-tools": "^3.0.2",
+    "bs-platform": "^5.0.3",
     "graphql_ppx": "^0.2.7",
-    "isomorphic-fetch": "^2.2.1",
-    "react": "^16.2.0",
-    "react-dom": "^16.2.0",
-    "reason-react": ">=0.3.4",
-    "url-loader": "^1.1.2",
-    "urql": "^0.2.1",
-    "webpack": "^4.0.1",
-    "webpack-cli": "^3.1.1",
-    "webpack-dev-server": "^3.1.10"
+    "reason-react": ">=0.3.4"
   },
   "peerDependencies": {
     "graphql_ppx": "^0.2.7",
-    "react": "^16.2.0",
-    "react-dom": "^16.2.0",
-    "reason-react": ">=0.3.4",
-    "urql": "^0.2.1"
+    "reason-react": ">=0.3.4"
   },
   "jest": {
     "testMatch": [
       "<rootDir>/__tests__/*_test.bs.js"
-    ],
-    "coveragePathIgnorePatterns": [
-      "<rootDir>/__tests__/utils/TestUtils.bs.js"
     ]
   }
 }

@@ -1,64 +1,36 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`UrqlClient Client with cache provided should instantiate a client instance with cache 1`] = `
+exports[`UrqlClient Client with exchanges provided should instantiate a client with exchanges 1`] = `
 Client {
-  "cache": Object {
-    "invalidate": [Function],
-    "invalidateAll": [Function],
-    "read": [Function],
-    "update": [Function],
-    "write": [Function],
-  },
+  "activeOperations": Object {},
+  "createOperationContext": [Function],
+  "createRequestOperation": [Function],
+  "dispatchOperation": [Function],
+  "exchange": [Function],
   "executeMutation": [Function],
   "executeQuery": [Function],
+  "executeSubscription": [Function],
   "fetchOptions": Object {
     "integrity": "",
     "referrerPolicy": "",
   },
-  "refreshAllFromCache": [Function],
-  "store": Object {},
-  "subscriptions": Object {},
-  "updateSubscribers": [Function],
+  "operations$": [Function],
+  "reexecuteOperation": [Function],
+  "results$": [Function],
   "url": "https://localhost:3000",
 }
 `;
 
-exports[`UrqlClient Client with cache provided should use an initialCache if provided 1`] = `
+exports[`UrqlClient Client with fetchOptions provided should instantiate a client instance with fetchOptions provided as FetchFn 1`] = `
 Client {
-  "cache": Object {
-    "invalidate": [Function],
-    "invalidateAll": [Function],
-    "read": [Function],
-    "update": [Function],
-    "write": [Function],
-  },
+  "activeOperations": Object {},
+  "createOperationContext": [Function],
+  "createRequestOperation": [Function],
+  "dispatchOperation": [Function],
+  "exchange": [Function],
   "executeMutation": [Function],
   "executeQuery": [Function],
-  "fetchOptions": Object {
-    "integrity": "",
-    "referrerPolicy": "",
-  },
-  "refreshAllFromCache": [Function],
-  "store": Object {
-    "VmeRTX7j-": "{ name: Dixie, likes: 1000, breed: Pit Bull }",
-  },
-  "subscriptions": Object {},
-  "updateSubscribers": [Function],
-  "url": "https://localhost:3000",
-}
-`;
-
-exports[`UrqlClient Client with fetchOptions provided should instantiate a client instance with fetchOptions 1`] = `
-Client {
-  "cache": Object {
-    "invalidate": [Function],
-    "invalidateAll": [Function],
-    "read": [Function],
-    "update": [Function],
-    "write": [Function],
-  },
-  "executeMutation": [Function],
-  "executeQuery": [Function],
+  "executeSubscription": [Function],
   "fetchOptions": Object {
     "headers": Object {
       "Content-Type": "application/json",
@@ -67,58 +39,55 @@ Client {
     "method": "POST",
     "referrerPolicy": "",
   },
-  "refreshAllFromCache": [Function],
-  "store": Object {},
-  "subscriptions": Object {},
-  "updateSubscribers": [Function],
+  "operations$": [Function],
+  "reexecuteOperation": [Function],
+  "results$": [Function],
   "url": "https://localhost:3000",
 }
 `;
 
-exports[`UrqlClient Client with initialCache provided should instantiate a client instance with initialCache 1`] = `
+exports[`UrqlClient Client with fetchOptions provided should instantiate a client instance with fetchOptions provided as FetchOpts 1`] = `
 Client {
-  "cache": Object {
-    "invalidate": [Function],
-    "invalidateAll": [Function],
-    "read": [Function],
-    "update": [Function],
-    "write": [Function],
-  },
+  "activeOperations": Object {},
+  "createOperationContext": [Function],
+  "createRequestOperation": [Function],
+  "dispatchOperation": [Function],
+  "exchange": [Function],
   "executeMutation": [Function],
   "executeQuery": [Function],
+  "executeSubscription": [Function],
   "fetchOptions": Object {
+    "headers": Object {
+      "Content-Type": "application/json",
+    },
     "integrity": "",
+    "method": "POST",
     "referrerPolicy": "",
   },
-  "refreshAllFromCache": [Function],
-  "store": Object {
-    "VmeRTX7j-": "{ name: Dixie, likes: 1000, breed: Pit Bull }",
-  },
-  "subscriptions": Object {},
-  "updateSubscribers": [Function],
+  "operations$": [Function],
+  "reexecuteOperation": [Function],
+  "results$": [Function],
   "url": "https://localhost:3000",
 }
 `;
 
 exports[`UrqlClient Client with only a url provided should instantiate a client instance 1`] = `
 Client {
-  "cache": Object {
-    "invalidate": [Function],
-    "invalidateAll": [Function],
-    "read": [Function],
-    "update": [Function],
-    "write": [Function],
-  },
+  "activeOperations": Object {},
+  "createOperationContext": [Function],
+  "createRequestOperation": [Function],
+  "dispatchOperation": [Function],
+  "exchange": [Function],
   "executeMutation": [Function],
   "executeQuery": [Function],
+  "executeSubscription": [Function],
   "fetchOptions": Object {
     "integrity": "",
     "referrerPolicy": "",
   },
-  "refreshAllFromCache": [Function],
-  "store": Object {},
-  "subscriptions": Object {},
-  "updateSubscribers": [Function],
+  "operations$": [Function],
+  "reexecuteOperation": [Function],
+  "results$": [Function],
   "url": "https://localhost:3000",
 }
 `;
