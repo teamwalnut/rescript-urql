@@ -1,5 +1,4 @@
-[@bs.module "urql"] external provider: ReasonReact.reactClass = "Provider";
-let component = ReasonReact.statelessComponent("Provider");
-
-let make = (~value: UrqlClient.t, children) =>
-  ReasonReact.wrapJsForReason(~reactClass=provider, ~props={"value": value}, children);
+[@bs.module "urql"] [@react.component]
+external make:
+  (~value: UrqlClient.t, ~children: React.element) => React.element =
+  "Provider";

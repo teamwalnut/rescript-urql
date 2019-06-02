@@ -43,12 +43,17 @@ let urqlDataToRecord = (result: mutationRenderPropsJs('a)) => {
 [@bs.deriving abstract]
 type jsProps = {query: string};
 
+module MutationJs = {
+  [@bs.module "urql"] [@react.component]
+  external make:
+    (~query: string, ~children: mutationRenderPropsJs('a) => React.element) =>
+    React.element =
+    "Mutation";
+};
+
+[@react.component]
 let make =
-    (
-      ~query: string,
-      children: mutationRenderProps('a) => ReasonReact.reactElement,
-    ) =>
-  ReasonReact.wrapJsForReason(
-    ~reactClass=mutationComponent, ~props=jsProps(~query), result =>
-    result |> urqlDataToRecord |> children
-  );
+    (~query: string, ~children: mutationRenderProps('a) => React.element) =>
+  <MutationJs query>
+    {result => result |> urqlDataToRecord |> children}
+  </MutationJs>;

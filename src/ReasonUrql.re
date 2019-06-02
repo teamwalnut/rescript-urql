@@ -15,3 +15,7 @@ module Request = UrqlRequest;
 module Error = UrqlCombinedError;
 
 module Exchanges = UrqlClient.UrqlExchanges;
+
+module Hooks = {
+  include UrqlUseMutation;
+};

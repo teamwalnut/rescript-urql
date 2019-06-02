@@ -8,6 +8,9 @@ module.exports = {
     publicPath: "/public/",
     filename: "index.js"
   },
+  resolve: {
+    modules: [path.resolve(__dirname, "../../node_modules"), "node_modules"]
+  },
   devServer: {
     open: true,
     contentBase: path.resolve(__dirname, "public")
