@@ -23,8 +23,8 @@ module QueryJs = {
 }
 
 let urqlDataToRecord = (result: queryRenderPropsJs('a)) => {
-  let data = result -> dataGet;
-  let error = result -> errorGet;
+  let data = result->dataGet;
+  let error = result->errorGet;
   let fetching = result->fetchingGet;
 
   let response: UrqlTypes.response('a) =
