@@ -17,7 +17,7 @@ type queryRenderProps('a) = {
 module QueryJs = {
   [@bs.module "urql"] [@react.component]
   external make:
-    (~query: string, ~variables: Js.Json.t, ~requestPolicy: string, ~children: queryRenderPropsJs('a) => React.element) =>
+    (~query: string, ~variables: option(Js.Json.t)=?, ~requestPolicy: string, ~pause: option(bool)=?, ~children: queryRenderPropsJs('a) => React.element) =>
     React.element =
     "Query";
 }
@@ -47,11 +47,12 @@ let urqlDataToRecord = (result: queryRenderPropsJs('a)) => {
 [@react.component]
 let make = (
   ~query: string,
-  ~variables: Js.Json.t,
+  ~variables: option(Js.Json.t)=?,
   ~requestPolicy: UrqlTypes.requestPolicy=`CacheFirst,
+  ~pause: option(bool)=?,
   ~children: queryRenderProps('a) => React.element
 ) => {
-  <QueryJs query variables requestPolicy=UrqlTypes.requestPolicyToJs(requestPolicy)>
+  <QueryJs query variables requestPolicy=UrqlTypes.requestPolicyToJs(requestPolicy) pause>
     {result => result |> urqlDataToRecord |> children}
   </QueryJs>
 };
