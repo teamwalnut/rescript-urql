@@ -57,11 +57,11 @@ ReactDOMRe.renderToElementWithId(
                           it all to the GetAll component */
                        let pokemons = pokemons->pokemonList;
                        <GetAll pokemons />;
-                     | None => <div> "No Data"->ReasonReact.string </div>
+                     | None => <div> "No Data"->React.string </div>
                      }
-                   | Fetching => <div> "Loading"->ReasonReact.string </div>
-                   | Error(error) => <div> "Error!"->ReasonReact.string </div>
-                   | NotFound => <div> "Not Found"->ReasonReact.string </div>
+                   | Fetching => <div> "Loading"->React.string </div>
+                   | Error(error) => <div> "Error!"->React.string </div>
+                   | NotFound => <div> "Not Found"->React.string </div>
                    }
                  }
                </main>

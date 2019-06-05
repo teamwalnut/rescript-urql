@@ -56,7 +56,7 @@ let make = (~pokemons) => {
           <button
             className=Styles.listButton
             onClick={_event => dispatch(SelectPokemon(pokemon))}>
-            pokemon->ReasonReact.string
+            pokemon->React.string
           </button>
         </li>,
       pokemonList,
@@ -73,13 +73,13 @@ let make = (~pokemons) => {
       />
       <ul>
         {pokemonElementsArray(~pokemonList=state.filteredList)
-        ->ReasonReact.array}
+        ->React.array}
       </ul>
     </section>
     {
       switch (state.selectedPokemon) {
       | Some(pokemon) => <Monster pokemon />
-      | None => ReasonReact.null
+      | None => React.null
       }
     }
   </div>;
