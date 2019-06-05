@@ -46,7 +46,7 @@ external useQueryJs: (useQueryArgs('a)) => useQueryResponseJs('b) = "useQuery";
 let useQuery = (~query, ~variables=?, ~requestPolicy=?, ~pause=?, ()) => {
   let args = useQueryArgs(~query, ~variables=?variables, ~requestPolicy=?requestPolicy, ~pause=?pause, ());
   let (state, executeQuery) = useQueryJs(args);
-  let state = state |> useQueryResponseToRecord;
+  let state_record = state |> useQueryResponseToRecord;
 
-  (state, executeQuery)
+  (state_record, executeQuery)
 }
