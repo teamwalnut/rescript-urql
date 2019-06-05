@@ -40,68 +40,61 @@ let make = (~pokemon: string) => {
   let variables = request##variables;
   let ({response}, _executeQuery) = useQuery(~query, ~variables, ());
 
-  <>
-    {
-      switch (response) {
-      | Data(data) =>
-        switch (data##pokemon) {
-        | Some(pokemon) =>
-          switch (
-            pokemon##image,
-            pokemon##classification,
-            pokemon##name,
-            pokemon##height,
-            pokemon##weight,
-          ) {
-          | (
-              Some(image),
-              Some(classification),
-              Some(name),
-              Some(height),
-              Some(weight),
-            ) =>
-            <section className=Styles.dexContainer>
-              <div className=Styles.dex>
-                <div className=Styles.dexImageContainer>
-                  <img className=Styles.dexImage src=image />
-                </div>
-                <div className=Styles.dexText>
-                  <h1 className=Styles.dexTitle>
-                    name->ReasonReact.string
-                  </h1>
-                  <h2 className=Styles.dexSubTitle>
-                    classification->ReasonReact.string
-                  </h2>
-                  {
-                    switch (height##maximum, weight##maximum) {
-                    | (Some(heightMax), Some(weightMax)) =>
-                      <div className=Styles.dexGrid>
-                        <p>
-                          ("Height: " ++ heightMax)
-                          ->ReasonReact.string
-                        </p>
-                        <p>
-                          ("Weight: " ++ weightMax)
-                          ->ReasonReact.string
-                        </p>
-                      </div>
-                    | (_, _) => ReasonReact.null
-                    }
-                  }
-                </div>
-              </div>
-            </section>
-          | (_, _, _, _, _) => ReasonReact.null
-          }
-        | None => ReasonReact.null
-        }
-      | Fetching => <div> "Loading"->ReasonReact.string </div>
-      | Error(error) => {
-        Js.log(error);
-        <div> "Error"->ReasonReact.string </div>
+  switch (response) {
+  | Data(data) =>
+    switch (data##pokemon) {
+    | Some(pokemon) =>
+      switch (
+        pokemon##image,
+        pokemon##classification,
+        pokemon##name,
+        pokemon##height,
+        pokemon##weight,
+      ) {
+      | (
+          Some(image),
+          Some(classification),
+          Some(name),
+          Some(height),
+          Some(weight),
+        ) =>
+        <section className=Styles.dexContainer>
+          <div className=Styles.dex>
+            <div className=Styles.dexImageContainer>
+              <img className=Styles.dexImage src=image />
+            </div>
+            <div className=Styles.dexText>
+              <h1 className=Styles.dexTitle>
+                name->React.string
+              </h1>
+              <h2 className=Styles.dexSubTitle>
+                classification->React.string
+              </h2>
+              {
+                switch (height##maximum, weight##maximum) {
+                | (Some(heightMax), Some(weightMax)) =>
+                  <div className=Styles.dexGrid>
+                    <p>
+                      ("Height: " ++ heightMax)
+                      ->React.string
+                    </p>
+                    <p>
+                      ("Weight: " ++ weightMax)
+                      ->React.string
+                    </p>
+                  </div>
+                | (_, _) => React.null
+                }
+              }
+            </div>
+          </div>
+        </section>
+      | (_, _, _, _, _) => React.null
       }
-      | NotFound => <div> "Not Found"->ReasonReact.string </div>
-      }
+    | None => React.null
     }
-  </>
+  | Fetching => <div> "Loading"->React.string </div>
+  | Error(error) => <div> "Error"->React.string </div>
+  | NotFound => <div> "Not Found"->React.string </div>
+  }
 };
