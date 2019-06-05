@@ -1,11 +1,10 @@
-[@bs.module "urql"]
-external subscriptionComponent: ReasonReact.reactClass = "Subscription";
-
+[@bs.deriving abstract]
 type subscriptionRenderPropsJs('a) = {
-  .
-  "fetching": bool,
-  "data": Js.Nullable.t('a),
-  "error": Js.Nullable.t(UrqlCombinedError.t),
+  fetching: bool,
+  [@bs.optional]
+  data: 'a,
+  [@bs.optional]
+  error: UrqlCombinedError.t,
 };
 
 type subscriptionRenderProps('a) = {
@@ -15,50 +14,61 @@ type subscriptionRenderProps('a) = {
   response: UrqlTypes.response('a),
 };
 
+type handler('a, 'b) =
+  (~prevSubscriptions: option('a), ~subscription: 'b) => 'a;
+
+module SubscriptionJs = {
+  [@bs.module "urql"] [@react.component]
+  external make:
+    (
+      ~query: string,
+      ~variables: option(Js.Json.t),
+      ~handler: option(handler('a, 'b)),
+      ~children: subscriptionRenderPropsJs('a) => React.element
+    ) =>
+    React.element =
+    "Subscription";
+};
+
 let urqlDataToRecord = (result: subscriptionRenderPropsJs('a)) => {
-  let data = result##data |> Js.Nullable.toOption;
-  let error = result##error |> Js.Nullable.toOption;
+  let data = result->dataGet;
+  let error = result->errorGet;
+  let fetching = result->fetchingGet;
 
   let response: UrqlTypes.response('a) =
-    switch (result##fetching, data, error) {
+    switch (fetching, data, error) {
     | (true, _, _) => Fetching
     | (false, Some(data), _) => Data(data)
     | (false, _, Some(error)) => Error(error)
     | (false, None, None) => NotFound
     };
 
-  {fetching: result##fetching, data, error, response};
+  {fetching, data, error, response};
 };
 
-type handler('a, 'b) =
-  (~prevSubscriptions: option('a), ~subscription: 'b) => 'a;
-
-[@bs.deriving abstract]
-type jsProps('a, 'b) = {
-  query: string,
-  [@bs.optional]
-  variables: Js.Json.t,
-  [@bs.optional]
-  handler: handler('a, 'b),
-};
-
+[@react.component]
 let make =
     (
-      ~query,
-      ~variables=?,
-      ~handler=?,
-      children: subscriptionRenderProps('a) => ReasonReact.reactElement,
-    ) => {
-  let props =
-    switch (variables, handler) {
-    | (Some(v), Some(h)) => jsProps(~query, ~variables=v, ~handler=h, ())
-    | (Some(v), None) => jsProps(~query, ~variables=v, ())
-    | (None, Some(h)) => jsProps(~query, ~handler=h, ())
-    | (None, None) => jsProps(~query, ())
-    };
-
-  ReasonReact.wrapJsForReason(
-    ~reactClass=subscriptionComponent, ~props, result =>
-    result |> urqlDataToRecord |> children
-  );
-};
+      ~query: string,
+      ~variables: option(Js.Json.t),
+      ~handler: option(handler('a, 'b)),
+      ~children: subscriptionRenderProps('a) => React.element,
+    ) =>
+  switch (variables, handler) {
+  | (Some(v), Some(h)) =>
+    <SubscriptionJs query variables={Some(v)} handler={Some(h)}>
+      (result => result |> urqlDataToRecord |> children)
+    </SubscriptionJs>
+  | (Some(v), None) =>
+    <SubscriptionJs query variables={Some(v)} handler=None>
+      (result => result |> urqlDataToRecord |> children)
+    </SubscriptionJs>
+  | (None, Some(h)) =>
+    <SubscriptionJs query variables=None handler={Some(h)}>
+      (result => result |> urqlDataToRecord |> children)
+    </SubscriptionJs>
+  | (None, None) =>
+    <SubscriptionJs query variables=None handler=None>
+      (result => result |> urqlDataToRecord |> children)
+    </SubscriptionJs>
+  };
