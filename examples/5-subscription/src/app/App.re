@@ -1,5 +1,3 @@
-let component = ReasonReact.statelessComponent("App");
-
 module Styles = {
   open Css;
 
@@ -25,11 +23,9 @@ module Styles = {
     ]);
 };
 
-let make = _children => {
-  ...component,
-  render: _self =>
-    <div className=Styles.page>
-      <section className=Styles.side> <Logo /> </section>
-      <section className=Styles.side> <Messages /> </section>
-    </div>,
-};
+[@react.component]
+let make = () =>
+  <div className=Styles.page>
+    <section className=Styles.side> <Logo /> </section>
+    <section className=Styles.side> <Messages /> </section>
+  </div>;

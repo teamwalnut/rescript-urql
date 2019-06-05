@@ -53,31 +53,28 @@ module Styles = {
     ]);
 };
 
-let str = ReasonReact.string;
+let str = React.string;
 
 let subscription = SubscribeHPMessages.make();
 let query = subscription##query;
 
-let component = ReasonReact.statelessComponent("Messages");
-
-let make = _children => {
-  ...component,
-  render: _self =>
-    <Subscription query>
-      ...{({response}) =>
-        switch (response) {
-        | Fetching => <div> "Loading"->str </div>
-        | Data(d) =>
-          <div className=Styles.wrapper>
-            <div key=d##newMessage##id className=Styles.message>
-              <span className=Styles.gradientBlock>
-                {d##newMessage##message->str}
-              </span>
-            </div>
-          </div>
-        | Error(_e) => <div> "Error"->str </div>
-        | NotFound => <div> "Not Found"->str </div>
-        }
-      }
-    </Subscription>,
-};
+[@react.component]
+let make = () =>
+  <Subscription query variables=None handler=None>
+    ...{
+         ({response}) =>
+           switch (response) {
+           | Fetching => <div> "Loading"->str </div>
+           | Data(d) =>
+             <div className=Styles.wrapper>
+               <div key=d##newMessage##id className=Styles.message>
+                 <span className=Styles.gradientBlock>
+                   d##newMessage##message->str
+                 </span>
+               </div>
+             </div>
+           | Error(_e) => <div> "Error"->str </div>
+           | NotFound => <div> "Not Found"->str </div>
+           }
+       }
+  </Subscription>;

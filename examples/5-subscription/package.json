@@ -14,12 +14,12 @@
   },
   "dependencies": {
     "bs-css": "^8.0.2",
-    "reason-react": ">=0.3.4",
+    "reason-react": "0.7.0",
     "reason-urql": "link:../../"
   },
   "devDependencies": {
     "apollo-server-express": "^2.4.8",
-    "bs-platform": "^5.0.3",
+    "bs-platform": "^5.0.4",
     "cors": "^2.8.5",
     "express": "^4.16.4",
     "faker": "^4.1.0",
