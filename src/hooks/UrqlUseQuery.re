@@ -1,5 +1,5 @@
 [@bs.deriving abstract]
-type useQueryState('a) = {
+type useQueryStateJs('a) = {
   fetching: bool,
   [@bs.optional] data: 'a,
   [@bs.optional] error: UrqlCombinedError.t
@@ -14,7 +14,39 @@ type useQueryArgs('a) = {
 }
 
 type partialOperationContextFunc = option(UrqlTypes.partialOperationContext) => unit;
+type useQueryResponseJs('a) = (useQueryStateJs('a), partialOperationContextFunc);
+
+type useQueryState('a) = {
+  fetching: bool,
+  data: option('a),
+  error: option(UrqlCombinedError.t),
+  response: UrqlTypes.response('a)
+}
 type useQueryResponse('a) = (useQueryState('a), partialOperationContextFunc);
 
+let useQueryResponseToRecord = (result: useQueryStateJs('a)) => {
+  let data = result->dataGet;
+  let error = result->errorGet;
+  let fetching = result->fetchingGet;
+
+  let response: UrqlTypes.response('a) =
+    switch (fetching, data, error) {
+    | (true, _, _) => Fetching
+    | (false, Some(data), _) => Data(data)
+    | (false, _, Some(error)) => Error(error)
+    | (false, None, None) => NotFound
+    };
+
+  {fetching, data, error, response};
+};
+
 [@bs.module "urql"]
-external useQuery: (useQueryArgs('a)) => useQueryResponse('b) = "useQuery";
+external useQueryJs: (useQueryArgs('a)) => useQueryResponseJs('b) = "useQuery";
+
+let useQuery = (~query, ~variables=?, ~requestPolicy=?, ~pause=?, ()) => {
+  let args = useQueryArgs(~query, ~variables=?variables, ~requestPolicy=?requestPolicy, ~pause=?pause, ());
+  let (state, executeQuery) = useQueryJs(args);
+  let state = state |> useQueryResponseToRecord;
+
+  (state, executeQuery)
+}

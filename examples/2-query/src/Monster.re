@@ -38,19 +38,7 @@ let make = (~pokemon: string) => {
   let request = GetPokemon.make(~name=pokemon, ());
   let query = request##query;
   let variables = request##variables;
-  let args = useQueryArgs(~query, ~variables, ());
-  let (result, _executeQuery) = useQuery(args);
-  let data = result->dataGet;
-  let error = result->errorGet;
-  let fetching = result->fetchingGet;
-
-  let response: Types.response('a) =
-    switch (fetching, data, error) {
-    | (true, _, _) => Fetching
-    | (false, Some(data), _) => Data(data)
-    | (false, _, Some(error)) => Error(error)
-    | (false, None, None) => NotFound
-    };
+  let ({response}, _executeQuery) = useQuery(~query, ~variables, ());
 
   <>
     {
