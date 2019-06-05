@@ -15,7 +15,7 @@ module.exports = {
   resolve: {
    alias: {
     react: path.resolve('./node_modules/react'),
-     urql: path.resolve('./node_modules/urql'),
+    urql: path.resolve('./node_modules/urql'),
     "react-dom": path.resolve('./node_modules/react-dom'),
    }
   }
