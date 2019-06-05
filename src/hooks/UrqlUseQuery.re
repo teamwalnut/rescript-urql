@@ -13,8 +13,8 @@ type useQueryArgs('a) = {
   [@bs.optional] pause: bool
 }
 
-type partialOperationContextFunc = option(UrqlTypes.partialOperationContext) => unit;
-type useQueryResponseJs('a) = (useQueryStateJs('a), partialOperationContextFunc);
+type partialOperationContextFn = option(UrqlTypes.partialOperationContext) => unit;
+type useQueryResponseJs('a) = (useQueryStateJs('a), partialOperationContextFn);
 
 type useQueryState('a) = {
   fetching: bool,
@@ -22,7 +22,7 @@ type useQueryState('a) = {
   error: option(UrqlCombinedError.t),
   response: UrqlTypes.response('a)
 }
-type useQueryResponse('a) = (useQueryState('a), partialOperationContextFunc);
+type useQueryResponse('a) = (useQueryState('a), partialOperationContextFn);
 
 let useQueryResponseToRecord = (result: useQueryStateJs('a)) => {
   let data = result->dataGet;
