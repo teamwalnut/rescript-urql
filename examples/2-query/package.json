@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "bs-css": "^8.0.4",
-    "reason-react": ">=0.3.4",
+    "reason-react": "0.7.0",
     "reason-urql": "link:../../"
   },
   "devDependencies": {
