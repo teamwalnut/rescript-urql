@@ -1,6 +1,8 @@
 module Client = UrqlClient;
 
-module Provider = UrqlProvider;
+module Context = UrqlContext;
+module Provider = UrqlContext.Provider;
+module Consumer = UrqlContext.Consumer;
 
 module Query = UrqlQuery;
 
