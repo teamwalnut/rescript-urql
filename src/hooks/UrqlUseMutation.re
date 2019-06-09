@@ -1,8 +1,10 @@
+[@bs.deriving abstract]
 type useMutationResponseJs('a) = {
-  .
-  "fetching": bool,
-  "data": Js.Nullable.t('a),
-  "error": Js.Nullable.t(UrqlCombinedError.t),
+  fetching: bool,
+  [@bs.optional]
+  data: 'a,
+  [@bs.optional]
+  error: UrqlCombinedError.t,
 };
 
 type useMutationResponse('a) = {
@@ -21,18 +23,19 @@ external useMutationJs:
   "useMutation";
 
 let useMutationResponseToRecord = (result: useMutationResponseJs('a)) => {
-  let data = result##data |> Js.Nullable.toOption;
-  let error = result##error |> Js.Nullable.toOption;
+  let data = result->dataGet;
+  let error = result->errorGet;
+  let fetching = result->fetchingGet;
 
   let response: UrqlTypes.response('a) =
-    switch (result##fetching, data, error) {
+    switch (fetching, data, error) {
     | (true, _, _) => Fetching
     | (false, Some(data), _) => Data(data)
     | (false, _, Some(error)) => Error(error)
     | (false, None, None) => NotFound
     };
 
-  {fetching: result##fetching, data, error, response};
+  {fetching, data, error, response};
 };
 
 let useMutation = (~query: string) => {
