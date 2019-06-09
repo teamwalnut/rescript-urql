@@ -1,12 +1,11 @@
-[@bs.module "urql"]
-external mutationComponent: ReasonReact.reactClass = "Mutation";
-
+[@bs.deriving abstract]
 type mutationRenderPropsJs('a) = {
-  .
-  "fetching": bool,
-  "data": Js.Nullable.t('a),
-  "error": Js.Nullable.t(UrqlCombinedError.t),
-  "executeMutation":
+  fetching: bool,
+  [@bs.optional]
+  data: 'a,
+  [@bs.optional]
+  error: UrqlCombinedError.t,
+  executeMutation:
     option(Js.Json.t) => Js.Promise.t(UrqlTypes.operationResult),
 };
 
@@ -19,12 +18,21 @@ type mutationRenderProps('a) = {
   response: UrqlTypes.response('a),
 };
 
+module MutationJs = {
+  [@bs.module "urql"] [@react.component]
+  external make:
+    (~query: string, ~children: mutationRenderPropsJs('a) => React.element) =>
+    React.element =
+    "Mutation";
+};
+
 let urqlDataToRecord = (result: mutationRenderPropsJs('a)) => {
-  let data = result##data |> Js.Nullable.toOption;
-  let error = result##error |> Js.Nullable.toOption;
+  let data = result->dataGet;
+  let error = result->errorGet;
+  let fetching = result->fetchingGet;
 
   let response: UrqlTypes.response('a) =
-    switch (result##fetching, data, error) {
+    switch (fetching, data, error) {
     | (true, _, _) => Fetching
     | (false, Some(data), _) => Data(data)
     | (false, _, Some(error)) => Error(error)
@@ -32,23 +40,12 @@ let urqlDataToRecord = (result: mutationRenderPropsJs('a)) => {
     };
 
   {
-    fetching: result##fetching,
+    fetching,
     data,
     error,
-    executeMutation: result##executeMutation,
+    executeMutation: result->executeMutationGet,
     response,
   };
-};
-
-[@bs.deriving abstract]
-type jsProps = {query: string};
-
-module MutationJs = {
-  [@bs.module "urql"] [@react.component]
-  external make:
-    (~query: string, ~children: mutationRenderPropsJs('a) => React.element) =>
-    React.element =
-    "Mutation";
 };
 
 [@react.component]
