@@ -50,25 +50,10 @@ let urqlDataToRecord = (result: subscriptionRenderPropsJs('a)) => {
 let make =
     (
       ~query: string,
-      ~variables: option(Js.Json.t),
+      ~variables: Js.Json.t=?,
       ~handler: option(handler('a, 'b)),
       ~children: subscriptionRenderProps('a) => React.element,
     ) =>
-  switch (variables, handler) {
-  | (Some(v), Some(h)) =>
-    <SubscriptionJs query variables={Some(v)} handler={Some(h)}>
-      (result => result |> urqlDataToRecord |> children)
-    </SubscriptionJs>
-  | (Some(v), None) =>
-    <SubscriptionJs query variables={Some(v)} handler=None>
-      (result => result |> urqlDataToRecord |> children)
-    </SubscriptionJs>
-  | (None, Some(h)) =>
-    <SubscriptionJs query variables=None handler={Some(h)}>
-      (result => result |> urqlDataToRecord |> children)
-    </SubscriptionJs>
-  | (None, None) =>
-    <SubscriptionJs query variables=None handler=None>
-      (result => result |> urqlDataToRecord |> children)
-    </SubscriptionJs>
-  };
+  <SubscriptionJs query ?variables ?handler>
+    {result => result |> urqlDataToRecord |> children}
+  </SubscriptionJs>;
