@@ -51,7 +51,7 @@ let make =
     (
       ~query: string,
       ~variables: Js.Json.t=?,
-      ~handler: option(handler('a, 'b)),
+      ~handler: handler('a, 'b)=?,
       ~children: subscriptionRenderProps('a) => React.element,
     ) =>
   <SubscriptionJs query ?variables ?handler>
