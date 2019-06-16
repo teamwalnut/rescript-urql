@@ -6,6 +6,7 @@
   "author": "Parker Ziegler <parker.ziegler@formidable.com>",
   "license": "MIT",
   "scripts": {
+    "build": "bsb -make-world",
     "start": "bsb -make-world -w",
     "clean": "bsb -clean-world",
     "start:demo": "webpack-dev-server --hot"

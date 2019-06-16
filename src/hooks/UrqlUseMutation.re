@@ -22,12 +22,17 @@ external useMutationJs:
   (~query: string) => (useMutationResponseJs('a), executeMutation) =
   "useMutation";
 
-let useMutationResponseToRecord = (result: useMutationResponseJs('a)) => {
-  let data = result->dataGet;
+let useMutationResponseToRecord =
+    (parse: Js.Json.t => 'response, result: useMutationResponseJs('a)) => {
+  let data =
+    switch (result->dataGet) {
+    | None => None
+    | Some(d) => Some(parse(d))
+    };
   let error = result->errorGet;
   let fetching = result->fetchingGet;
 
-  let response: UrqlTypes.response('a) =
+  let response: UrqlTypes.response('response) =
     switch (fetching, data, error) {
     | (true, _, _) => Fetching
     | (false, Some(data), _) => Data(data)
@@ -38,9 +43,18 @@ let useMutationResponseToRecord = (result: useMutationResponseJs('a)) => {
   {fetching, data, error, response};
 };
 
-let useMutation = (~query: string) => {
-  let (useMutationResponseJs, executeMutation) = useMutationJs(~query);
+let useMutation =
+    (
+      ~request: {
+         .
+         "query": string,
+         "variables": Js.Json.t,
+         "parse": Js.Json.t => 'response,
+       },
+    ) => {
+  let (useMutationResponseJs, executeMutation) =
+    useMutationJs(~query=request##query);
   let useMutationResponse =
-    useMutationResponseJs |> useMutationResponseToRecord;
-  (useMutationResponse, executeMutation);
+    useMutationResponseJs |> useMutationResponseToRecord(request##parse);
+  (useMutationResponse, () => executeMutation(Some(request##variables)));
 };

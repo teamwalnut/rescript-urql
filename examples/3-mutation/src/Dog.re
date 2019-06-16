@@ -1,13 +1,15 @@
 open ReasonUrql;
 
 module Mutations = {
-  let likeDog = {|
+  module LikeDog = [%graphql
+    {|
     mutation likeDog($key: ID!) {
       likeDog(key: $key) {
         likes
       }
     }
-  |};
+  |}
+  ];
 
   let patDog = {|
     mutation patDog($key: ID!) {
@@ -56,22 +58,28 @@ let make =
       [|id|],
     );
 
-  let (_, executeMutation) = Hooks.useMutation(~query=Mutations.treatDog);
+  let (_, executeLikeMutation) =
+    Hooks.useMutation(~request=Mutations.LikeDog.make(~key=id, ()));
+
+  let (_, executeTreatMutation) =
+    Hooks.useMutation(
+      ~request={
+        "query": Mutations.treatDog,
+        "variables": payload,
+        "parse": x => x,
+      },
+    );
 
   <div className=DogStyles.container>
     <img src=imageUrl alt=name className=DogStyles.image />
     <h3 className=DogStyles.title> {j|$name|j}->React.string </h3>
     <div className=DogStyles.buttons>
-      <Mutation query=Mutations.likeDog>
-        ...{({executeMutation}) =>
-          <EmojiButton
-            emoji={j|👍|j}
-            count={string_of_int(likes)}
-            hex="48a9dc"
-            onClick={_ => executeMutation(Some(payload)) |> ignore}
-          />
-        }
-      </Mutation>
+      <EmojiButton
+        emoji={j|👍|j}
+        count={string_of_int(likes)}
+        hex="48a9dc"
+        onClick={_ => executeLikeMutation() |> ignore}
+      />
       <Mutation query=Mutations.patDog>
         ...{({executeMutation}) =>
           <EmojiButton
@@ -86,7 +94,7 @@ let make =
         emoji={j|🍖|j}
         count={string_of_int(treats)}
         hex="7b16ff"
-        onClick={_ => executeMutation(Some(payload)) |> ignore}
+        onClick={_ => executeTreatMutation() |> ignore}
       />
       <Mutation query=Mutations.bellyscratchDog>
         ...{({executeMutation}) =>
