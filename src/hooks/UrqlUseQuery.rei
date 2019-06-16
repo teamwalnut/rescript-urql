@@ -7,4 +7,16 @@ type useQueryState('a) = {
 }
 type useQueryResponse('a) = (useQueryState('a), partialOperationContextFn);
 
-let useQuery: (~query: string, ~variables: 'a=?, ~requestPolicy: UrqlTypes.requestPolicy=?, ~pause: bool=?, unit) => useQueryResponse('b)
+let useQuery:
+  (
+    ~request: {
+                .
+                "parse": Js.Json.t => 'response,
+                "query": string,
+                "variables": 'vars,
+              },
+    ~requestPolicy: UrqlTypes.requestPolicy=?,
+    ~pause: bool=?,
+    unit
+  ) =>
+  useQueryResponse('response);

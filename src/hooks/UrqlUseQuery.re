@@ -24,12 +24,17 @@ type useQueryState('a) = {
 }
 type useQueryResponse('a) = (useQueryState('a), partialOperationContextFn);
 
-let useQueryResponseToRecord = (result: useQueryStateJs('a)) => {
-  let data = result->dataGet;
+let useQueryResponseToRecord =
+    (parse: Js.Json.t => 'response, result: useQueryStateJs('a)) => {
+  let data =
+    switch (result->dataGet) {
+    | None => None
+    | Some(d) => Some(parse(d))
+    };
   let error = result->errorGet;
   let fetching = result->fetchingGet;
 
-  let response: UrqlTypes.response('a) =
+  let response: UrqlTypes.response('response) =
     switch (fetching, data, error) {
     | (true, _, _) => Fetching
     | (false, Some(data), _) => Data(data)
@@ -43,10 +48,17 @@ let useQueryResponseToRecord = (result: useQueryStateJs('a)) => {
 [@bs.module "urql"]
 external useQueryJs: (useQueryArgs('a)) => useQueryResponseJs('b) = "useQuery";
 
-let useQuery = (~query, ~variables=?, ~requestPolicy=?, ~pause=?, ()) => {
-  let args = useQueryArgs(~query, ~variables=?variables, ~requestPolicy=?requestPolicy, ~pause=?pause, ());
+let useQuery = (~request, ~requestPolicy=?, ~pause=?, ()) => {
+  let args =
+    useQueryArgs(
+      ~query=request##query,
+      ~variables=request##variables,
+      ~requestPolicy?,
+      ~pause?,
+      (),
+    );
   let (state, executeQuery) = useQueryJs(args);
-  let state_record = state |> useQueryResponseToRecord;
+  let state_record = state |> useQueryResponseToRecord(request##parse);
 
   (state_record, executeQuery)
 }
