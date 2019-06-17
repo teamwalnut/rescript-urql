@@ -13,7 +13,7 @@ let useQuery:
                 .
                 "parse": Js.Json.t => 'response,
                 "query": string,
-                "variables": 'vars,
+                "variables": Js.Json.t,
               },
     ~requestPolicy: UrqlTypes.requestPolicy=?,
     ~pause: bool=?,

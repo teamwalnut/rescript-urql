@@ -8,10 +8,12 @@ type useQueryStateJs('a) = {
 [@bs.deriving abstract]
 type useQueryArgs('a) = {
   query: string,
-  [@bs.optional] variables: 'a,
-  [@bs.optional] requestPolicy: UrqlTypes.requestPolicy,
-  [@bs.optional] pause: bool
-}
+  variables: Js.Json.t,
+  [@bs.optional]
+  requestPolicy: UrqlTypes.requestPolicy,
+  [@bs.optional]
+  pause: bool,
+};
 
 type partialOperationContextFn = option(UrqlTypes.partialOperationContext) => unit;
 type useQueryResponseJs('a) = (useQueryStateJs('a), partialOperationContextFn);
