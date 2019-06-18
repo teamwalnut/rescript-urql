@@ -1,37 +1,42 @@
 [@bs.deriving abstract]
-type useQueryStateJs('a) = {
+type useQueryStateJs = {
   fetching: bool,
-  [@bs.optional] data: 'a,
-  [@bs.optional] error: UrqlCombinedError.t
+  [@bs.optional]
+  data: Js.Json.t,
+  [@bs.optional]
+  error: UrqlCombinedError.t,
 };
 
 [@bs.deriving abstract]
-type useQueryArgs('a) = {
+type useQueryArgs = {
   query: string,
-  [@bs.optional] variables: 'a,
-  [@bs.optional] requestPolicy: UrqlTypes.requestPolicy,
-  [@bs.optional] pause: bool
-}
+  variables: Js.Json.t,
+  [@bs.optional]
+  requestPolicy: UrqlTypes.requestPolicy,
+  [@bs.optional]
+  pause: bool,
+};
 
-type partialOperationContextFn = option(UrqlTypes.partialOperationContext) => unit;
-type useQueryResponseJs('a) = (useQueryStateJs('a), partialOperationContextFn);
+type partialOperationContextFn =
+  option(UrqlTypes.partialOperationContext) => unit;
+type useQueryResponseJs = (useQueryStateJs, partialOperationContextFn);
 
 type useQueryState('a) = {
   fetching: bool,
   data: option('a),
   error: option(UrqlCombinedError.t),
-  response: UrqlTypes.response('a)
-}
+  response: UrqlTypes.response('a),
+};
 type useQueryResponse('a) = (useQueryState('a), partialOperationContextFn);
 
-let useQueryResponseToRecord = (result: useQueryStateJs('a)) => {
-  let data = result->dataGet;
+let useQueryResponseToRecord = (parse, result) => {
+  let data = result->dataGet->Belt.Option.map(parse);
   let error = result->errorGet;
   let fetching = result->fetchingGet;
 
-  let response: UrqlTypes.response('a) =
+  let response =
     switch (fetching, data, error) {
-    | (true, _, _) => Fetching
+    | (true, _, _) => UrqlTypes.Fetching
     | (false, Some(data), _) => Data(data)
     | (false, _, Some(error)) => Error(error)
     | (false, None, None) => NotFound
@@ -41,12 +46,19 @@ let useQueryResponseToRecord = (result: useQueryStateJs('a)) => {
 };
 
 [@bs.module "urql"]
-external useQueryJs: (useQueryArgs('a)) => useQueryResponseJs('b) = "useQuery";
+external useQueryJs: useQueryArgs => useQueryResponseJs = "useQuery";
 
-let useQuery = (~query, ~variables=?, ~requestPolicy=?, ~pause=?, ()) => {
-  let args = useQueryArgs(~query, ~variables=?variables, ~requestPolicy=?requestPolicy, ~pause=?pause, ());
+let useQuery = (~request, ~requestPolicy=?, ~pause=?, ()) => {
+  let args =
+    useQueryArgs(
+      ~query=request##query,
+      ~variables=request##variables,
+      ~requestPolicy?,
+      ~pause?,
+      (),
+    );
   let (state, executeQuery) = useQueryJs(args);
-  let state_record = state |> useQueryResponseToRecord;
+  let state_record = state |> useQueryResponseToRecord(request##parse);
 
-  (state_record, executeQuery)
-}
+  (state_record, executeQuery);
+};

@@ -34,11 +34,9 @@ module GetPokemon = [%graphql
 [@react.component]
 let make = (~pokemon: string) => {
   /* We set up the query here as we need access to the pokemon
-      value passed in from GetAll */
+     value passed in from GetAll */
   let request = GetPokemon.make(~name=pokemon, ());
-  let query = request##query;
-  let variables = request##variables;
-  let ({response}, _executeQuery) = useQuery(~query, ~variables, ());
+  let ({response}, _executeQuery) = useQuery(~request, ());
 
   switch (response) {
   | Data(data) =>
