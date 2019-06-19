@@ -1,5 +1,5 @@
 [@bs.deriving abstract]
-type useSubscriptionArgs('acc) = {
+type useSubscriptionArgs = {
   query: string,
   [@bs.optional]
   variables: Js.Json.t,
@@ -23,7 +23,7 @@ type useSubscriptionResponse('response) = {
 
 [@bs.module "urql"]
 external useSubscriptionJs:
-  useSubscriptionArgs('acc) => array(useSubscriptionResponseJs) =
+  useSubscriptionArgs => array(useSubscriptionResponseJs) =
   "useSubscription";
 
 let useSubscriptionResponseToRecord =
@@ -34,7 +34,8 @@ let useSubscriptionResponseToRecord =
 
   let response =
     switch (fetching, data, error) {
-    | (true, _, _) => UrqlTypes.Fetching
+    | (true, None, _) => UrqlTypes.Fetching
+    | (true, Some(data), _) => Data(data)
     | (false, Some(data), _) => Data(data)
     | (false, _, Some(error)) => Error(error)
     | (false, None, None) => NotFound

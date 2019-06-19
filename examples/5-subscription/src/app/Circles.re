@@ -10,7 +10,6 @@ module SubscribeRandomInt = [%graphql
 ];
 
 let handler = (~prevSubscriptions, ~subscription) => {
-  Js.log2(prevSubscriptions, subscription);
   switch (prevSubscriptions) {
   | Some(subs) => Array.append(subs, [|subscription|])
   | None => [|subscription|]
@@ -31,12 +30,10 @@ let getRandomHex = () => {
   {j|#$hex|j};
 };
 
-Js.log(getRandomHex());
-
 [@react.component]
 let make = () => {
   let {response} =
-    useSubscriptionWithHandler(SubscribeRandomInt.make(), handler);
+    useSubscriptionWithHandler(~request=SubscribeRandomInt.make(), ~handler);
 
   switch (response) {
   | Fetching => <text> "Loading"->React.string </text>
@@ -47,7 +44,7 @@ let make = () => {
           cx={
             datum##newNumber;
           }
-          cy={index !== 0 ? d[index - 1]##newNumber : datum##newNumber}
+          cy={index === 0 ? datum##newNumber : d[index - 1]##newNumber}
           stroke={getRandomHex()}
           fill="none"
           r={getRandomInt(30) |> string_of_int}

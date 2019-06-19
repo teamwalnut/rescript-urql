@@ -11,4 +11,5 @@ let page =
     bottom(px(0)),
     left(px(0)),
     right(px(0)),
+    padding(px(20)),
   ]);

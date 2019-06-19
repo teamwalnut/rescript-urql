@@ -6,6 +6,6 @@ let make = () =>
       height="1000"
       width="1000"
       style={ReactDOMRe.Style.make(~border="1px solid blue", ())}>
-      <Messages />
+      <Circles />
     </svg>
   </div>;

@@ -39,8 +39,8 @@ let useSubscriptionResponseToRecordWithHandler =
   let response =
     switch (fetching, data, error) {
     | (true, None, _) => UrqlTypes.Fetching
-    | (true, Some(d), _) => Data(d)
-    | (false, Some(d), _) => Data(d)
+    | (true, Some(data), _) => Data(data)
+    | (false, Some(data), _) => Data(data)
     | (false, _, Some(error)) => Error(error)
     | (false, None, None) => NotFound
     };
@@ -50,8 +50,8 @@ let useSubscriptionResponseToRecordWithHandler =
 
 let useSubscriptionWithHandler =
     (
-      request: UrqlTypes.request('response),
-      handler: UrqlTypes.parsedHandler('acc, 'response),
+      ~request: UrqlTypes.request('response),
+      ~handler: UrqlTypes.parsedHandler('acc, 'response),
     ) => {
   let parse = request##parse;
   let parsedHandler =

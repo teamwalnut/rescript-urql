@@ -6,5 +6,8 @@ type useSubscriptionWithHandlerResponse('acc) = {
 };
 
 let useSubscriptionWithHandler:
-  (UrqlTypes.request('response), UrqlTypes.parsedHandler('acc, 'response)) =>
+  (
+    ~request: UrqlTypes.request('response),
+    ~handler: UrqlTypes.parsedHandler('acc, 'response)
+  ) =>
   useSubscriptionWithHandlerResponse('acc);
