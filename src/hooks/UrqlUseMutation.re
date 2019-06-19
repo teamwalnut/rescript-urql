@@ -1,8 +1,8 @@
 [@bs.deriving abstract]
-type useMutationResponseJs('a) = {
+type useMutationResponseJs = {
   fetching: bool,
   [@bs.optional]
-  data: 'a,
+  data: Js.Json.t,
   [@bs.optional]
   error: UrqlCombinedError.t,
 };
@@ -18,18 +18,18 @@ type executeMutation =
   option(Js.Json.t) => Js.Promise.t(UrqlTypes.operationResult);
 
 [@bs.module "urql"]
-external useMutationJs:
-  (~query: string) => (useMutationResponseJs('a), executeMutation) =
+external useMutationJs: string => (useMutationResponseJs, executeMutation) =
   "useMutation";
 
-let useMutationResponseToRecord = (result: useMutationResponseJs('a)) => {
-  let data = result->dataGet;
+let useMutationResponseToRecord =
+    (parse: Js.Json.t => 'response, result: useMutationResponseJs) => {
+  let data = result->dataGet->Belt.Option.map(parse);
   let error = result->errorGet;
   let fetching = result->fetchingGet;
 
-  let response: UrqlTypes.response('a) =
+  let response =
     switch (fetching, data, error) {
-    | (true, _, _) => Fetching
+    | (true, _, _) => UrqlTypes.Fetching
     | (false, Some(data), _) => Data(data)
     | (false, _, Some(error)) => Error(error)
     | (false, None, None) => NotFound
@@ -38,9 +38,18 @@ let useMutationResponseToRecord = (result: useMutationResponseJs('a)) => {
   {fetching, data, error, response};
 };
 
-let useMutation = (~query: string) => {
-  let (useMutationResponseJs, executeMutation) = useMutationJs(~query);
+let useMutation =
+    (
+      ~request: {
+         .
+         "query": string,
+         "variables": Js.Json.t,
+         "parse": Js.Json.t => 'response,
+       },
+    ) => {
+  let (useMutationResponseJs, executeMutation) =
+    useMutationJs(request##query);
   let useMutationResponse =
-    useMutationResponseJs |> useMutationResponseToRecord;
-  (useMutationResponse, executeMutation);
+    useMutationResponseJs |> useMutationResponseToRecord(request##parse);
+  (useMutationResponse, () => executeMutation(Some(request##variables)));
 };
