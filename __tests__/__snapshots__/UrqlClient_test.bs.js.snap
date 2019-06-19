@@ -17,6 +17,7 @@ Client {
   "operations$": [Function],
   "reexecuteOperation": [Function],
   "results$": [Function],
+  "suspense": false,
   "url": "https://localhost:3000",
 }
 `;
@@ -42,6 +43,7 @@ Client {
   "operations$": [Function],
   "reexecuteOperation": [Function],
   "results$": [Function],
+  "suspense": false,
   "url": "https://localhost:3000",
 }
 `;
@@ -67,6 +69,7 @@ Client {
   "operations$": [Function],
   "reexecuteOperation": [Function],
   "results$": [Function],
+  "suspense": false,
   "url": "https://localhost:3000",
 }
 `;
@@ -88,6 +91,7 @@ Client {
   "operations$": [Function],
   "reexecuteOperation": [Function],
   "results$": [Function],
+  "suspense": false,
   "url": "https://localhost:3000",
 }
 `;
