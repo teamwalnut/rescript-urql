@@ -1,44 +1,40 @@
-type handler('a, 'b) =
-  (~prevSubscriptions: option('a), ~subscription: 'b) => 'a;
+[@bs.deriving abstract]
+type useSubscriptionArgs('acc) = {
+  query: string,
+  [@bs.optional]
+  variables: Js.Json.t,
+};
 
 [@bs.deriving abstract]
-type useSubscriptionResponseJs('a) = {
+type useSubscriptionResponseJs = {
   fetching: bool,
   [@bs.optional]
-  data: 'a,
+  data: Js.Json.t,
   [@bs.optional]
   error: UrqlCombinedError.t,
 };
 
-type useSubscriptionResponse('a) = {
+type useSubscriptionResponse('response) = {
   fetching: bool,
-  data: option('a),
+  data: option('response),
   error: option(UrqlCombinedError.t),
-  response: UrqlTypes.response('a),
-};
-
-[@bs.deriving abstract]
-type useSubscriptionArgs('a, 'b) = {
-  query: string,
-  [@bs.optional]
-  variables: Js.Json.t,
-  [@bs.optional]
-  handler: handler('a, 'b),
+  response: UrqlTypes.response('response),
 };
 
 [@bs.module "urql"]
 external useSubscriptionJs:
-  useSubscriptionArgs('a, 'b) => useSubscriptionResponseJs('a) =
+  useSubscriptionArgs('acc) => array(useSubscriptionResponseJs) =
   "useSubscription";
 
-let useSubscriptionResponseToRecord = (result: useSubscriptionResponseJs('a)) => {
-  let data = result->dataGet;
+let useSubscriptionResponseToRecord =
+    (parse: Js.Json.t => 'response, result: useSubscriptionResponseJs) => {
+  let data = result->dataGet->Belt.Option.map(parse);
   let error = result->errorGet;
   let fetching = result->fetchingGet;
 
-  let response: UrqlTypes.response('a) =
+  let response =
     switch (fetching, data, error) {
-    | (true, _, _) => Fetching
+    | (true, _, _) => UrqlTypes.Fetching
     | (false, Some(data), _) => Data(data)
     | (false, _, Some(error)) => Error(error)
     | (false, None, None) => NotFound
@@ -47,16 +43,16 @@ let useSubscriptionResponseToRecord = (result: useSubscriptionResponseJs('a)) =>
   {fetching, data, error, response};
 };
 
-let useSubscription =
-    (
-      ~query: string,
-      ~variables: option(Js.Json.t)=?,
-      ~handler: option(handler('a, 'b))=?,
+let useSubscription = request => {
+  let args =
+    useSubscriptionArgs(
+      ~query=request##query,
+      ~variables=request##variables,
       (),
-    ) => {
-  let args = useSubscriptionArgs(~query, ~variables?, ~handler?, ());
-  let state = useSubscriptionJs(args);
+    );
+  let state = useSubscriptionJs(args)[0];
 
-  let useSubscriptionResponse = state |> useSubscriptionResponseToRecord;
+  let useSubscriptionResponse =
+    state |> useSubscriptionResponseToRecord(request##parse);
   useSubscriptionResponse;
 };

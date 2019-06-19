@@ -1,80 +1,61 @@
 open ReasonUrql;
+open Hooks;
 
-module SubscribeHPMessages = [%graphql
+module SubscribeRandomInt = [%graphql
   {|
-  subscription subscribeMessages {
-    newMessage {
-      id
-      message
-    }
+  subscription subscribeNumbers {
+    newNumber @bsDecoder(fn: "string_of_int")
   }
 |}
 ];
 
-module Styles = {
-  open Css;
-
-  let wrapper =
-    style([
-      display(flexBox),
-      flexDirection(column),
-      alignItems(center),
-      justifyContent(center),
-    ]);
-
-  let fadeIn =
-    keyframes([
-      (0, [transform(translateY(px(20))), opacity(0.)]),
-      (100, [transform(translateY(px(0))), opacity(1.)]),
-    ]);
-
-  let message =
-    style([
-      background(linearGradient(turn(0.25), [(0, red), (100, orange)])),
-      listStyle(none, `outside, none),
-      padding(px(5)),
-      margin(px(10)),
-      borderRadius(px(5)),
-      fontSize(rem(2.)),
-      fontFamily("'PT Serif Caption', serif"),
-      width(pct(50.)),
-      display(flexBox),
-      alignItems(center),
-      justifyContent(center),
-      animation(~duration=500, ~fillMode=both, fadeIn),
-    ]);
-
-  let gradientBlock =
-    style([
-      display(block),
-      padding(px(10)),
-      background(white),
-      borderRadius(px(5)),
-    ]);
+let handler = (~prevSubscriptions, ~subscription) => {
+  Js.log2(prevSubscriptions, subscription);
+  switch (prevSubscriptions) {
+  | Some(subs) => Array.append(subs, [|subscription|])
+  | None => [|subscription|]
+  };
 };
 
-let str = React.string;
+[@bs.scope "Math"] [@bs.val] external random: unit => float = "random";
+[@bs.scope "Math"] [@bs.val] external floor: float => int = "floor";
+[@bs.send] external toString: (int, int) => string = "toString";
 
-let subscription = SubscribeHPMessages.make();
-let query = subscription##query;
+let getRandomInt = (max: int) => {
+  floor(random() *. float_of_int(max));
+};
+
+let getRandomHex = () => {
+  let encode = random() *. float_of_int(16777215) |> floor;
+  let hex = encode->toString(16);
+  {j|#$hex|j};
+};
+
+Js.log(getRandomHex());
 
 [@react.component]
-let make = () =>
-  <Subscription query variables=None handler=None>
-    ...{
-         ({response}) =>
-           switch (response) {
-           | Fetching => <div> "Loading"->str </div>
-           | Data(d) =>
-             <div className=Styles.wrapper>
-               <div key=d##newMessage##id className=Styles.message>
-                 <span className=Styles.gradientBlock>
-                   d##newMessage##message->str
-                 </span>
-               </div>
-             </div>
-           | Error(_e) => <div> "Error"->str </div>
-           | NotFound => <div> "Not Found"->str </div>
-           }
-       }
-  </Subscription>;
+let make = () => {
+  let {response} =
+    useSubscriptionWithHandler(SubscribeRandomInt.make(), handler);
+
+  switch (response) {
+  | Fetching => <text> "Loading"->React.string </text>
+  | Data(d) =>
+    Array.mapi(
+      (index, datum) =>
+        <circle
+          cx={
+            datum##newNumber;
+          }
+          cy={index !== 0 ? d[index - 1]##newNumber : datum##newNumber}
+          stroke={getRandomHex()}
+          fill="none"
+          r={getRandomInt(30) |> string_of_int}
+        />,
+      d,
+    )
+    |> React.array
+  | Error(_e) => <text> "Error"->React.string </text>
+  | NotFound => <text> "Not Found"->React.string </text>
+  };
+};

@@ -14,16 +14,13 @@ type subscriptionRenderProps('a) = {
   response: UrqlTypes.response('a),
 };
 
-type handler('a, 'b) =
-  (~prevSubscriptions: option('a), ~subscription: 'b) => 'a;
-
 module SubscriptionJs = {
   [@bs.module "urql"] [@react.component]
   external make:
     (
       ~query: string,
-      ~variables: option(Js.Json.t),
-      ~handler: option(handler('a, 'b)),
+      ~variables: Js.Json.t=?,
+      ~handler: UrqlTypes.handler('acc)=?,
       ~children: subscriptionRenderPropsJs('a) => React.element
     ) =>
     React.element =
@@ -50,8 +47,8 @@ let urqlDataToRecord = (result: subscriptionRenderPropsJs('a)) => {
 let make =
     (
       ~query: string,
-      ~variables: Js.Json.t=?,
-      ~handler: handler('a, 'b)=?,
+      ~variables: option(Js.Json.t)=?,
+      ~handler: option(UrqlTypes.handler('acc))=?,
       ~children: subscriptionRenderProps('a) => React.element,
     ) =>
   <SubscriptionJs query ?variables ?handler>

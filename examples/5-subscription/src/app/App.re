@@ -1,31 +1,11 @@
-module Styles = {
-  open Css;
-
-  let page =
-    style([
-      display(flexBox),
-      flexDirection(column),
-      position(absolute),
-      top(px(0)),
-      bottom(px(0)),
-      left(px(0)),
-      right(px(0)),
-      padding(px(20)),
-    ]);
-
-  let side =
-    style([
-      display(flexBox),
-      flexDirection(column),
-      alignItems(center),
-      flexBasis(pct(50.)),
-      firstChild([justifyContent(flexEnd)]),
-    ]);
-};
-
 [@react.component]
 let make = () =>
-  <div className=Styles.page>
-    <section className=Styles.side> <Logo /> </section>
-    <section className=Styles.side> <Messages /> </section>
+  <div className=AppStyles.page>
+    <svg
+      viewBox="0 0 1000 1000"
+      height="1000"
+      width="1000"
+      style={ReactDOMRe.Style.make(~border="1px solid blue", ())}>
+      <Messages />
+    </svg>
   </div>;

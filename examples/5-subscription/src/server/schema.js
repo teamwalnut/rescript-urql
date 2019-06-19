@@ -66,8 +66,8 @@ function getRandomInt(max) {
   return Math.floor(Math.random() * Math.floor(max));
 }
 
-setInterval(() =>
+setInterval(() => {
   pubsub.publish("newNumber", {
     newNumber: getRandomInt(1000)
-  })
-);
+  });
+}, 2000);

@@ -1,18 +1,9 @@
-type handler('a, 'b) =
-  (~prevSubscriptions: option('a), ~subscription: 'b) => 'a;
-
-type useSubscriptionResponse('a) = {
+type useSubscriptionResponse('response) = {
   fetching: bool,
-  data: option('a),
+  data: option('response),
   error: option(UrqlCombinedError.t),
-  response: UrqlTypes.response('a),
+  response: UrqlTypes.response('response),
 };
 
 let useSubscription:
-  (
-    ~query: string,
-    ~variables: Js.Json.t=?,
-    ~handler: handler('a, 'b)=?,
-    unit
-  ) =>
-  useSubscriptionResponse('a);
+  UrqlTypes.request('response) => useSubscriptionResponse('response);

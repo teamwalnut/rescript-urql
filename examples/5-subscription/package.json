@@ -8,6 +8,7 @@
   "scripts": {
     "start": "bsb -make-world -w",
     "clean": "bsb -clean-world",
+    "build": "bsb -make-world",
     "webpack": "webpack-dev-server --hot",
     "server": "node src/server/index.js",
     "start:demo": "run-p server webpack"
