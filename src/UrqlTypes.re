@@ -96,7 +96,7 @@ type request('response) = {
    `handler` corresponds to the type of the handler function _before_ the latest subscription has been parsed.
    `parsedHandler` corresponds to the type of the handler function _after_ the latest subscription has been parsed. */
 type handler('acc) =
-  (~prevSubscriptions: 'acc, ~subscription: Js.Json.t) => 'acc;
+  (~prevSubscriptions: option('acc), ~subscription: Js.Json.t) => 'acc;
 
 type parsedHandler('acc, 'response) =
   (~prevSubscriptions: option('acc), ~subscription: 'response) => 'acc;
