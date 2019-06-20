@@ -83,3 +83,20 @@ type operationResult = {
   [@bs.optional]
   error: UrqlCombinedError.t,
 };
+
+/* The signature of the structure created by calling `.make()` on a `graphql_ppx` module. */
+type request('response) = {
+  .
+  "parse": Js.Json.t => 'response,
+  "query": string,
+  "variables": Js.Json.t,
+};
+
+/* The type of the handler function passed to Subscription and useSubscription.
+   `handler` corresponds to the type of the handler function _before_ the latest subscription has been parsed.
+   `parsedHandler` corresponds to the type of the handler function _after_ the latest subscription has been parsed. */
+type handler('acc) =
+  (~prevSubscriptions: option('acc), ~subscription: Js.Json.t) => 'acc;
+
+type parsedHandler('acc, 'response) =
+  (~prevSubscriptions: option('acc), ~subscription: 'response) => 'acc;

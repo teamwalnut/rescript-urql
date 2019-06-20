@@ -21,4 +21,6 @@ module Exchanges = UrqlClient.UrqlExchanges;
 module Hooks = {
   include UrqlUseMutation;
   include UrqlUseQuery;
+  include UrqlUseSubscription;
+  include UrqlUseSubscriptionWithHandler;
 };
