@@ -12,11 +12,7 @@ module Styles = {
     ]);
 };
 
-let component = ReasonReact.statelessComponent("App");
-
-let make = _children => {
-  ...component,
-  render: _self => {
-    <div className=Styles.page> <ColdStart /> <Previewer /> </div>;
-  },
+[@react.component]
+let make = () => {
+  <div className=Styles.page> <ColdStart /> <Previewer /> </div>;
 };
