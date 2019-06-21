@@ -33,7 +33,7 @@ let getRandomHex = () => {
 [@react.component]
 let make = () => {
   let {response} =
-    useSubscription(SubscribeRandomInt.make(), ~handler=Handler(handler));
+    useSubscription(SubscribeRandomInt.make(), ~handler);
 
   switch (response) {
   | Fetching => <text> "Loading"->React.string </text>

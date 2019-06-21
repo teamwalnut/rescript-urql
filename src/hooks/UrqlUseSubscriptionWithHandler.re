@@ -52,10 +52,17 @@ let useSubscriptionResponseToRecord =
   {fetching, data, error, response};
 };
 
+let handler_of_option = (type a, type b, type c, option_handler: option((option(a), b) => a)): handler(a, b, c) => {
+  switch (option_handler) {
+  | None => Obj.magic(NoHandler)
+  | Some(fn) => Obj.magic(Handler(fn))
+  }
+}
+
 let useSubscription =
     (
       type a, type b, type c,
-      ~handler: handler(a, b, c),
+      ~handler: option((option(a), b) => a)=?,
       request: UrqlTypes.request(b),
     ): useSubscriptionResponse(c) => {
   let parse = request##parse;
@@ -66,6 +73,7 @@ let useSubscription =
       (),
     );
 
+  let handler: handler(a, b, c) = handler_of_option(handler);
   let state: useSubscriptionResponse(c) = switch (handler) {
     | NoHandler => 
       useSubscriptionJs(args, None)[0] 
