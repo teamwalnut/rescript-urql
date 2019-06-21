@@ -93,7 +93,7 @@ module Styles = {
   let colors = {query: "48a9dc", mutation: "db4d3f"};
 };
 
-let str = ReasonReact.string;
+let str = React.string;
 
 type state = {
   query: string,
@@ -101,117 +101,108 @@ type state = {
 };
 
 type action =
-  | ExecuteQuery
   | SetQuery(string)
   | ClearQuery
-  | ExecuteMutation
   | SetMutation(string)
   | ClearMutation;
 
-let component = ReasonReact.reducerComponent("Previewer");
+let initialState = {query: "", mutation: ""};
 
-let make = _children => {
-  ...component,
-  initialState: () => {query: "", mutation: ""},
-  reducer: (action, state) => {
-    switch (action) {
-    | ExecuteQuery =>
-      ReasonReact.SideEffects(
-        self =>
-          Client.executeQuery(~client, ~query=queryRequest, ())
-          |> Wonka.forEach((. response) =>
-               self.send(
-                 SetQuery(Js.Json.stringifyWithSpace(response##data, 2)),
-               )
-             ),
-      )
-    | SetQuery(query) => ReasonReact.Update({...state, query})
-    | ClearQuery => ReasonReact.Update({...state, query: ""})
-    | ExecuteMutation =>
-      ReasonReact.SideEffects(
-        self =>
-          Client.executeMutation(~client, ~mutation=mutationRequest, ())
-          |> Wonka.forEach((. response) =>
-               self.send(
-                 SetMutation(Js.Json.stringifyWithSpace(response##data, 2)),
-               )
-             ),
-      )
-    | SetMutation(mutation) => ReasonReact.Update({...state, mutation})
-    | ClearMutation => ReasonReact.Update({...state, mutation: ""})
-    };
-  },
-  render: self => {
-    <div className=Styles.wrapper>
-      <div className=Styles.side>
-        <section className=Styles.section>
-          <span className=Styles.title> "Query"->str </span>
-          <div className={Styles.colors.query->Styles.code}>
-            {|query dogs {
-  dogs {
-    name
-    breed
-    likes
-  }
-}|}->str
-          </div>
-          <button
-            className={Styles.colors.query->Styles.button}
-            onClick={_event => self.send(ExecuteQuery)}>
-            "Execute Query"->str
-          </button>
-        </section>
-        {switch (String.length(self.state.query)) {
-         | 0 => ReasonReact.null
-         | _ =>
-           <section className=Styles.section>
-             <span className=Styles.title> "Result"->str </span>
-             <div className={Styles.colors.query->Styles.code}>
-               self.state.query->str
-             </div>
-             <button
-               className={Styles.colors.query->Styles.button}
-               onClick={_event => self.send(ClearQuery)}>
-               "Clear Query"->str
-             </button>
-           </section>
-         }}
-      </div>
-      <div className=Styles.side>
-        <section className=Styles.section>
-          <span className=Styles.title> "Mutation"->str </span>
-          <div className={"db4d3f"->Styles.code}>
-            {|mutation likeDog($key: ID!) {
+[@react.component]
+let make = () => {
+  let (state, dispatch) =
+    React.useReducer(
+      (state, action) =>
+        switch (action) {
+        | SetQuery(query) => {...state, query}
+        | ClearQuery => {...state, query: ""}
+        | SetMutation(mutation) => {...state, mutation}
+        | ClearMutation => {...state, mutation: ""}
+        },
+      initialState,
+    );
+
+  let executeQuery = () =>
+    Client.executeQuery(~client, ~query=queryRequest, ())
+    |> Wonka.forEach((. response) =>
+         dispatch(SetQuery(Js.Json.stringifyWithSpace(response##data, 2)))
+       );
+
+  let executeMutation = () =>
+    Client.executeMutation(~client, ~mutation=mutationRequest, ())
+    |> Wonka.forEach((. response) =>
+         dispatch(
+           SetMutation(Js.Json.stringifyWithSpace(response##data, 2)),
+         )
+       );
+  <div className=Styles.wrapper>
+    <div className=Styles.side>
+      <section className=Styles.section>
+        <span className=Styles.title> "Query"->str </span>
+        <div className={Styles.colors.query->Styles.code}>
+          {|query dogs {
+            dogs {
+              name
+              breed
+              likes
+            }
+          }|}
+          ->str
+        </div>
+        <button
+          className={Styles.colors.query->Styles.button}
+          onClick={_event => executeQuery()}>
+          "Execute Query"->str
+        </button>
+      </section>
+      {switch (String.length(state.query)) {
+       | 0 => React.null
+       | _ =>
+         <section className=Styles.section>
+           <span className=Styles.title> "Result"->str </span>
+           <div className={Styles.colors.query->Styles.code}>
+             state.query->str
+           </div>
+           <button
+             className={Styles.colors.query->Styles.button}
+             onClick={_event => dispatch(ClearQuery)}>
+             "Clear Query"->str
+           </button>
+         </section>
+       }}
+    </div>
+    <div className=Styles.side>
+      <section className=Styles.section>
+        <span className=Styles.title> "Mutation"->str </span>
+        <div className={"db4d3f"->Styles.code}>
+          {|mutation likeDog($key: ID!) {
   likeDog(key: $key) {
     name
     breed
     likes
   }
 }|}
-            ->str
-          </div>
-          <button
-            className={"db4d3f"->Styles.button}
-            onClick={_event => self.send(ExecuteMutation)}>
-            "Execute Mutation"->str
-          </button>
-        </section>
-        {switch (String.length(self.state.mutation)) {
-         | 0 => ReasonReact.null
-         | _ =>
-           <section className=Styles.section>
-             <span className=Styles.title> "Result"->str </span>
-             <div className={"db4d3f"->Styles.code}>
-               self.state.mutation->str
-             </div>
-             <button
-               className={"db4d3f"->Styles.button}
-               onClick={_event => self.send(ClearMutation)}>
-               "Clear Mutation"->str
-             </button>
-           </section>
-         }}
-      </div>
-    </div>;
-  },
+          ->str
+        </div>
+        <button
+          className={"db4d3f"->Styles.button}
+          onClick={_event => executeMutation()}>
+          "Execute Mutation"->str
+        </button>
+      </section>
+      {switch (String.length(state.mutation)) {
+       | 0 => React.null
+       | _ =>
+         <section className=Styles.section>
+           <span className=Styles.title> "Result"->str </span>
+           <div className={"db4d3f"->Styles.code}> state.mutation->str </div>
+           <button
+             className={"db4d3f"->Styles.button}
+             onClick={_event => dispatch(ClearMutation)}>
+             "Clear Mutation"->str
+           </button>
+         </section>
+       }}
+    </div>
+  </div>;
 };
