@@ -93,7 +93,7 @@ module Styles = {
   let colors = {query: "48a9dc", mutation: "db4d3f"};
 };
 
-let str = ReasonReact.string;
+let str = React.string;
 
 type state = {
   query: string,
@@ -156,7 +156,7 @@ let make = () => {
         </button>
       </section>
       {switch (String.length(state.query)) {
-       | 0 => ReasonReact.null
+       | 0 => React.null
        | _ =>
          <section className=Styles.section>
            <span className=Styles.title> "Result"->str </span>
@@ -191,7 +191,7 @@ let make = () => {
         </button>
       </section>
       {switch (String.length(state.mutation)) {
-       | 0 => ReasonReact.null
+       | 0 => React.null
        | _ =>
          <section className=Styles.section>
            <span className=Styles.title> "Result"->str </span>
