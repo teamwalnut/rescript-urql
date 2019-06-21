@@ -1,3 +1,7 @@
+type handler('a, 'b, 'c) =
+  | Handler((option('a), 'b) => 'a): handler('a, 'b, 'a)
+  | NoHandler: handler(_, 'b, 'b);
+
 type useSubscriptionResponse('acc) = {
   fetching: bool,
   data: option('acc),
@@ -7,7 +11,7 @@ type useSubscriptionResponse('acc) = {
 
 let useSubscription:
   (
-    ~handler: (option('a), 'b) => 'a=?,
+    ~handler: handler('a, 'b, 'c),
     UrqlTypes.request('b)
   ) =>
   useSubscriptionResponse('c);
