@@ -78,6 +78,16 @@
       "contributions": [
         "ideas"
       ]
+    },
+    {
+      "login": "idkjs",
+      "name": "Alain Armand",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/2370391?v=4",
+      "profile": "https://medium.com/@idkjs",
+      "contributions": [
+        "code",
+        "example"
+      ]
     }
   ],
   "contributorsPerLine": 4
