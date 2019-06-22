@@ -29,7 +29,7 @@ type useSubscriptionResponse('ret) = {
 external useSubscriptionJs:
   (
     useSubscriptionArgs,
-    option((option('acc), 'resp) => 'acc)
+    option((option('acc), Js.Json.t) => 'acc)
   ) =>
   array(useSubscriptionResponseJs('ret)) =
   "useSubscription";
@@ -71,7 +71,7 @@ let useSubscription =
       useSubscriptionJs(args, None)[0] 
       |> useSubscriptionResponseToRecord(parse)
     | Handler(handler_fn) =>
-      useSubscriptionJs(args, Some(handler_fn))[0] 
+      useSubscriptionJs(args, Some((acc, data) => handler_fn(acc, parse(data))))[0] 
       |> useSubscriptionResponseToRecord(x => x)
   }
 
