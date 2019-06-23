@@ -11,13 +11,15 @@ module Mutations = {
   |}
   ];
 
-  let patDog = {|
+  module PatDog = [%graphql
+    {|
     mutation patDog($key: ID!) {
       patDog(key: $key) {
         pats
       }
     }
-  |};
+  |}
+  ];
 
   let treatDog = {|
     mutation treatDog($key: ID!) {
@@ -27,13 +29,15 @@ module Mutations = {
     }
   |};
 
-  let bellyscratchDog = {|
+  module BellyscratchDog = [%graphql
+    {|
     mutation bellyscratchDog($key: ID!) {
       bellyscratchDog(key: $key) {
         bellyscratches
       }
     }
-  |};
+  |}
+  ];
 };
 
 [@react.component]
@@ -80,13 +84,13 @@ let make =
         hex="48a9dc"
         onClick={_ => executeLikeMutation() |> ignore}
       />
-      <Mutation query=Mutations.patDog>
+      <Mutation request={Mutations.PatDog.make(~key=id, ())}>
         ...{({executeMutation}) =>
           <EmojiButton
             emoji={j|✋|j}
             count={string_of_int(pats)}
             hex="db4d3f"
-            onClick={_ => executeMutation(Some(payload)) |> ignore}
+            onClick={_ => executeMutation() |> ignore}
           />
         }
       </Mutation>
@@ -96,13 +100,13 @@ let make =
         hex="7b16ff"
         onClick={_ => executeTreatMutation() |> ignore}
       />
-      <Mutation query=Mutations.bellyscratchDog>
+      <Mutation request={Mutations.BellyscratchDog.make(~key=id, ())}>
         ...{({executeMutation}) =>
           <EmojiButton
             emoji={j|🐾|j}
             count={string_of_int(bellyscratches)}
             hex="1bda2a"
-            onClick={_ => executeMutation(Some(payload)) |> ignore}
+            onClick={_ => executeMutation() |> ignore}
           />
         }
       </Mutation>

@@ -7,11 +7,11 @@ type useMutationResponseJs = {
   error: UrqlCombinedError.t,
 };
 
-type useMutationResponse('a) = {
+type useMutationResponse('response) = {
   fetching: bool,
-  data: option('a),
+  data: option('response),
   error: option(UrqlCombinedError.t),
-  response: UrqlTypes.response('a),
+  response: UrqlTypes.response('response),
 };
 
 type executeMutation =
@@ -38,15 +38,7 @@ let useMutationResponseToRecord =
   {fetching, data, error, response};
 };
 
-let useMutation =
-    (
-      ~request: {
-         .
-         "query": string,
-         "variables": Js.Json.t,
-         "parse": Js.Json.t => 'response,
-       },
-    ) => {
+let useMutation = (~request: UrqlTypes.request('response)) => {
   let (useMutationResponseJs, executeMutation) =
     useMutationJs(request##query);
   let useMutationResponse =
