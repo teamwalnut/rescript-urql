@@ -32,9 +32,9 @@ let urqlDataToRecord = (parse, variables, result) => {
   let executeMutationFn = result->executeMutationGet;
   let executeMutation = () => executeMutationFn(Some(variables));
 
-  let response: UrqlTypes.response('a) =
+  let response =
     switch (fetching, data, error) {
-    | (true, _, _) => Fetching
+    | (true, _, _) => UrqlTypes.Fetching
     | (false, Some(data), _) => Data(data)
     | (false, _, Some(error)) => Error(error)
     | (false, None, None) => NotFound
