@@ -1,58 +1,68 @@
 [@bs.deriving abstract]
-type queryRenderPropsJs('a) = {
+type queryRenderPropsJs = {
   fetching: bool,
-  [@bs.optional] data: 'a,
-  [@bs.optional] error: UrqlCombinedError.t,
-  executeQuery: option(Js.Json.t) => Js.Promise.t(UrqlTypes.operationResult)
+  [@bs.optional]
+  data: Js.Json.t,
+  [@bs.optional]
+  error: UrqlCombinedError.t,
+  executeQuery: option(Js.Json.t) => Js.Promise.t(UrqlTypes.operationResult),
 };
 
-type queryRenderProps('a) = {
+type queryRenderProps('response) = {
   fetching: bool,
-  data: option('a),
+  data: option('response),
   error: option(UrqlCombinedError.t),
   executeQuery: option(Js.Json.t) => Js.Promise.t(UrqlTypes.operationResult),
-  response: UrqlTypes.response('a)
+  response: UrqlTypes.response('response),
 };
 
 module QueryJs = {
   [@bs.module "urql"] [@react.component]
   external make:
-    (~query: string, ~variables: option(Js.Json.t)=?, ~requestPolicy: string, ~pause: option(bool)=?, ~children: queryRenderPropsJs('a) => React.element) =>
+    (
+      ~query: string,
+      ~variables: Js.Json.t,
+      ~requestPolicy: string,
+      ~pause: option(bool)=?,
+      ~children: queryRenderPropsJs => React.element
+    ) =>
     React.element =
     "Query";
-}
+};
 
-let urqlDataToRecord = (result: queryRenderPropsJs('a)) => {
-  let data = result->dataGet;
+let urqlDataToRecord = (parse, result) => {
+  let data = result->dataGet->Belt.Option.map(parse);
   let error = result->errorGet;
   let fetching = result->fetchingGet;
+  let executeQuery = result->executeQueryGet;
 
-  let response: UrqlTypes.response('a) =
+  let response =
     switch (fetching, data, error) {
-    | (true, _, _) => Fetching
+    | (true, _, _) => UrqlTypes.Fetching
     | (false, Some(data), _) => Data(data)
     | (false, _, Some(error)) => Error(error)
     | (false, None, None) => NotFound
     };
 
-  {
-    fetching,
-    data,
-    error,
-    executeQuery: result->executeQueryGet,
-    response,
-  };
+  {fetching, data, error, executeQuery, response};
 };
 
 [@react.component]
-let make = (
-  ~query: string,
-  ~variables: option(Js.Json.t)=?,
-  ~requestPolicy: UrqlTypes.requestPolicy=`CacheFirst,
-  ~pause: option(bool)=?,
-  ~children: queryRenderProps('a) => React.element
-) => {
-  <QueryJs query variables requestPolicy=UrqlTypes.requestPolicyToJs(requestPolicy) pause>
-    {result => result |> urqlDataToRecord |> children}
-  </QueryJs>
+let make =
+    (
+      ~request: UrqlTypes.request('response),
+      ~requestPolicy: UrqlTypes.requestPolicy=`CacheFirst,
+      ~pause: option(bool)=?,
+      ~children: queryRenderProps('response) => React.element,
+    ) => {
+  let query = request##query;
+  let variables = request##variables;
+  let parse = request##parse;
+  <QueryJs
+    query
+    variables
+    requestPolicy={UrqlTypes.requestPolicyToJs(requestPolicy)}
+    pause>
+    {result => result |> urqlDataToRecord(parse) |> children}
+  </QueryJs>;
 };

@@ -12,7 +12,6 @@ type pokemon = {
 };
 
 /* graphql query for GetPokemon */
-
 module GetPokemon = [%graphql
   {|
   query pokemon($name: String!) {
@@ -62,28 +61,18 @@ let make = (~pokemon: string) => {
               <img className=Styles.dexImage src=image />
             </div>
             <div className=Styles.dexText>
-              <h1 className=Styles.dexTitle>
-                name->React.string
-              </h1>
+              <h1 className=Styles.dexTitle> name->React.string </h1>
               <h2 className=Styles.dexSubTitle>
                 classification->React.string
               </h2>
-              {
-                switch (height##maximum, weight##maximum) {
-                | (Some(heightMax), Some(weightMax)) =>
-                  <div className=Styles.dexGrid>
-                    <p>
-                      ("Height: " ++ heightMax)
-                      ->React.string
-                    </p>
-                    <p>
-                      ("Weight: " ++ weightMax)
-                      ->React.string
-                    </p>
-                  </div>
-                | (_, _) => React.null
-                }
-              }
+              {switch (height##maximum, weight##maximum) {
+               | (Some(heightMax), Some(weightMax)) =>
+                 <div className=Styles.dexGrid>
+                   <p> {("Height: " ++ heightMax)->React.string} </p>
+                   <p> {("Weight: " ++ weightMax)->React.string} </p>
+                 </div>
+               | (_, _) => React.null
+               }}
             </div>
           </div>
         </section>
@@ -92,7 +81,7 @@ let make = (~pokemon: string) => {
     | None => React.null
     }
   | Fetching => <div> "Loading"->React.string </div>
-  | Error(error) => <div> "Error"->React.string </div>
+  | Error(_e) => <div> "Error"->React.string </div>
   | NotFound => <div> "Not Found"->React.string </div>
-  }
+  };
 };

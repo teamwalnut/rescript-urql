@@ -1,12 +1,17 @@
 type partialOperationContextFn =
   option(UrqlTypes.partialOperationContext) => unit;
-type useQueryState('a) = {
+
+type useQueryState('response) = {
   fetching: bool,
-  data: option('a),
+  data: option('response),
   error: option(UrqlCombinedError.t),
-  response: UrqlTypes.response('a),
+  response: UrqlTypes.response('response),
 };
-type useQueryResponse('a) = (useQueryState('a), partialOperationContextFn);
+
+type useQueryResponse('response) = (
+  useQueryState('response),
+  partialOperationContextFn,
+);
 
 let useQuery:
   (
