@@ -12,6 +12,6 @@ type useSubscriptionResponse('ret) = {
 let useSubscription:
   (
     ~handler: handler('acc, 'resp, 'ret),
-    UrqlTypes.request('resp)
+    ~request: UrqlTypes.request('resp)
   ) =>
   useSubscriptionResponse('ret);

@@ -56,7 +56,7 @@ let useSubscription =
     (
       type acc, type resp, type ret,
       ~handler: handler(acc, resp, ret),
-      request: UrqlTypes.request(resp),
+      ~request: UrqlTypes.request(resp),
     ): useSubscriptionResponse(ret) => {
   let parse = request##parse;
   let args =
