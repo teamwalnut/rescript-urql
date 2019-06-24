@@ -47,7 +47,7 @@ let urqlDataToRecord = (parse, variables, result) => {
 let make =
     (
       ~request: UrqlTypes.request('response),
-      ~children: mutationRenderProps('a) => React.element,
+      ~children: mutationRenderProps('response) => React.element,
     ) => {
   let query = request##query;
   let variables = request##variables;
