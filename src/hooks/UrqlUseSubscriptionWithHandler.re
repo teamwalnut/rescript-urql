@@ -27,15 +27,11 @@ type useSubscriptionResponse('ret) = {
 
 [@bs.module "urql"]
 external useSubscriptionJs:
-  (
-    useSubscriptionArgs,
-    option((option('acc), Js.Json.t) => 'acc)
-  ) =>
+  (useSubscriptionArgs, option((option('acc), Js.Json.t) => 'acc)) =>
   array(useSubscriptionResponseJs('ret)) =
   "useSubscription";
 
-let useSubscriptionResponseToRecord =
-    (parse, result) => {
+let useSubscriptionResponseToRecord = (parse, result) => {
   let data = result->dataGet->Belt.Option.map(parse);
   let error = result->errorGet;
   let fetching = result->fetchingGet;
@@ -54,10 +50,13 @@ let useSubscriptionResponseToRecord =
 
 let useSubscription =
     (
-      type acc, type resp, type ret,
+      type acc,
+      type resp,
+      type ret,
       ~handler: handler(acc, resp, ret),
       ~request: UrqlTypes.request(resp),
-    ): useSubscriptionResponse(ret) => {
+    )
+    : useSubscriptionResponse(ret) => {
   let parse = request##parse;
   let args =
     useSubscriptionArgs(
@@ -66,14 +65,18 @@ let useSubscription =
       (),
     );
 
-  let state: useSubscriptionResponse(ret) = switch (handler) {
-    | NoHandler => 
-      useSubscriptionJs(args, None)[0] 
+  let state: useSubscriptionResponse(ret) =
+    switch (handler) {
+    | NoHandler =>
+      useSubscriptionJs(args, None)[0]
       |> useSubscriptionResponseToRecord(parse)
     | Handler(handler_fn) =>
-      useSubscriptionJs(args, Some((acc, data) => handler_fn(acc, parse(data))))[0] 
+      useSubscriptionJs(
+        args,
+        Some((acc, data) => handler_fn(acc, parse(data))),
+      )[0]
       |> useSubscriptionResponseToRecord(x => x)
-  }
+    };
 
-  state
+  state;
 };

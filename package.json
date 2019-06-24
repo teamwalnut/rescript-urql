@@ -33,6 +33,8 @@
     "all-contributors-cli": "^5.4.0",
     "bs-platform": "^5.0.4",
     "graphql_ppx": "^0.2.7",
+    "husky": "^2.4.1",
+    "lint-staged": "^8.2.1",
     "reason-react": "0.7.0"
   },
   "peerDependencies": {
@@ -43,5 +45,16 @@
     "testMatch": [
       "<rootDir>/__tests__/*_test.bs.js"
     ]
+  },
+  "lint-staged": {
+    "*.{re,rei}": [
+      "bsrefmt --in-place",
+      "git add"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
   }
 }
