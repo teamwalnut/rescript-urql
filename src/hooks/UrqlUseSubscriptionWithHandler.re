@@ -1,38 +1,42 @@
+type handler('acc, 'resp, 'ret) =
+  | Handler((option('acc), 'resp) => 'acc): handler('acc, 'resp, 'acc)
+  | NoHandler: handler(_, 'resp, 'resp);
+
 [@bs.deriving abstract]
-type useSubscriptionWithHandlerArgs = {
+type useSubscriptionArgs = {
   query: string,
   [@bs.optional]
   variables: Js.Json.t,
 };
 
 [@bs.deriving abstract]
-type useSubscriptionWithHandlerResponseJs('acc) = {
+type useSubscriptionResponseJs('ret) = {
   fetching: bool,
   [@bs.optional]
-  data: 'acc,
+  data: 'ret,
   [@bs.optional]
   error: UrqlCombinedError.t,
 };
 
-type useSubscriptionWithHandlerResponse('acc) = {
+type useSubscriptionResponse('ret) = {
   fetching: bool,
-  data: option('acc),
+  data: option('ret),
   error: option(UrqlCombinedError.t),
-  response: UrqlTypes.response('acc),
+  response: UrqlTypes.response('ret),
 };
 
 [@bs.module "urql"]
-external useSubscriptionWithHandlerJs:
+external useSubscriptionJs:
   (
-    useSubscriptionWithHandlerArgs,
-    UrqlTypes.parsedHandler('acc, 'response)
+    useSubscriptionArgs,
+    option((option('acc), Js.Json.t) => 'acc)
   ) =>
-  array(useSubscriptionWithHandlerResponseJs('acc)) =
+  array(useSubscriptionResponseJs('ret)) =
   "useSubscription";
 
-let useSubscriptionResponseToRecordWithHandler =
-    (result: useSubscriptionWithHandlerResponseJs('acc)) => {
-  let data = result->dataGet;
+let useSubscriptionResponseToRecord =
+    (parse, result) => {
+  let data = result->dataGet->Belt.Option.map(parse);
   let error = result->errorGet;
   let fetching = result->fetchingGet;
 
@@ -48,25 +52,28 @@ let useSubscriptionResponseToRecordWithHandler =
   {fetching, data, error, response};
 };
 
-let useSubscriptionWithHandler =
+let useSubscription =
     (
-      ~request: UrqlTypes.request('response),
-      ~handler: UrqlTypes.parsedHandler('acc, 'response),
-    ) => {
+      type acc, type resp, type ret,
+      ~handler: handler(acc, resp, ret),
+      ~request: UrqlTypes.request(resp),
+    ): useSubscriptionResponse(ret) => {
   let parse = request##parse;
-  let parsedHandler =
-      (~prevSubscriptions: option('acc), ~subscription: Js.Json.t) =>
-    handler(~prevSubscriptions, ~subscription=parse(subscription));
-
   let args =
-    useSubscriptionWithHandlerArgs(
+    useSubscriptionArgs(
       ~query=request##query,
       ~variables=request##variables,
       (),
     );
 
-  let state = useSubscriptionWithHandlerJs(args, parsedHandler)[0];
-  let useSubscriptionResponse =
-    state |> useSubscriptionResponseToRecordWithHandler;
-  useSubscriptionResponse;
+  let state: useSubscriptionResponse(ret) = switch (handler) {
+    | NoHandler => 
+      useSubscriptionJs(args, None)[0] 
+      |> useSubscriptionResponseToRecord(parse)
+    | Handler(handler_fn) =>
+      useSubscriptionJs(args, Some((acc, data) => handler_fn(acc, parse(data))))[0] 
+      |> useSubscriptionResponseToRecord(x => x)
+  }
+
+  state
 };
