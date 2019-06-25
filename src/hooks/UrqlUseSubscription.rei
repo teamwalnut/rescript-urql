@@ -1,9 +1,17 @@
-type useSubscriptionResponse('response) = {
+type handler('acc, 'resp, 'ret) =
+  | Handler((option('acc), 'resp) => 'acc): handler('acc, 'resp, 'acc)
+  | NoHandler: handler(_, 'resp, 'resp);
+
+type useSubscriptionResponse('ret) = {
   fetching: bool,
-  data: option('response),
+  data: option('ret),
   error: option(UrqlCombinedError.t),
-  response: UrqlTypes.response('response),
+  response: UrqlTypes.response('ret),
 };
 
 let useSubscription:
-  UrqlTypes.request('response) => useSubscriptionResponse('response);
+  (
+    ~handler: handler('acc, 'resp, 'ret),
+    ~request: UrqlTypes.request('resp)
+  ) =>
+  useSubscriptionResponse('ret);

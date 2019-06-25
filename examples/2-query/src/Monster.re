@@ -1,6 +1,5 @@
-open MonsterStyles;
 open ReasonUrql;
-open Hooks;
+open MonsterStyles;
 
 type maximum = {maximum: int};
 
@@ -35,9 +34,9 @@ let make = (~pokemon: string) => {
   /* We set up the query here as we need access to the pokemon
      value passed in from GetAll */
   let request = GetPokemon.make(~name=pokemon, ());
-  let ({response}, _executeQuery) = useQuery(~request, ());
+  let (result, _) = Hooks.useQuery(~request, ());
 
-  switch (response) {
+  switch (result.response) {
   | Data(data) =>
     switch (data##pokemon) {
     | Some(pokemon) =>
