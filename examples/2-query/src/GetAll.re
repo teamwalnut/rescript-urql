@@ -26,28 +26,31 @@ let filteredPokemonList = (~pokemonList: array(Js.String.t), ~input: string) =>
 
 [@react.component]
 let make = (~pokemons) => {
-  let (state, dispatch) = React.useReducer(
-    (state, action) =>
-    switch (action) {
-    | ChangeInput(textInput) =>
+  let (state, dispatch) =
+    React.useReducer(
+      (state, action) =>
+        switch (action) {
+        | ChangeInput(textInput) => {
+            ...state,
+            textInput,
+            filteredList:
+              filteredPokemonList(
+                ~pokemonList=state.listOfPokemons,
+                ~input=textInput,
+              ),
+          }
+        | SelectPokemon(selected) => {
+            ...state,
+            selectedPokemon: Some(selected),
+          }
+        },
       {
-        ...state,
-        textInput,
-        filteredList:
-          filteredPokemonList(
-            ~pokemonList=state.listOfPokemons,
-            ~input=textInput,
-          ),
-      }
-    | SelectPokemon(selected) => {...state, selectedPokemon: Some(selected)}
-    },
-    {
-      listOfPokemons: pokemons,
-      textInput: "",
-      filteredList: filteredPokemonList(~pokemonList=pokemons, ~input=""),
-      selectedPokemon: None,
-    }
-  );
+        listOfPokemons: pokemons,
+        textInput: "",
+        filteredList: filteredPokemonList(~pokemonList=pokemons, ~input=""),
+        selectedPokemon: None,
+      },
+    );
 
   let pokemonElementsArray = (~pokemonList: array(string)) =>
     Array.map(
@@ -66,21 +69,17 @@ let make = (~pokemons) => {
       <input
         className=Styles.searchBox
         value={state.textInput}
-        onChange={
-          event =>
-            dispatch(ChangeInput(event->ReactEvent.Form.target##value))
+        onChange={event =>
+          dispatch(ChangeInput(event->ReactEvent.Form.target##value))
         }
       />
       <ul>
-        {pokemonElementsArray(~pokemonList=state.filteredList)
-        ->React.array}
+        {pokemonElementsArray(~pokemonList=state.filteredList)->React.array}
       </ul>
     </section>
-    {
-      switch (state.selectedPokemon) {
-      | Some(pokemon) => <Monster pokemon />
-      | None => React.null
-      }
-    }
+    {switch (state.selectedPokemon) {
+     | Some(pokemon) => <Monster pokemon />
+     | None => React.null
+     }}
   </div>;
 };
