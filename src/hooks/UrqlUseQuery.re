@@ -1,3 +1,5 @@
+open UrqlTypes;
+
 [@bs.deriving abstract]
 type useQueryStateJs = {
   fetching: bool,
@@ -12,23 +14,17 @@ type useQueryArgs = {
   query: string,
   variables: Js.Json.t,
   [@bs.optional]
-  requestPolicy: UrqlTypes.requestPolicy,
+  requestPolicy: requestPolicy,
   [@bs.optional]
   pause: bool,
 };
 
 type partialOperationContextFn =
-  option(UrqlTypes.partialOperationContext) => unit;
+  option(partialOperationContext) => unit;
 type useQueryResponseJs = (useQueryStateJs, partialOperationContextFn);
 
-type useQueryState('response) = {
-  fetching: bool,
-  data: option('response),
-  error: option(UrqlCombinedError.t),
-  response: UrqlTypes.response('response),
-};
 type useQueryResponse('response) = (
-  useQueryState('response),
+  hookResponse('response),
   partialOperationContextFn,
 );
 
@@ -39,7 +35,7 @@ let useQueryResponseToRecord = (parse, result) => {
 
   let response =
     switch (fetching, data, error) {
-    | (true, _, _) => UrqlTypes.Fetching
+    | (true, _, _) => Fetching
     | (false, Some(data), _) => Data(data)
     | (false, _, Some(error)) => Error(error)
     | (false, None, None) => NotFound

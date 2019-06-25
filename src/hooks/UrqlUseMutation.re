@@ -1,3 +1,5 @@
+open UrqlTypes;
+
 [@bs.deriving abstract]
 type useMutationResponseJs = {
   fetching: bool,
@@ -5,13 +7,6 @@ type useMutationResponseJs = {
   data: Js.Json.t,
   [@bs.optional]
   error: UrqlCombinedError.t,
-};
-
-type useMutationResponse('response) = {
-  fetching: bool,
-  data: option('response),
-  error: option(UrqlCombinedError.t),
-  response: UrqlTypes.response('response),
 };
 
 type executeMutation =

@@ -1,15 +1,10 @@
-type partialOperationContextFn =
-  option(UrqlTypes.partialOperationContext) => unit;
+open UrqlTypes;
 
-type useQueryState('response) = {
-  fetching: bool,
-  data: option('response),
-  error: option(UrqlCombinedError.t),
-  response: UrqlTypes.response('response),
-};
+type partialOperationContextFn =
+  option(partialOperationContext) => unit;
 
 type useQueryResponse('response) = (
-  useQueryState('response),
+  hookResponse('response),
   partialOperationContextFn,
 );
 
@@ -21,7 +16,7 @@ let useQuery:
                 "query": string,
                 "variables": Js.Json.t,
               },
-    ~requestPolicy: UrqlTypes.requestPolicy=?,
+    ~requestPolicy: requestPolicy=?,
     ~pause: bool=?,
     unit
   ) =>

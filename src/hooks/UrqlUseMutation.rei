@@ -1,13 +1,8 @@
-type useMutationResponse('response) = {
-  fetching: bool,
-  data: option('response),
-  error: option(UrqlCombinedError.t),
-  response: UrqlTypes.response('response),
-};
+open UrqlTypes;
 
 let useMutation:
-  (~request: UrqlTypes.request('response)) =>
+  (~request: request('response)) =>
   (
-    useMutationResponse('response),
+    hookResponse('response),
     unit => Js.Promise.t(UrqlTypes.operationResult),
   );
