@@ -10,7 +10,7 @@ type useMutationResponseJs = {
 };
 
 type executeMutation =
-  option(Js.Json.t) => Js.Promise.t(UrqlTypes.operationResult);
+  option(Js.Json.t) => Js.Promise.t(operationResult);
 
 [@bs.module "urql"]
 external useMutationJs: string => (useMutationResponseJs, executeMutation) =
@@ -24,7 +24,7 @@ let useMutationResponseToRecord =
 
   let response =
     switch (fetching, data, error) {
-    | (true, _, _) => UrqlTypes.Fetching
+    | (true, _, _) => Fetching
     | (false, Some(data), _) => Data(data)
     | (false, _, Some(error)) => Error(error)
     | (false, None, None) => NotFound
@@ -33,7 +33,7 @@ let useMutationResponseToRecord =
   {fetching, data, error, response};
 };
 
-let useMutation = (~request: UrqlTypes.request('response)) => {
+let useMutation = (~request: request('response)) => {
   let (useMutationResponseJs, executeMutation) =
     useMutationJs(request##query);
   let useMutationResponse =

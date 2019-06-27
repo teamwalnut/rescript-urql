@@ -26,14 +26,14 @@ external useSubscriptionJs:
   array(useSubscriptionResponseJs('ret)) =
   "useSubscription";
 
-let useSubscriptionResponseToRecord = (parse, result): hookResponse('a) => {
+let useSubscriptionResponseToRecord = (parse, result) => {
   let data = result->dataGet->Belt.Option.map(parse);
   let error = result->errorGet;
   let fetching = result->fetchingGet;
 
   let response =
     switch (fetching, data, error) {
-    | (true, None, _) => UrqlTypes.Fetching
+    | (true, None, _) => Fetching
     | (true, Some(data), _) => Data(data)
     | (false, Some(data), _) => Data(data)
     | (false, _, Some(error)) => Error(error)
