@@ -1,6 +1,5 @@
 open ReasonUrql;
 open Hooks;
-open Types;
 open MonsterStyles;
 
 type maximum = {maximum: int};
