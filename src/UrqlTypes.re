@@ -100,3 +100,10 @@ type handler('acc) =
 
 type parsedHandler('acc, 'response) =
   (~prevSubscriptions: option('acc), ~subscription: 'response) => 'acc;
+
+type hookResponse('ret) = {
+  fetching: bool,
+  data: option('ret),
+  error: option(UrqlCombinedError.t),
+  response: response('ret)
+}

@@ -19,6 +19,12 @@ module Error = UrqlCombinedError;
 module Exchanges = UrqlClient.UrqlExchanges;
 
 module Hooks = {
+  type hookResponse('ret) = Types.hookResponse('ret) = {
+    fetching: bool,
+    data: option('ret),
+    error: option(UrqlCombinedError.t),
+    response: Types.response('ret)
+  };
   include UrqlUseMutation;
   include UrqlUseQuery;
   include UrqlUseSubscription;

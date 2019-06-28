@@ -1,3 +1,5 @@
+open UrqlTypes;
+
 type handler('acc, 'resp, 'ret) =
   | Handler((option('acc), 'resp) => 'acc): handler('acc, 'resp, 'acc)
   | NoHandler: handler(_, 'resp, 'resp);
@@ -18,13 +20,6 @@ type useSubscriptionResponseJs('ret) = {
   error: UrqlCombinedError.t,
 };
 
-type useSubscriptionResponse('ret) = {
-  fetching: bool,
-  data: option('ret),
-  error: option(UrqlCombinedError.t),
-  response: UrqlTypes.response('ret),
-};
-
 [@bs.module "urql"]
 external useSubscriptionJs:
   (useSubscriptionArgs, option((option('acc), Js.Json.t) => 'acc)) =>
@@ -38,7 +33,7 @@ let useSubscriptionResponseToRecord = (parse, result) => {
 
   let response =
     switch (fetching, data, error) {
-    | (true, None, _) => UrqlTypes.Fetching
+    | (true, None, _) => Fetching
     | (true, Some(data), _) => Data(data)
     | (false, Some(data), _) => Data(data)
     | (false, _, Some(error)) => Error(error)
@@ -54,9 +49,9 @@ let useSubscription =
       type resp,
       type ret,
       ~handler: handler(acc, resp, ret),
-      ~request: UrqlTypes.request(resp),
+      ~request: request(resp),
     )
-    : useSubscriptionResponse(ret) => {
+    : hookResponse(ret) => {
   let parse = request##parse;
   let args =
     useSubscriptionArgs(
@@ -65,7 +60,7 @@ let useSubscription =
       (),
     );
 
-  let state: useSubscriptionResponse(ret) =
+  let state: hookResponse(ret) =
     switch (handler) {
     | NoHandler =>
       useSubscriptionJs(args, None)[0]
