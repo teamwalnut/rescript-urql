@@ -1,17 +1,19 @@
+open UrqlTypes;
+
 [@bs.deriving abstract]
-type subscriptionRenderPropsJs('a) = {
+type subscriptionRenderPropsJs('ret) = {
   fetching: bool,
   [@bs.optional]
-  data: 'a,
+  data: 'ret,
   [@bs.optional]
   error: UrqlCombinedError.t,
 };
 
-type subscriptionRenderProps('a) = {
+type subscriptionRenderProps('ret) = {
   fetching: bool,
-  data: option('a),
+  data: option('ret),
   error: option(UrqlCombinedError.t),
-  response: UrqlTypes.response('a),
+  response: UrqlTypes.response('ret),
 };
 
 module SubscriptionJs = {
@@ -19,22 +21,23 @@ module SubscriptionJs = {
   external make:
     (
       ~query: string,
-      ~variables: Js.Json.t=?,
-      ~handler: UrqlTypes.handler('acc)=?,
-      ~children: subscriptionRenderPropsJs('a) => React.element
+      ~variables: Js.Json.t,
+      ~handler: (option('acc), Js.Json.t) => 'acc=?,
+      ~children: subscriptionRenderPropsJs('ret) => React.element
     ) =>
     React.element =
     "Subscription";
 };
 
-let urqlDataToRecord = (result: subscriptionRenderPropsJs('a)) => {
-  let data = result->dataGet;
+let urqlDataToRecord = (parse, result) => {
+  let data = result->dataGet->Belt.Option.map(parse);
   let error = result->errorGet;
   let fetching = result->fetchingGet;
 
-  let response: UrqlTypes.response('a) =
+  let response =
     switch (fetching, data, error) {
-    | (true, _, _) => Fetching
+    | (true, None, _) => Fetching
+    | (true, Some(data), _) => Data(data)
     | (false, Some(data), _) => Data(data)
     | (false, _, Some(error)) => Error(error)
     | (false, None, None) => NotFound
@@ -43,14 +46,39 @@ let urqlDataToRecord = (result: subscriptionRenderPropsJs('a)) => {
   {fetching, data, error, response};
 };
 
-[@react.component]
-let make =
-    (
-      ~query: string,
-      ~variables: option(Js.Json.t)=?,
-      ~handler: option(UrqlTypes.handler('acc))=?,
-      ~children: subscriptionRenderProps('a) => React.element,
-    ) =>
-  <SubscriptionJs query ?variables ?handler>
-    {result => result |> urqlDataToRecord |> children}
-  </SubscriptionJs>;
+module Subscription = {
+  [@react.component]
+  let make =
+      (
+        ~request: request('response),
+        ~children: subscriptionRenderProps('response) => React.element,
+      ) => {
+    let query = request##query;
+    let variables = request##variables;
+    let parse = request##parse;
+
+    <SubscriptionJs query variables>
+      {result => result |> urqlDataToRecord(parse) |> children}
+    </SubscriptionJs>;
+  };
+};
+
+module SubscriptionWithHandler = {
+  [@react.component]
+  let make =
+      (
+        ~request: request('response),
+        ~handler: (option('acc), 'response) => 'acc,
+        ~children: subscriptionRenderProps('acc) => React.element,
+      ) => {
+    let query = request##query;
+    let variables = request##variables;
+    let parse = request##parse;
+
+    let applyParsedResponse = (acc, data) => handler(acc, parse(data));
+
+    <SubscriptionJs query variables handler=applyParsedResponse>
+      {result => result |> urqlDataToRecord(x => x) |> children}
+    </SubscriptionJs>;
+  };
+};

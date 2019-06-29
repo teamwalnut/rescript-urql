@@ -16,14 +16,14 @@ module GetPokemon = [%graphql
   {|
   query pokemon($name: String!) {
     pokemon(name: $name) {
-        name
-        classification
-        height {
-            maximum
-        }
-        weight {
-            maximum
-        }
+      name
+      classification
+      height {
+        maximum
+      }
+      weight {
+        maximum
+      }
       image
     }
   }
