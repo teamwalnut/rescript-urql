@@ -92,18 +92,9 @@ type request('response) = {
   "variables": Js.Json.t,
 };
 
-/* The type of the handler function passed to Subscription and useSubscription.
-   `handler` corresponds to the type of the handler function _before_ the latest subscription has been parsed.
-   `parsedHandler` corresponds to the type of the handler function _after_ the latest subscription has been parsed. */
-type handler('acc) =
-  (~prevSubscriptions: option('acc), ~subscription: Js.Json.t) => 'acc;
-
-type parsedHandler('acc, 'response) =
-  (~prevSubscriptions: option('acc), ~subscription: 'response) => 'acc;
-
 type hookResponse('ret) = {
   fetching: bool,
   data: option('ret),
   error: option(UrqlCombinedError.t),
-  response: response('ret)
-}
+  response: response('ret),
+};
