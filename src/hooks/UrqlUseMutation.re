@@ -34,9 +34,12 @@ let useMutationResponseToRecord =
 };
 
 let useMutation = (~request: request('response)) => {
-  let (useMutationResponseJs, executeMutation) =
+  let (useMutationResponseJs, executeMutationJs) =
     useMutationJs(request##query);
-  let useMutationResponse =
-    useMutationResponseJs |> useMutationResponseToRecord(request##parse);
-  (useMutationResponse, () => executeMutation(Some(request##variables)));
+  let useMutationResponse = React.useMemo1(
+    () => useMutationResponseJs |> useMutationResponseToRecord(request##parse),
+    [|useMutationResponseJs|]
+    );
+  let executeMutation = React.useCallback1(() => executeMutationJs(Some(request##variables)), [|request##variables|]);
+  (useMutationResponse, executeMutation);
 };
