@@ -3,8 +3,7 @@ open UrqlTypes;
 [@bs.deriving abstract]
 type useQueryStateJs = {
   fetching: bool,
-  [@bs.optional]
-  data: Js.Json.t,
+  data: Js.Nullable.t(Js.Json.t),
   [@bs.optional]
   error: UrqlCombinedError.t,
 };
@@ -29,7 +28,7 @@ type useQueryResponse('response) = (
 );
 
 let useQueryResponseToRecord = (parse, result) => {
-  let data = result->dataGet->Belt.Option.map(parse);
+  let data = result->dataGet->Js.Nullable.toOption->Belt.Option.map(parse);
   let error = result->errorGet;
   let fetching = result->fetchingGet;
 
@@ -57,7 +56,11 @@ let useQuery = (~request, ~requestPolicy=?, ~pause=?, ()) => {
       (),
     );
   let (state, executeQuery) = useQueryJs(args);
-  let state_record = state |> useQueryResponseToRecord(request##parse);
+  let state_record =
+    React.useMemo2(
+      () => state |> useQueryResponseToRecord(request##parse),
+      (state, request##parse),
+    );
 
   (state_record, executeQuery);
 };

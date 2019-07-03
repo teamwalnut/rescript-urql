@@ -14,8 +14,7 @@ type useSubscriptionArgs = {
 [@bs.deriving abstract]
 type useSubscriptionResponseJs('ret) = {
   fetching: bool,
-  [@bs.optional]
-  data: 'ret,
+  data: Js.Nullable.t('ret),
   [@bs.optional]
   error: UrqlCombinedError.t,
 };
@@ -27,7 +26,7 @@ external useSubscriptionJs:
   "useSubscription";
 
 let useSubscriptionResponseToRecord = (parse, result) => {
-  let data = result->dataGet->Belt.Option.map(parse);
+  let data = result->dataGet->Js.Nullable.toOption->Belt.Option.map(parse);
   let error = result->errorGet;
   let fetching = result->fetchingGet;
 
@@ -60,18 +59,23 @@ let useSubscription =
       (),
     );
 
-  let state: hookResponse(ret) =
-    switch (handler) {
-    | NoHandler =>
-      useSubscriptionJs(args, None)[0]
-      |> useSubscriptionResponseToRecord(parse)
-    | Handler(handler_fn) =>
-      useSubscriptionJs(
-        args,
-        Some((acc, data) => handler_fn(acc, parse(data))),
-      )[0]
-      |> useSubscriptionResponseToRecord(x => x)
-    };
+  React.useMemo3(
+    () => {
+      let state: hookResponse(ret) =
+        switch (handler) {
+        | NoHandler =>
+          useSubscriptionJs(args, None)[0]
+          |> useSubscriptionResponseToRecord(parse)
+        | Handler(handler_fn) =>
+          useSubscriptionJs(
+            args,
+            Some((acc, data) => handler_fn(acc, parse(data))),
+          )[0]
+          |> useSubscriptionResponseToRecord(x => x)
+        };
 
-  state;
+      state;
+    },
+    (handler, args, parse),
+  );
 };
