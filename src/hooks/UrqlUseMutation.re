@@ -3,8 +3,7 @@ open UrqlTypes;
 [@bs.deriving abstract]
 type useMutationResponseJs = {
   fetching: bool,
-  [@bs.optional]
-  data: Js.Json.t,
+  data: Js.Nullable.t(Js.Json.t),
   [@bs.optional]
   error: UrqlCombinedError.t,
 };
@@ -18,7 +17,7 @@ external useMutationJs: string => (useMutationResponseJs, executeMutation) =
 
 let useMutationResponseToRecord =
     (parse: Js.Json.t => 'response, result: useMutationResponseJs) => {
-  let data = result->dataGet->Belt.Option.map(parse);
+  let data = result->dataGet->Js.Nullable.toOption->Belt.Option.map(parse);
   let error = result->errorGet;
   let fetching = result->fetchingGet;
 

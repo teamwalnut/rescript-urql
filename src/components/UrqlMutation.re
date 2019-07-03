@@ -1,8 +1,7 @@
 [@bs.deriving abstract]
 type mutationRenderPropsJs = {
   fetching: bool,
-  [@bs.optional]
-  data: Js.Json.t,
+  data: Js.Nullable.t(Js.Json.t),
   [@bs.optional]
   error: UrqlCombinedError.t,
   executeMutation:
@@ -26,7 +25,7 @@ module MutationJs = {
 };
 
 let urqlDataToRecord = (parse, variables, result) => {
-  let data = result->dataGet->Belt.Option.map(parse);
+  let data = result->dataGet->Js.Nullable.toOption->Belt.Option.map(parse);
   let error = result->errorGet;
   let fetching = result->fetchingGet;
   let executeMutationFn = result->executeMutationGet;

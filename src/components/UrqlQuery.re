@@ -1,8 +1,7 @@
 [@bs.deriving abstract]
 type queryRenderPropsJs = {
   fetching: bool,
-  [@bs.optional]
-  data: Js.Json.t,
+  data: Js.Nullable.t(Js.Json.t),
   [@bs.optional]
   error: UrqlCombinedError.t,
   executeQuery: option(Js.Json.t) => Js.Promise.t(UrqlTypes.operationResult),
@@ -31,7 +30,7 @@ module QueryJs = {
 };
 
 let urqlDataToRecord = (parse, result) => {
-  let data = result->dataGet->Belt.Option.map(parse);
+  let data = result->dataGet->Js.Nullable.toOption->Belt.Option.map(parse);
   let error = result->errorGet;
   let fetching = result->fetchingGet;
   let executeQuery = result->executeQueryGet;

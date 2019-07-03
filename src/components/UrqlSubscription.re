@@ -3,8 +3,7 @@ open UrqlTypes;
 [@bs.deriving abstract]
 type subscriptionRenderPropsJs('ret) = {
   fetching: bool,
-  [@bs.optional]
-  data: 'ret,
+  data: Js.Nullable.t('ret),
   [@bs.optional]
   error: UrqlCombinedError.t,
 };
@@ -30,7 +29,7 @@ module SubscriptionJs = {
 };
 
 let urqlDataToRecord = (parse, result) => {
-  let data = result->dataGet->Belt.Option.map(parse);
+  let data = result->dataGet->Js.Nullable.toOption->Belt.Option.map(parse);
   let error = result->errorGet;
   let fetching = result->fetchingGet;
 
