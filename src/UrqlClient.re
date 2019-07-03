@@ -87,7 +87,7 @@ external executeQuery:
   (
     ~client: t,
     ~query: UrqlTypes.graphqlRequest,
-    ~opts: option(UrqlTypes.partialOperationContext)=?,
+    ~opts: UrqlTypes.partialOperationContext=?,
     unit
   ) =>
   Wonka.Types.sourceT('a) =
