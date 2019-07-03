@@ -56,7 +56,11 @@ let useQuery = (~request, ~requestPolicy=?, ~pause=?, ()) => {
       (),
     );
   let (state, executeQuery) = useQueryJs(args);
-  let state_record = state |> useQueryResponseToRecord(request##parse);
+  let state_record =
+    React.useMemo2(
+      () => state |> useQueryResponseToRecord(request##parse),
+      (state, request##parse),
+    );
 
   (state_record, executeQuery);
 };

@@ -59,18 +59,23 @@ let useSubscription =
       (),
     );
 
-  let state: hookResponse(ret) =
-    switch (handler) {
-    | NoHandler =>
-      useSubscriptionJs(args, None)[0]
-      |> useSubscriptionResponseToRecord(parse)
-    | Handler(handler_fn) =>
-      useSubscriptionJs(
-        args,
-        Some((acc, data) => handler_fn(acc, parse(data))),
-      )[0]
-      |> useSubscriptionResponseToRecord(x => x)
-    };
+  React.useMemo3(
+    () => {
+      let state: hookResponse(ret) =
+        switch (handler) {
+        | NoHandler =>
+          useSubscriptionJs(args, None)[0]
+          |> useSubscriptionResponseToRecord(parse)
+        | Handler(handler_fn) =>
+          useSubscriptionJs(
+            args,
+            Some((acc, data) => handler_fn(acc, parse(data))),
+          )[0]
+          |> useSubscriptionResponseToRecord(x => x)
+        };
 
-  state;
+      state;
+    },
+    (handler, args, parse),
+  );
 };

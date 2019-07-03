@@ -35,10 +35,16 @@ let useMutationResponseToRecord =
 let useMutation = (~request: request('response)) => {
   let (useMutationResponseJs, executeMutationJs) =
     useMutationJs(request##query);
-  let useMutationResponse = React.useMemo1(
-    () => useMutationResponseJs |> useMutationResponseToRecord(request##parse),
-    [|useMutationResponseJs|]
+  let useMutationResponse =
+    React.useMemo2(
+      () =>
+        useMutationResponseJs |> useMutationResponseToRecord(request##parse),
+      (request##parse, useMutationResponseJs),
     );
-  let executeMutation = React.useCallback1(() => executeMutationJs(Some(request##variables)), [|request##variables|]);
+  let executeMutation =
+    React.useCallback1(
+      () => executeMutationJs(Some(request##variables)),
+      [|request##variables|],
+    );
   (useMutationResponse, executeMutation);
 };
