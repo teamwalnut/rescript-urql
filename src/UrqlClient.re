@@ -135,9 +135,9 @@ external createRequestOperationJs:
   operation =
   "createRequestOperation";
 
-let createRequestOperation = (~client, ~operationType, ~request, ~opts, ()) => {
+let createRequestOperation = (~client, ~operationType, ~request, ~opts=?, ()) => {
   let op = operationTypeToJs(operationType);
-  createRequestOperationJs(~client, ~operationType=op, ~request, ~opts, ());
+  createRequestOperationJs(~client, ~operationType=op, ~request, ~opts?, ());
 };
 
 [@bs.send]

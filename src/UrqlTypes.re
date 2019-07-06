@@ -81,10 +81,8 @@ type operation = {
 [@bs.deriving abstract]
 type operationResult = {
   operation,
-  [@bs.optional]
-  data: Js.Json.t,
-  [@bs.optional]
-  error: UrqlCombinedError.t,
+  data: Js.Nullable.t(Js.Json.t),
+  error: Js.Nullable.t(UrqlCombinedError.t),
 };
 
 /* The signature of the Js.t created by calling `.make()` on a `graphql_ppx` module. */
