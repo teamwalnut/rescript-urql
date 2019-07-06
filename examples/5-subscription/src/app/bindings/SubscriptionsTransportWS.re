@@ -24,16 +24,12 @@ type subscriptionClientConfig = {
   websocketImpl,
 };
 
-type executionResult;
-
 type client = {
   .
   [@bs.meth]
   "request":
     UrqlClient.UrqlExchanges.subscriptionOperation =>
-    UrqlClient.UrqlExchanges.observableLike(
-      UrqlTypes.executionResult(executionResult),
-    ),
+    UrqlClient.UrqlExchanges.observableLike(UrqlTypes.executionResult),
 };
 
 [@bs.new] [@bs.module "subscriptions-transport-ws"]

@@ -31,7 +31,7 @@
   "devDependencies": {
     "@glennsl/bs-jest": "^0.4.8",
     "all-contributors-cli": "^5.4.0",
-    "bs-platform": "^5.0.4",
+    "bs-platform": "5.0.4",
     "graphql_ppx": "^0.2.7",
     "husky": "^2.4.1",
     "lint-staged": "^8.2.1",
