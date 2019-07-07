@@ -17,7 +17,7 @@ Reason bindings for Formidable's Universal React Query Library, [`urql`](https:/
 
 ## 📋 Documentation
 
-- [API](/docs/api.md)
+### [API](/docs/api.md)
 
 ## 💾 Installation
 
