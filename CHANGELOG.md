@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.0-beta.1] – 🎣 Hooks - 2019-07-06
+
+This release includes support for `urql` hooks, including `useQuery`, `useMutation`, and `useSubscription`. It also includes additions to support proper type inference of GraphQL requests, such that users get compile-time guarantees that they are accessing data in a fully type-safe way.
+
+### Added
+
+- Bindings for `useQuery`, `useMutation`, and `useSubscription`.
+- Bindings for `SubscriptionWithHandler`, which is to be used in cases where a custom `handler` function is passed to the `Subscription` component to accumulate subscriptions.
+- The top-level `urql` context object, which exposes a `Consumer` and `Provider`, is now exposed to the user.
+
+### Changed
+
+- Migrated all components and examples to latest ReasonReact syntax (`"jsx: 3"`).
+- Add proper type inference for hooks and components. This is achieved by passing the entire `graphql_ppx` module to the hooks, which allows them to use the `parse` method to infer the return type of data from the request.
+
+#### Diff
+
+https://github.com/parkerziegler/reason-urql/compare/v1.0.0-beta...v1.0.0-beta.1
+
 ## [1.0.0-beta] - 🎉 v1 (Beta) - 2019-05-16
 
 This represents the beta release of v1, which provides support for [`urql` v1](https://github.com/FormidableLabs/urql/tree/v1.0.5).
