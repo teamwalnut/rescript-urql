@@ -32,14 +32,7 @@ Client {
   "executeMutation": [Function],
   "executeQuery": [Function],
   "executeSubscription": [Function],
-  "fetchOptions": Object {
-    "headers": Object {
-      "Content-Type": "application/json",
-    },
-    "integrity": "",
-    "method": "POST",
-    "referrerPolicy": "",
-  },
+  "fetchOptions": [Function],
   "operations$": [Function],
   "reexecuteOperation": [Function],
   "results$": [Function],

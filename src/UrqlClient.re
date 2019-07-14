@@ -2,14 +2,16 @@ open UrqlTypes;
 type t;
 
 /* Helpers for supporting polymorphic fetchOptions. */
-type fetchOptions =
-  | FetchOpts(Fetch.requestInit)
-  | FetchFn(unit => Fetch.requestInit);
+type fetchOptions('a) =
+  | FetchOpts(Fetch.requestInit): fetchOptions(Fetch.requestInit)
+  | FetchFn(unit => Fetch.requestInit)
+    : fetchOptions(unit => Fetch.requestInit);
 
-let unwrapFetchOptions = fetchOptions =>
+let unwrapFetchOptions = (type a, fetchOptions: option(fetchOptions(a))): a =>
   switch (fetchOptions) {
-  | FetchOpts(opts) => opts
-  | FetchFn(fn) => fn()
+  | Some(FetchOpts(opts)) => opts
+  | Some(FetchFn(fn)) => fn
+  | None => Obj.magic(Fetch.RequestInit.make())
   };
 
 /* A module for binding exchange types and urql's exposed exchanges. Since this module
@@ -72,15 +74,16 @@ module UrqlExchanges = {
 };
 
 [@bs.deriving abstract]
-type clientOptions = {
+type clientOptions('a) = {
   url: string,
   [@bs.optional]
-  fetchOptions: Fetch.requestInit,
+  fetchOptions: 'a,
   [@bs.optional]
   exchanges: array(UrqlExchanges.exchange),
 };
 
-[@bs.new] [@bs.module "urql"] external client: clientOptions => t = "Client";
+[@bs.new] [@bs.module "urql"]
+external client: clientOptions('a) => t = "Client";
 
 [@bs.send]
 external executeQuery:
@@ -150,7 +153,7 @@ external dispatchOperation: (~client: t, ~operation: operation) => unit = "";
 let make =
     (
       ~url,
-      ~fetchOptions=FetchOpts(Fetch.RequestInit.make()),
+      ~fetchOptions=?,
       ~exchanges=[|
                    UrqlExchanges.dedupExchange,
                    UrqlExchanges.cacheExchange,
