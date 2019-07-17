@@ -7,11 +7,12 @@ type fetchOptions('a) =
   | FetchFn(unit => Fetch.requestInit)
     : fetchOptions(unit => Fetch.requestInit);
 
-let unwrapFetchOptions = (type a, fetchOptions: option(fetchOptions(a))): a =>
+let unwrapFetchOptions =
+    (type a, fetchOptions: option(fetchOptions(a))): option(a) =>
   switch (fetchOptions) {
-  | Some(FetchOpts(opts)) => opts
-  | Some(FetchFn(fn)) => fn
-  | None => Obj.magic(Fetch.RequestInit.make())
+  | Some(FetchOpts(opts)) => Some(opts)
+  | Some(FetchFn(fn)) => Some(fn)
+  | None => None
   };
 
 /* A module for binding exchange types and urql's exposed exchanges. Since this module

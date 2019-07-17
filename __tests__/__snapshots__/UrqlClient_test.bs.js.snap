@@ -10,10 +10,7 @@ Client {
   "executeMutation": [Function],
   "executeQuery": [Function],
   "executeSubscription": [Function],
-  "fetchOptions": Object {
-    "integrity": "",
-    "referrerPolicy": "",
-  },
+  "fetchOptions": undefined,
   "operations$": [Function],
   "reexecuteOperation": [Function],
   "results$": [Function],
@@ -77,10 +74,7 @@ Client {
   "executeMutation": [Function],
   "executeQuery": [Function],
   "executeSubscription": [Function],
-  "fetchOptions": Object {
-    "integrity": "",
-    "referrerPolicy": "",
-  },
+  "fetchOptions": undefined,
   "operations$": [Function],
   "reexecuteOperation": [Function],
   "results$": [Function],
