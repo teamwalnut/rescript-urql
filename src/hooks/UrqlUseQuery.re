@@ -13,13 +13,12 @@ type useQueryArgs = {
   query: string,
   variables: Js.Json.t,
   [@bs.optional]
-  requestPolicy: requestPolicy,
+  requestPolicy,
   [@bs.optional]
   pause: bool,
 };
 
-type partialOperationContextFn =
-  option(partialOperationContext) => unit;
+type partialOperationContextFn = option(partialOperationContext) => unit;
 type useQueryResponseJs = (useQueryStateJs, partialOperationContextFn);
 
 type useQueryResponse('response) = (
