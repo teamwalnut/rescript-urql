@@ -54,9 +54,23 @@ class type _combinedError =
   {
     pub networkError: Js.Nullable.t(Js.Exn.t);
     pub graphqlErrors: Js.Nullable.t(array(graphqlError));
-    pub response: 'response;
+    pub response: Js.Nullable.t(Fetch.response);
   };
 
 type t = Js.t(_combinedError);
+
+type combinedError = {
+  networkError: option(Js.Exn.t),
+  graphqlErrors: option(array(graphqlError)),
+  response: option(Fetch.response),
+};
+
+let combinedErrorToRecord = (err: t): combinedError => {
+  {
+    networkError: err##networkError->Js.Nullable.toOption,
+    graphqlErrors: err##graphqlErrors->Js.Nullable.toOption,
+    response: err##response->Js.Nullable.toOption,
+  };
+};
 
 [@bs.module "urql"] external combinedError: t = "CombinedError";

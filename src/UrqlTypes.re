@@ -32,7 +32,7 @@ type executionResult = {
 type response('a) =
   | Fetching
   | Data('a)
-  | Error(UrqlCombinedError.t)
+  | Error(UrqlCombinedError.combinedError)
   | NotFound;
 
 /* OperationType for the active operation.
@@ -96,6 +96,6 @@ type request('response) = {
 type hookResponse('ret) = {
   fetching: bool,
   data: option('ret),
-  error: option(UrqlCombinedError.t),
+  error: option(UrqlCombinedError.combinedError),
   response: response('ret),
 };

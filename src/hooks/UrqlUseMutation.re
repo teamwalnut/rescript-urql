@@ -8,8 +8,7 @@ type useMutationResponseJs = {
   error: UrqlCombinedError.t,
 };
 
-type executeMutation =
-  option(Js.Json.t) => Js.Promise.t(operationResult);
+type executeMutation = option(Js.Json.t) => Js.Promise.t(operationResult);
 
 [@bs.module "urql"]
 external useMutationJs: string => (useMutationResponseJs, executeMutation) =
@@ -18,7 +17,10 @@ external useMutationJs: string => (useMutationResponseJs, executeMutation) =
 let useMutationResponseToRecord =
     (parse: Js.Json.t => 'response, result: useMutationResponseJs) => {
   let data = result->dataGet->Js.Nullable.toOption->Belt.Option.map(parse);
-  let error = result->errorGet;
+  let error =
+    result
+    ->errorGet
+    ->Belt.Option.map(UrqlCombinedError.combinedErrorToRecord);
   let fetching = result->fetchingGet;
 
   let response =

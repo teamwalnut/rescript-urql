@@ -82,7 +82,7 @@ let make = (~pokemon: string) => {
     }
   | Fetching => <div> "Loading"->React.string </div>
   | Error(e) =>
-    switch (e##networkError->Js.Nullable.toOption) {
+    switch (e.networkError) {
     | Some(_exn) => <div> "Network Error"->React.string </div>
     | None => <div> "No Network Error"->React.string </div>
     }

@@ -25,7 +25,7 @@ module Hooks = {
     Types.hookResponse('ret) = {
       fetching: bool,
       data: option('ret),
-      error: option(UrqlCombinedError.t),
+      error: option(UrqlCombinedError.combinedError),
       response: Types.response('ret),
     };
   include UrqlUseMutation;

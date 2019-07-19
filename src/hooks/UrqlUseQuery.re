@@ -28,7 +28,10 @@ type useQueryResponse('response) = (
 
 let useQueryResponseToRecord = (parse, result) => {
   let data = result->dataGet->Js.Nullable.toOption->Belt.Option.map(parse);
-  let error = result->errorGet;
+  let error =
+    result
+    ->errorGet
+    ->Belt.Option.map(UrqlCombinedError.combinedErrorToRecord);
   let fetching = result->fetchingGet;
 
   let response =

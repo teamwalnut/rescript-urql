@@ -11,7 +11,7 @@ type mutationRenderPropsJs = {
 type mutationRenderProps('response) = {
   fetching: bool,
   data: option('response),
-  error: option(UrqlCombinedError.t),
+  error: option(UrqlCombinedError.combinedError),
   executeMutation: unit => Js.Promise.t(UrqlTypes.operationResult),
   response: UrqlTypes.response('response),
 };
@@ -26,7 +26,10 @@ module MutationJs = {
 
 let urqlDataToRecord = (parse, variables, result) => {
   let data = result->dataGet->Js.Nullable.toOption->Belt.Option.map(parse);
-  let error = result->errorGet;
+  let error =
+    result
+    ->errorGet
+    ->Belt.Option.map(UrqlCombinedError.combinedErrorToRecord);
   let fetching = result->fetchingGet;
   let executeMutationFn = result->executeMutationGet;
   let executeMutation = () => executeMutationFn(Some(variables));
