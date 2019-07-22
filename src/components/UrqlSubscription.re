@@ -11,7 +11,7 @@ type subscriptionRenderPropsJs('ret) = {
 type subscriptionRenderProps('ret) = {
   fetching: bool,
   data: option('ret),
-  error: option(UrqlCombinedError.t),
+  error: option(UrqlCombinedError.combinedError),
   response: UrqlTypes.response('ret),
 };
 
@@ -30,7 +30,10 @@ module SubscriptionJs = {
 
 let urqlDataToRecord = (parse, result) => {
   let data = result->dataGet->Js.Nullable.toOption->Belt.Option.map(parse);
-  let error = result->errorGet;
+  let error =
+    result
+    ->errorGet
+    ->Belt.Option.map(UrqlCombinedError.combinedErrorToRecord);
   let fetching = result->fetchingGet;
 
   let response =

@@ -13,13 +13,12 @@ type useQueryArgs = {
   query: string,
   variables: Js.Json.t,
   [@bs.optional]
-  requestPolicy: requestPolicy,
+  requestPolicy,
   [@bs.optional]
   pause: bool,
 };
 
-type partialOperationContextFn =
-  option(partialOperationContext) => unit;
+type partialOperationContextFn = option(partialOperationContext) => unit;
 type useQueryResponseJs = (useQueryStateJs, partialOperationContextFn);
 
 type useQueryResponse('response) = (
@@ -29,7 +28,10 @@ type useQueryResponse('response) = (
 
 let useQueryResponseToRecord = (parse, result) => {
   let data = result->dataGet->Js.Nullable.toOption->Belt.Option.map(parse);
-  let error = result->errorGet;
+  let error =
+    result
+    ->errorGet
+    ->Belt.Option.map(UrqlCombinedError.combinedErrorToRecord);
   let fetching = result->fetchingGet;
 
   let response =
