@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.0-beta.2] – CombinedError and FetchOption Function - 2019-07-22
+
+This release adds small improvements around `client.fetchOptions` and the `CombinedError` API.
+
+### Changed
+
+- The `FetchFn` variant of the client's `fetchOptions` argument now supports calling the function at runtime of the client rather than invoking it early in order to pass a `fetchOptions` object to `urql`.
+- `UrqlCombinedError` is now properly bound using OCaml classes. A helper was added to convert the `CombinedError` `Js.t` to a record type to allow for nicer, typesafe access.
+
+#### Diff
+
+https://github.com/FormidableLabs/reason-urql/compare/v1.0.0-beta.1...v1.0.0-beta.2
+
 ## [1.0.0-beta.1] – 🎣 Hooks - 2019-07-06
 
 This release includes support for `urql` hooks, including `useQuery`, `useMutation`, and `useSubscription`. It also includes additions to support proper type inference of GraphQL requests, such that users get compile-time guarantees that they are accessing data in a fully type-safe way.
