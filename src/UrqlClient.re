@@ -87,37 +87,97 @@ type clientOptions('a) = {
 external client: clientOptions('a) => t = "Client";
 
 [@bs.send]
-external executeQuery:
+external urqlExecuteQuery:
   (
     ~client: t,
     ~query: graphqlRequest,
     ~opts: partialOperationContext=?,
     unit
   ) =>
-  Wonka.Types.sourceT('a) =
-  "";
+  Wonka.Types.sourceT({. "data": Js.Json.t}) =
+  "executeQuery";
+
+let executeQuery =
+    (
+      ~client: t,
+      ~request: request('response),
+      ~opts: option(partialOperationContext)=?,
+      (),
+    )
+    : Wonka.Types.sourceT('response) => {
+  let req =
+    UrqlRequest.createRequest(
+      ~query=request##query,
+      ~variables=request##variables,
+      (),
+    );
+  let parse = request##parse;
+
+  urqlExecuteQuery(~client, ~query=req, ~opts?, ())
+  |> Wonka.map((. res) => parse(res##data));
+};
 
 [@bs.send]
-external executeMutation:
+external urqlExecuteMutation:
   (
     ~client: t,
     ~mutation: graphqlRequest,
     ~opts: partialOperationContext=?,
     unit
   ) =>
-  Wonka.Types.sourceT('a) =
-  "";
+  Wonka.Types.sourceT({. "data": Js.Json.t}) =
+  "executeMutation";
+
+let executeMutation =
+    (
+      ~client: t,
+      ~request: request('response),
+      ~opts: option(partialOperationContext)=?,
+      (),
+    )
+    : Wonka.Types.sourceT('response) => {
+  let req =
+    UrqlRequest.createRequest(
+      ~query=request##query,
+      ~variables=request##variables,
+      (),
+    );
+  let parse = request##parse;
+
+  urqlExecuteMutation(~client, ~mutation=req, ~opts?, ())
+  |> Wonka.map((. res) => parse(res##data));
+};
 
 [@bs.send]
-external executeSubscription:
+external urqlExecuteSubscription:
   (
     ~client: t,
     ~subscription: graphqlRequest,
     ~opts: partialOperationContext=?,
     unit
   ) =>
-  Wonka.Types.sourceT('a) =
-  "";
+  Wonka.Types.sourceT({. "data": Js.Json.t}) =
+  "executeSubscription";
+
+let executeSubscription =
+    (
+      ~client: t,
+      ~request: request('response),
+      ~opts: option(partialOperationContext)=?,
+      (),
+    )
+    : Wonka.Types.sourceT('response) => {
+  let req =
+    UrqlRequest.createRequest(
+      ~query=request##query,
+      ~variables=request##variables,
+      (),
+    );
+  let parse = request##parse;
+
+  urqlExecuteSubscription(~client, ~subscription=req, ~opts?, ())
+  |> Wonka.map((. res) => parse(res##data));
+};
 
 [@bs.send]
 external executeRequestOperation:

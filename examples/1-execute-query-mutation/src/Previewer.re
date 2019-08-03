@@ -14,7 +14,7 @@ module GetAllDogs = [%graphql
 |}
 ];
 
-let queryRequest = Request.createRequest(~query=GetAllDogs.make()##query, ());
+let queryRequest = GetAllDogs.make();
 
 module LikeDog = [%graphql
   {|
@@ -28,14 +28,7 @@ module LikeDog = [%graphql
 |}
 ];
 
-let mutation = LikeDog.make(~key="VmeRTX7j-", ());
-
-let mutationRequest =
-  Request.createRequest(
-    ~query=mutation##query,
-    ~variables=mutation##variables,
-    (),
-  );
+let mutationRequest = LikeDog.make(~key="VmeRTX7j-", ());
 
 type state = {
   query: string,
@@ -65,18 +58,23 @@ let make = () => {
     );
 
   let executeQuery = () =>
-    Client.executeQuery(~client, ~query=queryRequest, ())
-    |> Wonka.forEach((. response) =>
-         dispatch(SetQuery(Js.Json.stringifyWithSpace(response##data, 2)))
+    Client.executeQuery(~client, ~request=queryRequest, ())
+    |> Wonka.subscribe((. data) =>
+         switch (Js.Json.stringifyAny(data)) {
+         | Some(d) => dispatch(SetQuery(d))
+         | None => ()
+         }
        );
 
   let executeMutation = () =>
-    Client.executeMutation(~client, ~mutation=mutationRequest, ())
-    |> Wonka.forEach((. response) =>
-         dispatch(
-           SetMutation(Js.Json.stringifyWithSpace(response##data, 2)),
-         )
+    Client.executeMutation(~client, ~request=mutationRequest, ())
+    |> Wonka.subscribe((. data) =>
+         switch (Js.Json.stringifyAny(data)) {
+         | Some(d) => dispatch(SetMutation(d))
+         | None => ()
+         }
        );
+
   <div className=PreviewerStyles.previewer>
     <div className=PreviewerStyles.side>
       <section className=PreviewerStyles.section>
@@ -93,7 +91,7 @@ let make = () => {
         </div>
         <button
           className={PreviewerStyles.colors.query->PreviewerStyles.button}
-          onClick={_event => executeQuery()}>
+          onClick={_event => executeQuery() |> ignore}>
           "Execute Query"->React.string
         </button>
       </section>
@@ -130,7 +128,7 @@ let make = () => {
         </div>
         <button
           className={PreviewerStyles.colors.mutation->PreviewerStyles.button}
-          onClick={_event => executeMutation()}>
+          onClick={_event => executeMutation() |> ignore}>
           "Execute Mutation"->React.string
         </button>
       </section>
