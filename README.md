@@ -11,7 +11,7 @@ Reason bindings for Formidable's Universal React Query Library, [`urql`](https:/
 - ⚛️A fully featured GraphQL client for ReasonReact.
 - ✅Compile time type and schema validation.
 - ⚙️Customizable behavior via `exchanges`.
-- 🎣Coming soon – support for `useQuery`, `useMutation`, and `useSubscription` hooks!
+- 🎣Support for `useQuery`, `useMutation`, and `useSubscription` hooks!
 
 `reason-urql` is a GraphQL client for ReasonReact, allowing you to hook up your components to queries, mutations, and subscriptions. It provides bindings to `urql` that allow you to use the API in Reason, with the benefits of a sound type system, blazing fast compilation, and opportunities for guided customization.
 
@@ -25,9 +25,6 @@ Reason bindings for Formidable's Universal React Query Library, [`urql`](https:/
 
 ```sh
 yarn add reason-urql
-
-# or
-npm install reason-urql --save
 ```
 
 #### 2. Add `graphql_ppx`.
@@ -36,9 +33,6 @@ This project uses [`graphql_ppx`](https://github.com/mhallin/graphql_ppx) to typ
 
 ```sh
 yarn add graphql_ppx --dev
-
-# or
-npm install -D graphql_ppx
 ```
 
 #### 3. Update `bsconfig.json`.
@@ -58,9 +52,6 @@ Finally, you'll need to send an introspection query to your GraphQl API. This al
 
 ```sh
 yarn send-introspection-query <your_graphql_endpoint>
-
-# or
-npm run send-introspection-query <your_graphql_endpoint>
 ```
 
 Simply re-run this script at anytime to regenerate the `graphql_schema.json` file. See the [docs for `graphql_ppx`](https://github.com/mhallin/graphql_ppx) for more assistance.
@@ -71,9 +62,6 @@ Before version 1.0.0, `reason-urql` listed `urql` as a peer dependency. If using
 
 ```sh
 yarn add reason-urql@0.1.1 urql@0.2.2
-
-# or
-npm install -s reason-urql@0.1.1 urql@0.2.2
 ```
 
 ## 💻 Example Projects
@@ -87,20 +75,11 @@ cd examples/1-execute-query-mutation
 # 2. Install dependencies.
 yarn
 
-# or
-npm install
-
 # 3. In one terminal, compile the source in watch mode.
 yarn start
 
-# or
-npm run start
-
 # 4. In another terminal, start the demo app server.
 yarn start:demo
-
-# or
-npm run start:demo
 ```
 
 The example will start up at `http://localhost:8080`. Edit the example freely to watch changes take effect.
@@ -115,23 +94,13 @@ If developing on the main `reason-urql` source files (i.e. anything in `/src/`) 
 # 1. Clean any artifacts from previous builds.
 yarn clean
 
-# or
-npm run clean
-
 # 2. Rebuild the source.
 yarn build
-
-# or
-npm run build
 
 # 3. Clean example build and reinstall dependencies.
 cd examples/2-query
 yarn clean
 yarn
-
-# or
-nom run clean
-npm install
 ```
 
 Since we are `link`ing the examples' dependency on `reason-urql` to the `src` directory, it's important to clean builds between changes to prevent any stale or erroneous artifacts.
