@@ -1,4 +1,5 @@
 open ReasonUrql;
+open Types;
 
 let client = Client.make(~url="https://formidadog-ql.now.sh", ());
 
@@ -60,18 +61,36 @@ let make = () => {
   let executeQuery = () =>
     Client.executeQuery(~client, ~request=queryRequest, ())
     |> Wonka.subscribe((. data) =>
-         switch (Js.Json.stringifyAny(data)) {
-         | Some(d) => dispatch(SetQuery(d))
-         | None => ()
+         switch (data.response) {
+         | Data(d) =>
+           switch (Js.Json.stringifyAny(d)) {
+           | Some(s) => dispatch(SetQuery(s))
+           | None => ()
+           }
+         | Error(e) =>
+           switch (Js.Json.stringifyAny(e)) {
+           | Some(s) => dispatch(SetQuery(s))
+           | None => ()
+           }
+         | _ => ()
          }
        );
 
   let executeMutation = () =>
     Client.executeMutation(~client, ~request=mutationRequest, ())
     |> Wonka.subscribe((. data) =>
-         switch (Js.Json.stringifyAny(data)) {
-         | Some(d) => dispatch(SetMutation(d))
-         | None => ()
+         switch (data.response) {
+         | Data(d) =>
+           switch (Js.Json.stringifyAny(d)) {
+           | Some(s) => dispatch(SetQuery(s))
+           | None => ()
+           }
+         | Error(e) =>
+           switch (Js.Json.stringifyAny(e)) {
+           | Some(s) => dispatch(SetQuery(s))
+           | None => ()
+           }
+         | _ => ()
          }
        );
 

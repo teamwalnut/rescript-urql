@@ -28,13 +28,6 @@ type executionResult = {
   data: Js.Json.t,
 };
 
-/* The response variant passed to Query, Mutation, and Subscription. */
-type response('a) =
-  | Fetching
-  | Data('a)
-  | Error(UrqlCombinedError.combinedError)
-  | NotFound;
-
 /* OperationType for the active operation.
    Use with operationTypeToJs for proper conversion to string. */
 [@bs.deriving jsConverter]
@@ -91,6 +84,21 @@ type request('response) = {
   "parse": Js.Json.t => 'response,
   "query": string,
   "variables": Js.Json.t,
+};
+
+/* The response variant wraps the parsed result of executing a GraphQL operation. */
+type response('response) =
+  | Fetching
+  | Data('response)
+  | Error(UrqlCombinedError.combinedError)
+  | NotFound;
+
+[@bs.deriving abstract]
+type jsResponse = {
+  fetching: bool,
+  data: Js.Nullable.t(Js.Json.t),
+  [@bs.optional]
+  error: UrqlCombinedError.t,
 };
 
 type hookResponse('ret) = {

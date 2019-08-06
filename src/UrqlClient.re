@@ -1,4 +1,5 @@
 open UrqlTypes;
+open UrqlConverters;
 type t;
 
 /* Helpers for supporting polymorphic fetchOptions. */
@@ -94,7 +95,7 @@ external urqlExecuteQuery:
     ~opts: partialOperationContext=?,
     unit
   ) =>
-  Wonka.Types.sourceT({. "data": Js.Json.t}) =
+  Wonka.Types.sourceT(jsResponse) =
   "executeQuery";
 
 let executeQuery =
@@ -104,7 +105,7 @@ let executeQuery =
       ~opts: option(partialOperationContext)=?,
       (),
     )
-    : Wonka.Types.sourceT('response) => {
+    : Wonka.Types.sourceT(hookResponse('response)) => {
   let req =
     UrqlRequest.createRequest(
       ~query=request##query,
@@ -114,7 +115,7 @@ let executeQuery =
   let parse = request##parse;
 
   urqlExecuteQuery(~client, ~query=req, ~opts?, ())
-  |> Wonka.map((. res) => parse(res##data));
+  |> Wonka.map((. res) => urqlResponseToReason(parse, res));
 };
 
 [@bs.send]
@@ -125,7 +126,7 @@ external urqlExecuteMutation:
     ~opts: partialOperationContext=?,
     unit
   ) =>
-  Wonka.Types.sourceT({. "data": Js.Json.t}) =
+  Wonka.Types.sourceT(jsResponse) =
   "executeMutation";
 
 let executeMutation =
@@ -135,7 +136,7 @@ let executeMutation =
       ~opts: option(partialOperationContext)=?,
       (),
     )
-    : Wonka.Types.sourceT('response) => {
+    : Wonka.Types.sourceT(hookResponse('response)) => {
   let req =
     UrqlRequest.createRequest(
       ~query=request##query,
@@ -145,7 +146,7 @@ let executeMutation =
   let parse = request##parse;
 
   urqlExecuteMutation(~client, ~mutation=req, ~opts?, ())
-  |> Wonka.map((. res) => parse(res##data));
+  |> Wonka.map((. res) => urqlResponseToReason(parse, res));
 };
 
 [@bs.send]
@@ -156,7 +157,7 @@ external urqlExecuteSubscription:
     ~opts: partialOperationContext=?,
     unit
   ) =>
-  Wonka.Types.sourceT({. "data": Js.Json.t}) =
+  Wonka.Types.sourceT(jsResponse) =
   "executeSubscription";
 
 let executeSubscription =
@@ -166,7 +167,7 @@ let executeSubscription =
       ~opts: option(partialOperationContext)=?,
       (),
     )
-    : Wonka.Types.sourceT('response) => {
+    : Wonka.Types.sourceT(hookResponse('response)) => {
   let req =
     UrqlRequest.createRequest(
       ~query=request##query,
@@ -176,7 +177,7 @@ let executeSubscription =
   let parse = request##parse;
 
   urqlExecuteSubscription(~client, ~subscription=req, ~opts?, ())
-  |> Wonka.map((. res) => parse(res##data));
+  |> Wonka.map((. res) => urqlResponseToReason(parse, res));
 };
 
 [@bs.send]
