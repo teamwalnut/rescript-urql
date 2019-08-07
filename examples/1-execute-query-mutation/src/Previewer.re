@@ -1,7 +1,7 @@
 open ReasonUrql;
-open Types;
+open Client;
 
-let client = Client.make(~url="https://formidadog-ql.now.sh", ());
+let client = make(~url="https://formidadog-ql.now.sh", ());
 
 module GetAllDogs = [%graphql
   {|
@@ -59,7 +59,7 @@ let make = () => {
     );
 
   let executeQuery = () =>
-    Client.executeQuery(~client, ~request=queryRequest, ())
+    executeQuery(~client, ~request=queryRequest, ())
     |> Wonka.subscribe((. data) =>
          switch (data.response) {
          | Data(d) =>
@@ -77,7 +77,7 @@ let make = () => {
        );
 
   let executeMutation = () =>
-    Client.executeMutation(~client, ~request=mutationRequest, ())
+    executeMutation(~client, ~request=mutationRequest, ())
     |> Wonka.subscribe((. data) =>
          switch (data.response) {
          | Data(d) =>

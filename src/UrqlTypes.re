@@ -93,12 +93,10 @@ type response('response) =
   | Error(UrqlCombinedError.combinedError)
   | NotFound;
 
-[@bs.deriving abstract]
-type jsResponse = {
-  fetching: bool,
-  data: Js.Nullable.t(Js.Json.t),
-  [@bs.optional]
-  error: UrqlCombinedError.t,
+type clientResponse('ret) = {
+  data: option('ret),
+  error: option(UrqlCombinedError.combinedError),
+  response: response('ret),
 };
 
 type hookResponse('ret) = {
@@ -106,4 +104,13 @@ type hookResponse('ret) = {
   data: option('ret),
   error: option(UrqlCombinedError.combinedError),
   response: response('ret),
+};
+
+[@bs.deriving abstract]
+type jsResponse = {
+  fetching: bool,
+  [@bs.as "data"]
+  jsData: Js.Nullable.t(Js.Json.t),
+  [@bs.optional] [@bs.as "error"]
+  jsError: UrqlCombinedError.t,
 };
