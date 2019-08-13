@@ -82,12 +82,12 @@ let make = () => {
          switch (data.response) {
          | Data(d) =>
            switch (Js.Json.stringifyAny(d)) {
-           | Some(s) => dispatch(SetQuery(s))
+           | Some(s) => dispatch(SetMutation(s))
            | None => ()
            }
          | Error(e) =>
            switch (Js.Json.stringifyAny(e)) {
-           | Some(s) => dispatch(SetQuery(s))
+           | Some(s) => dispatch(SetMutation(s))
            | None => ()
            }
          | _ => ()

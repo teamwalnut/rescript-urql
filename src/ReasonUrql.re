@@ -1,11 +1,11 @@
 module Types = UrqlTypes;
 
 module Client = {
-  type clientResponse('ret) =
-    Types.clientResponse('ret) = {
-      data: option('ret),
+  type clientResponse('response) =
+    UrqlClient.Types.clientResponse('response) = {
+      data: option('response),
       error: option(UrqlCombinedError.combinedError),
-      response: Types.response('ret),
+      response: UrqlClient.Types.response('response),
     };
 
   include UrqlClient;

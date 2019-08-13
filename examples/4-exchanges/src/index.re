@@ -1,4 +1,5 @@
 open ReasonUrql;
+open Client;
 
 /* This is the native debugExchange that ships with `urql`, re-implemented in Reason.
      Typically, you'd just add Exchanges.debugExchange to the Client's exchange array.
@@ -37,7 +38,7 @@ module GetAllDogs = [%graphql
 |}
 ];
 
-let queryRequest = Request.createRequest(~query=GetAllDogs.make()##query, ());
+let queryRequest = GetAllDogs.make();
 
 module LikeDog = [%graphql
   {|
@@ -50,30 +51,26 @@ module LikeDog = [%graphql
   |}
 ];
 
-Client.executeQuery(~client, ~query=queryRequest, ())
-|> Wonka.subscribe((. response) => {
-     let dogs = response##data##dogs;
-
-     Js_global.setInterval(
-       () => {
-         dogs->Belt.Array.shuffleInPlace;
-
-         let mutation = LikeDog.make(~key=dogs[0]##key, ());
-
-         let mutationRequest =
-           Request.createRequest(
-             ~query=mutation##query,
-             ~variables=mutation##variables,
-             (),
-           );
-
-         Client.executeMutation(~client, ~mutation=mutationRequest, ())
-         |> Wonka.subscribe((. response) => Js.log(response))
-         |> ignore;
-       },
-       5000,
-     )
-     |> ignore;
-   });
+executeQuery(~client, ~request=queryRequest, ())
+|> Wonka.subscribe((. data) =>
+     switch (data.response) {
+     | Data(d) =>
+       Js_global.setInterval(
+         () =>
+           switch (d##dogs) {
+           | Some(dogs) =>
+             dogs->Belt.Array.shuffleInPlace;
+             let mutationRequest = LikeDog.make(~key=dogs[0]##key, ());
+             executeMutation(~client, ~request=mutationRequest, ())
+             |> Wonka.subscribe((. response) => Js.log(response))
+             |> ignore;
+           | None => ()
+           },
+         5000,
+       )
+       |> ignore
+     | _ => ()
+     }
+   );
 
 ReactDOMRe.renderToElementWithId(<Console />, "root");

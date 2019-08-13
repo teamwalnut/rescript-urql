@@ -2,17 +2,16 @@
 type mutationRenderPropsJs = {
   fetching: bool,
   data: Js.Nullable.t(Js.Json.t),
-  [@bs.optional]
-  error: UrqlCombinedError.t,
+  error: Js.Nullable.t(UrqlCombinedError.t),
   executeMutation:
-    option(Js.Json.t) => Js.Promise.t(UrqlTypes.operationResult),
+    option(Js.Json.t) => Js.Promise.t(UrqlClient.Types.operationResult),
 };
 
 type mutationRenderProps('response) = {
   fetching: bool,
   data: option('response),
   error: option(UrqlCombinedError.combinedError),
-  executeMutation: unit => Js.Promise.t(UrqlTypes.operationResult),
+  executeMutation: unit => Js.Promise.t(UrqlClient.Types.operationResult),
   response: UrqlTypes.response('response),
 };
 
@@ -24,11 +23,18 @@ module MutationJs = {
     "Mutation";
 };
 
-let urqlDataToRecord = (parse, variables, result) => {
+let urqlMutationResponseToReason =
+    (
+      parse: Js.Json.t => 'response,
+      variables: Js.Json.t,
+      result: mutationRenderPropsJs,
+    )
+    : mutationRenderProps('response) => {
   let data = result->dataGet->Js.Nullable.toOption->Belt.Option.map(parse);
   let error =
     result
     ->errorGet
+    ->Js.Nullable.toOption
     ->Belt.Option.map(UrqlCombinedError.combinedErrorToRecord);
   let fetching = result->fetchingGet;
   let executeMutationFn = result->executeMutationGet;
@@ -55,6 +61,7 @@ let make =
   let variables = request##variables;
   let parse = request##parse;
   <MutationJs query>
-    {result => result |> urqlDataToRecord(parse, variables) |> children}
+    {result =>
+       result |> urqlMutationResponseToReason(parse, variables) |> children}
   </MutationJs>;
 };
