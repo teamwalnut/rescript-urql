@@ -1,7 +1,7 @@
 open UrqlTypes;
 
 type partialOperationContextFn =
-  option(partialOperationContext) => unit;
+  option(UrqlClient.Types.partialOperationContext) => unit;
 
 type useQueryResponse('response) = (
   hookResponse('response),

@@ -2,16 +2,17 @@
 type queryRenderPropsJs = {
   fetching: bool,
   data: Js.Nullable.t(Js.Json.t),
-  [@bs.optional]
-  error: UrqlCombinedError.t,
-  executeQuery: option(Js.Json.t) => Js.Promise.t(UrqlTypes.operationResult),
+  error: Js.Nullable.t(UrqlCombinedError.t),
+  executeQuery:
+    option(Js.Json.t) => Js.Promise.t(UrqlClient.Types.operationResult),
 };
 
 type queryRenderProps('response) = {
   fetching: bool,
   data: option('response),
   error: option(UrqlCombinedError.combinedError),
-  executeQuery: option(Js.Json.t) => Js.Promise.t(UrqlTypes.operationResult),
+  executeQuery:
+    option(Js.Json.t) => Js.Promise.t(UrqlClient.Types.operationResult),
   response: UrqlTypes.response('response),
 };
 
@@ -29,11 +30,14 @@ module QueryJs = {
     "Query";
 };
 
-let urqlDataToRecord = (parse, result) => {
+let urqlQueryResponseToReason =
+    (parse: Js.Json.t => 'response, result: queryRenderPropsJs)
+    : queryRenderProps('response) => {
   let data = result->dataGet->Js.Nullable.toOption->Belt.Option.map(parse);
   let error =
     result
     ->errorGet
+    ->Js.Nullable.toOption
     ->Belt.Option.map(UrqlCombinedError.combinedErrorToRecord);
   let fetching = result->fetchingGet;
   let executeQuery = result->executeQueryGet;
@@ -65,6 +69,6 @@ let make =
     variables
     requestPolicy={UrqlTypes.requestPolicyToJs(requestPolicy)}
     pause>
-    {result => result |> urqlDataToRecord(parse) |> children}
+    {result => result |> urqlQueryResponseToReason(parse) |> children}
   </QueryJs>;
 };

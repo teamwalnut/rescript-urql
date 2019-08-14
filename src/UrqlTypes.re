@@ -18,66 +18,6 @@ type graphqlRequest = {
   variables: Js.Json.t,
 };
 
-/* The result of executing a GraphQL request.
-   Consists of optional data and errors fields. */
-[@bs.deriving abstract]
-type executionResult = {
-  [@bs.optional]
-  errors: array(UrqlCombinedError.graphqlError),
-  [@bs.optional]
-  data: Js.Json.t,
-};
-
-/* OperationType for the active operation.
-   Use with operationTypeToJs for proper conversion to string. */
-[@bs.deriving jsConverter]
-type operationType = [
-  | [@bs.as "subscription"] `Subscription
-  | [@bs.as "query"] `Query
-  | [@bs.as "mutation"] `Mutation
-  | [@bs.as "teardown"] `Teardown
-];
-
-/* Additional operation metadata to pass to the active operation.
-   Currently does not support additional untyped options. */
-[@bs.deriving abstract]
-type operationContext = {
-  [@bs.optional]
-  fetchOptions: Fetch.requestInit,
-  requestPolicy,
-  url: string,
-};
-
-/* A partial operation context, which can be passed as the second optional argument
-   to executeQuery, executeMutation, and executeSubscription. */
-[@bs.deriving abstract]
-type partialOperationContext = {
-  [@bs.optional]
-  fetchOptions: Fetch.requestInit,
-  [@bs.optional]
-  requestPolicy,
-  [@bs.optional]
-  url: string,
-};
-
-/* The active GraphQL operation. */
-[@bs.deriving abstract]
-type operation = {
-  [@bs.optional]
-  variables: Js.Json.t,
-  key: int,
-  query: string,
-  operationName: operationType,
-  context: operationContext,
-};
-
-[@bs.deriving abstract]
-type operationResult = {
-  operation,
-  data: Js.Nullable.t(Js.Json.t),
-  error: Js.Nullable.t(UrqlCombinedError.t),
-};
-
 /* The signature of the Js.t created by calling `.make()` on a `graphql_ppx` module. */
 type request('response) = {
   .
@@ -92,12 +32,6 @@ type response('response) =
   | Data('response)
   | Error(UrqlCombinedError.combinedError)
   | NotFound;
-
-type clientResponse('ret) = {
-  data: option('ret),
-  error: option(UrqlCombinedError.combinedError),
-  response: response('ret),
-};
 
 type hookResponse('ret) = {
   fetching: bool,

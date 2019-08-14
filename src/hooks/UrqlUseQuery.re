@@ -1,5 +1,4 @@
 open UrqlTypes;
-open UrqlConverters;
 
 [@bs.deriving abstract]
 type useQueryArgs = {
@@ -11,7 +10,8 @@ type useQueryArgs = {
   pause: bool,
 };
 
-type partialOperationContextFn = option(partialOperationContext) => unit;
+type partialOperationContextFn =
+  option(UrqlClient.Types.partialOperationContext) => unit;
 type useQueryResponseJs = (jsResponse, partialOperationContextFn);
 
 type useQueryResponse('response) = (
@@ -21,6 +21,25 @@ type useQueryResponse('response) = (
 
 [@bs.module "urql"]
 external useQueryJs: useQueryArgs => useQueryResponseJs = "useQuery";
+
+let urqlResponseToReason = (parse: Js.Json.t => 'response, result: jsResponse) => {
+  let data = result->jsDataGet->Js.Nullable.toOption->Belt.Option.map(parse);
+  let error =
+    result
+    ->jsErrorGet
+    ->Belt.Option.map(UrqlCombinedError.combinedErrorToRecord);
+  let fetching = result->fetchingGet;
+
+  let response =
+    switch (fetching, data, error) {
+    | (true, _, _) => Fetching
+    | (false, Some(data), _) => Data(data)
+    | (false, _, Some(error)) => Error(error)
+    | (false, None, None) => NotFound
+    };
+
+  {fetching, data, error, response};
+};
 
 let useQuery = (~request, ~requestPolicy=?, ~pause=?, ()) => {
   let args =
