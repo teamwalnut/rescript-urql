@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.0-beta.3] – Type Inference on Client.execute\* Methods - 2019-08-17
+
+This release adds improved type inference around the `Client`'s `execute*` methods (i.e. `executeQuery`, `executeMutation`, and `executeSubscription`). Responses will now be fully type checked at compile time. This release also pins the bound version of `urql` to 1.0.5 to address a regression that occurs when using `urql` > 1.2.0.
+
+### Changed
+
+- Add proper type inference to `Client.execute*` methods. This now involves passing the full `graphql_ppx` module to the `Client` such that it can grab the `parse` method off of it to properly infer the response. This mimics exactly how the components and hooks work.
+- Reorganize types to reduce redundancy and ensure unique generation of `[@bs.deriving abstract]` accessors. This change is mostly internal, but it begins to isolated types used by different `module`s into submodules. For example, rather than all types living in the top-level `Types` module, certain types reserved for particular domains, i.e. the `Client`, live in a submodule i.e. `Client.Types`.
+
+#### Diff
+
+https://github.com/FormidableLabs/reason-urql/compare/v1.0.0-beta.2...v1.0.0-beta.3
+
 ## [1.0.0-beta.2] – CombinedError and FetchOption Function - 2019-07-22
 
 This release adds small improvements around `client.fetchOptions` and the `CombinedError` API.
