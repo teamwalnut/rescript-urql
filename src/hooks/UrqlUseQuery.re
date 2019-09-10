@@ -33,8 +33,8 @@ let urqlResponseToReason = (parse: Js.Json.t => 'response, result: jsResponse) =
   let response =
     switch (fetching, data, error) {
     | (true, _, _) => Fetching
-    | (false, Some(data), _) => Data(data)
     | (false, _, Some(error)) => Error(error)
+    | (false, Some(data), _) => Data(data)
     | (false, None, None) => NotFound
     };
 

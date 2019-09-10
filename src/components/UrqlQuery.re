@@ -45,8 +45,8 @@ let urqlQueryResponseToReason =
   let response =
     switch (fetching, data, error) {
     | (true, _, _) => UrqlTypes.Fetching
-    | (false, Some(data), _) => Data(data)
     | (false, _, Some(error)) => Error(error)
+    | (false, Some(data), _) => Data(data)
     | (false, None, None) => NotFound
     };
 

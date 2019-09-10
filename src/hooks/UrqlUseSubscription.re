@@ -36,9 +36,9 @@ let useSubscriptionResponseToRecord = (parse, result) => {
   let response =
     switch (fetching, data, error) {
     | (true, None, _) => Fetching
+    | (false, _, Some(error)) => Error(error)
     | (true, Some(data), _) => Data(data)
     | (false, Some(data), _) => Data(data)
-    | (false, _, Some(error)) => Error(error)
     | (false, None, None) => NotFound
     };
 
