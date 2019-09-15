@@ -272,7 +272,7 @@ let executeMutation =
 };
 
 [@bs.send]
-external urqlExecuteSubscription:
+external executeSubscriptionJs:
   (
     ~client: t,
     ~subscription: UrqlTypes.graphqlRequest,
@@ -298,7 +298,7 @@ let executeSubscription =
     );
   let parse = request##parse;
 
-  urqlExecuteSubscription(~client, ~subscription=req, ~opts?, ())
+  executeSubscriptionJs(~client, ~subscription=req, ~opts?, ())
   |> Wonka.map((. result) => urqlClientResponseToReason(~parse, ~result));
 };
 
