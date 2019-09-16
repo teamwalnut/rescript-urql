@@ -11,7 +11,7 @@ type useQueryArgs = {
 };
 
 type partialOperationContextFn =
-  option(UrqlClient.Types.partialOperationContext) => unit;
+  option(UrqlClient.ClientTypes.partialOperationContext) => unit;
 type useQueryResponseJs = (jsResponse, partialOperationContextFn);
 
 type useQueryResponse('response) = (

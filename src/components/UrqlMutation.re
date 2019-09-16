@@ -4,14 +4,15 @@ type mutationRenderPropsJs = {
   data: Js.Nullable.t(Js.Json.t),
   error: Js.Nullable.t(UrqlCombinedError.t),
   executeMutation:
-    option(Js.Json.t) => Js.Promise.t(UrqlClient.Types.operationResult),
+    option(Js.Json.t) => Js.Promise.t(UrqlClient.ClientTypes.operationResult),
 };
 
 type mutationRenderProps('response) = {
   fetching: bool,
   data: option('response),
   error: option(UrqlCombinedError.combinedError),
-  executeMutation: unit => Js.Promise.t(UrqlClient.Types.operationResult),
+  executeMutation:
+    unit => Js.Promise.t(UrqlClient.ClientTypes.operationResult),
   response: UrqlTypes.response('response),
 };
 
