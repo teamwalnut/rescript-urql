@@ -1,17 +1,16 @@
 open ReasonUrql;
 open Client;
-open Types;
-// type dog = {
-//   key: string,
-//   name: string,
-//   breed: string,
-//   likes: int,
-//   pats: int,
-//   treats: int,
-//   bellyscratches: int,
-//   description: string,
-//   imageUrl: string,
-// };
+type dog = {
+  key: string,
+  name: string,
+  breed: string,
+  likes: int,
+  pats: int,
+  treats: int,
+  bellyscratches: int,
+  description: string,
+  imageUrl: string,
+};
 
 module GetAllDogs = [%graphql
   {|
