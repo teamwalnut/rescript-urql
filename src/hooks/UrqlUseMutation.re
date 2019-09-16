@@ -1,7 +1,7 @@
 open UrqlTypes;
 
 type executeMutation =
-  option(Js.Json.t) => Js.Promise.t(UrqlClient.Types.operationResult);
+  option(Js.Json.t) => Js.Promise.t(UrqlClient.ClientTypes.operationResult);
 
 [@bs.module "urql"]
 external useMutationJs: string => (jsResponse, executeMutation) =

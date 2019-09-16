@@ -19,14 +19,16 @@
   ],
   "author": "Parker Ziegler <parker.ziegler@formidable.com>",
   "contributors": [
-    "Kara Stubbs <kara.stubbs@formidable.com>"
+    "Kara Stubbs <kara.stubbs@formidable.com>",
+    "Avery Morin",
+    "Gustavo Aguiar"
   ],
   "license": "MIT",
   "dependencies": {
     "bs-fetch": "^0.3.0",
     "graphql": "^14.1.1",
     "urql": "1.0.5",
-    "wonka": "^2.0.1"
+    "wonka": "^3.1.0"
   },
   "devDependencies": {
     "@glennsl/bs-jest": "^0.4.8",

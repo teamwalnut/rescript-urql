@@ -78,7 +78,7 @@ let make = () => {
       | Some(_exn) => <div> "Network Error"->React.string </div>
       | None => <div> "Other Error"->React.string </div>
       }
-    | NotFound => <div> "Something went wrong!"->React.string</div>
+    | NotFound => <div> "Something went wrong!"->React.string </div>
   }
 }
 ```

@@ -1,11 +1,11 @@
-module Types = UrqlTypes;
+module UrqlTypes = UrqlTypes;
 
 module Client = {
   type clientResponse('response) =
-    UrqlClient.Types.clientResponse('response) = {
+    UrqlClient.ClientTypes.clientResponse('response) = {
       data: option('response),
       error: option(UrqlCombinedError.combinedError),
-      response: UrqlClient.Types.response('response),
+      response: UrqlClient.ClientTypes.response('response),
     };
 
   include UrqlClient;
@@ -31,11 +31,11 @@ module Exchanges = UrqlClient.UrqlExchanges;
 
 module Hooks = {
   type hookResponse('ret) =
-    Types.hookResponse('ret) = {
+    UrqlTypes.hookResponse('ret) = {
       fetching: bool,
       data: option('ret),
       error: option(UrqlCombinedError.combinedError),
-      response: Types.response('ret),
+      response: UrqlTypes.response('ret),
     };
   include UrqlUseMutation;
   include UrqlUseQuery;

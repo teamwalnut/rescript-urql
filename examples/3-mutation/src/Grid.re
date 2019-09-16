@@ -1,4 +1,5 @@
 open ReasonUrql;
+open Client;
 
 type dog = {
   key: string,
@@ -14,7 +15,7 @@ type dog = {
 
 module GetAllDogs = [%graphql
   {|
-  query dogs {
+  {
     dogs @bsRecord {
       key
       name
@@ -30,9 +31,7 @@ module GetAllDogs = [%graphql
 |}
 ];
 
-let parse = GetAllDogs.make()##parse;
-
-let queryRequest = Request.createRequest(~query=GetAllDogs.make()##query, ());
+let request = GetAllDogs.make();
 
 type state = {dogs: array(dog)};
 
@@ -48,21 +47,20 @@ let make = (~client: Client.t) => {
 
   React.useEffect1(
     () => {
-      let subscription =
-        Client.executeQuery(~client, ~query=queryRequest, ())
-        |> Wonka.subscribe((. response) => {
-             let dogs =
-               switch (response##data->parse##dogs) {
-               | Some(data) => data
-               | None => [||]
-               };
-             dispatch({
-               payload: {
-                 dogs: dogs,
-               },
-             });
-           });
-      Some(subscription.unsubscribe);
+      let query =
+        Client.executeQuery(~client, ~request, ())
+        |> Wonka.subscribe((. data) =>
+             switch (data.response) {
+             | Data(d) => dispatch({
+                            payload: {
+                              dogs: d##dogs,
+                            },
+                          })
+             | _ => ()
+             }
+           );
+
+      Some(query.unsubscribe);
     },
     [|client|],
   );

@@ -33,24 +33,24 @@ let getRandomHex = () => {
 [@react.component]
 let make = () => {
   let {response} =
-    useSubscription(~request=SubscribeRandomInt.make(), ~handler=Handler(handler));
+    useSubscription(
+      ~request=SubscribeRandomInt.make(),
+      ~handler=Handler(handler),
+    );
 
   switch (response) {
   | Fetching => <text> "Loading"->React.string </text>
   | Data(d) =>
-    Array.mapi(
-      (index, datum) =>
-        <circle
-          cx={
-            datum##newNumber;
-          }
-          cy={index === 0 ? datum##newNumber : d[index - 1]##newNumber}
-          stroke={getRandomHex()}
-          fill="none"
-          r={getRandomInt(30) |> string_of_int}
-        />,
-      d,
-    )
+    d
+    |> Array.mapi((index, datum) =>
+         <circle
+           cx=datum##newNumber
+           cy={index === 0 ? datum##newNumber : d[index - 1]##newNumber}
+           stroke={getRandomHex()}
+           fill="none"
+           r={getRandomInt(30) |> string_of_int}
+         />
+       )
     |> React.array
   | Error(_e) => <text> "Error"->React.string </text>
   | NotFound => <text> "Not Found"->React.string </text>

@@ -4,7 +4,7 @@ type queryRenderPropsJs = {
   data: Js.Nullable.t(Js.Json.t),
   error: Js.Nullable.t(UrqlCombinedError.t),
   executeQuery:
-    option(Js.Json.t) => Js.Promise.t(UrqlClient.Types.operationResult),
+    option(Js.Json.t) => Js.Promise.t(UrqlClient.ClientTypes.operationResult),
 };
 
 type queryRenderProps('response) = {
@@ -12,7 +12,7 @@ type queryRenderProps('response) = {
   data: option('response),
   error: option(UrqlCombinedError.combinedError),
   executeQuery:
-    option(Js.Json.t) => Js.Promise.t(UrqlClient.Types.operationResult),
+    option(Js.Json.t) => Js.Promise.t(UrqlClient.ClientTypes.operationResult),
   response: UrqlTypes.response('response),
 };
 
