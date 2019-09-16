@@ -1,5 +1,6 @@
 open ReasonUrql;
 open Client;
+
 type dog = {
   key: string,
   name: string,
