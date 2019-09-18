@@ -1,6 +1,6 @@
 {
   "name": "3-mutation",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "An example of how to use the Mutation component in reason-urql.",
   "main": "index.bs.js",
   "author": "Parker Ziegler <parker.ziegler@formidable.com>",
