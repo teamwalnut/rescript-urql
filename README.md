@@ -1,17 +1,19 @@
 # reason-urql
 
 [![npm](https://img.shields.io/npm/v/reason-urql.svg)](https://www.npmjs.com/package/reason-urql)
-[![All Contributors](https://img.shields.io/badge/all_contributors-8-blue.svg)](#contributors)
+[![All Contributors](https://img.shields.io/badge/all_contributors-8-orange.svg)](#contributors)
+[![Build Status](https://github.com/FormidableLabs/reason-urql/workflows/reason-urql%20CI/badge.svg)](https://github.com/FormidableLabs/reason-urql/actions)
 [![Maintenance Status][maintenance-image]](#maintenance-status)
+[![Spectrum](https://withspectrum.github.io/badge/badge.svg)](https://spectrum.chat/urql)
 
 Reason bindings for Formidable's Universal React Query Library, [`urql`](https://github.com/FormidableLabs/urql).
 
 ## ✨Features
 
-- ⚛️A fully featured GraphQL client for ReasonReact.
-- ✅Compile time type and schema validation.
-- ⚙️Customizable behavior via `exchanges`.
-- 🎣Support for `useQuery`, `useMutation`, and `useSubscription` hooks!
+- ⚛️ A fully featured GraphQL client for ReasonReact.
+- ✅ Compile time type and schema validation.
+- ⚙️ Customizable behavior via `exchanges`.
+- 🎣 Support for `useQuery`, `useMutation`, and `useSubscription` hooks!
 
 `reason-urql` is a GraphQL client for ReasonReact, allowing you to hook up your components to queries, mutations, and subscriptions. It provides bindings to `urql` that allow you to use the API in Reason, with the benefits of a sound type system, blazing fast compilation, and opportunities for guided customization.
 
