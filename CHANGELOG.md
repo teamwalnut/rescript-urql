@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.0] - 2019-09-18
+
+This release represents the first stable reason of `reason-urql`. From this point forward we'll be starting to enforce semantic versioning for all changes. Thank you so much to all of the contributors who helped us to achieve this milestone!
+
+### Added
+
+- A [Getting Started](./docs/getting_started.md) guide to help first time users of `reason-urql` get up and running.
+
+### Changed
+
+- The `Error(e)` constructor of the `response` variant has been moved above the `Data(d)` constructor to better match `urql`'s JS API, where uses check for error responses on the GraphQL request before operating on data.
+- The `Types` and `Client.Types` `module`s were renamed to `UrqlTypes` and `Client.ClientTypes` to avoid namespace collisions with user-defined `Types` `module`s.
+
+#### Diff
+
+https://github.com/FormidableLabs/reason-urql/compare/v1.0.0-beta.3...v1.0.0
+
 ## [1.0.0-beta.3] – Type Inference on Client.execute\* Methods - 2019-08-17
 
 This release adds improved type inference around the `Client`'s `execute*` methods (i.e. `executeQuery`, `executeMutation`, and `executeSubscription`). Responses will now be fully type checked at compile time. This release also pins the bound version of `urql` to 1.0.5 to address a regression that occurs when using `urql` > 1.2.0.
