@@ -25,7 +25,6 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "bs-fetch": "^0.3.0",
     "graphql": "^14.1.1",
     "urql": "1.0.5",
     "wonka": "^3.1.0"
@@ -33,6 +32,7 @@
   "devDependencies": {
     "@glennsl/bs-jest": "^0.4.8",
     "all-contributors-cli": "^5.4.0",
+    "bs-fetch": "^0.5.0",
     "bs-platform": "5.0.4",
     "graphql_ppx": "^0.2.7",
     "husky": "^2.4.1",
@@ -40,6 +40,7 @@
     "reason-react": "0.7.0"
   },
   "peerDependencies": {
+    "bs-fetch": "^0.5.0",
     "graphql_ppx": "^0.2.7",
     "reason-react": "0.7.0"
   },

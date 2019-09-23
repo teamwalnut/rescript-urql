@@ -23,7 +23,7 @@
   ],
   "suffix": ".bs.js",
   "namespace": false,
-  "bs-dependencies": ["reason-react", "bs-fetch", "wonka"],
+  "bs-dependencies": ["reason-react", "wonka", "bs-fetch"],
   "bs-dev-dependencies": ["@glennsl/bs-jest"],
   "refmt": 3,
   "warnings": {
