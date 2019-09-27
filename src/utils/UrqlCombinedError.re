@@ -55,6 +55,7 @@ class type _combinedError =
     pub networkError: Js.Nullable.t(Js.Exn.t);
     pub graphqlErrors: Js.Nullable.t(array(graphqlError));
     pub response: Js.Nullable.t(Fetch.response);
+    pub message: string;
   };
 
 type t = Js.t(_combinedError);
@@ -63,6 +64,7 @@ type combinedError = {
   networkError: option(Js.Exn.t),
   graphqlErrors: option(array(graphqlError)),
   response: option(Fetch.response),
+  message: string,
 };
 
 let combinedErrorToRecord = (err: t): combinedError => {
@@ -70,6 +72,7 @@ let combinedErrorToRecord = (err: t): combinedError => {
     networkError: err##networkError->Js.Nullable.toOption,
     graphqlErrors: err##graphqlErrors->Js.Nullable.toOption,
     response: err##response->Js.Nullable.toOption,
+    message: err##message,
   };
 };
 
