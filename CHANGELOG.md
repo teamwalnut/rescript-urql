@@ -17,6 +17,10 @@ This release removes `bs-fetch` as a dependency such that it doesn't conflict wi
 
 - `message` field on `CombinedError.combinedError`. This represents the raw string `message` returned by the `urql` client for your requests. PR by @Schmavery [here](https://github.com/FormidableLabs/reason-urql/pull/105).
 
+### Diff
+
+https://github.com/FormidableLabs/reason-urql/compare/v1.0.0...v1.0.1
+
 ## [1.0.0] - 2019-09-18
 
 This release represents the first stable reason of `reason-urql`. From this point forward we'll be starting to enforce semantic versioning for all changes. Thank you so much to all of the contributors who helped us to achieve this milestone!
