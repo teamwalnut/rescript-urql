@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.1] - 2019-09-26
+
+This release removes `bs-fetch` as a dependency such that it doesn't conflict with a user's local copy of `bs-fetch`. Since we only use `bs-fetch` for type checking `fetchOptions`, it can safely be included as a `devDependency`. This release also adds a `message` field on the `combinedError` record to provide users access to the raw error string from `urql`.
+
+### Removed
+
+- Dependency on `bs-fetch`. `bs-fetch` is now a `devDependency` for `reason-urql` and can also be installed as a `peerDependency` if you want to use a different version in your app. PR by @parkerziegler and @gugahoa [here](https://github.com/FormidableLabs/reason-urql/pull/104).
+
+### Added
+
+- `message` field on `CombinedError.combinedError`. This represents the raw string `message` returned by the `urql` client for your requests. PR by @Schmavery [here](https://github.com/FormidableLabs/reason-urql/pull/105).
+
 ## [1.0.0] - 2019-09-18
 
 This release represents the first stable reason of `reason-urql`. From this point forward we'll be starting to enforce semantic versioning for all changes. Thank you so much to all of the contributors who helped us to achieve this milestone!
