@@ -116,4 +116,64 @@ describe("UrqlClient", () => {
       )
     );
   });
+
+  describe("ssrExchange", () => {
+    it("should exist and be callable", () =>
+      Expect.(expect(Exchanges.ssrExchange()) |> toMatchSnapshot)
+    );
+
+    it(
+      "should accept an initialState for passing data extracted during SSR prepass",
+      () => {
+      let json = Js.Dict.empty();
+      Js.Dict.set(json, "key", Js.Json.number(1.));
+      Js.Dict.set(json, "key2", Js.Json.number(2.));
+      let data = Js.Json.object_(json);
+      let serializedResult = Exchanges.serializedResult(~data, ());
+
+      let initialState = Js.Dict.empty();
+      Js.Dict.set(initialState, "query", serializedResult);
+      let ssrExchangeOpts = Exchanges.ssrExchangeOpts(~initialState, ());
+
+      Expect.(
+        expect(() =>
+          Exchanges.ssrExchange(~ssrExchangeOpts, ())
+        )
+        |> not
+        |> toThrow
+      );
+      /* let ssrCache = Exchanges.ssrExchange(~ssrExchangeOpts, ());
+         let decodedResult =
+           Exchanges.extractData(~exchange=ssrCache) |> Js.Json.decodeObject;
+
+         switch (decodedResult) {
+         | Some(dict) =>
+           let result = (
+             Js.Dict.unsafeGet(dict, "key") |> Js.Json.decodeNumber,
+             Js.Dict.unsafeGet(dict, "key2") |> Js.Json.decodeNumber,
+           );
+           Expect.(expect(result) |> toEqual((Some(1.), Some(2.))));
+         | None => Expect.(expect(1) |> toEqual(1))
+         }; */
+    });
+
+    it(
+      "should expose a restoreData method for rehydrating data fetched server-side on the client",
+      () => {
+        let json = Js.Dict.empty();
+        Js.Dict.set(json, "key", Js.Json.number(1.));
+        Js.Dict.set(json, "key2", Js.Json.number(2.));
+        let data = Js.Json.object_(json);
+        let ssrCache = Exchanges.ssrExchange();
+
+        Expect.(
+          expect(() =>
+            Exchanges.restoreData(~exchange=ssrCache, ~restore=data)
+          )
+          |> not
+          |> toThrow
+        );
+      },
+    );
+  });
 });
