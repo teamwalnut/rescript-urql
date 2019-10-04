@@ -16,7 +16,7 @@ type useSubscriptionResponseJs('ret) = {
   fetching: bool,
   data: Js.Nullable.t('ret),
   [@bs.optional]
-  error: UrqlCombinedError.t,
+  error: UrqlCombinedError.combinedErrorJs,
 };
 
 [@bs.module "urql"]

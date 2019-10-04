@@ -20,7 +20,7 @@ module ClientTypes = {
      Consists of optional data and errors fields. */
   [@bs.deriving abstract]
   type executionResult = {
-    errors: Js.Nullable.t(array(UrqlCombinedError.graphqlError)),
+    errors: Js.Nullable.t(array(UrqlCombinedError.graphQLError)),
     data: Js.Nullable.t(Js.Json.t),
   };
 
@@ -73,7 +73,7 @@ module ClientTypes = {
   type operationResult = {
     operation,
     data: Js.Nullable.t(Js.Json.t),
-    error: Js.Nullable.t(UrqlCombinedError.t),
+    error: Js.Nullable.t(UrqlCombinedError.combinedErrorJs),
   };
 
   /* The record representing the response returned by the client _after_

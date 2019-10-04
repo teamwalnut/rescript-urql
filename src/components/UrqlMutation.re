@@ -2,7 +2,7 @@
 type mutationRenderPropsJs = {
   fetching: bool,
   data: Js.Nullable.t(Js.Json.t),
-  error: Js.Nullable.t(UrqlCombinedError.t),
+  error: Js.Nullable.t(UrqlCombinedError.combinedErrorJs),
   executeMutation:
     option(Js.Json.t) => Js.Promise.t(UrqlClient.ClientTypes.operationResult),
 };

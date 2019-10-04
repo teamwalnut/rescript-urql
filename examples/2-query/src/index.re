@@ -51,7 +51,32 @@ ReactDOMRe.renderToElementWithId(
              | None => <div> "No Data"->React.string </div>
              }
            | Fetching => <div> "Loading"->React.string </div>
-           | Error(_e) => <div> "Error!"->React.string </div>
+           | Error(e) =>
+             switch (e) {
+             | {networkError: Some(ne)} =>
+               <div>
+                 {ne
+                  ->Js.Exn.message
+                  ->Belt.Option.getWithDefault("Network error")
+                  ->React.string}
+               </div>
+             | {graphQLErrors: Some(gqle)} =>
+               <div>
+                 {gqle
+                  |> Array.to_list
+                  |> List.map(e => {
+                       let msg =
+                         Belt.Option.getWithDefault(
+                           Js.Nullable.toOption(CombinedError.messageGet(e)),
+                           "GraphQL error",
+                         );
+                       "[GraphQLError: " ++ msg ++ "]";
+                     })
+                  |> String.concat(", ")
+                  |> React.string}
+               </div>
+             | _ => <div> "Unknown error."->React.string </div>
+             }
            | NotFound => <div> "Not Found"->React.string </div>
            }}
         </main>

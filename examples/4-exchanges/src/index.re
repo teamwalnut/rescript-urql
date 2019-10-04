@@ -56,16 +56,13 @@ executeQuery(~client, ~request=queryRequest, ())
      switch (data.response) {
      | Data(d) =>
        Js_global.setInterval(
-         () =>
-           switch (d##dogs) {
-           | Some(dogs) =>
-             dogs->Belt.Array.shuffleInPlace;
-             let mutationRequest = LikeDog.make(~key=dogs[0]##key, ());
-             executeMutation(~client, ~request=mutationRequest, ())
-             |> Wonka.subscribe((. response) => Js.log(response))
-             |> ignore;
-           | None => ()
-           },
+         () => {
+           d##dogs->Belt.Array.shuffleInPlace;
+           let mutationRequest = LikeDog.make(~key=d##dogs[0]##key, ());
+           executeMutation(~client, ~request=mutationRequest, ())
+           |> Wonka.subscribe((. response) => Js.log(response))
+           |> ignore;
+         },
          5000,
        )
        |> ignore

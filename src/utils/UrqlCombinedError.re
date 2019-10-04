@@ -38,7 +38,7 @@ type extension;
     https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/graphql/error/GraphQLError.d.ts.
    */
 [@bs.deriving abstract]
-type graphqlError = {
+type graphQLError = {
   message: Js.Nullable.t(message),
   locations: Js.Nullable.t(locations),
   path: Js.Nullable.t(array(path)),
@@ -53,27 +53,28 @@ class type _combinedError =
   [@bs]
   {
     pub networkError: Js.Nullable.t(Js.Exn.t);
-    pub graphQLErrors: Js.Nullable.t(array(graphqlError));
+    pub graphQLErrors: Js.Nullable.t(array(graphQLError));
     pub response: Js.Nullable.t(Fetch.response);
     pub message: string;
   };
 
-type t = Js.t(_combinedError);
+type combinedErrorJs = Js.t(_combinedError);
+[@bs.module "urql"] external combinedError: combinedErrorJs = "CombinedError";
 
 type combinedError = {
   networkError: option(Js.Exn.t),
-  graphqlErrors: option(array(graphqlError)),
+  graphQLErrors: option(array(graphQLError)),
   response: option(Fetch.response),
   message: string,
 };
 
-let combinedErrorToRecord = (err: t): combinedError => {
+let combinedErrorToRecord = (err: combinedErrorJs): combinedError => {
   {
     networkError: err##networkError->Js.Nullable.toOption,
-    graphqlErrors: err##graphQLErrors->Js.Nullable.toOption,
+    graphQLErrors: err##graphQLErrors->Js.Nullable.toOption,
     response: err##response->Js.Nullable.toOption,
     message: err##message,
   };
 };
 
-[@bs.module "urql"] external combinedError: t = "CombinedError";
+type t = combinedError;
