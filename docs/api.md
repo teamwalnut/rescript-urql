@@ -740,7 +740,16 @@ In this case, `networkError` returns the original JavaScript error thrown if a n
 
 #### Example
 
-Dependening on the types of errors you get from your GraphQL API, you may want to do different things. Here's an example showing how to handle `networkError`s and `graphQLErrors` separately.
+The easiest way to interact with `CombinedError` is through the `message` field on the `CombinedError.t` record. If you just want to display the error message to your user, or operate directly on the error string, simply do the following:
+
+```reason
+switch (response) {
+  | Error(e) => <div> e.message->React.string </div>
+  | _ => <div />
+}
+```
+
+Dependening on the types of errors you get from your GraphQL API, you may want to do different things. Here's an example showing how to handle `networkError`s and `graphQLErrors` indepedently.
 
 ```reason
 let ({ response }, _) = useQuery(~request, ());
@@ -773,15 +782,6 @@ switch (response) {
     | _ => <div> "Unknown error."->React.string </div>
     }
   }
-  | _ => <div />
-}
-```
-
-Due to the verbosity of the above, sometimes it isn't useful to handle every potential case around errors in your application. When you just want a simple error message of what went wrong to display to the user, just access the `message` field on the `CombinedError.t`:
-
-```reason
-switch (response) {
-  | Error(e) => <div> e.message->React.string </div>
   | _ => <div />
 }
 ```
