@@ -40,7 +40,7 @@ jobs:
         run: |
           yarn
           yarn build
-          cd examples
-          for dir in ./examples/*; do (cd "$dir"; yarn; yarn build; cd ../); done
+          cd $GITHUB_WORKSPACE/examples
+          for dir in $GITHUB_WORKSPACE/examples/*; do (cd "$dir"; yarn; yarn build; cd ../); done
         env:
           CI: true
