@@ -46,5 +46,5 @@ type jsResponse = {
   [@bs.as "data"]
   jsData: Js.Nullable.t(Js.Json.t),
   [@bs.optional] [@bs.as "error"]
-  jsError: UrqlCombinedError.t,
+  jsError: UrqlCombinedError.combinedErrorJs,
 };

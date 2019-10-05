@@ -2,7 +2,7 @@
 type queryRenderPropsJs = {
   fetching: bool,
   data: Js.Nullable.t(Js.Json.t),
-  error: Js.Nullable.t(UrqlCombinedError.t),
+  error: Js.Nullable.t(UrqlCombinedError.combinedErrorJs),
   executeQuery:
     option(Js.Json.t) => Js.Promise.t(UrqlClient.ClientTypes.operationResult),
 };

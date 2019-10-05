@@ -25,7 +25,7 @@ module SubscriptionWithHandler = UrqlSubscription.SubscriptionWithHandler;
 
 module Request = UrqlRequest;
 
-module Error = UrqlCombinedError;
+module CombinedError = UrqlCombinedError;
 
 module Exchanges = UrqlClient.UrqlExchanges;
 
