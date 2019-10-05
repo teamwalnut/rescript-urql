@@ -41,6 +41,6 @@ jobs:
           yarn
           yarn build
           cd $GITHUB_WORKSPACE/examples
-          for dir in $GITHUB_WORKSPACE/examples/*; do (cd "$dir"; yarn; yarn build; cd ../); done
+          for dir in $GITHUB_WORKSPACE/examples/*; do (cd "$dir"; yarn; yarn clean; yarn build; cd ../); done
         env:
           CI: true
