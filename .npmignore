@@ -9,3 +9,5 @@
 !package.json
 # exclude BuckleScript output
 src/**/*.bs.js
+examples/**/package.json
+examples/**/bsconfig.json
