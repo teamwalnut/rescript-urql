@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.2] - 2019-10-05
+
+This release makes a small change around the API for `CombinedError`. Specifically, the module type `t` for `CombinedError` now refers to the record exposed by the module rather than the `Js.t` / OCaml class binding `urql`'s native `CombinedError` class. Better documentation for `CombinedError` was also added.
+
+### Added
+
+- More documentation on `CombinedError` in the [API docs](/docs/api.md). PR by @Schmavery and @parkerziegler [here](https://github.com/FormidableLabs/reason-urql/pull/109).
+
+### Changed
+
+- `CombinedError.t` now references the record exposed by the `CombinedError` module containing fields for `message`, `networkError`, `graphQLErrors`, and `message`. PR by @Schmavery and @parkerziegler [here](https://github.com/FormidableLabs/reason-urql/pull/108).
+
+### Fixed
+
+- Capitalization / casing for the `graphQLErrors` field on `CombinedError.t`. Previously this was bound as `graphqlErrors`, which would always result in `None` being returned as `urql` has no `graphqlErrors` field. PR by @Schmavery [here](https://github.com/FormidableLabs/reason-urql/pull/109).
+
 ## [1.0.1] - 2019-09-26
 
 This release removes `bs-fetch` as a dependency such that it doesn't conflict with a user's local copy of `bs-fetch`. Since we only use `bs-fetch` for type checking `fetchOptions`, it can safely be included as a `devDependency`. This release also adds a `message` field on the `combinedError` record to provide users access to the raw error string from `urql`.
