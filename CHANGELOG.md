@@ -21,6 +21,10 @@ This release makes a small change around the API for `CombinedError`. Specifical
 
 - Capitalization / casing for the `graphQLErrors` field on `CombinedError.t`. Previously this was bound as `graphqlErrors`, which would always result in `None` being returned as `urql` has no `graphqlErrors` field. PR by @Schmavery [here](https://github.com/FormidableLabs/reason-urql/pull/109).
 
+### Diff
+
+https://github.com/FormidableLabs/reason-urql/compare/v1.0.1...v1.0.2
+
 ## [1.0.1] - 2019-09-26
 
 This release removes `bs-fetch` as a dependency such that it doesn't conflict with a user's local copy of `bs-fetch`. Since we only use `bs-fetch` for type checking `fetchOptions`, it can safely be included as a `devDependency`. This release also adds a `message` field on the `combinedError` record to provide users access to the raw error string from `urql`.
