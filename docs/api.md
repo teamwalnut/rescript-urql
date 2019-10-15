@@ -719,6 +719,62 @@ let client = Client.make(
 );
 ```
 
+#### `ssrExchange` (Experimental)
+
+The `ssrExchange` is currently experimental. It acceps a single optional argument, `~ssrExchangeOpts`, a `bs.deriving abstract` that accepts two properties – `~initialState` (which populates the server-side rendered data with a rehydrated cache) and `~isClient`, which tells the exchange whether it is running on the client or the server.
+
+If using the `ssrExchange`, it should be placed after any caching exchanges, like `cacheExchange`, but before any asynchronous exchanges, like `fetchExchange`.
+
+```reason
+open ReasonUrql;
+
+/* Mocking up some fake cache data on the server. */
+let json = Js.Dict.empty();
+Js.Dict.set(json, "key", Js.Json.number(1.));
+Js.Dict.set(json, "key2", Js.Json.number(2.));
+let data = Js.Json.object_(json);
+let serializedResult = Exchanges.serializedResult(~data, ());
+
+let initialState = Js.Dict.empty();
+Js.Dict.set(initialState, "query", serializedResult);
+
+/* Create the initialState that will be passed to the ssrExchange. */
+let ssrExchangeOpts = Exchanges.ssrExchangeOpts(~initialState, ());
+
+let ssrCache = Exchanges.ssrExchange(~ssrExchangeOpts, ());
+
+let client = Client.make(
+  ~url="http://localhost:3000",
+  ~exchanges=[|
+    Exchanges.dedupExchange,
+    Exchanges.cacheExchange,
+    ssrCache,
+    Exchanges.fetchExchange
+  |],
+  ()
+);
+```
+
+The resulting object returned from creating the `ssrExchange` has two methods available on it – `extractData` and `restoreData`. `extractData` is typically used on the server-side to extract data returned from your GrqphQL requests after they've been executed on the server.
+
+```reason
+let ssrCache = Exchanges.ssrExchange(~ssrExchangeOpts, ());
+
+/* Extract data from the ssrCache. */
+let extractedData = Exchanges.extractData(~exchange=ssrCache);
+```
+
+`restoreData` is typically used to rehydrate the client with data from the server. The `restore` argument is what allows you to reference the data returned from the server to the client.
+
+```reason
+let ssrCache = Exchanges.ssrExchange(~ssrExchangeOpts, ());
+
+/* Extract data from the ssrCache. */
+let extractedData = Exchanges.restoreData(~exchange=ssrCache, ~restore=urqlData);
+```
+
+This part of the API is still quite experimental, as server-side rendering in Reason with NextJS is still in its e=infancy. Use with caution. For more information, read `urql`'s server-side rendering guide [here](https://github.com/FormidableLabs/urql/blob/master/docs/basics.md#server-side-rendering).
+
 #### `composeExchanges`
 
 `composeExchanges` is a helper function that will compose a single exchange from an array of exchanges. Operations will be run through the provided exchanges in the order that they were provided to `composeExchanges`, from left to right.

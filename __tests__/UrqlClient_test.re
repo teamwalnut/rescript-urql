@@ -142,19 +142,20 @@ describe("UrqlClient", () => {
         |> not
         |> toThrow
       );
-      /* let ssrCache = Exchanges.ssrExchange(~ssrExchangeOpts, ());
-         let decodedResult =
-           Exchanges.extractData(~exchange=ssrCache) |> Js.Json.decodeObject;
+    });
 
-         switch (decodedResult) {
-         | Some(dict) =>
-           let result = (
-             Js.Dict.unsafeGet(dict, "key") |> Js.Json.decodeNumber,
-             Js.Dict.unsafeGet(dict, "key2") |> Js.Json.decodeNumber,
-           );
-           Expect.(expect(result) |> toEqual((Some(1.), Some(2.))));
-         | None => Expect.(expect(1) |> toEqual(1))
-         }; */
+    it(
+      "should expose an extractData method for extracting server-side rendered data",
+      () => {
+      let ssrCache = Exchanges.ssrExchange();
+
+      Expect.(
+        expect(() =>
+          Exchanges.extractData(~exchange=ssrCache)
+        )
+        |> not
+        |> toThrow
+      );
     });
 
     it(
