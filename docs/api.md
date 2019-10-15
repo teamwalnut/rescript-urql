@@ -443,13 +443,13 @@ let make = () => {
 
 ### `Provider`
 
-The `Provider`'s responsibility is to pass the `urql` client instance down to `Query`, `Mutation`, and `Subscription` components through context. Wrap the root of your application with `Provider`.
+The `Provider`'s responsibility is to pass the `urql` client instance down to `Query`, `Mutation`, and `Subscription` components or `useQuery`, `useMutation`, and `useSubcription` hooks through context. Wrap the root of your application with `Provider`.
 
 #### Props
 
-| Prop     | Type       | Description                 |
-| -------- | ---------- | --------------------------- |
-| `client` | `Client.t` | The `urql` client instance. |
+| Prop    | Type       | Description                 |
+| ------- | ---------- | --------------------------- |
+| `value` | `Client.t` | The `urql` client instance. |
 
 #### Example
 
@@ -659,11 +659,11 @@ Client.executeSubscription(~client, ~request, ())
 
 Exchanges are the mechanism by which `urql` modifies requests before they are sent to your GraphQL API and alters responses as they are received. If you want to add some additional functionality to your GraphQL operations, this is a great place to do that. The following exchanges are provided out of the box with `urql`.
 
-#### cacheExchange
+#### `cacheExchange`
 
 The `cacheExchange` provides basic caching support for your GraphQL operations. It is of type `Exchanges.exchange`.
 
-#### dedupExchange
+#### `dedupExchange`
 
 The `dedupExchange` will deduplicate pending operations waiting for a response. For example, if a user attempts to execute the same query by clicking a button in rapid succession, the `dedupExchange` will filter these events to a single request. It is of type `Exchanges.exchange`.
 
