@@ -490,6 +490,7 @@ Instantiate an `urql` client instance. By default, `urql` will execute requests 
 | `url`          | `string`                              | The url of your GraphQL API.                                                                                                                                                                                                                                 |
 | `fetchOptions` | `option(Client.fetchOptions)=?`       | A variant type representing optional fetch options to be used by your client. You can pass your `fetchOptions` as a plain `Fetch.requestInit` by wrapping it in `Client.FetchOpts`, or instantiate it dynamically in a function wrapped by `Client.FetchFn`. |
 | `exchanges`    | `option(array(Exchanges.exchange))=?` | The array of exchanges to be used by your client.                                                                                                                                                                                                            |
+| `suspense`     | `option(bool)=false`                  | A flag activating the experimental React suspense mode, which can be used during server-side rendering to prefetch data.                                                                                                                                     |
 
 #### Return Type
 
