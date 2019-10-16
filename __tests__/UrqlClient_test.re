@@ -116,4 +116,65 @@ describe("UrqlClient", () => {
       )
     );
   });
+
+  describe("ssrExchange", () => {
+    it("should exist and be callable", () =>
+      Expect.(expect(Exchanges.ssrExchange()) |> toMatchSnapshot)
+    );
+
+    it(
+      "should accept an initialState for passing data extracted during SSR prepass",
+      () => {
+      let json = Js.Dict.empty();
+      Js.Dict.set(json, "key", Js.Json.number(1.));
+      Js.Dict.set(json, "key2", Js.Json.number(2.));
+      let data = Js.Json.object_(json);
+      let serializedResult = Exchanges.serializedResult(~data, ());
+
+      let initialState = Js.Dict.empty();
+      Js.Dict.set(initialState, "query", serializedResult);
+      let ssrExchangeOpts = Exchanges.ssrExchangeOpts(~initialState, ());
+
+      Expect.(
+        expect(() =>
+          Exchanges.ssrExchange(~ssrExchangeOpts, ())
+        )
+        |> not
+        |> toThrow
+      );
+    });
+
+    it(
+      "should expose an extractData method for extracting server-side rendered data",
+      () => {
+      let ssrCache = Exchanges.ssrExchange();
+
+      Expect.(
+        expect(() =>
+          Exchanges.extractData(~exchange=ssrCache)
+        )
+        |> not
+        |> toThrow
+      );
+    });
+
+    it(
+      "should expose a restoreData method for rehydrating data fetched server-side on the client",
+      () => {
+        let json = Js.Dict.empty();
+        Js.Dict.set(json, "key", Js.Json.number(1.));
+        Js.Dict.set(json, "key2", Js.Json.number(2.));
+        let data = Js.Json.object_(json);
+        let ssrCache = Exchanges.ssrExchange();
+
+        Expect.(
+          expect(() =>
+            Exchanges.restoreData(~exchange=ssrCache, ~restore=data)
+          )
+          |> not
+          |> toThrow
+        );
+      },
+    );
+  });
 });

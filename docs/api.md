@@ -443,13 +443,13 @@ let make = () => {
 
 ### `Provider`
 
-The `Provider`'s responsibility is to pass the `urql` client instance down to `Query`, `Mutation`, and `Subscription` components through context. Wrap the root of your application with `Provider`.
+The `Provider`'s responsibility is to pass the `urql` client instance down to `Query`, `Mutation`, and `Subscription` components or `useQuery`, `useMutation`, and `useSubcription` hooks through context. Wrap the root of your application with `Provider`.
 
 #### Props
 
-| Prop     | Type       | Description                 |
-| -------- | ---------- | --------------------------- |
-| `client` | `Client.t` | The `urql` client instance. |
+| Prop    | Type       | Description                 |
+| ------- | ---------- | --------------------------- |
+| `value` | `Client.t` | The `urql` client instance. |
 
 #### Example
 
@@ -490,6 +490,7 @@ Instantiate an `urql` client instance. By default, `urql` will execute requests 
 | `url`          | `string`                              | The url of your GraphQL API.                                                                                                                                                                                                                                 |
 | `fetchOptions` | `option(Client.fetchOptions)=?`       | A variant type representing optional fetch options to be used by your client. You can pass your `fetchOptions` as a plain `Fetch.requestInit` by wrapping it in `Client.FetchOpts`, or instantiate it dynamically in a function wrapped by `Client.FetchFn`. |
 | `exchanges`    | `option(array(Exchanges.exchange))=?` | The array of exchanges to be used by your client.                                                                                                                                                                                                            |
+| `suspense`     | `option(bool)=false`                  | A flag activating the experimental React suspense mode, which can be used during server-side rendering to prefetch data.                                                                                                                                     |
 
 #### Return Type
 
@@ -659,11 +660,11 @@ Client.executeSubscription(~client, ~request, ())
 
 Exchanges are the mechanism by which `urql` modifies requests before they are sent to your GraphQL API and alters responses as they are received. If you want to add some additional functionality to your GraphQL operations, this is a great place to do that. The following exchanges are provided out of the box with `urql`.
 
-#### cacheExchange
+#### `cacheExchange`
 
 The `cacheExchange` provides basic caching support for your GraphQL operations. It is of type `Exchanges.exchange`.
 
-#### dedupExchange
+#### `dedupExchange`
 
 The `dedupExchange` will deduplicate pending operations waiting for a response. For example, if a user attempts to execute the same query by clicking a button in rapid succession, the `dedupExchange` will filter these events to a single request. It is of type `Exchanges.exchange`.
 
@@ -718,6 +719,62 @@ let client = Client.make(
   ()
 );
 ```
+
+#### `ssrExchange` (Experimental)
+
+The `ssrExchange` is currently experimental. It acceps a single optional argument, `~ssrExchangeOpts`, a `bs.deriving abstract` that accepts two properties – `~initialState` (which populates the server-side rendered data with a rehydrated cache) and `~isClient`, which tells the exchange whether it is running on the client or the server.
+
+If using the `ssrExchange`, it should be placed after any caching exchanges, like `cacheExchange`, but before any asynchronous exchanges, like `fetchExchange`.
+
+```reason
+open ReasonUrql;
+
+/* Mocking up some fake cache data on the server. */
+let json = Js.Dict.empty();
+Js.Dict.set(json, "key", Js.Json.number(1.));
+Js.Dict.set(json, "key2", Js.Json.number(2.));
+let data = Js.Json.object_(json);
+let serializedResult = Exchanges.serializedResult(~data, ());
+
+let initialState = Js.Dict.empty();
+Js.Dict.set(initialState, "query", serializedResult);
+
+/* Create the initialState that will be passed to the ssrExchange. */
+let ssrExchangeOpts = Exchanges.ssrExchangeOpts(~initialState, ());
+
+let ssrCache = Exchanges.ssrExchange(~ssrExchangeOpts, ());
+
+let client = Client.make(
+  ~url="http://localhost:3000",
+  ~exchanges=[|
+    Exchanges.dedupExchange,
+    Exchanges.cacheExchange,
+    ssrCache,
+    Exchanges.fetchExchange
+  |],
+  ()
+);
+```
+
+The resulting object returned from creating the `ssrExchange` has two methods available on it – `extractData` and `restoreData`. `extractData` is typically used on the server-side to extract data returned from your GrqphQL requests after they've been executed on the server.
+
+```reason
+let ssrCache = Exchanges.ssrExchange(~ssrExchangeOpts, ());
+
+/* Extract data from the ssrCache. */
+let extractedData = Exchanges.extractData(~exchange=ssrCache);
+```
+
+`restoreData` is typically used to rehydrate the client with data from the server. The `restore` argument is what allows you to reference the data returned from the server to the client.
+
+```reason
+let ssrCache = Exchanges.ssrExchange(~ssrExchangeOpts, ());
+
+/* Extract data from the ssrCache. */
+let extractedData = Exchanges.restoreData(~exchange=ssrCache, ~restore=urqlData);
+```
+
+This part of the API is still quite experimental, as server-side rendering in Reason with NextJS is still in its e=infancy. Use with caution. For more information, read `urql`'s server-side rendering guide [here](https://github.com/FormidableLabs/urql/blob/master/docs/basics.md#server-side-rendering).
 
 #### `composeExchanges`
 

@@ -148,6 +148,37 @@ module UrqlExchanges = {
 
   [@bs.module "urql"]
   external subscriptionExchange: subscriptionExchangeOpts => exchange = "";
+
+  /* Specific types for the ssrExchange. */
+  [@bs.deriving abstract]
+  type serializedError = {
+    networkError: Js.Nullable.t(string),
+    graphQLErrors: Js.Nullable.t(array(string)),
+  };
+
+  [@bs.deriving abstract]
+  type serializedResult = {
+    [@bs.optional]
+    data: Js.Json.t,
+    [@bs.optional]
+    error: serializedError,
+  };
+
+  [@bs.deriving abstract]
+  type ssrExchangeOpts = {
+    initialState: Js.Dict.t(serializedResult),
+    [@bs.optional]
+    isClient: bool,
+  };
+
+  [@bs.send]
+  external restoreData: (~exchange: exchange, ~restore: Js.Json.t) => Js.Json.t =
+    "";
+  [@bs.send] external extractData: (~exchange: exchange) => Js.Json.t = "";
+
+  [@bs.module "urql"]
+  external ssrExchange: (~ssrExchangeOpts: ssrExchangeOpts=?, unit) => exchange =
+    "";
 };
 
 [@bs.deriving abstract]
@@ -157,6 +188,8 @@ type clientOptions('a) = {
   fetchOptions: 'a,
   [@bs.optional]
   exchanges: array(UrqlExchanges.exchange),
+  [@bs.optional]
+  suspense: bool,
 };
 
 [@bs.new] [@bs.module "urql"]
@@ -173,6 +206,7 @@ let make =
                    UrqlExchanges.cacheExchange,
                    UrqlExchanges.fetchExchange,
                  |],
+      ~suspense=false,
       (),
     ) => {
   let options =
@@ -180,6 +214,7 @@ let make =
       ~url,
       ~fetchOptions=unwrapFetchOptions(fetchOptions),
       ~exchanges,
+      ~suspense,
       (),
     );
   client(options);
