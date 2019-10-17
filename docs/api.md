@@ -458,7 +458,7 @@ open ReasonUrql;
 
 let client = Client.make(~url="https://localhost:3000/graphql", ());
 
-ReactDOMRe.renderToElementWithId(<Provider client><App /></Provider>, "root");
+ReactDOMRe.renderToElementWithId(<Provider value=client><App /></Provider>, "root");
 ```
 
 ## `Client`
