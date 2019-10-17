@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2019-10-17
+
+This release adds experimental support for server-side rendering with the addition of bindings for the `ssrExchange`.
+
+### Added
+
+- Bindings for `ssrExchange` and the `suspense` option on the `Client.make` function. PR by @parkerziegler [here](https://github.com/FormidableLabs/reason-urql/pull/111).
+- Initial docs for server side rendering support. PR by @parkerziegler [here](https://github.com/FormidableLabs/reason-urql/pull/111).
+
+### Changed
+
+- `urql` dependency upgraded to v1.1.3!
+
+### Fixed
+
+- Minor docs fix by for the `Client` module. PR by @robinweser [here](https://github.com/FormidableLabs/reason-urql/pull/112).
+- `bsconfig.json` and `package.json` files from the `examples` directory are no longer published to `npm`.
+
 ## [1.0.2] - 2019-10-05
 
 This release makes a small change around the API for `CombinedError`. Specifically, the module type `t` for `CombinedError` now refers to the record exposed by the module rather than the `Js.t` / OCaml class binding `urql`'s native `CombinedError` class. Better documentation for `CombinedError` was also added.

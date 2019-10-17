@@ -75,6 +75,15 @@ describe("UrqlClient", () => {
     });
   });
 
+  describe("Client with suspense flag", () =>
+    it("should accept a suspense flag to enable experimental SSR mode", () => {
+      let client =
+        Client.make(~url="https://localhost:3000", ~suspense=true, ());
+
+      Expect.(expect(client) |> toMatchSnapshot);
+    })
+  );
+
   describe("Client with exchanges provided", () => {
     it("should instantiate a client with exchanges", () => {
       let client =

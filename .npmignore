@@ -5,9 +5,7 @@
 !README.md
 !CHANGELOG.md
 !CONTRIBUTING.md
-!bsconfig.json
-!package.json
+!/bsconfig.json
+!/package.json
 # exclude BuckleScript output
 src/**/*.bs.js
-examples/**/package.json
-examples/**/bsconfig.json

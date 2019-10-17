@@ -83,4 +83,23 @@ Client {
 }
 `;
 
+exports[`UrqlClient Client with suspense flag should accept a suspense flag to enable experimental SSR mode 1`] = `
+Client {
+  "activeOperations": Object {},
+  "createOperationContext": [Function],
+  "createRequestOperation": [Function],
+  "dispatchOperation": [Function],
+  "exchange": [Function],
+  "executeMutation": [Function],
+  "executeQuery": [Function],
+  "executeSubscription": [Function],
+  "fetchOptions": undefined,
+  "operations$": [Function],
+  "reexecuteOperation": [Function],
+  "results$": [Function],
+  "suspense": true,
+  "url": "https://localhost:3000",
+}
+`;
+
 exports[`UrqlClient ssrExchange should exist and be callable 1`] = `[Function]`;

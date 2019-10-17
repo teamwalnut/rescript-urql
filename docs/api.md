@@ -729,20 +729,7 @@ If using the `ssrExchange`, it should be placed after any caching exchanges, lik
 ```reason
 open ReasonUrql;
 
-/* Mocking up some fake cache data on the server. */
-let json = Js.Dict.empty();
-Js.Dict.set(json, "key", Js.Json.number(1.));
-Js.Dict.set(json, "key2", Js.Json.number(2.));
-let data = Js.Json.object_(json);
-let serializedResult = Exchanges.serializedResult(~data, ());
-
-let initialState = Js.Dict.empty();
-Js.Dict.set(initialState, "query", serializedResult);
-
-/* Create the initialState that will be passed to the ssrExchange. */
-let ssrExchangeOpts = Exchanges.ssrExchangeOpts(~initialState, ());
-
-let ssrCache = Exchanges.ssrExchange(~ssrExchangeOpts, ());
+let ssrCache = Exchanges.ssrExchange();
 
 let client = Client.make(
   ~url="http://localhost:3000",
@@ -774,7 +761,7 @@ let ssrCache = Exchanges.ssrExchange(~ssrExchangeOpts, ());
 let extractedData = Exchanges.restoreData(~exchange=ssrCache, ~restore=urqlData);
 ```
 
-This part of the API is still quite experimental, as server-side rendering in Reason with NextJS is still in its e=infancy. Use with caution. For more information, read `urql`'s server-side rendering guide [here](https://github.com/FormidableLabs/urql/blob/master/docs/basics.md#server-side-rendering).
+This part of the API is still quite experimental, as server-side rendering in Reason with NextJS is still in its infancy. Use with caution. For more information, read `urql`'s server-side rendering guide [here](https://github.com/FormidableLabs/urql/blob/master/docs/basics.md#server-side-rendering).
 
 #### `composeExchanges`
 
