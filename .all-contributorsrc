@@ -90,6 +90,15 @@
         "code",
         "example"
       ]
+    },
+    {
+      "login": "robinweser",
+      "name": "Robin Weser",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/10060928?v=4",
+      "profile": "http://weser.io",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 4
