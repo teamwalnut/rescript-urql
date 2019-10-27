@@ -1,17 +1,7 @@
 open ReasonUrql;
 open Hooks;
-open MonsterStyles;
+open PokemonStyles;
 
-type maximum = {maximum: int};
-
-type pokemon = {
-  id: string,
-  number: string,
-  height: maximum,
-  weight: maximum,
-};
-
-/* graphql query for GetPokemon */
 module GetPokemon = [%graphql
   {|
   query pokemon($name: String!) {
@@ -32,8 +22,6 @@ module GetPokemon = [%graphql
 
 [@react.component]
 let make = (~pokemon: string) => {
-  /* We set up the query here as we need access to the pokemon
-     value passed in from GetAll */
   let request = GetPokemon.make(~name=pokemon, ());
   let ({response}, _) = useQuery(~request, ());
 
@@ -81,11 +69,7 @@ let make = (~pokemon: string) => {
     | None => React.null
     }
   | Fetching => <div> "Loading"->React.string </div>
-  | Error(e) =>
-    switch (e.networkError) {
-    | Some(_exn) => <div> "Network Error"->React.string </div>
-    | None => <div> "No Network Error"->React.string </div>
-    }
+  | Error(e) => <div> e.message->React.string </div>
   | NotFound => <div> "Not Found"->React.string </div>
   };
 };
