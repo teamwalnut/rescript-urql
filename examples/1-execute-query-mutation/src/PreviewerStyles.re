@@ -26,7 +26,7 @@ let button = bdColor =>
     backgroundColor(white),
     fontSize(rem(1.2)),
     margin(px(10)),
-    borderRadius(px(15)),
+    borderRadius(px(25)),
     padding(px(10)),
     cursor(`pointer),
   ]);

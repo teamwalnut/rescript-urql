@@ -5,18 +5,24 @@ module Styles = {
       display(flexBox),
       alignItems(flexStart),
       justifyContent(center),
-      paddingTop(em(1.)),
+      margin(auto),
+      width(rem(25.)),
     ]);
 
   let dex =
     style([
       display(flexBox),
       flexDirection(column),
+      width(pct(100.)),
       borderRadius(pct(5.)),
-      backgroundColor(red),
+      background(
+        linearGradient(
+          deg(45),
+          [(0, hex("F29441")), (100, hex("A04AD9"))],
+        ),
+      ),
       border(px(2), solid, hsl(210, 23, 95)),
       overflow(hidden),
-      width(pct(50.)),
       alignItems(center),
       boxShadow(~x=px(0), ~y=px(4), ~blur=px(6), hsl(0, 0, 80)),
     ]);
@@ -27,15 +33,15 @@ module Styles = {
       display(flexBox),
       justifyContent(center),
       alignItems(center),
-      width(em(8.)),
-      height(em(8.)),
+      width(rem(12.)),
+      height(rem(12.)),
       borderRadius(pct(100.)),
       backgroundColor(white),
       border(px(2), solid, black),
-      margin(em(3.)),
+      margin(rem(2.)),
     ]);
-  let dexImage =
-    style([overflow(hidden), width(em(6.)), height(em(6.))]);
+
+  let dexImage = style([height(rem(8.))]);
 
   let dexText =
     style([
@@ -50,9 +56,9 @@ module Styles = {
     ]);
 
   let dexTitle =
-    style([fontSize(em(2.)), margin(zero), padding(em(0.5))]);
+    style([fontSize(rem(2.)), margin(zero), padding(rem(0.5))]);
   let dexSubTitle =
-    style([fontSize(em(1.5)), margin(zero), padding(em(0.25))]);
+    style([fontSize(rem(1.5)), margin(zero), padding(rem(0.25))]);
   let dexGrid =
     style([display(grid), gridTemplateColumns([`fr(1.), `fr(1.)])]);
 };

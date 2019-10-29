@@ -36,12 +36,36 @@ module ClientTypes = {
 
   /* Additional operation metadata to pass to the active operation.
      We currently do not support additional untyped options. */
+
+  /* Cache outcomes for operations. This is likely to be deprecated
+     in future releases. */
+  [@bs.deriving jsConverter]
+  type cacheOutcome = [
+    | [@bs.as "miss"] `Miss
+    | [@bs.as "partial"] `Partial
+    | [@bs.as "hit"] `Hit
+  ];
+
+  /* Debug information on specific operations. */
+  [@bs.deriving abstract]
+  type operationDebugMeta = {
+    [@bs.optional]
+    source: string,
+    [@bs.optional]
+    cacheOutcome,
+    [@bs.optional]
+    networkLatency: int,
+  };
+
+  /* The operation context object for a request. */
   [@bs.deriving abstract]
   type operationContext = {
     [@bs.optional]
     fetchOptions: Fetch.requestInit,
     requestPolicy: UrqlTypes.requestPolicy,
     url: string,
+    [@bs.optional]
+    meta: operationDebugMeta,
   };
 
   /* A partial operation context, which can be passed as the second optional argument
@@ -55,6 +79,8 @@ module ClientTypes = {
     partialOpRequestPolicy: UrqlTypes.requestPolicy,
     [@bs.optional] [@bs.as "url"]
     partialOpUrl: string,
+    [@bs.optional] [@bs.as "meta"]
+    partialOpDebugMeta: operationDebugMeta,
   };
 
   /* The active GraphQL operation. */
@@ -77,7 +103,7 @@ module ClientTypes = {
   };
 
   /* The record representing the response returned by the client _after_
-     it has been converted by UrqlConverts.urqlClientResponseToReason. */
+     it has been converted by urqlClientResponseToReason. */
   type response('response) =
     | Data('response)
     | Error(UrqlCombinedError.combinedError)
@@ -106,14 +132,16 @@ module UrqlExchanges = {
 
   type exchange = exchangeInput => exchangeIO;
 
-  [@bs.module "urql"] external cacheExchange: exchange = "";
-  [@bs.module "urql"] external debugExchange: exchange = "";
-  [@bs.module "urql"] external dedupExchange: exchange = "";
-  [@bs.module "urql"] external fallbackExchangeIO: exchangeIO = "";
-  [@bs.module "urql"] external fetchExchange: exchange = "";
+  [@bs.module "urql"] external cacheExchange: exchange = "cacheExchange";
+  [@bs.module "urql"] external debugExchange: exchange = "debugExchange";
+  [@bs.module "urql"] external dedupExchange: exchange = "dedupExchange";
   [@bs.module "urql"]
-  external composeExchanges: array(exchange) => exchange = "";
-  [@bs.module "urql"] external defaultExchanges: array(exchange) = "";
+  external fallbackExchangeIO: exchangeIO = "fallbackExchangeIO";
+  [@bs.module "urql"] external fetchExchange: exchange = "fetchExchange";
+  [@bs.module "urql"]
+  external composeExchanges: array(exchange) => exchange = "composeExchanges";
+  [@bs.module "urql"]
+  external defaultExchanges: array(exchange) = "defaultExchanges";
 
   /* Specific types for the subscriptionExchange. */
   [@bs.deriving abstract]
@@ -147,7 +175,8 @@ module UrqlExchanges = {
   };
 
   [@bs.module "urql"]
-  external subscriptionExchange: subscriptionExchangeOpts => exchange = "";
+  external subscriptionExchange: subscriptionExchangeOpts => exchange =
+    "subscriptionExchange";
 
   /* Specific types for the ssrExchange. */
   [@bs.deriving abstract]
@@ -173,12 +202,13 @@ module UrqlExchanges = {
 
   [@bs.send]
   external restoreData: (~exchange: exchange, ~restore: Js.Json.t) => Js.Json.t =
-    "";
-  [@bs.send] external extractData: (~exchange: exchange) => Js.Json.t = "";
+    "restoreData";
+  [@bs.send]
+  external extractData: (~exchange: exchange) => Js.Json.t = "extractData";
 
   [@bs.module "urql"]
   external ssrExchange: (~ssrExchangeOpts: ssrExchangeOpts=?, unit) => exchange =
-    "";
+    "ssrExchange";
 };
 
 [@bs.deriving abstract]
@@ -343,12 +373,12 @@ let executeSubscription =
 external executeRequestOperation:
   (~client: t, ~operation: ClientTypes.operation) =>
   Wonka.Types.sourceT(ClientTypes.operationResult) =
-  "";
+  "executeRequestOperation";
 
 [@bs.send]
 external reexecuteOperation:
   (~client: t, ~operation: ClientTypes.operation) => unit =
-  "";
+  "reexecuteOperation";
 
 [@bs.send]
 external createRequestOperationJs:
@@ -370,4 +400,4 @@ let createRequestOperation = (~client, ~operationType, ~request, ~opts=?, ()) =>
 [@bs.send]
 external dispatchOperation:
   (~client: t, ~operation: ClientTypes.operation) => unit =
-  "";
+  "dispatchOperation";
