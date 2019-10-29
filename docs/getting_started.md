@@ -26,7 +26,7 @@ let client = Client.make(~url="https://mygraphqlapi.com/graphql", ());
 /* Wrap your application in Provider, passing it the Client as a prop. */
 [@react.component]
 let make = () =>
-  <Provider client><App /></Provider>
+  <Provider value=client><App /></Provider>
 ```
 
 ## Using Your First Hook
