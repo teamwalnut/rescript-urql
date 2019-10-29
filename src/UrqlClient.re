@@ -36,12 +36,36 @@ module ClientTypes = {
 
   /* Additional operation metadata to pass to the active operation.
      We currently do not support additional untyped options. */
+
+  /* Cache outcomes for operations. This is likely to be deprecated
+     in future releases. */
+  [@bs.deriving jsConverter]
+  type cacheOutcome = [
+    | [@bs.as "miss"] `Miss
+    | [@bs.as "partial"] `Partial
+    | [@bs.as "hit"] `Hit
+  ];
+
+  /* Debug information on specific operations. */
+  [@bs.deriving abstract]
+  type operationDebugMeta = {
+    [@bs.optional]
+    source: string,
+    [@bs.optional]
+    cacheOutcome,
+    [@bs.optional]
+    networkLatency: int,
+  };
+
+  /* The operation context object for a request. */
   [@bs.deriving abstract]
   type operationContext = {
     [@bs.optional]
     fetchOptions: Fetch.requestInit,
     requestPolicy: UrqlTypes.requestPolicy,
     url: string,
+    [@bs.optional]
+    meta: operationDebugMeta,
   };
 
   /* A partial operation context, which can be passed as the second optional argument
@@ -55,6 +79,8 @@ module ClientTypes = {
     partialOpRequestPolicy: UrqlTypes.requestPolicy,
     [@bs.optional] [@bs.as "url"]
     partialOpUrl: string,
+    [@bs.optional] [@bs.as "meta"]
+    partialOpDebugMeta: operationDebugMeta,
   };
 
   /* The active GraphQL operation. */
@@ -77,7 +103,7 @@ module ClientTypes = {
   };
 
   /* The record representing the response returned by the client _after_
-     it has been converted by UrqlConverts.urqlClientResponseToReason. */
+     it has been converted by urqlClientResponseToReason. */
   type response('response) =
     | Data('response)
     | Error(UrqlCombinedError.combinedError)
