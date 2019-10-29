@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2019-10-29
+
+This release upgrades our `urql` dependency to 1.2.0 and picks up a handful of small bugfixes introduced in that [release](https://github.com/FormidableLabs/urql/releases/tag/v1.2.0).
+
+### Added
+
+- The `operationContext` object now has a `meta` property on it, containing fields for `source`, `cacheOutcome`, and `networkLatency`. These fields are likely to be deprecated in the next minor release and moved to `bs-urql-devtools-exchange`.
+
+### Changed
+
+- `urql` dependency upgraded to v1.2.0!
+- `bs-platform` dependency upgraded to v5.2.1! PR by @parkerziegler [here](https://github.com/FormidableLabs/reason-urql/pull/116).
+- Some cmall changes to spurce up the example projects!
+
+### Diff
+
+https://github.com/FormidableLabs/reason-urql/compare/v1.1.0...v1.2.0
+
 ## [1.1.0] - 2019-10-17
 
 This release adds experimental support for server-side rendering with the addition of bindings for the `ssrExchange`.
@@ -22,6 +40,10 @@ This release adds experimental support for server-side rendering with the additi
 
 - Minor docs fix by for the `Client` module. PR by @robinweser [here](https://github.com/FormidableLabs/reason-urql/pull/112).
 - `bsconfig.json` and `package.json` files from the `examples` directory are no longer published to `npm`.
+
+### Diff
+
+https://github.com/FormidableLabs/reason-urql/compare/v1.0.2...v1.1.0
 
 ## [1.0.2] - 2019-10-05
 
