@@ -32,7 +32,7 @@ yarn add reason-urql bs-fetch
 
 #### 2. Add `graphql_ppx_re`.
 
-This project uses [`graphql_ppx_re`](https://github.com/baransu/graphql_ppx_re) (which is based on [graphql_ppx](https://github.com/mhallin/graphql_ppx)) to type check your GraphQL queries, mutations, and subscriptions **at compile time**. You'll need to add it as a dev dependency.
+This project uses [`graphql_ppx_re`](https://github.com/baransu/graphql_ppx_re) (which is based on [`graphql_ppx`](https://github.com/mhallin/graphql_ppx)) to type check your GraphQL queries, mutations, and subscriptions **at compile time**. You'll need to add it as a devDependency.
 
 ```sh
 yarn add @baransu/graphql_ppx_re --dev
