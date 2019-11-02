@@ -30,34 +30,40 @@ Reason bindings for Formidable's Universal React Query Library, [`urql`](https:/
 yarn add reason-urql bs-fetch
 ```
 
-#### 2. Add `graphql_ppx`.
+#### 2. Add `graphql_ppx_re`.
 
-This project uses [`graphql_ppx`](https://github.com/mhallin/graphql_ppx) to type check your GraphQL queries, mutations, and subscriptions **at compile time**. You'll need to add it as a dev dependency.
+This project uses [`graphql_ppx_re`](https://github.com/baransu/graphql_ppx_re) (which is based on [`graphql_ppx`](https://github.com/mhallin/graphql_ppx)) to type check your GraphQL queries, mutations, and subscriptions **at compile time**. You'll need to add it as a devDependency.
 
 ```sh
-yarn add graphql_ppx --dev
+yarn add @baransu/graphql_ppx_re --dev
 ```
 
 #### 3. Update `bsconfig.json`.
 
-Add `reason-urql` to your `bs-dependencies` and `graphql_ppx/ppx` to your `ppx_flags` in `bsconfig.json`.
+Add `reason-urql` to your `bs-dependencies` and `graphql_ppx_re` to your `ppx_flags` in `bsconfig.json`.
 
 ```json
 {
   "bs-dependencies": ["reason-urql"],
-  "ppx-flags": ["graphql_ppx/ppx"]
+  "ppx-flags": ["@baransu/graphql_ppx_re/ppx"]
+}
+```
+If you're using `bs-platform` 6.x, use this value for the `"ppx_flags"` instead:
+```json
+{
+  "ppx-flags": ["@baransu/graphql_ppx_re/ppx6"]
 }
 ```
 
 #### 4. Send an introspection query to your API.
 
-Finally, you'll need to send an introspection query to your GraphQl API. This allows `graphql_ppx` to generate a `graphql_schema.json` at the root of your project that it can use to type check your queries. **You should check this file into version control** and keep it updated as your API changes. To do this:
+Finally, you'll need to send an introspection query to your GraphQl API. This allows `@baransu/graphql_ppx_re` to generate a `graphql_schema.json` at the root of your project that it can use to type check your queries. **You should check this file into version control** and keep it updated as your API changes. To do this:
 
 ```sh
 yarn send-introspection-query <your_graphql_endpoint>
 ```
 
-Simply re-run this script at anytime to regenerate the `graphql_schema.json` file. See the [docs for `graphql_ppx`](https://github.com/mhallin/graphql_ppx) for more assistance.
+Simply re-run this script at anytime to regenerate the `graphql_schema.json` file. See the [docs for `graphql_ppx_re`](https://github.com/baransu/graphql_ppx_re#usage) for more assistance.
 
 ### Older Versions
 

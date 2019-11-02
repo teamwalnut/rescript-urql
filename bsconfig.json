@@ -29,5 +29,4 @@
   "warnings": {
     "error": "+5"
   },
-  "ppx-flags": ["graphql_ppx/ppx"]
 }
