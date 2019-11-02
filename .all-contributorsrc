@@ -108,6 +108,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "huy-nguyen",
+      "name": "Huy Nguyen",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/7352279?v=4",
+      "profile": "https://www.huy.dev/",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 4
