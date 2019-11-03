@@ -1,7 +1,7 @@
 # reason-urql
 
 [![npm](https://img.shields.io/npm/v/reason-urql.svg)](https://www.npmjs.com/package/reason-urql)
-[![All Contributors](https://img.shields.io/badge/all_contributors-10-orange.svg)](#contributors)
+[![All Contributors](https://img.shields.io/badge/all_contributors-11-orange.svg)](#contributors)
 [![Build Status](https://github.com/FormidableLabs/reason-urql/workflows/reason-urql%20CI/badge.svg)](https://github.com/FormidableLabs/reason-urql/actions)
 [![Maintenance Status][maintenance-image]](#maintenance-status)
 [![Spectrum](https://withspectrum.github.io/badge/badge.svg)](https://spectrum.chat/urql)
@@ -140,6 +140,7 @@ This project follows the [all contributors spec](https://github.com/kentcdodds/a
   <tr>
     <td align="center"><a href="http://weser.io"><img src="https://avatars0.githubusercontent.com/u/10060928?v=4" width="100px;" alt="Robin Weser"/><br /><sub><b>Robin Weser</b></sub></a><br /><a href="https://github.com/FormidableLabs/reason-urql/commits?author=robinweser" title="Documentation">📖</a></td>
     <td align="center"><a href="https://ce.ms"><img src="https://avatars3.githubusercontent.com/u/959142?v=4" width="100px;" alt="Cem Turan"/><br /><sub><b>Cem Turan</b></sub></a><br /><a href="https://github.com/FormidableLabs/reason-urql/commits?author=cem2ran" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://www.huy.dev/"><img src="https://avatars1.githubusercontent.com/u/7352279?v=4" width="100px;" alt="Huy Nguyen"/><br /><sub><b>Huy Nguyen</b></sub></a><br /><a href="https://github.com/FormidableLabs/reason-urql/commits?author=huy-nguyen" title="Documentation">📖</a></td>
   </tr>
 </table>
 
