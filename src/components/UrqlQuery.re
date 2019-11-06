@@ -23,7 +23,7 @@ module QueryJs = {
       ~query: string,
       ~variables: Js.Json.t,
       ~requestPolicy: string,
-      ~pause: option(bool)=?,
+      ~pause: bool=?,
       ~children: queryRenderPropsJs => React.element
     ) =>
     React.element =
@@ -68,7 +68,7 @@ let make =
     query
     variables
     requestPolicy={UrqlTypes.requestPolicyToJs(requestPolicy)}
-    pause>
+    ?pause>
     {result => result |> urqlQueryResponseToReason(parse) |> children}
   </QueryJs>;
 };
