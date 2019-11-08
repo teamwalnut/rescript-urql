@@ -38,7 +38,7 @@ open ReasonUrql;
 /* Be sure to open the Hooks module to bring necessary types into scope. */
 open Hooks;
 
-/* Create a graphql_ppx module with your GraphQL query. */
+/* Create a module with your GraphQL query. */
 module DogsQuery = [%graphql
   {|
   query dogs {
@@ -54,7 +54,7 @@ module DogsQuery = [%graphql
 
 [@react.component]
 let make = () => {
-  /* Build your request by calling .make on the graphql_ppx module. */
+  /* Build your request by calling .make on your query. */
   let request = DogsQuery.make();
 
   /* Pass the request to useQuery. */
@@ -83,7 +83,7 @@ let make = () => {
 }
 ```
 
-Sweet 😎! We've executed a query with our `useQuery` hook. Notice that we didn't have to write _any_ types to get 💯% type inference and type saftey on the response. We use the `graphql_ppx` module you pass to `useQuery` to ensure that you're using the data returned by your query in a fully type safe way.
+Sweet 😎! We've executed a query with our `useQuery` hook. Notice that we didn't have to write _any_ types to get 💯% type inference and type safety on the response. We use type information included in the query module you pass to `useQuery` to ensure that you're using the data returned by your query in a fully safe way.
 
 ## Can I See an Example?
 
@@ -100,7 +100,7 @@ open ReasonUrql;
 /* Be sure to open the Hooks module to bring necessary types into scope. */
 open Hooks;
 
-/* Create a graphql_ppx module with your GraphQL mutation. */
+/* Create a module with your GraphQL mutation. */
 module LikeDogMutation = [%graphql
     {|
     mutation likeDog($key: ID!) {
@@ -115,14 +115,13 @@ module LikeDogMutation = [%graphql
 
 [@react.component]
 let make = (~key: string) => {
-  /* Build your request by calling .make on the graphql_ppx module, passing variables as labeled arguments. */
+  /* Build your request by calling .make on your mutation, passing variables as labeled arguments. */
   let request = LikeDogMutation.make(~key, ());
 
   /* Pass the request to useMutation. */
   let (_, executeMutation) = useMutation(~request, ());
 
-  <button
-    onClick=(_e) => executeMutation()>
+  <button onClick=(_e) => executeMutation()>
       "Execute the Mutation (and Reward a Good Dog)"->React.string
   </button>
 }
@@ -133,23 +132,6 @@ Great – we've successfully executed a mutation to like a dog! Existing queries
 `useMutation` returns a two-dimensional tuple, containing `(result, executeMutation)`. `result` contains the `response` variant, which allows you to pattern match on the API response from your mutation. For example, if you wanted to show different UI when your mutation was `Fetching`, or if there was an `Error(e)` you can do something like the following:
 
 ```reason
-open ReasonUrql;
-/* Be sure to open the Hooks module to bring necessary types into scope. */
-open Hooks;
-
-/* Create a graphql_ppx module with your GraphQL mutation. */
-module LikeDogMutation = [%graphql
-    {|
-    mutation likeDog($key: ID!) {
-      likeDog(key: $key) {
-        likes
-        name
-        breed
-      }
-    }
-  |}
-  ];
-
 [@react.component]
 let make = (~key: string) => {
   /* Build your request by calling .make on the graphql_ppx module, passing variables as labeled arguments. */
@@ -159,8 +141,7 @@ let make = (~key: string) => {
   let ({ response }, executeMutation) = useMutation(~request, ());
 
   let button = React.useMemo1(() =>
-    <button
-      onClick=(_e) => executeMutation()>
+    <button onClick=(_e) => executeMutation()>
         "Execute the Mutation (and Reward a Good Dog)"->React.string
     </button>,
     [|executeMutation|]
@@ -168,7 +149,7 @@ let make = (~key: string) => {
 
   switch (response) {
     | Fetching =>
-      /* If the mutation is loading, display a LoadingSpinner on top of our button. */
+      /* If the mutation is still executing, display a LoadingSpinner on top of our button. */
       <LoadingSpinner>
         button
       <LoadingSpinner>
@@ -182,3 +163,7 @@ let make = (~key: string) => {
   }
 }
 ```
+
+## Can I See an Example?
+
+Check out the example in `examples/3-mutation` to see a more involved example of using `useMutation`, in addition to `reason-urql`'s `Mutation` component.
