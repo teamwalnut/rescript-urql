@@ -10,7 +10,7 @@ type mutationRenderPropsJs = {
 type mutationRenderProps('response) = {
   fetching: bool,
   data: option('response),
-  error: option(UrqlCombinedError.combinedError),
+  error: option(UrqlCombinedError.t),
   executeMutation:
     unit => Js.Promise.t(UrqlClient.ClientTypes.operationResult),
   response: UrqlTypes.response('response),

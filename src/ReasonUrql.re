@@ -4,7 +4,7 @@ module Client = {
   type clientResponse('response) =
     UrqlClient.ClientTypes.clientResponse('response) = {
       data: option('response),
-      error: option(UrqlCombinedError.combinedError),
+      error: option(UrqlCombinedError.t),
       response: UrqlClient.ClientTypes.response('response),
     };
 
@@ -34,7 +34,7 @@ module Hooks = {
     UrqlTypes.hookResponse('ret) = {
       fetching: bool,
       data: option('ret),
-      error: option(UrqlCombinedError.combinedError),
+      error: option(UrqlCombinedError.t),
       response: UrqlTypes.response('ret),
     };
   include UrqlUseMutation;

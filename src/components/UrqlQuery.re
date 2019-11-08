@@ -10,7 +10,7 @@ type queryRenderPropsJs = {
 type queryRenderProps('response) = {
   fetching: bool,
   data: option('response),
-  error: option(UrqlCombinedError.combinedError),
+  error: option(UrqlCombinedError.t),
   executeQuery:
     option(Js.Json.t) => Js.Promise.t(UrqlClient.ClientTypes.operationResult),
   response: UrqlTypes.response('response),

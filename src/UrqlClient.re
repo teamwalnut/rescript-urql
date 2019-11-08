@@ -106,12 +106,12 @@ module ClientTypes = {
      it has been converted by urqlClientResponseToReason. */
   type response('response) =
     | Data('response)
-    | Error(UrqlCombinedError.combinedError)
+    | Error(UrqlCombinedError.t)
     | NotFound;
 
   type clientResponse('response) = {
     data: option('response),
-    error: option(UrqlCombinedError.combinedError),
+    error: option(UrqlCombinedError.t),
     response: response('response),
   };
 };

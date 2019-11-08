@@ -778,6 +778,8 @@ type combinedError = {
   response: option(Fetch.response),
   message: string,
 };
+
+type t = combinedError;
 ```
 
 In this case, `networkError` returns the original JavaScript error thrown if a network error was encountered. `graphQLErrors` represent an `array` of errors of type `graphQLError`. These represent the errors encountered in the validation or execution stages of interacting with your GraphQL API. `response` is the raw `response` object returned by `fetch`. `message` is a stringified version of either the `networkError` or the `graphQLErrors` – `networkError` will take precedence.
