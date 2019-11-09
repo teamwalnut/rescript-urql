@@ -134,7 +134,7 @@ Great – we've successfully executed a mutation to like a dog! Existing queries
 ```reason
 [@react.component]
 let make = (~key: string) => {
-  /* Build your request by calling .make on the graphql_ppx module, passing variables as labeled arguments. */
+  /* Build your request by calling .make on your mutation, passing variables as labeled arguments. */
   let request = LikeDogMutation.make(~key, ());
 
   /* Pass the request to useMutation. */
