@@ -30,25 +30,32 @@ Reason bindings for Formidable's Universal React Query Library, [`urql`](https:/
 yarn add reason-urql bs-fetch
 ```
 
-#### 2. Add `graphql_ppx_re`.
+#### 2. Add `graphql_ppx_re` or `graphql_ppx`.
 
-This project uses [`graphql_ppx_re`](https://github.com/baransu/graphql_ppx_re) (which is based on [`graphql_ppx`](https://github.com/mhallin/graphql_ppx)) to type check your GraphQL queries, mutations, and subscriptions **at compile time**. You'll need to add it as a devDependency.
+To get the most out of compile time type checks for your GraphQL queries, mutations, and subscriptions, we recommend using one of the PPX rewriters available for Reason / OCaml. Currently, there are two options in the community – [`graphql_ppx_re`](https://github.com/baransu/graphql_ppx_re), which is under active maintenance, and [`graphql_ppx`](https://github.com/mhallin/graphql_ppx), which is no longer actively maintained. If using `bs-platform@6.x.x`, you'll have to use `graphql_ppx_re`.
 
 ```sh
 yarn add @baransu/graphql_ppx_re --dev
+
+# or
+yarn add graphql_ppx --dev
 ```
 
 #### 3. Update `bsconfig.json`.
 
-Add `reason-urql` to your `bs-dependencies` and `graphql_ppx_re` to your `ppx_flags` in `bsconfig.json`.
+Add `reason-urql` to your `bs-dependencies` and `graphql_ppx_re` or `graphql_ppx` (depending on which library you're using) to your `ppx_flags` in `bsconfig.json`.
 
 ```json
 {
   "bs-dependencies": ["reason-urql"],
-  "ppx-flags": ["@baransu/graphql_ppx_re/ppx"]
+  "ppx-flags": ["@baransu/graphql_ppx_re/ppx"],
+  // or
+  "ppx-flags": ["graphql_ppx"]
 }
 ```
-If you're using `bs-platform` 6.x, use this value for the `"ppx_flags"` instead:
+
+If you're using `bs-platform` 6.x, you'll need to use `@baransu/graphql_ppx_re/ppx6`:
+
 ```json
 {
   "ppx-flags": ["@baransu/graphql_ppx_re/ppx6"]
@@ -57,13 +64,17 @@ If you're using `bs-platform` 6.x, use this value for the `"ppx_flags"` instead:
 
 #### 4. Send an introspection query to your API.
 
-Finally, you'll need to send an introspection query to your GraphQl API. This allows `@baransu/graphql_ppx_re` to generate a `graphql_schema.json` at the root of your project that it can use to type check your queries. **You should check this file into version control** and keep it updated as your API changes. To do this:
+Finally, you'll need to send an introspection query to your GraphQl API, using a tool like [`graphql-cli`](https://github.com/Urigo/graphql-cli/). You should generate a file called `graphql_schema.json` at the root of your project that your chosen PPX preprocessor can use to type check your queries. **You should check this file into version control** and keep it updated as your API changes.
+
+If using `grapqhl_ppx_re`, follow the instructions [here](https://github.com/baransu/graphql_ppx_re#usage).
+
+If using `graphql_ppx`, you'll already have a little utility to help you generate the `graphql_schema.json` file:
 
 ```sh
 yarn send-introspection-query <your_graphql_endpoint>
 ```
 
-Simply re-run this script at anytime to regenerate the `graphql_schema.json` file. See the [docs for `graphql_ppx_re`](https://github.com/baransu/graphql_ppx_re#usage) for more assistance.
+Simply re-run this script at anytime to regenerate the `graphql_schema.json` file according to your latest backend schema. See the [docs for `graphql_ppx_re`](https://github.com/baransu/graphql_ppx_re#usage) and the docs for [`grapqhl_ppx`](https://github.com/mhallin/graphql_ppx) for more assistance.
 
 ### Older Versions
 

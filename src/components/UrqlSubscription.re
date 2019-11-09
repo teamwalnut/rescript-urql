@@ -11,7 +11,7 @@ type subscriptionRenderPropsJs('ret) = {
 type subscriptionRenderProps('ret) = {
   fetching: bool,
   data: option('ret),
-  error: option(UrqlCombinedError.combinedError),
+  error: option(UrqlCombinedError.t),
   response: UrqlTypes.response('ret),
 };
 

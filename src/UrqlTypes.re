@@ -30,13 +30,13 @@ type request('response) = {
 type response('response) =
   | Fetching
   | Data('response)
-  | Error(UrqlCombinedError.combinedError)
+  | Error(UrqlCombinedError.t)
   | NotFound;
 
 type hookResponse('ret) = {
   fetching: bool,
   data: option('ret),
-  error: option(UrqlCombinedError.combinedError),
+  error: option(UrqlCombinedError.t),
   response: response('ret),
 };
 
