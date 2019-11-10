@@ -1,5 +1,3 @@
-open UrqlTypes;
-
 [@bs.deriving abstract]
 type subscriptionRenderPropsJs('ret) = {
   fetching: bool,
@@ -38,7 +36,7 @@ let urqlDataToRecord = (parse, result) => {
 
   let response =
     switch (fetching, data, error) {
-    | (true, None, _) => Fetching
+    | (true, None, _) => UrqlTypes.Fetching
     | (false, _, Some(error)) => Error(error)
     | (true, Some(data), _) => Data(data)
     | (false, Some(data), _) => Data(data)
@@ -52,7 +50,7 @@ module Subscription = {
   [@react.component]
   let make =
       (
-        ~request: request('response),
+        ~request: UrqlTypes.request('response),
         ~children: subscriptionRenderProps('response) => React.element,
       ) => {
     let query = request##query;
@@ -69,7 +67,7 @@ module SubscriptionWithHandler = {
   [@react.component]
   let make =
       (
-        ~request: request('response),
+        ~request: UrqlTypes.request('response),
         ~handler: (option('acc), 'response) => 'acc,
         ~children: subscriptionRenderProps('acc) => React.element,
       ) => {

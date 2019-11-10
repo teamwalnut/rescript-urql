@@ -1,8 +1,6 @@
-open UrqlTypes;
-
 let useMutation:
-  (~request: request('response)) =>
+  (~request: UrqlTypes.request('response)) =>
   (
-    hookResponse('response),
+    UrqlTypes.hookResponse('response),
     unit => Js.Promise.t(UrqlClient.ClientTypes.operationResult),
   );

@@ -33,7 +33,7 @@
     "@glennsl/bs-jest": "^0.4.8",
     "all-contributors-cli": "^5.4.0",
     "bs-fetch": "^0.5.0",
-    "bs-platform": "5.2.1",
+    "bs-platform": "6.2.1",
     "husky": "^2.4.1",
     "lint-staged": "^8.2.1",
     "reason-react": "0.7.0"

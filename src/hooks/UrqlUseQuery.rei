@@ -1,22 +1,15 @@
-open UrqlTypes;
-
-type partialOperationContextFn =
+type executeQuery =
   option(UrqlClient.ClientTypes.partialOperationContext) => unit;
 
 type useQueryResponse('response) = (
-  hookResponse('response),
-  partialOperationContextFn,
+  UrqlTypes.hookResponse('response),
+  executeQuery,
 );
 
 let useQuery:
   (
-    ~request: {
-                .
-                "parse": Js.Json.t => 'response,
-                "query": string,
-                "variables": Js.Json.t,
-              },
-    ~requestPolicy: requestPolicy=?,
+    ~request: UrqlTypes.request('response),
+    ~requestPolicy: UrqlTypes.requestPolicy=?,
     ~pause: bool=?,
     unit
   ) =>

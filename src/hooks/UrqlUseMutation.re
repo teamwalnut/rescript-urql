@@ -1,23 +1,32 @@
-open UrqlTypes;
-
-type executeMutation =
+/**
+ * The type of executeMutation – a function returned by
+ * useMutation to imperatively execute the mutation.
+ */
+type executeMutationJs =
   option(Js.Json.t) => Js.Promise.t(UrqlClient.ClientTypes.operationResult);
 
 [@bs.module "urql"]
-external useMutationJs: string => (jsResponse, executeMutation) =
+external useMutationJs: string => (UrqlTypes.jsResponse, executeMutationJs) =
   "useMutation";
 
-let urqlResponseToReason = (parse: Js.Json.t => 'response, result: jsResponse) => {
-  let data = result->jsDataGet->Js.Nullable.toOption->Belt.Option.map(parse);
+/**
+ * A function for converting the response to useQuery from the JavaScript
+ * representation to a typed Reason record.
+ */
+let urqlResponseToReason =
+    (parse: Js.Json.t => 'response, result: UrqlTypes.jsResponse)
+    : UrqlTypes.hookResponse('response) => {
+  let data =
+    result->UrqlTypes.jsDataGet->Js.Nullable.toOption->Belt.Option.map(parse);
   let error =
     result
-    ->jsErrorGet
+    ->UrqlTypes.jsErrorGet
     ->Belt.Option.map(UrqlCombinedError.combinedErrorToRecord);
-  let fetching = result->fetchingGet;
+  let fetching = result->UrqlTypes.fetchingGet;
 
   let response =
     switch (fetching, data, error) {
-    | (true, _, _) => Fetching
+    | (true, _, _) => UrqlTypes.Fetching
     | (false, _, Some(error)) => Error(error)
     | (false, Some(data), _) => Data(data)
     | (false, None, None) => NotFound
@@ -26,18 +35,28 @@ let urqlResponseToReason = (parse: Js.Json.t => 'response, result: jsResponse) =
   {fetching, data, error, response};
 };
 
-let useMutation = (~request: request('response)) => {
-  let (useMutationResponseJs, executeMutationJs) =
-    useMutationJs(request##query);
-  let useMutationResponse =
+/**
+ * The useMutation hook.
+ *
+ * Accepts the following arguments:
+ *
+ * request – a Js.t containing the query and variables corresponding
+ * to the GraphQL mutation, and a parse function for decoding the JSON response.
+ */;
+let useMutation = (~request) => {
+  let (responseJs, executeMutationJs) = useMutationJs(request##query);
+
+  let response =
     React.useMemo2(
-      () => useMutationResponseJs |> urqlResponseToReason(request##parse),
-      (request##parse, useMutationResponseJs),
+      () => responseJs |> urqlResponseToReason(request##parse),
+      (request##parse, responseJs),
     );
+
   let executeMutation =
     React.useCallback1(
       () => executeMutationJs(Some(request##variables)),
       [|request##variables|],
     );
-  (useMutationResponse, executeMutation);
+
+  (response, executeMutation);
 };
