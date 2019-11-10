@@ -18,7 +18,7 @@ type executeQuery =
   option(UrqlClient.ClientTypes.partialOperationContext) => unit;
 
 /* The response to useQuery on the JavaScript side. */
-type useQueryResponseJs = (UrqlTypes.jsResponse, executeQuery);
+type useQueryResponseJs = (UrqlTypes.jsResponse(Js.Json.t), executeQuery);
 
 /**
  * The response to useQuery – a two dimensional tuple containing
@@ -38,7 +38,7 @@ external useQueryJs: useQueryArgs => useQueryResponseJs = "useQuery";
  * representation to a typed Reason record.
  */
 let urqlResponseToReason =
-    (parse: Js.Json.t => 'response, result: UrqlTypes.jsResponse)
+    (parse: Js.Json.t => 'response, result: UrqlTypes.jsResponse(Js.Json.t))
     : UrqlTypes.hookResponse('response) => {
   let data =
     result->UrqlTypes.jsDataGet->Js.Nullable.toOption->Belt.Option.map(parse);

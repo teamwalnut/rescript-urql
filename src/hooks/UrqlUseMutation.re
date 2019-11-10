@@ -6,7 +6,8 @@ type executeMutationJs =
   option(Js.Json.t) => Js.Promise.t(UrqlClient.ClientTypes.operationResult);
 
 [@bs.module "urql"]
-external useMutationJs: string => (UrqlTypes.jsResponse, executeMutationJs) =
+external useMutationJs:
+  string => (UrqlTypes.jsResponse(Js.Json.t), executeMutationJs) =
   "useMutation";
 
 /**
@@ -14,7 +15,7 @@ external useMutationJs: string => (UrqlTypes.jsResponse, executeMutationJs) =
  * representation to a typed Reason record.
  */
 let urqlResponseToReason =
-    (parse: Js.Json.t => 'response, result: UrqlTypes.jsResponse)
+    (parse: Js.Json.t => 'response, result: UrqlTypes.jsResponse(Js.Json.t))
     : UrqlTypes.hookResponse('response) => {
   let data =
     result->UrqlTypes.jsDataGet->Js.Nullable.toOption->Belt.Option.map(parse);

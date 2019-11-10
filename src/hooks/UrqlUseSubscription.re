@@ -15,19 +15,10 @@ type useSubscriptionArgs = {
   variables: Js.Json.t,
 };
 
-/* The response to useSubscription on the JavaScript side. */
-[@bs.deriving abstract]
-type useSubscriptionResponseJs('ret) = {
-  fetching: bool,
-  data: Js.Nullable.t('ret),
-  [@bs.optional]
-  error: UrqlCombinedError.combinedErrorJs,
-};
-
 [@bs.module "urql"]
 external useSubscriptionJs:
   (useSubscriptionArgs, option((option('acc), Js.Json.t) => 'acc)) =>
-  array(useSubscriptionResponseJs('ret)) =
+  array(UrqlTypes.jsResponse('ret)) =
   "useSubscription";
 
 /**
@@ -36,12 +27,13 @@ external useSubscriptionJs:
  */
 let useSubscriptionResponseToRecord =
     (parse, result): UrqlTypes.hookResponse('response) => {
-  let data = result->dataGet->Js.Nullable.toOption->Belt.Option.map(parse);
+  let data =
+    result->UrqlTypes.jsDataGet->Js.Nullable.toOption->Belt.Option.map(parse);
   let error =
     result
-    ->errorGet
+    ->UrqlTypes.jsErrorGet
     ->Belt.Option.map(UrqlCombinedError.combinedErrorToRecord);
-  let fetching = result->fetchingGet;
+  let fetching = result->UrqlTypes.fetchingGet;
 
   let response =
     switch (fetching, data, error) {
