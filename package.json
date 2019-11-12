@@ -7,7 +7,7 @@
     "contributors:add": "all-contributors add",
     "contributors:generate": "all-contributors generate",
     "coverage": "yarn test --coverage",
-    "preversion": "run -s clean build test",
+    "preversion": "run-s clean build test",
     "start": "bsb -make-world -w",
     "test": "jest"
   },
