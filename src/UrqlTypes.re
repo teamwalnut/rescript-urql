@@ -41,10 +41,10 @@ type hookResponse('ret) = {
 };
 
 [@bs.deriving abstract]
-type jsResponse = {
+type jsResponse('response) = {
   fetching: bool,
   [@bs.as "data"]
-  jsData: Js.Nullable.t(Js.Json.t),
+  jsData: Js.Nullable.t('response),
   [@bs.optional] [@bs.as "error"]
   jsError: UrqlCombinedError.combinedErrorJs,
 };

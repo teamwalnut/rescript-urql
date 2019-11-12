@@ -1,9 +1,13 @@
-open UrqlTypes;
-
+/**
+ * The handler type used to type the optional accumulator function
+ * returned by useSubscription. handler is a GADT used to support
+ * proper type inference for useSubscription.
+ */
 type handler('acc, 'resp, 'ret) =
   | Handler((option('acc), 'resp) => 'acc): handler('acc, 'resp, 'acc)
   | NoHandler: handler(_, 'resp, 'resp);
 
+/* Arguments passed to useSubscription on the JavaScript side. */
 [@bs.deriving abstract]
 type useSubscriptionArgs = {
   query: string,
@@ -11,31 +15,29 @@ type useSubscriptionArgs = {
   variables: Js.Json.t,
 };
 
-[@bs.deriving abstract]
-type useSubscriptionResponseJs('ret) = {
-  fetching: bool,
-  data: Js.Nullable.t('ret),
-  [@bs.optional]
-  error: UrqlCombinedError.combinedErrorJs,
-};
-
 [@bs.module "urql"]
 external useSubscriptionJs:
   (useSubscriptionArgs, option((option('acc), Js.Json.t) => 'acc)) =>
-  array(useSubscriptionResponseJs('ret)) =
+  array(UrqlTypes.jsResponse('ret)) =
   "useSubscription";
 
-let useSubscriptionResponseToRecord = (parse, result) => {
-  let data = result->dataGet->Js.Nullable.toOption->Belt.Option.map(parse);
+/**
+ * A function for converting the response to useQuery from the JavaScript
+ * representation to a typed Reason record.
+ */
+let useSubscriptionResponseToRecord =
+    (parse, result): UrqlTypes.hookResponse('response) => {
+  let data =
+    result->UrqlTypes.jsDataGet->Js.Nullable.toOption->Belt.Option.map(parse);
   let error =
     result
-    ->errorGet
+    ->UrqlTypes.jsErrorGet
     ->Belt.Option.map(UrqlCombinedError.combinedErrorToRecord);
-  let fetching = result->fetchingGet;
+  let fetching = result->UrqlTypes.fetchingGet;
 
   let response =
     switch (fetching, data, error) {
-    | (true, None, _) => Fetching
+    | (true, None, _) => UrqlTypes.Fetching
     | (false, _, Some(error)) => Error(error)
     | (true, Some(data), _) => Data(data)
     | (false, Some(data), _) => Data(data)
@@ -45,16 +47,27 @@ let useSubscriptionResponseToRecord = (parse, result) => {
   {fetching, data, error, response};
 };
 
+/**
+ * The useSubscription hook.
+ *
+ * Accepts the following arguments:
+ *
+ * request – a Js.t containing the query and variables corresponding
+ * to the GraphQL subscription, and a parse function for decoding the JSON response.
+ *
+ * handler – an optional function to accumulate subscription responses.
+ */;
 let useSubscription =
     (
       type acc,
       type resp,
       type ret,
+      ~request: UrqlTypes.request(resp),
       ~handler: handler(acc, resp, ret),
-      ~request: request(resp),
     )
-    : hookResponse(ret) => {
+    : UrqlTypes.hookResponse(ret) => {
   let parse = request##parse;
+
   let args =
     useSubscriptionArgs(
       ~query=request##query,
@@ -64,20 +77,20 @@ let useSubscription =
 
   React.useMemo3(
     () => {
-      let state: hookResponse(ret) =
+      let response: UrqlTypes.hookResponse(ret) =
         switch (handler) {
+        | Handler(handlerFn) =>
+          useSubscriptionJs(
+            args,
+            Some((acc, data) => handlerFn(acc, parse(data))),
+          )[0]
+          |> useSubscriptionResponseToRecord(x => x)
         | NoHandler =>
           useSubscriptionJs(args, None)[0]
           |> useSubscriptionResponseToRecord(parse)
-        | Handler(handler_fn) =>
-          useSubscriptionJs(
-            args,
-            Some((acc, data) => handler_fn(acc, parse(data))),
-          )[0]
-          |> useSubscriptionResponseToRecord(x => x)
         };
 
-      state;
+      response;
     },
     (handler, args, parse),
   );

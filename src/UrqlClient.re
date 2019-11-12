@@ -252,19 +252,19 @@ let make =
 
 /* A function to convert the JS response from the client to a Reason record. */
 let urqlClientResponseToReason =
-    (~parse: Js.Json.t => 'response, ~result: ClientTypes.operationResult) => {
-  open ClientTypes;
-
-  let data = result->dataGet->Js.Nullable.toOption->Belt.Option.map(parse);
+    (~parse: Js.Json.t => 'response, ~result: ClientTypes.operationResult)
+    : ClientTypes.clientResponse('response) => {
+  let data =
+    result->ClientTypes.dataGet->Js.Nullable.toOption->Belt.Option.map(parse);
   let error =
     result
-    ->errorGet
+    ->ClientTypes.errorGet
     ->Js.Nullable.toOption
     ->Belt.Option.map(UrqlCombinedError.combinedErrorToRecord);
 
   let response =
     switch (data, error) {
-    | (Some(data), _) => Data(data)
+    | (Some(data), _) => ClientTypes.Data(data)
     | (None, Some(error)) => Error(error)
     | (None, None) => NotFound
     };

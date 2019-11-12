@@ -17,8 +17,8 @@
     "reason-urql": "link:../../"
   },
   "devDependencies": {
-    "bs-platform": "5.2.1",
-    "graphql_ppx": "^0.2.8",
+    "@baransu/graphql_ppx_re": "^0.3.2",
+    "bs-platform": "6.2.1",
     "webpack": "^4.29.6",
     "webpack-cli": "^3.2.3",
     "webpack-dev-server": "^3.2.1"

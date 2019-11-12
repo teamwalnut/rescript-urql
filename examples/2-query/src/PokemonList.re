@@ -17,8 +17,8 @@ let filterPokemonList = (~pokemonArray: array(string), ~input: string) =>
   |> Array.to_list
   |> List.filter(pokemon =>
        Js.String.includes(
-         String.lowercase(input),
-         String.lowercase(pokemon),
+         String.lowercase_ascii(input),
+         String.lowercase_ascii(pokemon),
        )
      );
 
