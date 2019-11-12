@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2019-11-12
+
+This release migrates us to `bs-platform@6.2.1` and ensures `reason-urql` is compatible for codebases using latest `bs-platform`.
+
+### Added
+
+- Documentation on using `graphql_ppx_re` with `reason-urql`. PR by @huy-nguyen [here](https://github.com/FormidableLabs/reason-urql/pull/119).
+- Improved Getting Started documentation. PR by @parkerziegler [here](https://github.com/FormidableLabs/reason-urql/pull/125).
+
+### Changed
+
+- Fix type for `pause` argument to `Query` component for `bs-platform@6.2.1`. PR by @gugahoa [here](https://github.com/FormidableLabs/reason-urql/pull/124).
+- Migrate to `bs-platform@6.2.1` in source. Fix compiler warnings. Rename `partialOperationContextFn` to `executeQuery`. **This is a breaking change.**
+
+### Diff
+
+https://github.com/FormidableLabs/reason-urql/compare/v1.2.0...v1.3.0
+
 ## [1.2.0] - 2019-10-29
 
 This release upgrades our `urql` dependency to 1.2.0 and picks up a handful of small bugfixes introduced in that [release](https://github.com/FormidableLabs/urql/releases/tag/v1.2.0).
