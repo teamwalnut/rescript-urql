@@ -68,8 +68,8 @@ let make =
   let (_, executeLikeMutation) =
     useMutation(~request=Mutations.LikeDog.make(~key=id, ()));
 
-  module TreatMutationDog = UrqlUseMutation.Make(Mutations.TreatDog);
-  let (_, executeTreatMutation) = TreatMutationDog.useMutation();
+  module TreatDogMutation = UrqlUseMutation.Make(Mutations.TreatDog);
+  let (_, executeTreatMutation) = TreatDogMutation.useMutation();
 
   <div className=DogStyles.container>
     <img src=imageUrl alt=name className=DogStyles.image />
