@@ -1,4 +1,5 @@
 open ReasonUrql;
+open Hooks;
 
 module Mutations = {
   module LikeDog = [%graphql
@@ -21,13 +22,15 @@ module Mutations = {
   |}
   ];
 
-  let treatDog = {|
+  module TreatDog = [%graphql
+    {|
     mutation treatDog($key: ID!) {
       treatDog(key: $key) {
         treats
       }
     }
-  |};
+  |}
+  ];
 
   module BellyscratchDog = [%graphql
     {|
@@ -63,16 +66,10 @@ let make =
     );
 
   let (_, executeLikeMutation) =
-    Hooks.useMutation(~request=Mutations.LikeDog.make(~key=id, ()));
+    useMutation(~request=Mutations.LikeDog.make(~key=id, ()));
 
-  let (_, executeTreatMutation) =
-    Hooks.useMutation(
-      ~request={
-        "query": Mutations.treatDog,
-        "variables": payload,
-        "parse": x => x,
-      },
-    );
+  module TreatMutationDog = UrqlUseMutation.Make(Mutations.TreatDog);
+  let (_, executeTreatMutation) = TreatMutationDog.useMutation();
 
   <div className=DogStyles.container>
     <img src=imageUrl alt=name className=DogStyles.image />
@@ -98,7 +95,7 @@ let make =
         emoji={j|🍖|j}
         count={string_of_int(treats)}
         hex="7b16ff"
-        onClick={_ => executeTreatMutation() |> ignore}
+        onClick={_ => executeTreatMutation(payload) |> ignore}
       />
       <Mutation request={Mutations.BellyscratchDog.make(~key=id, ())}>
         ...{({executeMutation}) =>

@@ -61,3 +61,46 @@ let useMutation = (~request) => {
 
   (response, executeMutation);
 };
+
+module type MutationConfig = {
+  type t;
+  let parse: Js.Json.t => t;
+  let query: string;
+};
+
+module type MakeType =
+  (Mutation: MutationConfig) =>
+   {
+    let useMutation:
+      unit =>
+      (
+        UrqlTypes.hookResponse(Mutation.t),
+        React.callback(
+          Js.Json.t,
+          Js.Promise.t(UrqlClient.ClientTypes.operationResult),
+        ),
+      );
+  };
+
+module Make: MakeType =
+  (Mutation: MutationConfig) => {
+    let useMutation = () => {
+      let (responseJs, executeMutationJs) = useMutationJs(Mutation.query);
+
+      let response =
+        React.useMemo2(
+          () => responseJs |> urqlResponseToReason(Mutation.parse),
+          (Mutation.parse, responseJs),
+        );
+
+      let executeMutation =
+        React.useCallback1(
+          (variables: Js.Json.t) => executeMutationJs(Some(variables)),
+          [|executeMutationJs|],
+        );
+
+      (response, executeMutation);
+    };
+
+    useMutation;
+  };
