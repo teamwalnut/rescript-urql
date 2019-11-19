@@ -95,3 +95,63 @@ let useSubscription =
     (handler, args, parse),
   );
 };
+
+/**
+ * The functor implementation of useQuery. An alternative to the function API.
+ *
+ * Accepts the following arguments:
+ *
+ * Query - a graphql_ppx or graphql_ppx_re module containing the
+ * type t of the GraphQL query, the query string of the GraphQL query,
+ * and a parse function for decoding the JSON response.
+ */
+module type SubscriptionConfig = {
+  type t;
+  let query: string;
+  let parse: Js.Json.t => t;
+};
+
+module type MakeSubscriptionType = {
+  type resp;
+
+  let useSubscription:
+    (~variables: Js.Json.t=?, ~handler: handler('acc, resp, 'ret)) =>
+    UrqlTypes.hookResponse('ret);
+};
+
+module MakeSubscription =
+       (Subscription: SubscriptionConfig)
+       : (MakeSubscriptionType with type resp = Subscription.t) => {
+  type resp = Subscription.t;
+
+  let useSubscription =
+      (type acc, type ret, ~variables=?, ~handler: handler(acc, resp, ret))
+      : UrqlTypes.hookResponse(ret) => {
+    let args =
+      useSubscriptionArgs(~query=Subscription.query, ~variables?, ());
+
+    React.useMemo3(
+      () => {
+        let response: UrqlTypes.hookResponse(ret) =
+          switch (handler) {
+          | Handler(handlerFn) =>
+            useSubscriptionJs(
+              args,
+              Some(
+                (acc, data) => handlerFn(acc, Subscription.parse(data)),
+              ),
+            )[0]
+            |> useSubscriptionResponseToRecord(x => x)
+          | NoHandler =>
+            useSubscriptionJs(args, None)[0]
+            |> useSubscriptionResponseToRecord(Subscription.parse)
+          };
+
+        response;
+      },
+      (handler, args, Subscription.parse),
+    );
+  };
+
+  useSubscription;
+};

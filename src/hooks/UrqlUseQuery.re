@@ -2,6 +2,7 @@
 [@bs.deriving abstract]
 type useQueryArgs = {
   query: string,
+  [@bs.optional]
   variables: Js.Json.t,
   [@bs.optional]
   requestPolicy: UrqlTypes.requestPolicy,
@@ -93,3 +94,68 @@ let useQuery = (~request, ~requestPolicy=?, ~pause=?, ()) => {
 
   (response, executeQuery);
 };
+
+/**
+ * The functor implementation of useQuery. An alternative to the function API.
+ *
+ * Accepts the following arguments:
+ *
+ * Query - a graphql_ppx or graphql_ppx_re module containing the
+ * type t of the GraphQL query, the query string of the GraphQL query,
+ * and a parse function for decoding the JSON response.
+ */
+module type QueryConfig = {
+  type t;
+  let query: string;
+  let parse: Js.Json.t => t;
+};
+
+module type MakeQueryType =
+  (Query: QueryConfig) =>
+   {
+    let useQuery:
+      (
+        ~variables: Js.Json.t=?,
+        ~requestPolicy: UrqlTypes.requestPolicy=?,
+        ~pause: bool=?,
+        unit
+      ) =>
+      (
+        UrqlTypes.hookResponse(Query.t),
+        React.callback(
+          option(UrqlClient.ClientTypes.partialOperationContext),
+          unit,
+        ),
+      );
+  };
+
+module MakeQuery: MakeQueryType =
+  (Query: QueryConfig) => {
+    let useQuery = (~variables=?, ~requestPolicy=?, ~pause=?, ()) => {
+      let args =
+        useQueryArgs(
+          ~query=Query.query,
+          ~variables?,
+          ~requestPolicy?,
+          ~pause?,
+          (),
+        );
+      let (responseJs, executeQueryJs) = useQueryJs(args);
+
+      let response =
+        React.useMemo2(
+          () => responseJs |> urqlResponseToReason(Query.parse),
+          (Query.parse, responseJs),
+        );
+
+      let executeQuery =
+        React.useCallback1(
+          opts => executeQueryJs(opts),
+          [|executeQueryJs|],
+        );
+
+      (response, executeQuery);
+    };
+
+    useQuery;
+  };

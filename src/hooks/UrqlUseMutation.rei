@@ -7,19 +7,20 @@ let useMutation:
 
 module type MutationConfig = {
   type t;
-  let parse: Js.Json.t => t;
   let query: string;
+  let parse: Js.Json.t => t;
 };
 
-module type MakeType =
+module type MakeMutationType =
   (Mutation: MutationConfig) =>
    {
     let useMutation:
       unit =>
       (
         UrqlTypes.hookResponse(Mutation.t),
-        Js.Json.t => Js.Promise.t(UrqlClient.ClientTypes.operationResult),
+        option(Js.Json.t) =>
+        Js.Promise.t(UrqlClient.ClientTypes.operationResult),
       );
   };
 
-module Make: MakeType;
+module MakeMutation: MakeMutationType;

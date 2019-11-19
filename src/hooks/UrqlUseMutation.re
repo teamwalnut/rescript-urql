@@ -54,21 +54,31 @@ let useMutation = (~request) => {
     );
 
   let executeMutation =
-    React.useCallback1(
+    React.useCallback2(
       () => executeMutationJs(Some(request##variables)),
-      [|request##variables|],
+      (executeMutationJs, request##variables),
     );
 
   (response, executeMutation);
 };
 
+/**
+ * The functor implementation of useMutation. Useful for when you want to
+ * apply variables at execution time rather than at render time.
+ *
+ * Accepts the following arguments:
+ *
+ * Mutation - a graphql_ppx or graphql_ppx_re module containing the
+ * type t of the GraphQL mutation, the query string of the GraphQL mutation,
+ * and a parse function for decoding the JSON response.
+ */
 module type MutationConfig = {
   type t;
-  let parse: Js.Json.t => t;
   let query: string;
+  let parse: Js.Json.t => t;
 };
 
-module type MakeType =
+module type MakeMutationType =
   (Mutation: MutationConfig) =>
    {
     let useMutation:
@@ -76,13 +86,13 @@ module type MakeType =
       (
         UrqlTypes.hookResponse(Mutation.t),
         React.callback(
-          Js.Json.t,
+          option(Js.Json.t),
           Js.Promise.t(UrqlClient.ClientTypes.operationResult),
         ),
       );
   };
 
-module Make: MakeType =
+module MakeMutation: MakeMutationType =
   (Mutation: MutationConfig) => {
     let useMutation = () => {
       let (responseJs, executeMutationJs) = useMutationJs(Mutation.query);
@@ -95,7 +105,7 @@ module Make: MakeType =
 
       let executeMutation =
         React.useCallback1(
-          (variables: Js.Json.t) => executeMutationJs(Some(variables)),
+          variables => executeMutationJs(variables),
           [|executeMutationJs|],
         );
 

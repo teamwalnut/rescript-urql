@@ -55,6 +55,10 @@ let make =
       ~bellyscratches: int,
       ~description: string,
     ) => {
+  /* useMutation with variables applied at render time. */
+  let (_, executeLikeMutation) =
+    useMutation(~request=Mutations.LikeDog.make(~key=id, ()));
+
   let payload =
     React.useMemo1(
       () => {
@@ -65,10 +69,8 @@ let make =
       [|id|],
     );
 
-  let (_, executeLikeMutation) =
-    useMutation(~request=Mutations.LikeDog.make(~key=id, ()));
-
-  module TreatDogMutation = UrqlUseMutation.Make(Mutations.TreatDog);
+  /* useMutation functor API, allowing variables to be applied at execution time. */
+  module TreatDogMutation = MakeMutation(Mutations.TreatDog);
   let (_, executeTreatMutation) = TreatDogMutation.useMutation();
 
   <div className=DogStyles.container>
@@ -95,7 +97,7 @@ let make =
         emoji={j|🍖|j}
         count={string_of_int(treats)}
         hex="7b16ff"
-        onClick={_ => executeTreatMutation(payload) |> ignore}
+        onClick={_ => executeTreatMutation(Some(payload)) |> ignore}
       />
       <Mutation request={Mutations.BellyscratchDog.make(~key=id, ())}>
         ...{({executeMutation}) =>
