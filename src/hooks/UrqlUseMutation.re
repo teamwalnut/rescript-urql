@@ -73,7 +73,7 @@ let useDynamicMutation = (~query, ~parse) => {
 
   let executeMutation =
     React.useCallback1(
-      varsObj => executeMutationJs(Some(varsObj##variables)),
+      request => executeMutationJs(Some(request##variables)),
       [|executeMutationJs|],
     );
 

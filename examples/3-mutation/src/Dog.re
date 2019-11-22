@@ -62,11 +62,11 @@ let make =
       [|id|],
     );
 
-  // Example of using hooks with graphql_ppx
+  // Example of using hooks with graphql_ppx_re (or graphql_ppx)
   let (_, executeLikeMutation) =
     Hooks.useMutation(~request=Mutations.LikeDog.make(~key=id, ()));
 
-  // Example of using hooks without graphql_ppx
+  // Example of using hooks without graphql_ppx_re (or graphql_ppx)
   let (_, executeTreatMutation) =
     Hooks.useMutation(
       ~request={
