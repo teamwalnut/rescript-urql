@@ -61,3 +61,21 @@ let useMutation = (~request) => {
 
   (response, executeMutation);
 };
+
+let useDynamicMutation = (~query, ~parse) => {
+  let (responseJs, executeMutationJs) = useMutationJs(query);
+
+  let response =
+    React.useMemo1(
+      () => responseJs |> urqlResponseToReason(parse),
+      [|responseJs|],
+    );
+
+  let executeMutation =
+    React.useCallback1(
+      request => executeMutationJs(Some(request##variables)),
+      [|executeMutationJs|],
+    );
+
+  (response, executeMutation);
+};
