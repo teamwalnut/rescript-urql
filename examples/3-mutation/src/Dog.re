@@ -62,11 +62,11 @@ let make =
       [|id|],
     );
 
-  // Example of using hooks with graphql_ppx_re (or graphql_ppx)
+  // Example of using hooks with graphql_ppx_re (or graphql_ppx).
   let (_, executeLikeMutation) =
     Hooks.useMutation(~request=Mutations.LikeDog.make(~key=id, ()));
 
-  // Example of using hooks without graphql_ppx_re (or graphql_ppx)
+  // Example of using hooks without graphql_ppx_re (or graphql_ppx).
   let (_, executeTreatMutation) =
     Hooks.useMutation(
       ~request={
@@ -76,8 +76,8 @@ let make =
       },
     );
 
-  // Example of using hooks where the variables are only known when the
-  // mutation runs
+  /* Example of using hooks where the variables are only known when the
+     mutation runs. */
   let (_, executePatMutation) =
     Hooks.useDynamicMutation(
       ~query=Mutations.PatDog.query,
@@ -108,7 +108,7 @@ let make =
         hex="7b16ff"
         onClick={_ => executeTreatMutation() |> ignore}
       />
-      // Example of using the Mutation component
+      // Example of using the Mutation component.
       <Mutation request={Mutations.BellyscratchDog.make(~key=id, ())}>
         ...{({executeMutation}) =>
           <EmojiButton

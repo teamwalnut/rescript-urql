@@ -4,7 +4,7 @@ This document provides all of the API documentation for `reason-urql`.
 
 ## Hooks
 
-`reason-urql` comes with a set of custom hooks to use in your ReasonReact components, including `useQuery`, `useMutation`, and `useSubscription`. These are fully type safe and will correctly infer the type of your GraphQL response if using `graphql_ppx`.
+`reason-urql` comes with a set of custom hooks to use in your ReasonReact components, including `useQuery`, `useMutation`, `useDynamicMutation`, and `useSubscription`. These are fully type safe and will automatically infer the type of your GraphQL response if using `graphql_ppx_re` or `graphql_ppx`.
 
 Often, you'll want to fully `open` the `Hooks` module when using any of the custom hooks – this brings in some necessary types that will assist with pattern matching and type inference around the responses from your GraphQL API.
 
@@ -118,6 +118,75 @@ let make = (~id) => {
 ```
 
 Check out `examples/3-mutation` to see an example of using the `useMutation` hook.
+
+### `useDynamicMutation`
+
+`useDyanmicMutation` is quite similar to `useMutation`, except it is a hook reserved for when you want to **dynamically** pass in variables to the `executeMutation` function _at execution time_. In constrast, `useMutation` applies variables immediately when it is called _at render time_.
+
+A good example of a case where `useDyanmicMutation` comes in handy is when you need to execute a mutation with variables retrieved from `useQuery` in the same component. With `useMutation`, you'd have to provide a "fallback" `variables` argument, then rely on `useQuery` running to populate the proper `variables` in `useMutation`. With `useDynamicMutation`, this becomes much simpler – see the Example section below.
+
+#### Arguments
+
+| Argument | Type                     | Description                                                                                                                                                                                      |
+| -------- | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `query`  | `string`                 | The query string for your GraphQL mutation.                                                                                                                                                      |
+| `parse`  | `Js.Json.t => 'response` | A function describing how to parse the JSON returned by your GraphQL API. If using `graphql_ppx_re` or `graphql_ppx` this is provided by accessing the `parse` function on your mutation module. |
+
+### Return Type
+
+`useDynamicMutation` returns nearly the same tuple as `useMutation`, containing the result of executing your GraphQL mutation as a record, `result`, and a function for executing the mutation imperatively, `executeMutation`. Unlike `useMutation`, the `executeMutation` function returned by `useDynamicMutation` accepts an argument for `variables` of type `Js.Json.t`.
+
+| Return Value      | Type                                                                       | Description                                                                                                                                                                                                                       |
+| ----------------- | -------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `result`          | `UrqlTypes.hookResponse('response)`                                        | A record containing fields for `fetching`, `data`, `error`, and `response`. `response` is a variant containing constructors for `Data`, `Error`, `Fetching` and `NotFound`. Useful for pattern matching to render conditional UI. |
+| `executeMutation` | `{.. variables: Js.Json.t } => Js.Promise.t(Client.Types.operationResult)` | A function for imperatively executing the mutation, which accepts a `variables` argument.                                                                                                                                         |
+
+#### Example
+
+```reason
+open ReasonUrql;
+open Hooks;
+
+module GetAllDogs = [%graphql {|
+  query dogs {
+    dogs {
+      name
+      breed
+      likes
+    }
+  }
+|}];
+
+module LikeDog = [%graphql
+    {|
+    mutation likeDog($key: ID!) {
+      likeDog(key: $key) {
+        likes
+      }
+    }
+  |}
+  ];
+
+[@react.component]
+let make = () => {
+  let ({ response }, _) = useQuery(~request=GetAllDogs.make(), ());
+  let (_, executeMutation) = useMutation(~query=LikeDog.query, ~parse=LikeDog.parse);
+
+  switch (response) {
+    | Data(d) => {
+      <button
+      onClick={
+        _e => executeMutation(LikeDog.make(~key=d##dogs[0]##id, ())) |> ignore}
+      >
+        "Like The First Dog!"->React.string
+      </button>
+    }
+    | _ => React.null
+  }
+}
+```
+
+Check out `examples/3-mutation` to see an example of using the `useDynamicMutation` hook.
 
 ### `useSubscription`
 

@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Unreleased
+
+- Add `useDyanmicMutation` hook to support applying variables when calling `executeMutation`. PR by @Schmavery [here](https://github.com/FormidableLabs/reason-urql/pull/130).
+
 ## [1.3.0] - 2019-11-12
 
 This release migrates us to `bs-platform@6.2.1` and ensures `reason-urql` is compatible for codebases using latest `bs-platform`.
