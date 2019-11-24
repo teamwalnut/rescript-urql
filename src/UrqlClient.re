@@ -211,8 +211,34 @@ module UrqlExchanges = {
     "ssrExchange";
 };
 
+type fetchImpl('a) =
+  | FetchWithUrl(string => Js.Promise.t(Fetch.response))
+    : fetchImpl(string => Js.Promise.t(Fetch.response))
+  | FetchWithUrlOptions(
+      (string, Fetch.requestInit) => Js.Promise.t(Fetch.response),
+    )
+    : fetchImpl((string, Fetch.requestInit) => Js.Promise.t(Fetch.response))
+  | FetchWithRequest(Fetch.request => Js.Promise.t(Fetch.response))
+    : fetchImpl(Fetch.request => Js.Promise.t(Fetch.response))
+  | FetchWithRequestOptions(
+      (Fetch.request, Fetch.requestInit) => Js.Promise.t(Fetch.response),
+    )
+    : fetchImpl(
+        (Fetch.request, Fetch.requestInit) => Js.Promise.t(Fetch.response),
+      );
+
+let unwrapFetchImpl = (type a, fetch: option(fetchImpl(a))): option(a) => {
+  switch (fetch) {
+  | Some(FetchWithUrl(impl)) => Some(impl)
+  | Some(FetchWithUrlOptions(impl)) => Some(impl)
+  | Some(FetchWithRequest(impl)) => Some(impl)
+  | Some(FetchWithRequestOptions(impl)) => Some(impl)
+  | None => None
+  };
+};
+
 [@bs.deriving abstract]
-type clientOptions('a) = {
+type clientOptions('a, 'b) = {
   url: string,
   [@bs.optional]
   fetchOptions: 'a,
@@ -220,10 +246,12 @@ type clientOptions('a) = {
   exchanges: array(UrqlExchanges.exchange),
   [@bs.optional]
   suspense: bool,
+  [@bs.optional]
+  fetch: 'b,
 };
 
 [@bs.new] [@bs.module "urql"]
-external client: clientOptions('a) => t = "Client";
+external client: clientOptions('a, 'b) => t = "Client";
 
 /* `make` is equivalent to urql's `createClient`.
    We opt to use `make` here to adhere to standards in the Reason community. */
@@ -237,6 +265,7 @@ let make =
                    UrqlExchanges.fetchExchange,
                  |],
       ~suspense=false,
+      ~fetch=?,
       (),
     ) => {
   let options =
@@ -245,6 +274,7 @@ let make =
       ~fetchOptions=unwrapFetchOptions(fetchOptions),
       ~exchanges,
       ~suspense,
+      ~fetch=unwrapFetchImpl(fetch),
       (),
     );
   client(options);

@@ -13,12 +13,14 @@ type useSubscriptionArgs = {
   query: string,
   [@bs.optional]
   variables: Js.Json.t,
+  [@bs.optional]
+  context: UrqlClient.ClientTypes.partialOperationContext,
 };
 
 [@bs.module "urql"]
 external useSubscriptionJs:
   (useSubscriptionArgs, option((option('acc), Js.Json.t) => 'acc)) =>
-  array(UrqlTypes.jsResponse('ret)) =
+  array(UrqlTypes.jsResponse('ret, 'extensions)) =
   "useSubscription";
 
 /**
@@ -26,7 +28,7 @@ external useSubscriptionJs:
  * representation to a typed Reason record.
  */
 let useSubscriptionResponseToRecord =
-    (parse, result): UrqlTypes.hookResponse('response) => {
+    (parse, result): UrqlTypes.hookResponse('response, 'extensions) => {
   let data =
     result->UrqlTypes.jsDataGet->Js.Nullable.toOption->Belt.Option.map(parse);
   let error =
@@ -34,6 +36,7 @@ let useSubscriptionResponseToRecord =
     ->UrqlTypes.jsErrorGet
     ->Belt.Option.map(UrqlCombinedError.combinedErrorToRecord);
   let fetching = result->UrqlTypes.fetchingGet;
+  let extensions = result->UrqlTypes.extensionsGet->Js.Nullable.toOption;
 
   let response =
     switch (fetching, data, error) {
@@ -44,7 +47,7 @@ let useSubscriptionResponseToRecord =
     | (false, None, None) => NotFound
     };
 
-  {fetching, data, error, response};
+  {fetching, data, error, response, extensions};
 };
 
 /**
@@ -64,20 +67,23 @@ let useSubscription =
       type ret,
       ~request: UrqlTypes.request(resp),
       ~handler: handler(acc, resp, ret),
+      ~context=?,
+      (),
     )
-    : UrqlTypes.hookResponse(ret) => {
+    : UrqlTypes.hookResponse(ret, 'extensions) => {
   let parse = request##parse;
 
   let args =
     useSubscriptionArgs(
       ~query=request##query,
       ~variables=request##variables,
+      ~context?,
       (),
     );
 
   React.useMemo3(
     () => {
-      let response: UrqlTypes.hookResponse(ret) =
+      let response: UrqlTypes.hookResponse(ret, 'extensions) =
         switch (handler) {
         | Handler(handlerFn) =>
           useSubscriptionJs(

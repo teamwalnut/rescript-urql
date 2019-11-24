@@ -7,6 +7,8 @@ type useQueryArgs = {
   requestPolicy: string,
   [@bs.optional]
   pause: bool,
+  [@bs.optional]
+  context: UrqlClient.ClientTypes.partialOperationContext,
 };
 
 /**
@@ -18,28 +20,35 @@ type executeQuery =
   option(UrqlClient.ClientTypes.partialOperationContext) => unit;
 
 /* The response to useQuery on the JavaScript side. */
-type useQueryResponseJs = (UrqlTypes.jsResponse(Js.Json.t), executeQuery);
+type useQueryResponseJs('extensions) = (
+  UrqlTypes.jsResponse(Js.Json.t, 'extensions),
+  executeQuery,
+);
 
 /**
  * The response to useQuery – a two dimensional tuple containing
  * the result of executing the query and a function for re-executing
  * the query imperatively.
  */
-type useQueryResponse('response) = (
-  UrqlTypes.hookResponse('response),
+type useQueryResponse('response, 'extensions) = (
+  UrqlTypes.hookResponse('response, 'extensions),
   executeQuery,
 );
 
 [@bs.module "urql"]
-external useQueryJs: useQueryArgs => useQueryResponseJs = "useQuery";
+external useQueryJs: useQueryArgs => useQueryResponseJs('extensions) =
+  "useQuery";
 
 /**
  * A function for converting the response to useQuery from the JavaScript
  * representation to a typed Reason record.
  */
 let urqlResponseToReason =
-    (parse: Js.Json.t => 'response, result: UrqlTypes.jsResponse(Js.Json.t))
-    : UrqlTypes.hookResponse('response) => {
+    (
+      parse: Js.Json.t => 'response,
+      result: UrqlTypes.jsResponse(Js.Json.t, 'extensions),
+    )
+    : UrqlTypes.hookResponse('response, 'extensions) => {
   let data =
     result->UrqlTypes.jsDataGet->Js.Nullable.toOption->Belt.Option.map(parse);
   let error =
@@ -47,6 +56,7 @@ let urqlResponseToReason =
     ->UrqlTypes.jsErrorGet
     ->Belt.Option.map(UrqlCombinedError.combinedErrorToRecord);
   let fetching = result->UrqlTypes.fetchingGet;
+  let extensions = result->UrqlTypes.extensionsGet->Js.Nullable.toOption;
 
   let response =
     switch (fetching, data, error) {
@@ -56,7 +66,7 @@ let urqlResponseToReason =
     | (false, None, None) => NotFound
     };
 
-  {fetching, data, error, response};
+  {fetching, data, error, response, extensions};
 };
 
 /**
@@ -73,7 +83,7 @@ let urqlResponseToReason =
  * pause - prevent eager execution of the query.
  * The query will only execute when puse becomes false.
  */
-let useQuery = (~request, ~requestPolicy=?, ~pause=?, ()) => {
+let useQuery = (~request, ~requestPolicy=?, ~pause=?, ~context=?, ()) => {
   let args =
     useQueryArgs(
       ~query=request##query,
@@ -81,6 +91,7 @@ let useQuery = (~request, ~requestPolicy=?, ~pause=?, ()) => {
       ~requestPolicy=?
         requestPolicy->Belt.Option.map(UrqlTypes.requestPolicyToJs),
       ~pause?,
+      ~context?,
       (),
     );
 

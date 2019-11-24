@@ -1,8 +1,9 @@
 let useMutation:
   (~request: UrqlTypes.request('response)) =>
   (
-    UrqlTypes.hookResponse('response),
-    unit => Js.Promise.t(UrqlClient.ClientTypes.operationResult),
+    UrqlTypes.hookResponse('response, 'extensions),
+    option(UrqlClient.ClientTypes.partialOperationContext) =>
+    Js.Promise.t(UrqlClient.ClientTypes.operationResult),
   );
 
 let useDynamicMutation:

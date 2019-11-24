@@ -30,12 +30,13 @@ module CombinedError = UrqlCombinedError;
 module Exchanges = UrqlClient.UrqlExchanges;
 
 module Hooks = {
-  type hookResponse('ret) =
-    UrqlTypes.hookResponse('ret) = {
+  type hookResponse('ret, 'extensions) =
+    UrqlTypes.hookResponse('ret, 'extensions) = {
       fetching: bool,
       data: option('ret),
       error: option(UrqlCombinedError.t),
       response: UrqlTypes.response('ret),
+      extensions: option('extensions),
     };
   include UrqlUseMutation;
   include UrqlUseQuery;

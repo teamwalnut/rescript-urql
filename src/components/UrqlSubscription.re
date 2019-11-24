@@ -1,16 +1,17 @@
 [@bs.deriving abstract]
-type subscriptionRenderPropsJs('ret) = {
+type subscriptionRenderPropsJs('ret, 'extensions) = {
   fetching: bool,
   data: Js.Nullable.t('ret),
-  [@bs.optional]
-  error: UrqlCombinedError.combinedErrorJs,
+  error: Js.Nullable.t(UrqlCombinedError.combinedErrorJs),
+  extensions: Js.Nullable.t('extensions),
 };
 
-type subscriptionRenderProps('ret) = {
+type subscriptionRenderProps('ret, 'extensions) = {
   fetching: bool,
   data: option('ret),
   error: option(UrqlCombinedError.t),
   response: UrqlTypes.response('ret),
+  extensions: option('extensions),
 };
 
 module SubscriptionJs = {
@@ -20,7 +21,8 @@ module SubscriptionJs = {
       ~query: string,
       ~variables: Js.Json.t,
       ~handler: (option('acc), Js.Json.t) => 'acc=?,
-      ~children: subscriptionRenderPropsJs('ret) => React.element
+      ~context: UrqlClient.ClientTypes.partialOperationContext=?,
+      ~children: subscriptionRenderPropsJs('ret, 'extensions) => React.element
     ) =>
     React.element =
     "Subscription";
@@ -31,8 +33,10 @@ let urqlDataToRecord = (parse, result) => {
   let error =
     result
     ->errorGet
+    ->Js.Nullable.toOption
     ->Belt.Option.map(UrqlCombinedError.combinedErrorToRecord);
   let fetching = result->fetchingGet;
+  let extensions = result->extensionsGet->Js.Nullable.toOption;
 
   let response =
     switch (fetching, data, error) {
@@ -43,7 +47,7 @@ let urqlDataToRecord = (parse, result) => {
     | (false, None, None) => NotFound
     };
 
-  {fetching, data, error, response};
+  {fetching, data, error, response, extensions};
 };
 
 module Subscription = {
@@ -51,13 +55,15 @@ module Subscription = {
   let make =
       (
         ~request: UrqlTypes.request('response),
-        ~children: subscriptionRenderProps('response) => React.element,
+        ~context: option(UrqlClient.ClientTypes.partialOperationContext)=?,
+        ~children:
+           subscriptionRenderProps('response, 'extensions) => React.element,
       ) => {
     let query = request##query;
     let variables = request##variables;
     let parse = request##parse;
 
-    <SubscriptionJs query variables>
+    <SubscriptionJs query variables ?context>
       {result => result |> urqlDataToRecord(parse) |> children}
     </SubscriptionJs>;
   };
@@ -69,7 +75,9 @@ module SubscriptionWithHandler = {
       (
         ~request: UrqlTypes.request('response),
         ~handler: (option('acc), 'response) => 'acc,
-        ~children: subscriptionRenderProps('acc) => React.element,
+        ~context: option(UrqlClient.ClientTypes.partialOperationContext)=?,
+        ~children:
+           subscriptionRenderProps('acc, 'extensions) => React.element,
       ) => {
     let query = request##query;
     let variables = request##variables;
@@ -77,7 +85,7 @@ module SubscriptionWithHandler = {
 
     let applyParsedResponse = (acc, data) => handler(acc, parse(data));
 
-    <SubscriptionJs query variables handler=applyParsedResponse>
+    <SubscriptionJs query variables handler=applyParsedResponse ?context>
       {result => result |> urqlDataToRecord(x => x) |> children}
     </SubscriptionJs>;
   };

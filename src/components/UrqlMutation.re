@@ -1,25 +1,35 @@
 [@bs.deriving abstract]
-type mutationRenderPropsJs = {
+type mutationRenderPropsJs('extensions) = {
   fetching: bool,
   data: Js.Nullable.t(Js.Json.t),
   error: Js.Nullable.t(UrqlCombinedError.combinedErrorJs),
   executeMutation:
-    option(Js.Json.t) => Js.Promise.t(UrqlClient.ClientTypes.operationResult),
+    (
+      option(Js.Json.t),
+      option(UrqlClient.ClientTypes.partialOperationContext)
+    ) =>
+    Js.Promise.t(UrqlClient.ClientTypes.operationResult),
+  extensions: Js.Nullable.t('extensions),
 };
 
-type mutationRenderProps('response) = {
+type mutationRenderProps('response, 'extensions) = {
   fetching: bool,
   data: option('response),
   error: option(UrqlCombinedError.t),
   executeMutation:
-    unit => Js.Promise.t(UrqlClient.ClientTypes.operationResult),
+    option(UrqlClient.ClientTypes.partialOperationContext) =>
+    Js.Promise.t(UrqlClient.ClientTypes.operationResult),
   response: UrqlTypes.response('response),
+  extensions: option('extensions),
 };
 
 module MutationJs = {
   [@bs.module "urql"] [@react.component]
   external make:
-    (~query: string, ~children: mutationRenderPropsJs => React.element) =>
+    (
+      ~query: string,
+      ~children: mutationRenderPropsJs('extensions) => React.element
+    ) =>
     React.element =
     "Mutation";
 };
@@ -28,9 +38,9 @@ let urqlMutationResponseToReason =
     (
       parse: Js.Json.t => 'response,
       variables: Js.Json.t,
-      result: mutationRenderPropsJs,
+      result: mutationRenderPropsJs('extensions),
     )
-    : mutationRenderProps('response) => {
+    : mutationRenderProps('response, 'extensions) => {
   let data = result->dataGet->Js.Nullable.toOption->Belt.Option.map(parse);
   let error =
     result
@@ -38,8 +48,9 @@ let urqlMutationResponseToReason =
     ->Js.Nullable.toOption
     ->Belt.Option.map(UrqlCombinedError.combinedErrorToRecord);
   let fetching = result->fetchingGet;
-  let executeMutationFn = result->executeMutationGet;
-  let executeMutation = () => executeMutationFn(Some(variables));
+  let executeMutation = context =>
+    result->executeMutationGet(Some(variables), context);
+  let extensions = result->extensionsGet->Js.Nullable.toOption;
 
   let response =
     switch (fetching, data, error) {
@@ -49,14 +60,14 @@ let urqlMutationResponseToReason =
     | (false, None, None) => NotFound
     };
 
-  {fetching, data, error, executeMutation, response};
+  {fetching, data, error, executeMutation, response, extensions};
 };
 
 [@react.component]
 let make =
     (
       ~request: UrqlTypes.request('response),
-      ~children: mutationRenderProps('response) => React.element,
+      ~children: mutationRenderProps('response, 'extensions) => React.element,
     ) => {
   let query = request##query;
   let variables = request##variables;

@@ -33,20 +33,22 @@ type response('response) =
   | Error(UrqlCombinedError.t)
   | NotFound;
 
-type hookResponse('ret) = {
+type hookResponse('ret, 'extensions) = {
   fetching: bool,
   data: option('ret),
   error: option(UrqlCombinedError.t),
   response: response('ret),
+  extensions: option('extensions),
 };
 
 [@bs.deriving abstract]
-type jsResponse('response) = {
+type jsResponse('response, 'extensions) = {
   fetching: bool,
   [@bs.as "data"]
   jsData: Js.Nullable.t('response),
   [@bs.optional] [@bs.as "error"]
   jsError: UrqlCombinedError.combinedErrorJs,
+  extensions: Js.Nullable.t('extensions),
 };
 
 type graphqlDefinition('parseResult, 'composeReturnType, 'hookReturnType) = (
