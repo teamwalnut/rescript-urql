@@ -22,10 +22,10 @@ jobs:
         - yarn build
     - stage: Test
       script:
+        - yarn build
         - yarn test
     - stage: Build Examples
       script:
-        - yarn
         - yarn build
         - cd $TRAVIS_BUILD_DIR/examples
         - for dir in $TRAVIS_BUILD_DIR/examples/*; do (cd "$dir"; yarn; yarn clean; yarn build; cd ../); done
