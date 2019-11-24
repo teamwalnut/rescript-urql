@@ -1,0 +1,31 @@
+notifications:
+  email: false
+
+language: node_js
+cache:
+  yarn: true
+node_js:
+  - "8"
+  - "10"
+  - "12"
+
+matrix:
+  fast_finish: true
+
+install:
+  - yarn install --frozen-lockfile --non-interactive
+
+jobs:
+  include:
+    - stage: Build
+      script:
+        - yarn build
+    - stage: Test
+      script:
+        - yarn test
+    - stage: Build Examples
+      script:
+        - yarn
+        - yarn build
+        - cd $TRAVIS_BUILD_DIR/examples
+        - for dir in $TRAVIS_BUILD_DIR/examples/*; do (cd "$dir"; yarn; yarn clean; yarn build; cd ../); done
