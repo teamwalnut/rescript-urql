@@ -6,15 +6,9 @@ let useMutation:
   );
 
 let useDynamicMutation:
-  (
-    (
-      // `parse`
-      Js.Json.t => 'a,
-      // `query`
-      string,
-      // `composeVariables`
-      (Js.Json.t => Js.Promise.t(UrqlClient.ClientTypes.operationResult)) =>
-      'b,
-    )
+  UrqlTypes.graphqlDefinition(
+    'parsedResponse,
+    Js.Promise.t(UrqlClient.ClientTypes.operationResult),
+    'executeMutationFunction,
   ) =>
-  (UrqlTypes.hookResponse('a), 'b);
+  (UrqlTypes.hookResponse('parsedResponse), 'executeMutationFunction);
