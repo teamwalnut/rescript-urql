@@ -2,7 +2,7 @@
 
 [![npm](https://img.shields.io/npm/v/reason-urql.svg)](https://www.npmjs.com/package/reason-urql)
 [![All Contributors](https://img.shields.io/badge/all_contributors-11-orange.svg)](#contributors)
-[![Build Status](https://github.com/FormidableLabs/reason-urql/workflows/reason-urql%20CI/badge.svg)](https://github.com/FormidableLabs/reason-urql/actions)
+[![Build Status](https://travis-ci.org/FormidableLabs/reason-urql.svg?branch=master)](https://travis-ci.org/FormidableLabs/reason-urql)
 [![Maintenance Status][maintenance-image]](#maintenance-status)
 [![Spectrum](https://withspectrum.github.io/badge/badge.svg)](https://spectrum.chat/urql)
 
