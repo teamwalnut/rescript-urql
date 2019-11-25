@@ -4,7 +4,11 @@ type handler('acc, 'resp, 'ret) =
 
 let useSubscription:
   (
-    ~request: UrqlTypes.request('resp),
-    ~handler: handler('acc, 'resp, 'ret)
+    ~handler: handler('acc, 'parsedResponse, 'ret),
+    UrqlTypes.graphqlDefinition(
+      'parsedResponse,
+      UrqlTypes.hookResponse('ret),
+      'functionThatAcceptsVarArgsAndReturnsHookResponse,
+    )
   ) =>
-  UrqlTypes.hookResponse('ret);
+  'functionThatAcceptsVarArgsAndReturnsHookResponse;

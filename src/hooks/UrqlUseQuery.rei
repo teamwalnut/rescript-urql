@@ -8,9 +8,12 @@ type useQueryResponse('response) = (
 
 let useQuery:
   (
-    ~request: UrqlTypes.request('response),
     ~requestPolicy: UrqlTypes.requestPolicy=?,
     ~pause: bool=?,
-    unit
+    UrqlTypes.graphqlDefinition(
+      'parsedResponse,
+      useQueryResponse('parsedResponse),
+      'functionThatAcceptsVarArgsAndReturnsHookResponse,
+    )
   ) =>
-  useQueryResponse('response);
+  'functionThatAcceptsVarArgsAndReturnsHookResponse;
