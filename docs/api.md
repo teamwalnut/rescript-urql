@@ -138,7 +138,7 @@ A good example of a case where `useDynamicMutation` comes in handy is when you n
 | Return Value      | Type                                                                   | Description                                                                                                                                                                                                                       |
 | ----------------- | ---------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `result`          | `UrqlTypes.hookResponse('response)`                                    | A record containing fields for `fetching`, `data`, `error`, and `response`. `response` is a variant containing constructors for `Data`, `Error`, `Fetching` and `NotFound`. Useful for pattern matching to render conditional UI. |
-| `executeMutation` | `(~myVar1, ~myVar2, ()) => Js.Promise.t(Client.Types.operationResult)` | A function for imperatively executing the mutation, which accepts all the variables as named arguments.                                                                                                                           |
+| `executeMutation` | `(~myVar1, ~myVar2, ..., ()) => Js.Promise.t(Client.Types.operationResult)` | A function for imperatively executing the mutation, which accepts all the variables as named arguments.                                                                                                                           |
 
 #### Example
 
