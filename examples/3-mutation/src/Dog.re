@@ -79,10 +79,7 @@ let make =
   /* Example of using hooks where the variables are only known when the
      mutation runs. */
   let (_, executePatMutation) =
-    Hooks.useDynamicMutation(
-      ~query=Mutations.PatDog.query,
-      ~parse=Mutations.PatDog.parse,
-    );
+    Hooks.useDynamicMutation(Mutations.PatDog.definition);
 
   <div className=DogStyles.container>
     <img src=imageUrl alt=name className=DogStyles.image />
@@ -98,9 +95,7 @@ let make =
         emoji={j|✋|j}
         count={string_of_int(pats)}
         hex="db4d3f"
-        onClick={_ =>
-          executePatMutation(Mutations.PatDog.make(~key=id, ())) |> ignore
-        }
+        onClick={_ => executePatMutation(~key=id, ()) |> ignore}
       />
       <EmojiButton
         emoji={j|🍖|j}

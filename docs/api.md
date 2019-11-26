@@ -121,25 +121,24 @@ Check out `examples/3-mutation` to see an example of using the `useMutation` hoo
 
 ### `useDynamicMutation`
 
-`useDyanmicMutation` is quite similar to `useMutation`, except it is a hook reserved for when you want to **dynamically** pass in variables to the `executeMutation` function _at execution time_. In constrast, `useMutation` applies variables immediately when it is called _at render time_.
+`useDynamicMutation` is quite similar to `useMutation`, except it is a hook reserved for when you want to **dynamically** pass in variables to the `executeMutation` function _at execution time_. In constrast, `useMutation` applies variables immediately when it is called _at render time_.
 
-A good example of a case where `useDyanmicMutation` comes in handy is when you need to execute a mutation with variables retrieved from `useQuery` in the same component. With `useMutation`, you'd have to provide a "fallback" `variables` argument, then rely on `useQuery` running to populate the proper `variables` in `useMutation`. With `useDynamicMutation`, this becomes much simpler – see the Example section below.
+A good example of a case where `useDynamicMutation` comes in handy is when you need to execute a mutation with variables retrieved from `useQuery` in the same component. With `useMutation`, you'd have to provide a "fallback" `variables` argument, then rely on `useQuery` running to populate the proper `variables` in `useMutation`. With `useDynamicMutation`, this becomes much simpler – see the Example section below.
 
 #### Arguments
 
-| Argument | Type                     | Description                                                                                                                                                                                      |
-| -------- | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `query`  | `string`                 | The query string for your GraphQL mutation.                                                                                                                                                      |
-| `parse`  | `Js.Json.t => 'response` | A function describing how to parse the JSON returned by your GraphQL API. If using `graphql_ppx_re` or `graphql_ppx` this is provided by accessing the `parse` function on your mutation module. |
+| Argument     | Type                                                            | Description                                                                                                                                                                                      |
+| ------------ | --------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------|
+| `definition` | `(Js.Json.t => 'response, string, UrqlTypes.graphqlDefinition)` | The definition of your Graphql mutation. If using graphql_ppx_re, this is `MyMutation.definition`. |
 
 ### Return Type
 
-`useDynamicMutation` returns nearly the same tuple as `useMutation`, containing the result of executing your GraphQL mutation as a record, `result`, and a function for executing the mutation imperatively, `executeMutation`. Unlike `useMutation`, the `executeMutation` function returned by `useDynamicMutation` accepts an argument for `variables` of type `Js.Json.t`.
+`useDynamicMutation` returns nearly the same tuple as `useMutation`, containing the result of executing your GraphQL mutation as a record, `result`, and a function for executing the mutation imperatively, `executeMutation`. Unlike `useMutation`, the `executeMutation` function returned by `useDynamicMutation` accepts all your variables as named arguments.
 
-| Return Value      | Type                                                                       | Description                                                                                                                                                                                                                       |
-| ----------------- | -------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `result`          | `UrqlTypes.hookResponse('response)`                                        | A record containing fields for `fetching`, `data`, `error`, and `response`. `response` is a variant containing constructors for `Data`, `Error`, `Fetching` and `NotFound`. Useful for pattern matching to render conditional UI. |
-| `executeMutation` | `{.. variables: Js.Json.t } => Js.Promise.t(Client.Types.operationResult)` | A function for imperatively executing the mutation, which accepts a `variables` argument.                                                                                                                                         |
+| Return Value      | Type                                                                   | Description                                                                                                                                                                                                                       |
+| ----------------- | ---------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `result`          | `UrqlTypes.hookResponse('response)`                                    | A record containing fields for `fetching`, `data`, `error`, and `response`. `response` is a variant containing constructors for `Data`, `Error`, `Fetching` and `NotFound`. Useful for pattern matching to render conditional UI. |
+| `executeMutation` | `(~myVar1, ~myVar2, ..., ()) => Js.Promise.t(Client.Types.operationResult)` | A function for imperatively executing the mutation, which accepts all the variables as named arguments.                                                                                                                           |
 
 #### Example
 

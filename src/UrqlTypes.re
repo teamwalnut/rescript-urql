@@ -48,3 +48,12 @@ type jsResponse('response) = {
   [@bs.optional] [@bs.as "error"]
   jsError: UrqlCombinedError.combinedErrorJs,
 };
+
+type graphqlDefinition('parseResult, 'composeReturnType, 'hookReturnType) = (
+  // `parse`
+  Js.Json.t => 'parseResult,
+  // `query`
+  string,
+  // `composeVariables`
+  (Js.Json.t => 'composeReturnType) => 'hookReturnType,
+);
