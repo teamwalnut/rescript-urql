@@ -25,10 +25,10 @@
     lodash "^4.17.11"
     to-fast-properties "^2.0.0"
 
-"@baransu/graphql_ppx_re@^0.3.2":
-  version "0.3.2"
-  resolved "https://registry.yarnpkg.com/@baransu/graphql_ppx_re/-/graphql_ppx_re-0.3.2.tgz#6876609be84853b1da6184b7868731066a892851"
-  integrity sha512-DseaS4enJpd43MyTEQZagbEktCzE0wpI96QSxOYR9AHpkgLNrSaM92yi8FBV8Q4sYmFX9191Bdjp+30Y0KWXwQ==
+"@baransu/graphql_ppx_re@^0.4.0":
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/@baransu/graphql_ppx_re/-/graphql_ppx_re-0.4.0.tgz#24f01e19d030768bba85a8676c70679c8fb63725"
+  integrity sha512-vCWaBTbLRHDRvl72e80UH1Xo6Rp7JaBJgBgt24jBX1zXPdpvELObwxapmaSdPHK+wI31X0fRJu9z6yD7IAlBDA==
 
 "@emotion/babel-utils@^0.6.4":
   version "0.6.10"
