@@ -127,18 +127,18 @@ A good example of a case where `useDynamicMutation` comes in handy is when you n
 
 #### Arguments
 
-| Argument     | Type                                                            | Description                                                                                                                                                                                      |
-| ------------ | --------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------|
-| `definition` | `(Js.Json.t => 'response, string, UrqlTypes.graphqlDefinition)` | The definition of your Graphql mutation. If using graphql_ppx_re, this is `MyMutation.definition`. |
+| Argument     | Type                                                            | Description                                                                                          |
+| ------------ | --------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `definition` | `(Js.Json.t => 'response, string, UrqlTypes.graphqlDefinition)` | The definition of your Graphql mutation. If using `graphql_ppx_re`, this is `MyMutation.definition`. |
 
 ### Return Type
 
 `useDynamicMutation` returns nearly the same tuple as `useMutation`, containing the result of executing your GraphQL mutation as a record, `result`, and a function for executing the mutation imperatively, `executeMutation`. Unlike `useMutation`, the `executeMutation` function returned by `useDynamicMutation` accepts all your variables as named arguments.
 
-| Return Value      | Type                                                                   | Description                                                                                                                                                                                                                       |
-| ----------------- | ---------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `result`          | `UrqlTypes.hookResponse('response)`                                    | A record containing fields for `fetching`, `data`, `error`, and `response`. `response` is a variant containing constructors for `Data`, `Error`, `Fetching` and `NotFound`. Useful for pattern matching to render conditional UI. |
-| `executeMutation` | `(~myVar1, ~myVar2, ..., ()) => Js.Promise.t(Client.Types.operationResult)` | A function for imperatively executing the mutation, which accepts all the variables as named arguments.                                                                                                                           |
+| Return Value      | Type                                                                        | Description                                                                                                                                                                                                                       |
+| ----------------- | --------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `result`          | `UrqlTypes.hookResponse('response)`                                         | A record containing fields for `fetching`, `data`, `error`, and `response`. `response` is a variant containing constructors for `Data`, `Error`, `Fetching` and `NotFound`. Useful for pattern matching to render conditional UI. |
+| `executeMutation` | `(~myVar1, ~myVar2, ..., ()) => Js.Promise.t(Client.Types.operationResult)` | A function for imperatively executing the mutation, which accepts all the variables of your mutation as named arguments.                                                                                                          |
 
 #### Example
 
@@ -169,7 +169,7 @@ module LikeDog = [%graphql
 [@react.component]
 let make = () => {
   let ({ response }, _) = useQuery(~request=GetAllDogs.make(), ());
-  let (_, executeMutation) = useMutation(~query=LikeDog.query, ~parse=LikeDog.parse);
+  let (_, executeMutation) = useDynamicMutation(LikeDog.definition);
 
   switch (response) {
     | Data(d) => {

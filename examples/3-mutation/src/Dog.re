@@ -1,27 +1,26 @@
 open ReasonUrql;
 
-module Mutations = {
-  module LikeDog = [%graphql
-    {|
+module LikeDog = [%graphql
+  {|
     mutation likeDog($key: ID!) {
       likeDog(key: $key) {
         likes
       }
     }
   |}
-  ];
+];
 
-  module PatDog = [%graphql
-    {|
+module PatDog = [%graphql
+  {|
     mutation patDog($key: ID!) {
       patDog(key: $key) {
         pats
       }
     }
   |}
-  ];
+];
 
-  let treatDog = {|
+let treatDog = {|
     mutation treatDog($key: ID!) {
       treatDog(key: $key) {
         treats
@@ -29,16 +28,15 @@ module Mutations = {
     }
   |};
 
-  module BellyscratchDog = [%graphql
-    {|
+module BellyscratchDog = [%graphql
+  {|
     mutation bellyscratchDog($key: ID!) {
       bellyscratchDog(key: $key) {
         bellyscratches
       }
     }
   |}
-  ];
-};
+];
 
 [@react.component]
 let make =
@@ -64,22 +62,17 @@ let make =
 
   // Example of using hooks with graphql_ppx_re (or graphql_ppx).
   let (_, executeLikeMutation) =
-    Hooks.useMutation(~request=Mutations.LikeDog.make(~key=id, ()));
+    Hooks.useMutation(~request=LikeDog.make(~key=id, ()));
 
   // Example of using hooks without graphql_ppx_re (or graphql_ppx).
   let (_, executeTreatMutation) =
     Hooks.useMutation(
-      ~request={
-        "query": Mutations.treatDog,
-        "variables": payload,
-        "parse": x => x,
-      },
+      ~request={"query": treatDog, "variables": payload, "parse": x => x},
     );
 
   /* Example of using hooks where the variables are only known when the
      mutation runs. */
-  let (_, executePatMutation) =
-    Hooks.useDynamicMutation(Mutations.PatDog.definition);
+  let (_, executePatMutation) = Hooks.useDynamicMutation(PatDog.definition);
 
   <div className=DogStyles.container>
     <img src=imageUrl alt=name className=DogStyles.image />
@@ -104,7 +97,7 @@ let make =
         onClick={_ => executeTreatMutation() |> ignore}
       />
       // Example of using the Mutation component.
-      <Mutation request={Mutations.BellyscratchDog.make(~key=id, ())}>
+      <Mutation request={BellyscratchDog.make(~key=id, ())}>
         ...{({executeMutation}) =>
           <EmojiButton
             emoji={j|🐾|j}

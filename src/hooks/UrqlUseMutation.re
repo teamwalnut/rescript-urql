@@ -73,9 +73,9 @@ let useDynamicMutation = definition => {
     );
 
   let executeMutation =
-    React.useMemo1(
+    React.useMemo2(
       () => composeVariables(request => executeMutationJs(Some(request))),
-      [|executeMutationJs|],
+      (executeMutationJs, composeVariables),
     );
 
   (response, executeMutation);

@@ -7,8 +7,8 @@ let useMutation:
 
 let useDynamicMutation:
   UrqlTypes.graphqlDefinition(
-    'parsedResponse,
+    'parseResult,
     Js.Promise.t(UrqlClient.ClientTypes.operationResult),
-    'executeMutationFunction,
+    'executeMutation,
   ) =>
-  (UrqlTypes.hookResponse('parsedResponse), 'executeMutationFunction);
+  (UrqlTypes.hookResponse('parseResult), 'executeMutation);
