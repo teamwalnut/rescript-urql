@@ -13,7 +13,7 @@ Reason bindings for Formidable's Universal React Query Library, [`urql`](https:/
 - ⚛️ A fully featured GraphQL client for ReasonReact.
 - ✅ Compile time type and schema validation.
 - ⚙️ Customizable behavior via `exchanges`.
-- 🎣 Support for `useQuery`, `useMutation`, and `useSubscription` hooks!
+- 🎣 Support for `useQuery`, `useMutation`, `useDynamicMutation`, and `useSubscription` hooks!
 
 `reason-urql` is a GraphQL client for ReasonReact, allowing you to hook up your components to queries, mutations, and subscriptions. It provides bindings to `urql` that allow you to use the API in Reason, with the benefits of a sound type system, blazing fast compilation, and opportunities for guided customization.
 
@@ -32,13 +32,10 @@ yarn add reason-urql bs-fetch
 
 #### 2. Add `graphql_ppx_re` or `graphql_ppx`.
 
-To get the most out of compile time type checks for your GraphQL queries, mutations, and subscriptions, we recommend using one of the PPX rewriters available for Reason / OCaml. Currently, there are two options in the community – [`graphql_ppx_re`](https://github.com/baransu/graphql_ppx_re), which is under active maintenance, and [`graphql_ppx`](https://github.com/mhallin/graphql_ppx), which is no longer actively maintained. If using `bs-platform@6.x.x`, you'll have to use `graphql_ppx_re`.
+To get the most out of compile time type checks for your GraphQL queries, mutations, and subscriptions, we recommend using one of the PPX rewriters available for Reason / OCaml. Currently, there are two options in the community – [`graphql_ppx_re`](https://github.com/baransu/graphql_ppx_re), which is under active maintenance, and [`graphql_ppx`](https://github.com/mhallin/graphql_ppx), which is no longer actively maintained. We strongly encourage use of `graphql_ppx_re`, as `useDynamicMutation` makes direct use of some of its newer internals. If using `bs-platform@6.x.x`, you'll _have_ to use `graphql_ppx_re`.
 
 ```sh
 yarn add @baransu/graphql_ppx_re --dev
-
-# or
-yarn add graphql_ppx --dev
 ```
 
 #### 3. Update `bsconfig.json`.
@@ -48,13 +45,11 @@ Add `reason-urql` to your `bs-dependencies` and `graphql_ppx_re` or `graphql_ppx
 ```json
 {
   "bs-dependencies": ["reason-urql"],
-  "ppx-flags": ["@baransu/graphql_ppx_re/ppx"],
-  // or
-  "ppx-flags": ["graphql_ppx"]
+  "ppx-flags": ["@baransu/graphql_ppx_re/ppx"]
 }
 ```
 
-If you're using `bs-platform` 6.x, you'll need to use `@baransu/graphql_ppx_re/ppx6`:
+If you're using `bs-platform@6.x.x`, you'll need to use `@baransu/graphql_ppx_re/ppx6`:
 
 ```json
 {
@@ -127,7 +122,7 @@ Since we are `link`ing the examples' dependency on `reason-urql` to the `src` di
 
 ## Getting Involved
 
-This project is currently under active development. Please help out by [opening an issue](https://github.com/FormidableLabs/reason-urql/issues) or [filing a PR](https://github.com/FormidableLabs/reason-urql/pulls).
+Please help out by [opening an issue](https://github.com/FormidableLabs/reason-urql/issues) or [filing a PR](https://github.com/FormidableLabs/reason-urql/pulls).
 
 ## Contributors
 
