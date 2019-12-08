@@ -5,9 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## [1.4.0] - 2019-12-08
 
-- Add `useDyanmicMutation` hook to support applying variables when calling `executeMutation`. PR by @Schmavery [here](https://github.com/FormidableLabs/reason-urql/pull/130).
+This release adds support for a `useDynamicMutation` hook, which allows users to pass variables to the `executeMutation` function returned by the hook _at execution time_, as opposed to at render time as `useMutation` does.
+
+### Added
+
+- Add `useDyanmicMutation` hook to support applying variables when calling `executeMutation`. PR by @Schmavery and @sgrove [here](https://github.com/FormidableLabs/reason-urql/pull/130).
+
+### Fixed
+
+- Restore CI by migrating off of GitHub Actions to Travis CI. PR by @parkerziegler [here](https://github.com/FormidableLabs/reason-urql/pull/131).
 
 ## [1.3.0] - 2019-11-12
 
