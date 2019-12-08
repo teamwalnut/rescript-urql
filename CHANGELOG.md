@@ -17,6 +17,10 @@ This release adds support for a `useDynamicMutation` hook, which allows users to
 
 - Restore CI by migrating off of GitHub Actions to Travis CI. PR by @parkerziegler [here](https://github.com/FormidableLabs/reason-urql/pull/131).
 
+### Diff
+
+https://github.com/FormidableLabs/reason-urql/compare/v1.3.0...v1.4.0
+
 ## [1.3.0] - 2019-11-12
 
 This release migrates us to `bs-platform@6.2.1` and ensures `reason-urql` is compatible for codebases using latest `bs-platform`.
