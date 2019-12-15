@@ -4,7 +4,7 @@ type useQueryArgs = {
   query: string,
   variables: Js.Json.t,
   [@bs.optional]
-  requestPolicy: UrqlTypes.requestPolicy,
+  requestPolicy: string,
   [@bs.optional]
   pause: bool,
 };
@@ -78,7 +78,8 @@ let useQuery = (~request, ~requestPolicy=?, ~pause=?, ()) => {
     useQueryArgs(
       ~query=request##query,
       ~variables=request##variables,
-      ~requestPolicy?,
+      ~requestPolicy=?
+        requestPolicy->Belt.Option.map(UrqlTypes.requestPolicyToJs),
       ~pause?,
       (),
     );
