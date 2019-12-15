@@ -130,8 +130,19 @@
         "ideas",
         "doc"
       ]
+    },
+    {
+      "login": "baransu",
+      "name": "Tomasz Cichocinski",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/9558691?v=4",
+      "profile": "https://twitter.com/_cichocinski",
+      "contributions": [
+        "code",
+        "bug"
+      ]
     }
   ],
   "contributorsPerLine": 4,
-  "badgeTemplate": "[![All Contributors](https://img.shields.io/badge/all_contributors-<%= contributors.length %>-orange.svg)](#contributors)"
+  "badgeTemplate": "[![All Contributors](https://img.shields.io/badge/all_contributors-<%= contributors.length %>-orange.svg)](#contributors)",
+  "skipCi": true
 }
