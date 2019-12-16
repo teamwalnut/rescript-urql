@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.1] - 2019-12-16
+
+This release fixes a small bug with `requestPolicy` in `useQuery`. We weren't properly converting the polymorphic variants passed by a user to their JS string representation, which led to improper request policies being used by the `urql` Client.
+
+### Fixed
+
+- Properly unwrap user-supplied `requestPolicy` to the matching JS string representation. PR by @baransu [here](https://github.com/FormidableLabs/reason-urql/pull/138).
+
+### Diff
+
+https://github.com/FormidableLabs/reason-urql/compare/v1.4.0...v1.4.1
+
 ## [1.4.0] - 2019-12-08
 
 This release adds support for a `useDynamicMutation` hook, which allows users to pass variables to the `executeMutation` function returned by the hook _at execution time_, as opposed to at render time as `useMutation` does.
