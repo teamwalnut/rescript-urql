@@ -2,8 +2,10 @@ let useMutation:
   (~request: UrqlTypes.request('response)) =>
   (
     UrqlTypes.hookResponse('response, 'extensions),
-    option(UrqlClient.ClientTypes.partialOperationContext) =>
-    Js.Promise.t(UrqlClient.ClientTypes.operationResult),
+    React.callback(
+      option(UrqlClient.ClientTypes.partialOperationContext),
+      Js.Promise.t(UrqlClient.ClientTypes.operationResult),
+    ),
   );
 
 let useDynamicMutation:
