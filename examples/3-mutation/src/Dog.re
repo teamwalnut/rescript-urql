@@ -82,19 +82,19 @@ let make =
         emoji={j|👍|j}
         count={string_of_int(likes)}
         hex="48a9dc"
-        onClick={_ => executeLikeMutation() |> ignore}
+        onClick={_ => executeLikeMutation(None) |> ignore}
       />
       <EmojiButton
         emoji={j|✋|j}
         count={string_of_int(pats)}
         hex="db4d3f"
-        onClick={_ => executePatMutation(~key=id, ()) |> ignore}
+        onClick={_ => executePatMutation(~key=id, None, ()) |> ignore}
       />
       <EmojiButton
         emoji={j|🍖|j}
         count={string_of_int(treats)}
         hex="7b16ff"
-        onClick={_ => executeTreatMutation() |> ignore}
+        onClick={_ => executeTreatMutation(None) |> ignore}
       />
       // Example of using the Mutation component.
       <Mutation request={BellyscratchDog.make(~key=id, ())}>
@@ -103,7 +103,7 @@ let make =
             emoji={j|🐾|j}
             count={string_of_int(bellyscratches)}
             hex="1bda2a"
-            onClick={_ => executeMutation() |> ignore}
+            onClick={_ => executeMutation(None) |> ignore}
           />
         }
       </Mutation>

@@ -12,4 +12,10 @@ let useDynamicMutation:
     Js.Promise.t(UrqlClient.ClientTypes.operationResult),
     'executeMutation,
   ) =>
-  (UrqlTypes.hookResponse('parseResult), 'executeMutation);
+  (
+    UrqlTypes.hookResponse('parseResult, 'extensions),
+    React.callback(
+      option(UrqlClient.ClientTypes.partialOperationContext),
+      'executeMutation,
+    ),
+  );

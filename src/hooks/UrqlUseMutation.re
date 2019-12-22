@@ -81,8 +81,11 @@ let useDynamicMutation = definition => {
     );
 
   let executeMutation =
-    React.useMemo2(
-      () => composeVariables(request => executeMutationJs(Some(request))),
+    React.useCallback2(
+      context =>
+        composeVariables(request =>
+          executeMutationJs(Some(request), context)
+        ),
       (executeMutationJs, composeVariables),
     );
 
