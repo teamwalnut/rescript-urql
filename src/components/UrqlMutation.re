@@ -17,7 +17,7 @@ type mutationRenderProps('response, 'extensions) = {
   data: option('response),
   error: option(UrqlCombinedError.t),
   executeMutation:
-    option(UrqlClient.ClientTypes.partialOperationContext) =>
+    (~context: UrqlClient.ClientTypes.partialOperationContext=?, unit) =>
     Js.Promise.t(UrqlClient.ClientTypes.operationResult),
   response: UrqlTypes.response('response),
   extensions: option('extensions),
@@ -39,8 +39,7 @@ let urqlMutationResponseToReason =
       parse: Js.Json.t => 'response,
       variables: Js.Json.t,
       result: mutationRenderPropsJs('extensions),
-    )
-    : mutationRenderProps('response, 'extensions) => {
+    ) => {
   let data = result->dataGet->Js.Nullable.toOption->Belt.Option.map(parse);
   let error =
     result
@@ -48,7 +47,7 @@ let urqlMutationResponseToReason =
     ->Js.Nullable.toOption
     ->Belt.Option.map(UrqlCombinedError.combinedErrorToRecord);
   let fetching = result->fetchingGet;
-  let executeMutation = context =>
+  let executeMutation = (~context=?, ()) =>
     result->executeMutationGet(Some(variables), context);
   let extensions = result->extensionsGet->Js.Nullable.toOption;
 

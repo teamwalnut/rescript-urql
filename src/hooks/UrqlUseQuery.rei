@@ -1,5 +1,5 @@
 type executeQuery =
-  option(UrqlClient.ClientTypes.partialOperationContext) => unit;
+  (~context: UrqlClient.ClientTypes.partialOperationContext=?, unit) => unit;
 
 type useQueryResponse('response, 'extensions) = (
   UrqlTypes.hookResponse('response, 'extensions),

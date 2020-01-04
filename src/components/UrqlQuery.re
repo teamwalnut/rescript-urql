@@ -13,7 +13,7 @@ type queryRenderProps('response, 'extensions) = {
   data: option('response),
   error: option(UrqlCombinedError.t),
   executeQuery:
-    option(UrqlClient.ClientTypes.partialOperationContext) => unit,
+    (~context: UrqlClient.ClientTypes.partialOperationContext=?, unit) => unit,
   response: UrqlTypes.response('response),
   extensions: option('extensions),
 };
@@ -43,7 +43,7 @@ let urqlQueryResponseToReason =
     ->Js.Nullable.toOption
     ->Belt.Option.map(UrqlCombinedError.combinedErrorToRecord);
   let fetching = result->fetchingGet;
-  let executeQuery = result->executeQueryGet;
+  let executeQuery = (~context=?, ()) => result->executeQueryGet(context);
   let extensions = result->extensionsGet->Js.Nullable.toOption;
 
   let response =

@@ -103,7 +103,7 @@ let make =
             emoji={j|🐾|j}
             count={string_of_int(bellyscratches)}
             hex="1bda2a"
-            onClick={_ => executeMutation(None) |> ignore}
+            onClick={_ => executeMutation() |> ignore}
           />
         }
       </Mutation>

@@ -17,7 +17,7 @@ type useQueryArgs = {
  * operation context for modifying query execution.
  */
 type executeQuery =
-  option(UrqlClient.ClientTypes.partialOperationContext) => unit;
+  (~context: UrqlClient.ClientTypes.partialOperationContext=?, unit) => unit;
 
 /* The response to useQuery on the JavaScript side. */
 type useQueryResponseJs('extensions) = (
@@ -81,7 +81,7 @@ let urqlResponseToReason =
  * Can be one off `CacheFirst, `CacheOnly, `NetworkOnly, and `CacheAndNetwork.
  *
  * pause - prevent eager execution of the query.
- * The query will only execute when puse becomes false.
+ * The query will only execute when pause becomes false.
  */
 let useQuery = (~request, ~requestPolicy=?, ~pause=?, ~context=?, ()) => {
   let args =
