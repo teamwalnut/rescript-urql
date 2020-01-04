@@ -62,9 +62,10 @@ let useMutation = (~request) => {
     );
 
   let executeMutation =
-    React.useCallback1(
-      context => executeMutationJs(Some(request##variables), context),
-      [|request##variables|],
+    React.useMemo2(
+      ((), ~context=?, ()) =>
+        executeMutationJs(Some(request##variables), context),
+      (executeMutationJs, request##variables),
     );
 
   (response, executeMutation);
@@ -75,14 +76,14 @@ let useDynamicMutation = definition => {
   let (responseJs, executeMutationJs) = useMutationJs(query);
 
   let response =
-    React.useMemo1(
+    React.useMemo2(
       () => responseJs |> urqlResponseToReason(parse),
-      [|responseJs|],
+      (parse, responseJs),
     );
 
   let executeMutation =
-    React.useCallback2(
-      context =>
+    React.useMemo2(
+      ((), ~context=None) =>
         composeVariables(request =>
           executeMutationJs(Some(request), context)
         ),

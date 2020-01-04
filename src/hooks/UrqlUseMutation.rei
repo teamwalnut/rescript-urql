@@ -2,10 +2,8 @@ let useMutation:
   (~request: UrqlTypes.request('response)) =>
   (
     UrqlTypes.hookResponse('response, 'extensions),
-    React.callback(
-      option(UrqlClient.ClientTypes.partialOperationContext),
-      Js.Promise.t(UrqlClient.ClientTypes.operationResult),
-    ),
+    (~context: UrqlClient.ClientTypes.partialOperationContext=?, unit) =>
+    Js.Promise.t(UrqlClient.ClientTypes.operationResult),
   );
 
 let useDynamicMutation:
@@ -16,8 +14,6 @@ let useDynamicMutation:
   ) =>
   (
     UrqlTypes.hookResponse('parseResult, 'extensions),
-    React.callback(
-      option(UrqlClient.ClientTypes.partialOperationContext),
-      'executeMutation,
-    ),
+    (~context: option(UrqlClient.ClientTypes.partialOperationContext)=?) =>
+    'executeMutation,
   );
