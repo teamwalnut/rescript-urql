@@ -277,6 +277,7 @@ let make =
       ~fetch=unwrapFetchImpl(fetch),
       (),
     );
+
   client(options);
 };
 
