@@ -10,6 +10,7 @@ Client {
   "executeMutation": [Function],
   "executeQuery": [Function],
   "executeSubscription": [Function],
+  "fetch": undefined,
   "fetchOptions": undefined,
   "operations$": [Function],
   "reexecuteOperation": [Function],
@@ -29,6 +30,7 @@ Client {
   "executeMutation": [Function],
   "executeQuery": [Function],
   "executeSubscription": [Function],
+  "fetch": undefined,
   "fetchOptions": [Function],
   "operations$": [Function],
   "reexecuteOperation": [Function],
@@ -48,6 +50,7 @@ Client {
   "executeMutation": [Function],
   "executeQuery": [Function],
   "executeSubscription": [Function],
+  "fetch": undefined,
   "fetchOptions": Object {
     "headers": Object {
       "Content-Type": "application/json",
@@ -74,6 +77,7 @@ Client {
   "executeMutation": [Function],
   "executeQuery": [Function],
   "executeSubscription": [Function],
+  "fetch": undefined,
   "fetchOptions": undefined,
   "operations$": [Function],
   "reexecuteOperation": [Function],
@@ -93,6 +97,7 @@ Client {
   "executeMutation": [Function],
   "executeQuery": [Function],
   "executeSubscription": [Function],
+  "fetch": undefined,
   "fetchOptions": undefined,
   "operations$": [Function],
   "reexecuteOperation": [Function],
@@ -103,3 +108,43 @@ Client {
 `;
 
 exports[`UrqlClient ssrExchange should exist and be callable 1`] = `[Function]`;
+
+exports[`UrqlClient with custom fetch implementation should accept a custom fetch implementation 1`] = `
+Client {
+  "activeOperations": Object {},
+  "createOperationContext": [Function],
+  "createRequestOperation": [Function],
+  "dispatchOperation": [Function],
+  "exchange": [Function],
+  "executeMutation": [Function],
+  "executeQuery": [Function],
+  "executeSubscription": [Function],
+  "fetch": [Function],
+  "fetchOptions": undefined,
+  "operations$": [Function],
+  "reexecuteOperation": [Function],
+  "results$": [Function],
+  "suspense": false,
+  "url": "http://localhost:3000",
+}
+`;
+
+exports[`UrqlClient with custom fetch implementation should work with a fetcher using Fetch.request 1`] = `
+Client {
+  "activeOperations": Object {},
+  "createOperationContext": [Function],
+  "createRequestOperation": [Function],
+  "dispatchOperation": [Function],
+  "exchange": [Function],
+  "executeMutation": [Function],
+  "executeQuery": [Function],
+  "executeSubscription": [Function],
+  "fetch": [Function],
+  "fetchOptions": undefined,
+  "operations$": [Function],
+  "reexecuteOperation": [Function],
+  "results$": [Function],
+  "suspense": false,
+  "url": "http://localhost:3000",
+}
+`;

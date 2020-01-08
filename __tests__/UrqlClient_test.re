@@ -186,4 +186,35 @@ describe("UrqlClient", () => {
       },
     );
   });
+
+  describe("with custom fetch implementation", () => {
+    it("should accept a custom fetch implementation", () => {
+      let fetcher = url => Fetch.fetch(url);
+      let client =
+        Client.make(
+          ~url="http://localhost:3000",
+          ~fetch=Client.FetchWithUrl(fetcher),
+          (),
+        );
+      Expect.(expect(client) |> toMatchSnapshot);
+    });
+
+    it("should work with a fetcher using Fetch.request", () => {
+      let fetcher = request => {
+        switch (Fetch.Request.type_(request)) {
+        | Audio =>
+          Fetch.fetchWithRequest(Fetch.Request.make("/audio/graphql"))
+        | _ => Fetch.fetchWithRequest(Fetch.Request.make("/graphql"))
+        };
+      };
+
+      let client =
+        Client.make(
+          ~url="http://localhost:3000",
+          ~fetch=Client.FetchWithRequest(fetcher),
+          (),
+        );
+      Expect.(expect(client) |> toMatchSnapshot);
+    });
+  });
 });

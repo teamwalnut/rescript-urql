@@ -5,6 +5,8 @@ type handler('acc, 'resp, 'ret) =
 let useSubscription:
   (
     ~request: UrqlTypes.request('resp),
-    ~handler: handler('acc, 'resp, 'ret)
+    ~handler: handler('acc, 'resp, 'ret),
+    ~context: UrqlClient.ClientTypes.partialOperationContext=?,
+    unit
   ) =>
-  UrqlTypes.hookResponse('ret);
+  UrqlTypes.hookResponse('ret, 'extensions);
