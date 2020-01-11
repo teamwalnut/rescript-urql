@@ -59,7 +59,16 @@ let make = () => {
     );
 
   let executeQuery = () =>
-    executeQuery(~client, ~request=queryRequest, ())
+    executeQuery(
+      ~client,
+      ~request=queryRequest,
+      ~opts=
+        Client.ClientTypes.partialOperationContext(
+          ~partialOpRequestPolicy=`CacheAndNetwork,
+          (),
+        ),
+      (),
+    )
     |> Wonka.subscribe((. data) =>
          switch (data.response) {
          | Data(d) =>

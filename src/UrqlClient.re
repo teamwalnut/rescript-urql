@@ -68,9 +68,9 @@ module ClientTypes = {
     meta: operationDebugMeta,
   };
 
-  /* A partial operation context, which can be passed as the second optional argument
-     to executeQuery, executeMutation, and executeSubscription. Simply makes all
-     properties on operationContext optional */
+  /* A partial operation context, which can be passed as the
+     second optional argument to executeQuery and executeMutation.
+     Simply makes all properties on operationContext optional. */
   [@bs.deriving abstract]
   type partialOperationContext = {
     [@bs.optional] [@bs.as "fetchOptions"]
@@ -81,6 +81,18 @@ module ClientTypes = {
     partialOpUrl: string,
     [@bs.optional] [@bs.as "meta"]
     partialOpDebugMeta: operationDebugMeta,
+  };
+
+  [@bs.deriving abstract]
+  type partialOperationContextJs = {
+    [@bs.optional] [@bs.as "fetchOptions"]
+    partialOpFetchOptionsJs: Fetch.requestInit,
+    [@bs.optional] [@bs.as "requestPolicy"]
+    partialOpRequestPolicyJs: string,
+    [@bs.optional] [@bs.as "url"]
+    partialOpUrlJs: string,
+    [@bs.optional] [@bs.as "meta"]
+    partialOpDebugMetaJs: operationDebugMeta,
   };
 
   /* The active GraphQL operation. */
@@ -303,6 +315,30 @@ let urqlClientResponseToReason =
   {data, error, response};
 };
 
+/* A function to convert a partialOperationContext to a partialOperationContextJs. */
+let partialOpCtxToPartialOpCtxJs = opts =>
+  switch (opts) {
+  | Some(o) =>
+    let url = o->ClientTypes.partialOpUrlGet;
+    let fetchOptions = o->ClientTypes.partialOpFetchOptionsGet;
+    let requestPolicy =
+      o
+      ->ClientTypes.partialOpRequestPolicyGet
+      ->Belt.Option.map(UrqlTypes.requestPolicyToJs);
+    let debugMeta = o->ClientTypes.partialOpDebugMetaGet;
+
+    Some(
+      ClientTypes.partialOperationContextJs(
+        ~partialOpUrlJs=?url,
+        ~partialOpFetchOptionsJs=?fetchOptions,
+        ~partialOpRequestPolicyJs=?requestPolicy,
+        ~partialOpDebugMetaJs=?debugMeta,
+        (),
+      ),
+    );
+  | None => None
+  };
+
 /* Execution methods on the client. These allow you to imperatively execute GraphQL
    operations outside of components or hooks. */
 [@bs.send]
@@ -310,7 +346,7 @@ external executeQueryJs:
   (
     ~client: t,
     ~query: UrqlTypes.graphqlRequest,
-    ~opts: ClientTypes.partialOperationContext=?,
+    ~opts: ClientTypes.partialOperationContextJs=?,
     unit
   ) =>
   Wonka.Types.sourceT(ClientTypes.operationResult) =
@@ -331,8 +367,9 @@ let executeQuery =
       (),
     );
   let parse = request##parse;
+  let optsJs = partialOpCtxToPartialOpCtxJs(opts);
 
-  executeQueryJs(~client, ~query=req, ~opts?, ())
+  executeQueryJs(~client, ~query=req, ~opts=?optsJs, ())
   |> Wonka.map((. result) => urqlClientResponseToReason(~parse, ~result));
 };
 
@@ -341,7 +378,7 @@ external executeMutationJs:
   (
     ~client: t,
     ~mutation: UrqlTypes.graphqlRequest,
-    ~opts: ClientTypes.partialOperationContext=?,
+    ~opts: ClientTypes.partialOperationContextJs=?,
     unit
   ) =>
   Wonka.Types.sourceT(ClientTypes.operationResult) =
@@ -362,8 +399,9 @@ let executeMutation =
       (),
     );
   let parse = request##parse;
+  let optsJs = partialOpCtxToPartialOpCtxJs(opts);
 
-  executeMutationJs(~client, ~mutation=req, ~opts?, ())
+  executeMutationJs(~client, ~mutation=req, ~opts=?optsJs, ())
   |> Wonka.map((. result) => urqlClientResponseToReason(~parse, ~result));
 };
 
@@ -372,7 +410,7 @@ external executeSubscriptionJs:
   (
     ~client: t,
     ~subscription: UrqlTypes.graphqlRequest,
-    ~opts: ClientTypes.partialOperationContext=?,
+    ~opts: ClientTypes.partialOperationContextJs=?,
     unit
   ) =>
   Wonka.Types.sourceT(ClientTypes.operationResult) =
@@ -393,8 +431,9 @@ let executeSubscription =
       (),
     );
   let parse = request##parse;
+  let optsJs = partialOpCtxToPartialOpCtxJs(opts);
 
-  executeSubscriptionJs(~client, ~subscription=req, ~opts?, ())
+  executeSubscriptionJs(~client, ~subscription=req, ~opts=?optsJs, ())
   |> Wonka.map((. result) => urqlClientResponseToReason(~parse, ~result));
 };
 
@@ -417,7 +456,7 @@ external createRequestOperationJs:
     ~client: t,
     ~operationType: string,
     ~request: UrqlTypes.graphqlRequest,
-    ~opts: ClientTypes.partialOperationContext=?,
+    ~opts: ClientTypes.partialOperationContextJs=?,
     unit
   ) =>
   ClientTypes.operation =
@@ -425,7 +464,14 @@ external createRequestOperationJs:
 
 let createRequestOperation = (~client, ~operationType, ~request, ~opts=?, ()) => {
   let op = ClientTypes.operationTypeToJs(operationType);
-  createRequestOperationJs(~client, ~operationType=op, ~request, ~opts?, ());
+  let optsJs = partialOpCtxToPartialOpCtxJs(opts);
+  createRequestOperationJs(
+    ~client,
+    ~operationType=op,
+    ~request,
+    ~opts=?optsJs,
+    (),
+  );
 };
 
 [@bs.send]
