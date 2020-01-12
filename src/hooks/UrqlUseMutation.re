@@ -5,7 +5,7 @@
 type executeMutationJs =
   (
     option(Js.Json.t),
-    option(UrqlClient.ClientTypes.partialOperationContext)
+    option(UrqlClient.ClientTypes.partialOperationContextJs)
   ) =>
   Js.Promise.t(UrqlClient.ClientTypes.operationResult);
 
@@ -63,8 +63,10 @@ let useMutation = (~request) => {
 
   let executeMutation =
     React.useMemo2(
-      ((), ~context=?, ()) =>
-        executeMutationJs(Some(request##variables), context),
+      ((), ~context=?, ()) => {
+        let ctxJs = UrqlClient.partialOpCtxToPartialOpCtxJs(context);
+        executeMutationJs(Some(request##variables), ctxJs);
+      },
       (executeMutationJs, request##variables),
     );
 
@@ -83,10 +85,10 @@ let useDynamicMutation = definition => {
 
   let executeMutation =
     React.useMemo2(
-      ((), ~context=None) =>
-        composeVariables(request =>
-          executeMutationJs(Some(request), context)
-        ),
+      ((), ~context=None) => {
+        let ctxJs = UrqlClient.partialOpCtxToPartialOpCtxJs(context);
+        composeVariables(request => executeMutationJs(Some(request), ctxJs));
+      },
       (executeMutationJs, composeVariables),
     );
 

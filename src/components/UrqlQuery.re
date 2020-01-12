@@ -4,7 +4,7 @@ type queryRenderPropsJs('extensions) = {
   data: Js.Nullable.t(Js.Json.t),
   error: Js.Nullable.t(UrqlCombinedError.combinedErrorJs),
   executeQuery:
-    option(UrqlClient.ClientTypes.partialOperationContext) => unit,
+    option(UrqlClient.ClientTypes.partialOperationContextJs) => unit,
   extensions: Js.Nullable.t('extensions),
 };
 
@@ -26,7 +26,7 @@ module QueryJs = {
       ~variables: Js.Json.t,
       ~requestPolicy: string,
       ~pause: bool=?,
-      ~context: UrqlClient.ClientTypes.partialOperationContext=?,
+      ~context: UrqlClient.ClientTypes.partialOperationContextJs=?,
       ~children: queryRenderPropsJs('extensions) => React.element
     ) =>
     React.element =
@@ -43,7 +43,8 @@ let urqlQueryResponseToReason =
     ->Js.Nullable.toOption
     ->Belt.Option.map(UrqlCombinedError.combinedErrorToRecord);
   let fetching = result->fetchingGet;
-  let executeQuery = (~context=?, ()) => result->executeQueryGet(context);
+  let executeQuery = (~context=?, ()) =>
+    result->executeQueryGet(context->UrqlClient.partialOpCtxToPartialOpCtxJs);
   let extensions = result->extensionsGet->Js.Nullable.toOption;
 
   let response =
@@ -74,7 +75,7 @@ let make =
     variables
     requestPolicy={UrqlTypes.requestPolicyToJs(requestPolicy)}
     ?pause
-    ?context>
+    context=?{UrqlClient.partialOpCtxToPartialOpCtxJs(context)}>
     {result => result |> urqlQueryResponseToReason(parse) |> children}
   </QueryJs>;
 };
