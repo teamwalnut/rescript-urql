@@ -14,6 +14,7 @@ Reason bindings for Formidable's Universal React Query Library, [`urql`](https:/
 - ✅ Compile time type and schema validation.
 - ⚙️ Customizable behavior via `exchanges`.
 - 🎣 Support for `useQuery`, `useMutation`, `useDynamicMutation`, and `useSubscription` hooks!
+- ⚡ Support for server-side rendering with Next.js.
 
 `reason-urql` is a GraphQL client for ReasonReact, allowing you to hook up your components to queries, mutations, and subscriptions. It provides bindings to `urql` that allow you to use the API in Reason, with the benefits of a sound type system, blazing fast compilation, and opportunities for guided customization.
 
@@ -157,6 +158,7 @@ This project follows the [all contributors spec](https://github.com/kentcdodds/a
 
 <!-- markdownlint-enable -->
 <!-- prettier-ignore-end -->
+
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 ## Maintenance Status
