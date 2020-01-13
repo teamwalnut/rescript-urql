@@ -8,7 +8,7 @@ type useQueryArgs = {
   [@bs.optional]
   pause: bool,
   [@bs.optional]
-  context: UrqlClient.ClientTypes.partialOperationContext,
+  context: UrqlClient.ClientTypes.partialOperationContextJs,
 };
 
 /**
@@ -16,13 +16,16 @@ type useQueryArgs = {
  * the query passed to useQuery. Accepts an optional partial
  * operation context for modifying query execution.
  */
+type executeQueryJs =
+  option(UrqlClient.ClientTypes.partialOperationContextJs) => unit;
+
 type executeQuery =
   (~context: UrqlClient.ClientTypes.partialOperationContext=?, unit) => unit;
 
 /* The response to useQuery on the JavaScript side. */
 type useQueryResponseJs('extensions) = (
   UrqlTypes.jsResponse(Js.Json.t, 'extensions),
-  executeQuery,
+  executeQueryJs,
 );
 
 /**
@@ -91,16 +94,25 @@ let useQuery = (~request, ~requestPolicy=?, ~pause=?, ~context=?, ()) => {
       ~requestPolicy=?
         requestPolicy->Belt.Option.map(UrqlTypes.requestPolicyToJs),
       ~pause?,
-      ~context?,
+      ~context=?UrqlClient.partialOpCtxToPartialOpCtxJs(context),
       (),
     );
 
-  let (responseJs, executeQuery) = useQueryJs(args);
+  let (responseJs, executeQueryJs) = useQueryJs(args);
 
   let response =
     React.useMemo2(
       () => responseJs |> urqlResponseToReason(request##parse),
       (responseJs, request##parse),
+    );
+
+  let executeQuery =
+    React.useMemo1(
+      ((), ~context=?, ()) => {
+        let ctxJs = UrqlClient.partialOpCtxToPartialOpCtxJs(context);
+        executeQueryJs(ctxJs);
+      },
+      [|executeQueryJs|],
     );
 
   (response, executeQuery);

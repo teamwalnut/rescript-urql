@@ -27,7 +27,12 @@ let flattenPokemon = pokemons =>
 
 ReactDOMRe.renderToElementWithId(
   <Provider value=client>
-    <Query request>
+    <Query
+      request
+      context={Client.ClientTypes.partialOperationContext(
+        ~partialOpRequestPolicy=`CacheFirst,
+        (),
+      )}>
       ...{({response}) =>
         switch (response) {
         | Data(data) =>
