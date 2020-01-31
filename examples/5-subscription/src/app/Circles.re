@@ -36,6 +36,7 @@ let make = () => {
     useSubscription(
       ~request=SubscribeRandomInt.make(),
       ~handler=Handler(handler),
+      ()
     );
 
   switch (response) {
