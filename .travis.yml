@@ -1,6 +1,12 @@
 notifications:
   email: false
 
+branches:
+  only:
+    - master
+    - develop
+    - /^v\d+\.\d+\.\d+/
+
 language: node_js
 
 node_js:
