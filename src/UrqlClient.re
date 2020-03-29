@@ -50,11 +50,7 @@ module ClientTypes = {
   [@bs.deriving abstract]
   type operationDebugMeta = {
     [@bs.optional]
-    source: string,
-    [@bs.optional]
     cacheOutcome,
-    [@bs.optional]
-    networkLatency: int,
   };
 
   /* The operation context object for a request. */
