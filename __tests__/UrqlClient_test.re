@@ -75,6 +75,18 @@ describe("UrqlClient", () => {
     });
   });
 
+  describe("Client with default requestPolicy", () =>
+    it("should accept a default requestPolicy", () => {
+      let clent =
+        Client.make(
+          ~url="https://localhost:3000",
+          ~requestPolicy=`CacheFirst,
+          (),
+        );
+      ();
+    })
+  );
+
   describe("Client with suspense flag", () =>
     it("should accept a suspense flag to enable experimental SSR mode", () => {
       let client =
