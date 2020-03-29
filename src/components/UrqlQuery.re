@@ -26,7 +26,7 @@ module QueryJs = {
       ~variables: Js.Json.t,
       ~requestPolicy: string,
       ~pause: bool=?,
-      ~pollInterval: int?
+      ~pollInterval: int=?,
       ~context: UrqlClient.ClientTypes.partialOperationContextJs=?,
       ~children: queryRenderPropsJs('extensions) => React.element
     ) =>
