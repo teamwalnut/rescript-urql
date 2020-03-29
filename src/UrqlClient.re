@@ -277,6 +277,7 @@ let make =
     (
       ~url,
       ~fetchOptions=?,
+      ~requestPolicy=`CacheFirst,
       ~exchanges=[|
                    UrqlExchanges.dedupExchange,
                    UrqlExchanges.cacheExchange,
@@ -293,6 +294,7 @@ let make =
       ~exchanges,
       ~suspense,
       ~fetch=unwrapFetchImpl(fetch),
+      ~requestPolicy=requestPolicy->UrqlTypes.requestPolicyToJs,
       (),
     );
 

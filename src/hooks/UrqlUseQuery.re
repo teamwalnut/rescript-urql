@@ -9,6 +9,8 @@ type useQueryArgs = {
   pause: bool,
   [@bs.optional]
   context: UrqlClient.ClientTypes.partialOperationContextJs,
+  [@bs.optional]
+  pollInterval: int,
 };
 
 /**
@@ -86,7 +88,7 @@ let urqlResponseToReason =
  * pause - prevent eager execution of the query.
  * The query will only execute when pause becomes false.
  */
-let useQuery = (~request, ~requestPolicy=?, ~pause=?, ~context=?, ()) => {
+let useQuery = (~request, ~requestPolicy=?, ~pause=?, ~pollInterval=?, ~context=?, ()) => {
   let args =
     useQueryArgs(
       ~query=request##query,
@@ -94,6 +96,7 @@ let useQuery = (~request, ~requestPolicy=?, ~pause=?, ~context=?, ()) => {
       ~requestPolicy=?
         requestPolicy->Belt.Option.map(UrqlTypes.requestPolicyToJs),
       ~pause?,
+      ~pollInterval?
       ~context=?UrqlClient.partialOpCtxToPartialOpCtxJs(context),
       (),
     );

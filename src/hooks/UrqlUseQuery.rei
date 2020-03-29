@@ -11,6 +11,7 @@ let useQuery:
     ~request: UrqlTypes.request('response),
     ~requestPolicy: UrqlTypes.requestPolicy=?,
     ~pause: bool=?,
+    ~pollInterval: int=?,
     ~context: UrqlClient.ClientTypes.partialOperationContext=?,
     unit
   ) =>
