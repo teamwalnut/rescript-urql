@@ -62,6 +62,8 @@ module ClientTypes = {
     url: string,
     [@bs.optional]
     meta: operationDebugMeta,
+    [@bs.optional]
+    pollInterval: int,
   };
 
   /* A partial operation context, which can be passed as the
@@ -79,7 +81,7 @@ module ClientTypes = {
     partialOpDebugMeta: operationDebugMeta,
     // TODO: how to add this to useQuery...
     [@bs.optional] [@bs.as "pollInterval"]
-    pollInterval: int,
+    partialOpPollInterval: int,
   };
 
   [@bs.deriving abstract]
@@ -94,7 +96,7 @@ module ClientTypes = {
     partialOpDebugMetaJs: operationDebugMeta,
     // TODO: how to add this to useQuery...
     [@bs.optional] [@bs.as "pollInterval"]
-    pollInterval: int,
+    partialOpPollIntervalJs: int,
   };
 
   /* The active GraphQL operation. */
@@ -262,6 +264,8 @@ type clientOptions('a, 'b) = {
   suspense: bool,
   [@bs.optional]
   fetch: 'b,
+  [@bs.optional]
+  requestPolicy: UrqlTypes.requestPolicy,
 };
 
 [@bs.new] [@bs.module "urql"]
@@ -337,6 +341,7 @@ let partialOpCtxToPartialOpCtxJs = opts =>
         ~partialOpFetchOptionsJs=?fetchOptions,
         ~partialOpRequestPolicyJs=?requestPolicy,
         ~partialOpDebugMetaJs=?debugMeta,
+        ~partialOpPollIntervalJs=?pollInterval,
         (),
       ),
     );
