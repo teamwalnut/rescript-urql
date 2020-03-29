@@ -79,7 +79,6 @@ module ClientTypes = {
     partialOpUrl: string,
     [@bs.optional] [@bs.as "meta"]
     partialOpDebugMeta: operationDebugMeta,
-    // TODO: how to add this to useQuery...
     [@bs.optional] [@bs.as "pollInterval"]
     partialOpPollInterval: int,
   };
@@ -94,7 +93,6 @@ module ClientTypes = {
     partialOpUrlJs: string,
     [@bs.optional] [@bs.as "meta"]
     partialOpDebugMetaJs: operationDebugMeta,
-    // TODO: how to add this to useQuery...
     [@bs.optional] [@bs.as "pollInterval"]
     partialOpPollIntervalJs: int,
   };
@@ -328,7 +326,6 @@ let partialOpCtxToPartialOpCtxJs = opts =>
   switch (opts) {
   | Some(o) =>
     let url = o->ClientTypes.partialOpUrlGet;
-    // TODO: where does this "partialOpPollIntervalGet" come from...
     let pollInterval = o->ClientTypes.partialOpPollIntervalGet;
     let fetchOptions = o->ClientTypes.partialOpFetchOptionsGet;
     let requestPolicy =
