@@ -265,7 +265,7 @@ type clientOptions('a, 'b) = {
   [@bs.optional]
   fetch: 'b,
   [@bs.optional]
-  requestPolicy: UrqlTypes.requestPolicy,
+  requestPolicy: string,
 };
 
 [@bs.new] [@bs.module "urql"]
