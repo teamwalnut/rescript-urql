@@ -77,13 +77,14 @@ describe("UrqlClient", () => {
 
   describe("Client with default requestPolicy", () =>
     it("should accept a default requestPolicy", () => {
-      let clent =
+      let client =
         Client.make(
           ~url="https://localhost:3000",
-          ~requestPolicy=`CacheFirst,
+          ~requestPolicy=`CacheAndNetwork,
           (),
         );
-      ();
+
+      Expect.(expect(client) |> toMatchSnapshot);
     })
   );
 
