@@ -26,6 +26,7 @@ module QueryJs = {
       ~variables: Js.Json.t,
       ~requestPolicy: string,
       ~pause: bool=?,
+      ~pollInterval: int=?,
       ~context: UrqlClient.ClientTypes.partialOperationContextJs=?,
       ~children: queryRenderPropsJs('extensions) => React.element
     ) =>
@@ -64,6 +65,7 @@ let make =
       ~request: UrqlTypes.request('response),
       ~requestPolicy: UrqlTypes.requestPolicy=`CacheFirst,
       ~pause: option(bool)=?,
+      ~pollInterval: option(int)=?,
       ~context: option(UrqlClient.ClientTypes.partialOperationContext)=?,
       ~children: queryRenderProps('response, 'extension) => React.element,
     ) => {
@@ -75,6 +77,7 @@ let make =
     variables
     requestPolicy={UrqlTypes.requestPolicyToJs(requestPolicy)}
     ?pause
+    ?pollInterval
     context=?{UrqlClient.partialOpCtxToPartialOpCtxJs(context)}>
     {result => result |> urqlQueryResponseToReason(parse) |> children}
   </QueryJs>;

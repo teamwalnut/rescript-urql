@@ -1,5 +1,26 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`UrqlClient Client with default requestPolicy should accept a default requestPolicy 1`] = `
+Client {
+  "activeOperations": Object {},
+  "createOperationContext": [Function],
+  "createRequestOperation": [Function],
+  "dispatchOperation": [Function],
+  "exchange": [Function],
+  "executeMutation": [Function],
+  "executeQuery": [Function],
+  "executeSubscription": [Function],
+  "fetch": undefined,
+  "fetchOptions": undefined,
+  "operations$": [Function],
+  "reexecuteOperation": [Function],
+  "requestPolicy": "cache-and-network",
+  "results$": [Function],
+  "suspense": false,
+  "url": "https://localhost:3000",
+}
+`;
+
 exports[`UrqlClient Client with exchanges provided should instantiate a client with exchanges 1`] = `
 Client {
   "activeOperations": Object {},
@@ -14,6 +35,7 @@ Client {
   "fetchOptions": undefined,
   "operations$": [Function],
   "reexecuteOperation": [Function],
+  "requestPolicy": "cache-first",
   "results$": [Function],
   "suspense": false,
   "url": "https://localhost:3000",
@@ -34,6 +56,7 @@ Client {
   "fetchOptions": [Function],
   "operations$": [Function],
   "reexecuteOperation": [Function],
+  "requestPolicy": "cache-first",
   "results$": [Function],
   "suspense": false,
   "url": "https://localhost:3000",
@@ -61,6 +84,7 @@ Client {
   },
   "operations$": [Function],
   "reexecuteOperation": [Function],
+  "requestPolicy": "cache-first",
   "results$": [Function],
   "suspense": false,
   "url": "https://localhost:3000",
@@ -81,6 +105,7 @@ Client {
   "fetchOptions": undefined,
   "operations$": [Function],
   "reexecuteOperation": [Function],
+  "requestPolicy": "cache-first",
   "results$": [Function],
   "suspense": false,
   "url": "https://localhost:3000",
@@ -101,6 +126,7 @@ Client {
   "fetchOptions": undefined,
   "operations$": [Function],
   "reexecuteOperation": [Function],
+  "requestPolicy": "cache-first",
   "results$": [Function],
   "suspense": true,
   "url": "https://localhost:3000",
@@ -123,6 +149,7 @@ Client {
   "fetchOptions": undefined,
   "operations$": [Function],
   "reexecuteOperation": [Function],
+  "requestPolicy": "cache-first",
   "results$": [Function],
   "suspense": false,
   "url": "http://localhost:3000",
@@ -143,6 +170,7 @@ Client {
   "fetchOptions": undefined,
   "operations$": [Function],
   "reexecuteOperation": [Function],
+  "requestPolicy": "cache-first",
   "results$": [Function],
   "suspense": false,
   "url": "http://localhost:3000",

@@ -50,11 +50,7 @@ module ClientTypes = {
   [@bs.deriving abstract]
   type operationDebugMeta = {
     [@bs.optional]
-    source: string,
-    [@bs.optional]
     cacheOutcome,
-    [@bs.optional]
-    networkLatency: int,
   };
 
   /* The operation context object for a request. */
@@ -66,6 +62,8 @@ module ClientTypes = {
     url: string,
     [@bs.optional]
     meta: operationDebugMeta,
+    [@bs.optional]
+    pollInterval: int,
   };
 
   /* A partial operation context, which can be passed as the
@@ -81,6 +79,8 @@ module ClientTypes = {
     partialOpUrl: string,
     [@bs.optional] [@bs.as "meta"]
     partialOpDebugMeta: operationDebugMeta,
+    [@bs.optional] [@bs.as "pollInterval"]
+    partialOpPollInterval: int,
   };
 
   [@bs.deriving abstract]
@@ -93,6 +93,8 @@ module ClientTypes = {
     partialOpUrlJs: string,
     [@bs.optional] [@bs.as "meta"]
     partialOpDebugMetaJs: operationDebugMeta,
+    [@bs.optional] [@bs.as "pollInterval"]
+    partialOpPollIntervalJs: int,
   };
 
   /* The active GraphQL operation. */
@@ -260,6 +262,8 @@ type clientOptions('a, 'b) = {
   suspense: bool,
   [@bs.optional]
   fetch: 'b,
+  [@bs.optional]
+  requestPolicy: string,
 };
 
 [@bs.new] [@bs.module "urql"]
@@ -271,6 +275,7 @@ let make =
     (
       ~url,
       ~fetchOptions=?,
+      ~requestPolicy=`CacheFirst,
       ~exchanges=[|
                    UrqlExchanges.dedupExchange,
                    UrqlExchanges.cacheExchange,
@@ -287,6 +292,7 @@ let make =
       ~exchanges,
       ~suspense,
       ~fetch=unwrapFetchImpl(fetch),
+      ~requestPolicy=requestPolicy->UrqlTypes.requestPolicyToJs,
       (),
     );
 
@@ -320,6 +326,7 @@ let partialOpCtxToPartialOpCtxJs = opts =>
   switch (opts) {
   | Some(o) =>
     let url = o->ClientTypes.partialOpUrlGet;
+    let pollInterval = o->ClientTypes.partialOpPollIntervalGet;
     let fetchOptions = o->ClientTypes.partialOpFetchOptionsGet;
     let requestPolicy =
       o
@@ -333,6 +340,7 @@ let partialOpCtxToPartialOpCtxJs = opts =>
         ~partialOpFetchOptionsJs=?fetchOptions,
         ~partialOpRequestPolicyJs=?requestPolicy,
         ~partialOpDebugMetaJs=?debugMeta,
+        ~partialOpPollIntervalJs=?pollInterval,
         (),
       ),
     );
