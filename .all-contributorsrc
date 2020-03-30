@@ -140,6 +140,15 @@
         "code",
         "bug"
       ]
+    },
+    {
+      "login": "JoviDeCroock",
+      "name": "Jovi De Croock",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/17125876?v=4",
+      "profile": "https://www.jovidecroock.com/",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 4,
