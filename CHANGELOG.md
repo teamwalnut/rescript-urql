@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.0] - 2020-03-30
+
+This release migrates our dependency on `urql` to v1.4.0. This adds support for setting a default `requestPolicy` on the Client, in addition to setting up polling for your GraphQL queries using the `pollInterval` argument to `useQuery` and the `Query` component.
+
+### Added
+
+- Add option to set a default `requestPolicy` on the Client. PR by @JoviDeCroock [here](https://github.com/FormidableLabs/reason-urql/pull/154).
+- Add `pollInterval` argument to `useQuery` hook and `Query` component. PR by @JoviDeCroock [here](https://github.com/FormidableLabs/reason-urql/pull/154).
+
+### Diff
+
+### Diff
+
+https://github.com/FormidableLabs/reason-urql/compare/v1.5.0...v1.6.0
+
 ## [1.5.0] - 2020-01-11
 
 This release migrates our dependency on `urql` to v1.3.0. As such, we now have support for GraphQL extensions, custom `fetch` implementations, and adjustable operation contexts for queries and mutations.
