@@ -632,7 +632,8 @@ let client = Client.make(
 ```reason
 let client = Client.make(
   ~url="https://localhost:3000/graphql",
-  ~requestPolicy=`CacheAndNetwork
+  ~requestPolicy=`CacheAndNetwork,
+  ()
 );
 ```
 
