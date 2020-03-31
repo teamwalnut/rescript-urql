@@ -16,8 +16,6 @@ This release migrates our dependency on `urql` to v1.4.0. This adds support for 
 
 ### Diff
 
-### Diff
-
 https://github.com/FormidableLabs/reason-urql/compare/v1.5.0...v1.6.0
 
 ## [1.5.0] - 2020-01-11
