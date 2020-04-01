@@ -1,6 +1,6 @@
 {
   "name": "reason-urql",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "scripts": {
     "build": "bsb -make-world",
     "clean": "bsb -clean-world",
