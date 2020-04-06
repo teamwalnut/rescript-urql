@@ -18,7 +18,7 @@
   },
   "devDependencies": {
     "@baransu/graphql_ppx_re": "^0.4.6",
-    "bs-platform": "6.2.1",
+    "bs-platform": "7.2.2",
     "webpack": "^4.29.6",
     "webpack-cli": "^3.2.3",
     "webpack-dev-server": "^3.2.1"

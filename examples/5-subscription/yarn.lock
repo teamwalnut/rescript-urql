@@ -997,10 +997,10 @@ bs-css@^8.0.2:
   dependencies:
     emotion "^9.2.12"
 
-bs-platform@6.2.1:
-  version "6.2.1"
-  resolved "https://registry.yarnpkg.com/bs-platform/-/bs-platform-6.2.1.tgz#30266c7f23a3b323e1fc9596a9a6eb9f053981b4"
-  integrity sha512-FmQ8kYV52A0Y302qh6o0/J9TO+kHzsjGQnsjrg/ONUYIY/jWzBnt9dCBO6EBnaEKfFJLqk5JrUDCxuihqtTcnw==
+bs-platform@7.2.2:
+  version "7.2.2"
+  resolved "https://registry.yarnpkg.com/bs-platform/-/bs-platform-7.2.2.tgz#76fdc63e4889458ae3d257a0132107a792f2309c"
+  integrity sha512-PWcFfN+jCTtT/rMaHDhKh+W9RUTpaRunmSF9vbLYcrJbpgCNW6aFKAY33u0P3mLxwuhshN3b4FxqGUBPj6exZQ==
 
 bs58@^4.0.0:
   version "4.0.1"
@@ -3780,7 +3780,7 @@ promise-inflight@^1.0.1:
   resolved "https://registry.yarnpkg.com/promise-inflight/-/promise-inflight-1.0.1.tgz#98472870bf228132fcbdd868129bad12c3c029e3"
   integrity sha1-mEcocL8igTL8vdhoEputEsPAKeM=
 
-prop-types@^15.6.0, prop-types@^15.6.2:
+prop-types@^15.6.2:
   version "15.7.2"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.7.2.tgz#52c41e75b8c87e72b9d9360e0206b99dcbffa6c5"
   integrity sha512-8QQikdH7//R2vurIJSutZ1smHYTcLpRWEOlHnzcWHmBYrOGUysKwSsrC89BCiFj3CbrfJ/nXFdJepOVrY1GCHQ==
@@ -4932,15 +4932,12 @@ url@^0.11.0:
     punycode "1.3.2"
     querystring "0.2.0"
 
-urql@1.3.0:
-  version "1.3.0"
-  resolved "https://registry.yarnpkg.com/urql/-/urql-1.3.0.tgz#b5961becc3db58a8e5089f981ab5c8a3ad1a9aaa"
-  integrity sha512-AuZtyhvgq06vek1m5OAyUE50fevjGinT//AEK1N25vqWlFmB/nxNXdSfEmaSf2ZzRDIwu9w19l7BxWIs0D4Bcg==
+urql@1.5.1:
+  version "1.5.1"
+  resolved "https://registry.yarnpkg.com/urql/-/urql-1.5.1.tgz#57b10919bc635585f964b6de9a21f31d1417ccdf"
+  integrity sha512-Mw8si2iiQIJQLHAukdMV7V9A/x8BPxQ/Wl+uag2EhN3FvpkkufD0YLLHduKYtyQC8K64kXO22ZdKb2aNKBqRyw==
   dependencies:
-    fast-json-stable-stringify "^2.0.0"
-    graphql-tag "^2.10.1"
-    prop-types "^15.6.0"
-    wonka "^3.2.0"
+    wonka "^3.2.1"
 
 use@^3.1.0:
   version "3.1.1"
@@ -5173,15 +5170,15 @@ wide-align@^1.1.0:
   dependencies:
     string-width "^1.0.2 || 2"
 
-wonka@^3.1.0:
-  version "3.2.1"
-  resolved "https://registry.yarnpkg.com/wonka/-/wonka-3.2.1.tgz#f66123fabbb260f23a4e89f1526317169203e258"
-  integrity sha512-LpquZ9PJtYJ31AlMPp5tEba1y+S+wUmY7OyFLGZCmGSNO1ZOTTZGp/HbieFzP5fVJ9fWXCus3ecgDjwAssHSGg==
-
-wonka@^3.2.0:
+wonka@^3.2.1:
   version "3.2.2"
   resolved "https://registry.yarnpkg.com/wonka/-/wonka-3.2.2.tgz#4d5c79fee2e6042066ba7aa86bd2f180487cc0c3"
   integrity sha512-btmYyFDuDpJXJfELkFkoTjfyn0M+/a54/kjqt3qGN/h/90A8Ynq8qxG4b0uXBAOvJNRnWnL8+d0C3r6Clt8PYA==
+
+wonka@^4.0.9:
+  version "4.0.9"
+  resolved "https://registry.yarnpkg.com/wonka/-/wonka-4.0.9.tgz#b21d93621e1d5f3b45ca96d99d03711c7c1f7c55"
+  integrity sha512-he7Nn1254ToUN03zLbJok6QxKdRJd46/QHm8nUcJNViXQnCutCuUgAbZvzoxrX+VXzGb4sCFolC4XhkHsmvdaA==
 
 worker-farm@^1.7.0:
   version "1.7.0"

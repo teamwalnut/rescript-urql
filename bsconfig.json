@@ -17,7 +17,7 @@
   ],
   "package-specs": [
     {
-      "module": "commonjs",
+      "module": "es6",
       "in-source": true
     }
   ],
@@ -28,5 +28,5 @@
   "refmt": 3,
   "warnings": {
     "error": "+5"
-  },
+  }
 }
