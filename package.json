@@ -28,7 +28,7 @@
   "dependencies": {
     "graphql": "^14.1.1",
     "urql": "1.5.1",
-    "wonka": "^4.0.9"
+    "wonka": "^3.2.2"
   },
   "devDependencies": {
     "@babel/plugin-transform-modules-commonjs": "^7.9.0",
