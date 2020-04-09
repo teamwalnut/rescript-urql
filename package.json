@@ -27,26 +27,36 @@
   "license": "MIT",
   "dependencies": {
     "graphql": "^14.1.1",
-    "urql": "1.4.1",
-    "wonka": "^3.1.0"
+    "urql": "1.5.1",
+    "wonka": "^3.2.2"
   },
   "devDependencies": {
-    "@glennsl/bs-jest": "^0.4.8",
+    "@babel/plugin-transform-modules-commonjs": "^7.9.0",
+    "@glennsl/bs-jest": "^0.5.1",
     "all-contributors-cli": "^5.4.0",
-    "bs-fetch": "^0.5.0",
-    "bs-platform": "6.2.1",
+    "babel-jest": "^25.2.6",
+    "bs-fetch": "^0.5.2",
+    "bs-platform": "7.2.2",
+    "gentype": "^3.18.0",
     "husky": "^2.4.1",
     "lint-staged": "^8.2.1",
     "npm-run-all": "^4.1.5",
     "reason-react": "0.7.0"
   },
   "peerDependencies": {
-    "bs-fetch": "^0.5.0",
+    "bs-fetch": "^0.5.2",
     "reason-react": "0.7.0"
   },
   "jest": {
+    "testEnvironment": "node",
     "testMatch": [
       "<rootDir>/__tests__/*_test.bs.js"
+    ],
+    "transform": {
+      "\\.jsx?$": "<rootDir>/scripts/jest-transform-esm.js"
+    },
+    "transformIgnorePatterns": [
+      "node_modules/(?!(@glennsl/bs-jest|bs-fetch|wonka|bs-platform)/)"
     ]
   },
   "lint-staged": {

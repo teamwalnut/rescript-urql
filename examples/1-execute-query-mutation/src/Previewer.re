@@ -58,8 +58,8 @@ let make = () => {
       initialState,
     );
 
-  let executeQuery = () =>
-    executeQuery(
+  let executeQuery = () => {
+    query(
       ~client,
       ~request=queryRequest,
       ~opts=
@@ -69,21 +69,26 @@ let make = () => {
         ),
       (),
     )
-    |> Wonka.subscribe((. data) =>
+    |> Js.Promise.then_(data =>
          switch (data.response) {
          | Data(d) =>
            switch (Js.Json.stringifyAny(d)) {
-           | Some(s) => dispatch(SetQuery(s))
-           | None => ()
+           | Some(s) =>
+             dispatch(SetQuery(s));
+             Js.Promise.resolve();
+           | None => Js.Promise.resolve()
            }
          | Error(e) =>
            switch (Js.Json.stringifyAny(e)) {
-           | Some(s) => dispatch(SetQuery(s))
-           | None => ()
+           | Some(s) =>
+             dispatch(SetQuery(s));
+             Js.Promise.resolve();
+           | None => Js.Promise.resolve()
            }
-         | _ => ()
+         | _ => Js.Promise.resolve()
          }
        );
+  };
 
   let executeMutation = () =>
     executeMutation(~client, ~request=mutationRequest, ())

@@ -486,3 +486,51 @@ let createRequestOperation = (~client, ~operationType, ~request, ~opts=?, ()) =>
 external dispatchOperation:
   (~client: t, ~operation: ClientTypes.operation) => unit =
   "dispatchOperation";
+
+[@bs.send]
+external queryJs:
+  (
+    ~client: t,
+    ~query: string,
+    ~variables: Js.Json.t=?,
+    ~context: ClientTypes.partialOperationContextJs=?,
+    unit
+  ) =>
+  Wonka.Types.sourceT('response) =
+  "query";
+
+let query =
+    (
+      ~client: t,
+      ~request: UrqlTypes.request('response),
+      ~opts: option(ClientTypes.partialOperationContext)=?,
+      (),
+    ) => {
+  executeQuery(~client, ~request, ~opts?, ())
+  |> Wonka.take(1)
+  |> Wonka.toPromise;
+};
+
+[@bs.send]
+external mutationJs:
+  (
+    ~client: t,
+    ~query: string,
+    ~variables: Js.Json.t=?,
+    ~context: ClientTypes.partialOperationContextJs=?,
+    unit
+  ) =>
+  Wonka.Types.sourceT('response) =
+  "mutation";
+
+let mutation =
+    (
+      ~client: t,
+      ~request: UrqlTypes.request('response),
+      ~opts: option(ClientTypes.partialOperationContext)=?,
+      (),
+    ) => {
+  executeMutation(~client, ~request, ~opts?, ())
+  |> Wonka.take(1)
+  |> Wonka.toPromise;
+};
