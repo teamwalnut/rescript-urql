@@ -1,6 +1,7 @@
 [@bs.deriving abstract]
 type queryRenderPropsJs('extensions) = {
   fetching: bool,
+  stale: bool,
   data: Js.Nullable.t(Js.Json.t),
   error: Js.Nullable.t(UrqlCombinedError.combinedErrorJs),
   executeQuery:
@@ -10,6 +11,7 @@ type queryRenderPropsJs('extensions) = {
 
 type queryRenderProps('response, 'extensions) = {
   fetching: bool,
+  stale: bool,
   data: option('response),
   error: option(UrqlCombinedError.t),
   executeQuery:
@@ -44,6 +46,7 @@ let urqlQueryResponseToReason =
     ->Js.Nullable.toOption
     ->Belt.Option.map(UrqlCombinedError.combinedErrorToRecord);
   let fetching = result->fetchingGet;
+  let stale = result->staleGet;
   let executeQuery = (~context=?, ()) =>
     result->executeQueryGet(context->UrqlClient.partialOpCtxToPartialOpCtxJs);
   let extensions = result->extensionsGet->Js.Nullable.toOption;
@@ -56,7 +59,7 @@ let urqlQueryResponseToReason =
     | (false, None, None) => NotFound
     };
 
-  {fetching, data, error, executeQuery, response, extensions};
+  {fetching, data, error, executeQuery, response, extensions, stale};
 };
 
 [@react.component]
