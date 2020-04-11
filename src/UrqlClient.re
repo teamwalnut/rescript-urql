@@ -64,6 +64,8 @@ module ClientTypes = {
     meta: operationDebugMeta,
     [@bs.optional]
     pollInterval: int,
+    [@bs.optional] [@bs.as "suspense"]
+    suspense: bool,
   };
 
   /* A partial operation context, which can be passed as the
@@ -81,6 +83,8 @@ module ClientTypes = {
     partialOpDebugMeta: operationDebugMeta,
     [@bs.optional] [@bs.as "pollInterval"]
     partialOpPollInterval: int,
+    [@bs.optional] [@bs.as "suspense"]
+    partialSuspense: bool,
   };
 
   [@bs.deriving abstract]
@@ -95,6 +99,8 @@ module ClientTypes = {
     partialOpDebugMetaJs: operationDebugMeta,
     [@bs.optional] [@bs.as "pollInterval"]
     partialOpPollIntervalJs: int,
+    [@bs.optional] [@bs.as "suspense"]
+    suspenseJs: bool,
   };
 
   /* The active GraphQL operation. */
@@ -114,6 +120,7 @@ module ClientTypes = {
     operation,
     data: Js.Nullable.t(Js.Json.t),
     error: Js.Nullable.t(UrqlCombinedError.combinedErrorJs),
+    stale: Js.Nullable.t(bool),
   };
 
   /* The record representing the response returned by the client _after_

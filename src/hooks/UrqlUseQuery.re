@@ -63,6 +63,7 @@ let urqlResponseToReason =
   let fetching = result->UrqlTypes.fetchingGet;
   let extensions = result->UrqlTypes.extensionsGet->Js.Nullable.toOption;
 
+  // TODO: figure out how to add stale here.
   let response =
     switch (fetching, data, error) {
     | (true, _, _) => UrqlTypes.Fetching
