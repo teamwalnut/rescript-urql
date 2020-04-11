@@ -35,6 +35,7 @@ type response('response) =
 
 type hookResponse('ret, 'extensions) = {
   fetching: bool,
+  stale: bool,
   data: option('ret),
   error: option(UrqlCombinedError.t),
   response: response('ret),
@@ -44,6 +45,7 @@ type hookResponse('ret, 'extensions) = {
 [@bs.deriving abstract]
 type jsResponse('response, 'extensions) = {
   fetching: bool,
+  stale: bool, // TODO: can we indicate this as only for useQuery?
   [@bs.as "data"]
   jsData: Js.Nullable.t('response),
   [@bs.optional] [@bs.as "error"]

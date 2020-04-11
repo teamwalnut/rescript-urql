@@ -61,6 +61,7 @@ let urqlResponseToReason =
     ->UrqlTypes.jsErrorGet
     ->Belt.Option.map(UrqlCombinedError.combinedErrorToRecord);
   let fetching = result->UrqlTypes.fetchingGet;
+  let stale = result->UrqlTypes.staleGet;
   let extensions = result->UrqlTypes.extensionsGet->Js.Nullable.toOption;
 
   // TODO: figure out how to add stale here.
@@ -72,7 +73,7 @@ let urqlResponseToReason =
     | (false, None, None) => NotFound
     };
 
-  {fetching, data, error, response, extensions};
+  {fetching, data, error, response, extensions, stale};
 };
 
 /**
