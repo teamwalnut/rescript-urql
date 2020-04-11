@@ -278,6 +278,30 @@ let make = () => {
 
 Check out `examples/5-subscription` to see an example of using the `useSubscription` hook.
 
+### `useClient`
+
+`useClient` allows you to access your `urql` client instance anywhere within your React component tree.
+
+#### Return Type
+
+| Return Value | Type       | Description                                      |
+| ------------ | ---------- | ------------------------------------------------ |
+| `client`     | `Client.t` | The `urql` client instance for your application. |
+
+#### Example
+
+```reason
+open ReasonUrql;
+open Hooks;
+
+[@react.component]
+let make = () => {
+  let client = useClient();
+
+  <div> "You can now use your client!"->React.string </div>
+}
+```
+
 ## Components
 
 ### `Query`
