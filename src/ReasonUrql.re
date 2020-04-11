@@ -38,7 +38,9 @@ module Hooks = {
       response: UrqlTypes.response('ret),
       extensions: option('extensions),
     };
+
   include UrqlUseMutation;
   include UrqlUseQuery;
   include UrqlUseSubscription;
+  include UrqlUseClient;
 };
