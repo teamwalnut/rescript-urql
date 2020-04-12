@@ -25,10 +25,10 @@ Reason bindings for Formidable's Universal React Query Library, [`urql`](https:/
 
 ## 💾 Installation
 
-#### 1. Install `reason-urql` & `bs-fetch` peer dependency.
+#### 1. Install `reason-urql`.
 
 ```sh
-yarn add reason-urql bs-fetch
+yarn add reason-urql
 ```
 
 #### 2. Add `graphql_ppx_re` or `graphql_ppx`.
@@ -159,6 +159,7 @@ This project follows the [all contributors spec](https://github.com/kentcdodds/a
 
 <!-- markdownlint-enable -->
 <!-- prettier-ignore-end -->
+
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 ## Maintenance Status
