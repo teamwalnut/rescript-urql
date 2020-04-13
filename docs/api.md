@@ -301,6 +301,7 @@ The `Query` allows you to query your GraphQL API and render UI with the returned
 | `fetching`     | `bool`                                                                             | A boolean flag to indicate if the request is currently executing.                                                                       |
 | `data`         | `'response`                                                                        | The data returned by your GraphQL API.                                                                                                  |
 | `error`        | `Error.combinedError`                                                              | The error(s), if any, returned by the GraphQL operation.                                                                                |
+| `stale`        | `bool`                                                                             | A boolean flag to indicate the current data is stale, example: when a refetch is happening on the background (i.e. cache-and-network).  |
 | `executeQuery` | `(~context: option(UrqlClient.ClientTypes.partialOperationContext), unit) => unit` | A callback to imperatively re-execute the query operation. Accepts a partial operation context to modify execution of the query.        |
 | `response`     | `UrqlTypes.response('response)`                                                    | A variant containing constructors for `Data`, `Error`, `Fetching` and `NotFound`. Useful for pattern matching to render conditional UI. |
 
