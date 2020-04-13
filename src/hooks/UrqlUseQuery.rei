@@ -2,7 +2,7 @@ type executeQuery =
   (~context: UrqlClient.ClientTypes.partialOperationContext=?, unit) => unit;
 
 type useQueryResponse('response, 'extensions) = (
-  UrqlTypes.hookResponse('response, 'extensions),
+  UrqlTypes.queryHookResponse('response, 'extensions),
   executeQuery,
 );
 
