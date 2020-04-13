@@ -512,6 +512,32 @@ let query =
 };
 
 [@bs.send]
+external readQueryJs:
+  (
+    ~client: t,
+    ~query: string,
+    ~variables: Js.Json.t=?,
+    ~context: ClientTypes.partialOperationContextJs=?,
+    unit
+  ) =>
+  Js.Null.t('response) =
+  "readQuery";
+
+let readQuery =
+    (
+      ~client: t,
+      ~request: UrqlTypes.request('response),
+      ~opts: option(ClientTypes.partialOperationContext)=?,
+      (),
+    ) => {
+  let result = ref(None);
+  executeQuery(~client, ~request, ~opts?, ())
+  |> Wonka.subscribe((. data) => {result := Some(data)})
+  |> (subscription => subscription.unsubscribe());
+  result^;
+};
+
+[@bs.send]
 external mutationJs:
   (
     ~client: t,
