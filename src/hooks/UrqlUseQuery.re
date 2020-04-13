@@ -36,7 +36,7 @@ type useQueryResponseJs('extensions) = (
  * the query imperatively.
  */
 type useQueryResponse('response, 'extensions) = (
-  UrqlTypes.hookResponse('response, 'extensions),
+  UrqlTypes.queryHookResponse('response, 'extensions),
   executeQuery,
 );
 
@@ -53,7 +53,7 @@ let urqlResponseToReason =
       parse: Js.Json.t => 'response,
       result: UrqlTypes.jsResponse(Js.Json.t, 'extensions),
     )
-    : UrqlTypes.hookResponse('response, 'extensions) => {
+    : UrqlTypes.queryHookResponse('response, 'extensions) => {
   let data =
     result->UrqlTypes.jsDataGet->Js.Nullable.toOption->Belt.Option.map(parse);
   let error =

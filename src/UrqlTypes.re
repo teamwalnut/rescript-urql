@@ -33,9 +33,17 @@ type response('response) =
   | Error(UrqlCombinedError.t)
   | NotFound;
 
-type hookResponse('ret, 'extensions) = {
+type queryHookResponse('ret, 'extensions) = {
   fetching: bool,
   stale: bool,
+  data: option('ret),
+  error: option(UrqlCombinedError.t),
+  response: response('ret),
+  extensions: option('extensions),
+};
+
+type hookResponse('ret, 'extensions) = {
+  fetching: bool,
   data: option('ret),
   error: option(UrqlCombinedError.t),
   response: response('ret),
