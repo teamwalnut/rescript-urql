@@ -511,18 +511,6 @@ let query =
   |> Wonka.toPromise;
 };
 
-[@bs.send]
-external readQueryJs:
-  (
-    ~client: t,
-    ~query: string,
-    ~variables: Js.Json.t=?,
-    ~context: ClientTypes.partialOperationContextJs=?,
-    unit
-  ) =>
-  Js.Null.t('response) =
-  "readQuery";
-
 let readQuery =
     (
       ~client: t,
