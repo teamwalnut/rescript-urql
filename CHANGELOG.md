@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.0] - 2020-04-16
+
+This release migrates our dependency on `urql` to v1.5.1. It also migrates our `devDependency` on `bs-platform` (the BuckleScript compiler), to v7.2.2. While we don't expect this to affect end users still on BuckleScript v6, there may be small bugfixes and optimizations coming in the near future to support this migration.
+
+### Added
+
+- Add support for `Promise`-based methods `query` and `mutation` on the Client. This allows users to interact with Client operation results as `Js.Promise.t` rather than `Wonka.sourceT`. PR by @parkerziegler [here](https://github.com/FormidableLabs/reason-urql/pull/157).
+- Add bindings for the `useClient` hook. PR by @parkerziegler [here](https://github.com/FormidableLabs/reason-urql/pull/159/files).
+
+### Changed
+
+- Migrate local `devDependency` on `bs-platform` to v7.2.2 and in-repo compilation target to `es6`. PR by @parkerziegler [here](https://github.com/FormidableLabs/reason-urql/pull/157/files).
+- Remove `peerDependency` on `bs-fetch`.
+
+### Diff
+
+https://github.com/FormidableLabs/reason-urql/compare/v1.6.0...v1.7.0
+
 ## [1.6.0] - 2020-03-30
 
 This release migrates our dependency on `urql` to v1.4.0. This adds support for setting a default `requestPolicy` on the Client, in addition to setting up polling for your GraphQL queries using the `pollInterval` argument to `useQuery` and the `Query` component.
