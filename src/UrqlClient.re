@@ -487,18 +487,6 @@ external dispatchOperation:
   (~client: t, ~operation: ClientTypes.operation) => unit =
   "dispatchOperation";
 
-[@bs.send]
-external queryJs:
-  (
-    ~client: t,
-    ~query: string,
-    ~variables: Js.Json.t=?,
-    ~context: ClientTypes.partialOperationContextJs=?,
-    unit
-  ) =>
-  Wonka.Types.sourceT('response) =
-  "query";
-
 let query =
     (
       ~client: t,
@@ -510,18 +498,6 @@ let query =
   |> Wonka.take(1)
   |> Wonka.toPromise;
 };
-
-[@bs.send]
-external mutationJs:
-  (
-    ~client: t,
-    ~query: string,
-    ~variables: Js.Json.t=?,
-    ~context: ClientTypes.partialOperationContextJs=?,
-    unit
-  ) =>
-  Wonka.Types.sourceT('response) =
-  "mutation";
 
 let mutation =
     (
