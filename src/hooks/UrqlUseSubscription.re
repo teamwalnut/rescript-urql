@@ -81,23 +81,18 @@ let useSubscription =
       (),
     );
 
-  React.useMemo3(
-    () => {
-      let response: UrqlTypes.hookResponse(ret, 'extensions) =
-        switch (handler) {
-        | Handler(handlerFn) =>
-          useSubscriptionJs(
-            args,
-            Some((acc, data) => handlerFn(acc, parse(data))),
-          )[0]
-          |> useSubscriptionResponseToRecord(x => x)
-        | NoHandler =>
-          useSubscriptionJs(args, None)[0]
-          |> useSubscriptionResponseToRecord(parse)
-        };
+  let response: UrqlTypes.hookResponse(ret, 'extensions) =
+    switch (handler) {
+    | Handler(handlerFn) =>
+      useSubscriptionJs(
+        args,
+        Some((acc, data) => handlerFn(acc, parse(data))),
+      )[0]
+      |> useSubscriptionResponseToRecord(x => x)
+    | NoHandler =>
+      useSubscriptionJs(args, None)[0]
+      |> useSubscriptionResponseToRecord(parse)
+    };
 
-      response;
-    },
-    (handler, args, parse),
-  );
+  response;
 };
