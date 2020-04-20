@@ -17,20 +17,21 @@ type useSubscriptionArgs = {
   context: UrqlClient.ClientTypes.partialOperationContext,
 };
 
+type executeSubscriptionJs;
+
 [@bs.module "urql"]
 external useSubscriptionJs:
   (useSubscriptionArgs, option((option('acc), Js.Json.t) => 'acc)) =>
-  array(UrqlTypes.jsResponse('ret, 'extensions)) =
+  (UrqlTypes.jsResponse('ret, 'extensions), executeSubscriptionJs) =
   "useSubscription";
 
 /**
  * A function for converting the response to useQuery from the JavaScript
  * representation to a typed Reason record.
  */
-let useSubscriptionResponseToRecord =
-    (parse, result): UrqlTypes.hookResponse('response, 'extensions) => {
-  let data =
-    result->UrqlTypes.jsDataGet->Js.Nullable.toOption->Belt.Option.map(parse);
+let jsSubscriptionResponseToRecord =
+    (result): UrqlTypes.hookResponse('response, 'extensions) => {
+  let data = result->UrqlTypes.jsDataGet->Js.Nullable.toOption;
   let error =
     result
     ->UrqlTypes.jsErrorGet
@@ -60,6 +61,7 @@ let useSubscriptionResponseToRecord =
  *
  * handler – an optional function to accumulate subscription responses.
  */;
+
 let useSubscription =
     (
       type acc,
@@ -81,18 +83,17 @@ let useSubscription =
       (),
     );
 
-  let response: UrqlTypes.hookResponse(ret, 'extensions) =
+  let handler' =
     switch (handler) {
     | Handler(handlerFn) =>
-      useSubscriptionJs(
-        args,
-        Some((acc, data) => handlerFn(acc, parse(data))),
-      )[0]
-      |> useSubscriptionResponseToRecord(x => x)
-    | NoHandler =>
-      useSubscriptionJs(args, None)[0]
-      |> useSubscriptionResponseToRecord(parse)
+      Some((acc, data) => handlerFn(acc, parse(data)))
+    | NoHandler => Some((_acc, data) => Obj.magic(parse(data)))
     };
 
-  response;
+  let (jsResponse, _) = useSubscriptionJs(args, handler');
+
+  UrqlGuaranteedMemo.useGuaranteedMemo1(
+    jsSubscriptionResponseToRecord,
+    jsResponse,
+  );
 };
