@@ -5,7 +5,7 @@
  */
 type handler('acc, 'resp, 'ret) =
   | Handler((option('acc), 'resp) => 'acc): handler('acc, 'resp, 'acc)
-  | NoHandler: handler(_, 'resp, 'resp);
+  | NoHandler: handler('resp, 'resp, 'resp);
 
 /* Arguments passed to useSubscription on the JavaScript side. */
 [@bs.deriving abstract]
@@ -60,8 +60,7 @@ let jsSubscriptionResponseToRecord =
  * to the GraphQL subscription, and a parse function for decoding the JSON response.
  *
  * handler – an optional function to accumulate subscription responses.
- */;
-
+ */
 let useSubscription =
     (
       type acc,
@@ -83,14 +82,13 @@ let useSubscription =
       (),
     );
 
-  let handler' =
+  let handler' = (acc, jsData) =>
     switch (handler) {
-    | Handler(handlerFn) =>
-      Some((acc, data) => handlerFn(acc, parse(data)))
-    | NoHandler => Some((_acc, data) => Obj.magic(parse(data)))
+    | Handler(handlerFn) => handlerFn(acc, parse(jsData))
+    | NoHandler => parse(jsData)
     };
 
-  let (jsResponse, _) = useSubscriptionJs(args, handler');
+  let (jsResponse, _) = useSubscriptionJs(args, Some(handler'));
 
   UrqlGuaranteedMemo.useGuaranteedMemo1(
     jsSubscriptionResponseToRecord,
