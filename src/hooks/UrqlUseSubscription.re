@@ -29,7 +29,7 @@ external useSubscriptionJs:
  * A function for converting the response to useQuery from the JavaScript
  * representation to a typed Reason record.
  */
-let jsSubscriptionResponseToRecord =
+let urqlResponseToReason =
     (result): UrqlTypes.hookResponse('response, 'extensions) => {
   let data = result->UrqlTypes.jsDataGet->Js.Nullable.toOption;
   let error =
@@ -90,8 +90,5 @@ let useSubscription =
 
   let (jsResponse, _) = useSubscriptionJs(args, Some(handler'));
 
-  UrqlGuaranteedMemo.useGuaranteedMemo1(
-    jsSubscriptionResponseToRecord,
-    jsResponse,
-  );
+  UrqlGuaranteedMemo.useGuaranteedMemo1(urqlResponseToReason, jsResponse);
 };
