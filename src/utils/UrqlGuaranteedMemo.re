@@ -1,4 +1,4 @@
-// React.useMemo has to semantic guarantee so we define our own
+// React.useMemo has no semantic guarantee so we define our own
 let useGuaranteedMemo1 = (computeValue, arg) => {
   let (memoizedState, setMemoizedState) =
     React.useState(() => computeValue(arg));
