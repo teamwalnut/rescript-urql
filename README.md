@@ -155,12 +155,12 @@ This project follows the [all contributors spec](https://github.com/kentcdodds/a
     <td align="center"><a href="https://twitter.com/_cichocinski"><img src="https://avatars2.githubusercontent.com/u/9558691?v=4" width="100px;" alt=""/><br /><sub><b>Tomasz Cichocinski</b></sub></a><br /><a href="https://github.com/FormidableLabs/reason-urql/commits?author=baransu" title="Code">💻</a> <a href="https://github.com/FormidableLabs/reason-urql/issues?q=author%3Abaransu" title="Bug reports">🐛</a></td>
     <td align="center"><a href="https://www.jovidecroock.com/"><img src="https://avatars3.githubusercontent.com/u/17125876?v=4" width="100px;" alt=""/><br /><sub><b>Jovi De Croock</b></sub></a><br /><a href="https://github.com/FormidableLabs/reason-urql/commits?author=JoviDeCroock" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/tatchi"><img src="https://avatars2.githubusercontent.com/u/5595092?v=4" width="100px;" alt=""/><br /><sub><b>Corentin Leruth</b></sub></a><br /><a href="https://github.com/FormidableLabs/reason-urql/commits?author=tatchi" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://github.com/jeddeloh"><img src="https://avatars3.githubusercontent.com/u/1131723?v=4" width="100px;" alt=""/><br /><sub><b>Joel Jeddeloh</b></sub></a><br /><a href="https://github.com/FormidableLabs/reason-urql/commits?author=jeddeloh" title="Code">💻</a></td>
   </tr>
 </table>
 
 <!-- markdownlint-enable -->
 <!-- prettier-ignore-end -->
-
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 ## Maintenance Status
