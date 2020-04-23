@@ -5,7 +5,7 @@
  */
 type handler('acc, 'resp, 'ret) =
   | Handler((option('acc), 'resp) => 'acc): handler('acc, 'resp, 'acc)
-  | NoHandler: handler(_, 'resp, 'resp);
+  | NoHandler: handler('resp, 'resp, 'resp);
 
 /* Arguments passed to useSubscription on the JavaScript side. */
 [@bs.deriving abstract]
@@ -17,20 +17,21 @@ type useSubscriptionArgs = {
   context: UrqlClient.ClientTypes.partialOperationContext,
 };
 
+type executeSubscriptionJs;
+
 [@bs.module "urql"]
 external useSubscriptionJs:
   (useSubscriptionArgs, option((option('acc), Js.Json.t) => 'acc)) =>
-  array(UrqlTypes.jsResponse('ret, 'extensions)) =
+  (UrqlTypes.jsResponse('ret, 'extensions), executeSubscriptionJs) =
   "useSubscription";
 
 /**
  * A function for converting the response to useQuery from the JavaScript
  * representation to a typed Reason record.
  */
-let useSubscriptionResponseToRecord =
-    (parse, result): UrqlTypes.hookResponse('response, 'extensions) => {
-  let data =
-    result->UrqlTypes.jsDataGet->Js.Nullable.toOption->Belt.Option.map(parse);
+let urqlResponseToReason =
+    (result): UrqlTypes.hookResponse('response, 'extensions) => {
+  let data = result->UrqlTypes.jsDataGet->Js.Nullable.toOption;
   let error =
     result
     ->UrqlTypes.jsErrorGet
@@ -59,7 +60,7 @@ let useSubscriptionResponseToRecord =
  * to the GraphQL subscription, and a parse function for decoding the JSON response.
  *
  * handler – an optional function to accumulate subscription responses.
- */;
+ */
 let useSubscription =
     (
       type acc,
@@ -81,23 +82,13 @@ let useSubscription =
       (),
     );
 
-  React.useMemo3(
-    () => {
-      let response: UrqlTypes.hookResponse(ret, 'extensions) =
-        switch (handler) {
-        | Handler(handlerFn) =>
-          useSubscriptionJs(
-            args,
-            Some((acc, data) => handlerFn(acc, parse(data))),
-          )[0]
-          |> useSubscriptionResponseToRecord(x => x)
-        | NoHandler =>
-          useSubscriptionJs(args, None)[0]
-          |> useSubscriptionResponseToRecord(parse)
-        };
+  let handler' = (acc, jsData) =>
+    switch (handler) {
+    | Handler(handlerFn) => handlerFn(acc, parse(jsData))
+    | NoHandler => parse(jsData)
+    };
 
-      response;
-    },
-    (handler, args, parse),
-  );
+  let (jsResponse, _) = useSubscriptionJs(args, Some(handler'));
+
+  UrqlGuaranteedMemo.useGuaranteedMemo1(urqlResponseToReason, jsResponse);
 };

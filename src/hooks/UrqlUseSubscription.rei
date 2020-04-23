@@ -1,6 +1,6 @@
 type handler('acc, 'resp, 'ret) =
   | Handler((option('acc), 'resp) => 'acc): handler('acc, 'resp, 'acc)
-  | NoHandler: handler(_, 'resp, 'resp);
+  | NoHandler: handler('resp, 'resp, 'resp);
 
 let useSubscription:
   (
