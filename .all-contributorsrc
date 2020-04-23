@@ -158,6 +158,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "jeddeloh",
+      "name": "Joel Jeddeloh",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/1131723?v=4",
+      "profile": "https://github.com/jeddeloh",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 4,
