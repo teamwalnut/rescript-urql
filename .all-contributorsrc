@@ -158,9 +158,18 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "jeddeloh",
+      "name": "Joel Jeddeloh",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/1131723?v=4",
+      "profile": "https://github.com/jeddeloh",
+      "contributions": [
+        "code"
+      ]
     }
   ],
-  "contributorsPerLine": 4,
+  "contributorsPerLine": 6,
   "badgeTemplate": "[![All Contributors](https://img.shields.io/badge/all_contributors-<%= contributors.length %>-orange.svg)](#contributors)",
   "skipCi": true
 }
