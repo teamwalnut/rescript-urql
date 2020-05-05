@@ -1,13 +1,6 @@
 module UrqlTypes = UrqlTypes;
 
 module Client = {
-  type clientResponse('response) =
-    UrqlClient.ClientTypes.clientResponse('response) = {
-      data: option('response),
-      error: option(UrqlCombinedError.t),
-      response: UrqlClient.ClientTypes.response('response),
-    };
-
   include UrqlClient;
 };
 
@@ -19,15 +12,15 @@ module Query = UrqlQuery;
 
 module Mutation = UrqlMutation;
 
-module Subscription = UrqlSubscription.Subscription;
+module Subscription = UrqlSubscription;
 
-module SubscriptionWithHandler = UrqlSubscription.SubscriptionWithHandler;
+module SubscriptionWithHandler = UrqlSubscription;
 
 module Request = UrqlRequest;
 
 module CombinedError = UrqlCombinedError;
 
-module Exchanges = UrqlClient.UrqlExchanges;
+module Exchanges = UrqlExchanges;
 
 module Hooks = {
   type hookResponse('ret, 'extensions) =

@@ -32,11 +32,11 @@ let getRandomHex = () => {
 
 [@react.component]
 let make = () => {
-  let {response} =
+  let ({response}, _) =
     useSubscription(
       ~request=SubscribeRandomInt.make(),
       ~handler=Handler(handler),
-      ()
+      (),
     );
 
   switch (response) {
@@ -45,6 +45,7 @@ let make = () => {
     d
     |> Array.mapi((index, datum) =>
          <circle
+           key={string_of_int(index) ++ string_of_int(datum##newNumber)}
            cx=datum##newNumber
            cy={index === 0 ? datum##newNumber : d[index - 1]##newNumber}
            stroke={getRandomHex()}

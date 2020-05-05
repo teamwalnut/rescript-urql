@@ -11,11 +11,11 @@ type subscriptionRenderProps('response, 'extensions) = {
 };
 
 [@react.component]
-let make = (~request, ~pause=?, ~context=?, ~children) => {
+let make = (~request, ~handler, ~pause=?, ~context=?, ~children) => {
   let (state, executeSubscription) =
     UrqlUseSubscription.useSubscription(
       ~request,
-      ~handler=UrqlUseSubscription.NoHandler,
+      ~handler=UrqlUseSubscription.Handler(handler),
       ~pause?,
       ~context?,
       (),

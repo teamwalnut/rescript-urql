@@ -1,5 +1,5 @@
 type executeQuery =
-  (~context: UrqlClient.ClientTypes.partialOperationContext=?, unit) => unit;
+  (~context: UrqlClientTypes.partialOperationContext=?, unit) => unit;
 
 type useQueryResponse('response, 'extensions) = (
   UrqlTypes.hookResponse('response, 'extensions),
@@ -12,7 +12,7 @@ let useQuery:
     ~requestPolicy: UrqlTypes.requestPolicy=?,
     ~pause: bool=?,
     ~pollInterval: int=?,
-    ~context: UrqlClient.ClientTypes.partialOperationContext=?,
+    ~context: UrqlClientTypes.partialOperationContext=?,
     unit
   ) =>
   useQueryResponse('response, 'extensions);

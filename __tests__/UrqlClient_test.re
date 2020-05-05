@@ -22,22 +22,6 @@ describe("UrqlClient", () => {
     it("should expose an executeSubscription method", () =>
       ExpectJs.(expect(Client.executeSubscription) |> toBeTruthy)
     );
-
-    it("should expose an executeRequestOperation method", () =>
-      ExpectJs.(expect(Client.executeRequestOperation) |> toBeTruthy)
-    );
-
-    it("should expose an reexecuteOperation method", () =>
-      ExpectJs.(expect(Client.reexecuteOperation) |> toBeTruthy)
-    );
-
-    it("should expose an createRequestOperation method", () =>
-      ExpectJs.(expect(Client.createRequestOperation) |> toBeTruthy)
-    );
-
-    it("should expose an dispatchOperation method", () =>
-      ExpectJs.(expect(Client.dispatchOperation) |> toBeTruthy)
-    );
   });
 
   describe("Client with fetchOptions provided", () => {
@@ -151,15 +135,16 @@ describe("UrqlClient", () => {
       Js.Dict.set(json, "key", Js.Json.number(1.));
       Js.Dict.set(json, "key2", Js.Json.number(2.));
       let data = Js.Json.object_(json);
-      let serializedResult = Exchanges.serializedResult(~data, ());
+      let serializedResult = Exchanges.{data: Some(data), error: None};
 
       let initialState = Js.Dict.empty();
       Js.Dict.set(initialState, "query", serializedResult);
-      let ssrExchangeOpts = Exchanges.ssrExchangeOpts(~initialState, ());
+      let ssrExchangeParams =
+        Exchanges.{initialState: Some(initialState), isClient: Some(false)};
 
       Expect.(
         expect(() =>
-          Exchanges.ssrExchange(~ssrExchangeOpts, ())
+          Exchanges.ssrExchange(~ssrExchangeParams, ())
         )
         |> not
         |> toThrow

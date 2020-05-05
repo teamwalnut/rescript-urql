@@ -10,17 +10,9 @@ type mutationRenderProps('response, 'extensions) = {
 };
 
 [@react.component]
-let make = (~request, ~children) => {
-  let (state, executeMutation) = UrqlUseMutation.useMutation(~request);
-
-  let result = {
-    fetching: state.fetching,
-    data: state.data,
-    error: state.error,
-    response: state.response,
-    extensions: state.extensions,
-    executeMutation,
-  };
-
-  children(result);
-};
+let make:
+  (
+    ~request: UrqlTypes.request('response),
+    ~children: mutationRenderProps('response, 'extensions) => React.element
+  ) =>
+  React.element;

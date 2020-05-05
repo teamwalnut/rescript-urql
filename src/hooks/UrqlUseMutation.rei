@@ -2,18 +2,18 @@ let useMutation:
   (~request: UrqlTypes.request('response)) =>
   (
     UrqlTypes.hookResponse('response, 'extensions),
-    (~context: UrqlClient.ClientTypes.partialOperationContext=?, unit) =>
-    Js.Promise.t(UrqlClient.ClientTypes.operationResult),
+    (~context: UrqlClientTypes.partialOperationContext=?, unit) =>
+    Js.Promise.t(UrqlClientTypes.operationResult),
   );
 
 let useDynamicMutation:
   UrqlTypes.graphqlDefinition(
     'parseResult,
-    Js.Promise.t(UrqlClient.ClientTypes.operationResult),
+    Js.Promise.t(UrqlClientTypes.operationResult),
     'executeMutation,
   ) =>
   (
     UrqlTypes.hookResponse('parseResult, 'extensions),
-    (~context: option(UrqlClient.ClientTypes.partialOperationContext)=?) =>
+    (~context: UrqlClientTypes.partialOperationContext=?, unit) =>
     'executeMutation,
   );

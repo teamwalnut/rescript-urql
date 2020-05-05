@@ -10,12 +10,10 @@ type requestPolicy = [
 
 /* The GraphQL request object.
    Consists of a query, a unique key for the event, and, optionally, variables. */
-[@bs.deriving abstract]
 type graphqlRequest = {
   key: int,
   query: string,
-  [@bs.optional]
-  variables: Js.Json.t,
+  variables: option(Js.Json.t),
 };
 
 /* The signature of the Js.t created by calling `.make()` on a `graphql_ppx` module. */
@@ -33,22 +31,19 @@ type response('response) =
   | Error(UrqlCombinedError.t)
   | NotFound;
 
-type hookResponse('ret, 'extensions) = {
+type hookResponse('response, 'extensions) = {
   fetching: bool,
-  data: option('ret),
+  data: option('response),
   error: option(UrqlCombinedError.t),
-  response: response('ret),
+  response: response('response),
   extensions: option('extensions),
 };
 
-[@bs.deriving abstract]
-type jsResponse('response, 'extensions) = {
+type jsHookResponse('response, 'extensions) = {
   fetching: bool,
-  [@bs.as "data"]
-  jsData: Js.Nullable.t('response),
-  [@bs.optional] [@bs.as "error"]
-  jsError: UrqlCombinedError.combinedErrorJs,
-  extensions: Js.Nullable.t('extensions),
+  data: option('response),
+  error: option(UrqlCombinedError.combinedErrorJs),
+  extensions: option('extensions),
 };
 
 type graphqlDefinition('parseResult, 'composeReturnType, 'hookReturnType) = (

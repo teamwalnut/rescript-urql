@@ -1,43 +1,43 @@
 /**
  * The handler type used to type the optional accumulator function
  * returned by useSubscription. handler is a GADT used to support
- * proper type inference for useSubscription.
+ * proper type inference for polymorphic useSubscription.
  */
-type handler('acc, 'resp, 'ret) =
-  | Handler((option('acc), 'resp) => 'acc): handler('acc, 'resp, 'acc)
-  | NoHandler: handler('resp, 'resp, 'resp);
+type handler('acc, 'response, 'ret) =
+  | Handler((option('acc), 'response) => 'acc)
+    : handler('acc, 'response, 'acc)
+  | NoHandler: handler('response, 'response, 'response);
 
-/* Arguments passed to useSubscription on the JavaScript side. */
-[@bs.deriving abstract]
 type useSubscriptionArgs = {
   query: string,
-  [@bs.optional]
   variables: Js.Json.t,
-  [@bs.optional]
-  context: UrqlClient.ClientTypes.partialOperationContext,
+  pause: option(bool),
+  context: option(UrqlClientTypes.partialOperationContextJs),
 };
 
-type executeSubscriptionJs;
+type executeSubscriptionJs =
+  option(UrqlClientTypes.partialOperationContextJs) => unit;
 
 [@bs.module "urql"]
 external useSubscriptionJs:
   (useSubscriptionArgs, option((option('acc), Js.Json.t) => 'acc)) =>
-  (UrqlTypes.jsResponse('ret, 'extensions), executeSubscriptionJs) =
+  (UrqlTypes.jsHookResponse('ret, 'extensions), executeSubscriptionJs) =
   "useSubscription";
 
-/**
- * A function for converting the response to useQuery from the JavaScript
- * representation to a typed Reason record.
- */
-let urqlResponseToReason =
-    (result): UrqlTypes.hookResponse('response, 'extensions) => {
-  let data = result->UrqlTypes.jsDataGet->Js.Nullable.toOption;
+type executeSubscription =
+  (~context: UrqlClientTypes.partialOperationContext=?, unit) => unit;
+
+type useSubscriptionResponse('response, 'extensions) = (
+  UrqlTypes.hookResponse('response, 'extensions),
+  executeSubscription,
+);
+
+let subscriptionResponseToReason = result => {
+  let data = UrqlTypes.(result.data);
   let error =
-    result
-    ->UrqlTypes.jsErrorGet
-    ->Belt.Option.map(UrqlCombinedError.combinedErrorToRecord);
-  let fetching = result->UrqlTypes.fetchingGet;
-  let extensions = result->UrqlTypes.extensionsGet->Js.Nullable.toOption;
+    result.error->Belt.Option.map(UrqlCombinedError.combinedErrorToRecord);
+  let fetching = result.fetching;
+  let extensions = result.extensions;
 
   let response =
     switch (fetching, data, error) {
@@ -48,47 +48,43 @@ let urqlResponseToReason =
     | (false, None, None) => NotFound
     };
 
-  {fetching, data, error, response, extensions};
+  UrqlTypes.{fetching, data, error, response, extensions};
 };
 
-/**
- * The useSubscription hook.
- *
- * Accepts the following arguments:
- *
- * request – a Js.t containing the query and variables corresponding
- * to the GraphQL subscription, and a parse function for decoding the JSON response.
- *
- * handler – an optional function to accumulate subscription responses.
- */
 let useSubscription =
     (
       type acc,
-      type resp,
+      type response,
       type ret,
-      ~request: UrqlTypes.request(resp),
-      ~handler: handler(acc, resp, ret),
+      ~request: UrqlTypes.request(response),
+      ~handler: handler(acc, response, ret),
+      ~pause=?,
       ~context=?,
       (),
-    )
-    : UrqlTypes.hookResponse(ret, 'extensions) => {
+    ) => {
   let parse = request##parse;
 
-  let args =
-    useSubscriptionArgs(
-      ~query=request##query,
-      ~variables=request##variables,
-      ~context?,
-      (),
-    );
+  let args = {
+    query: request##query,
+    variables: request##variables,
+    pause,
+    context: UrqlClientTypes.decodeOperationRequestPolicy(context),
+  };
 
-  let handler' = (acc, jsData) =>
+  let h = (acc, subscriptionResult) =>
     switch (handler) {
-    | Handler(handlerFn) => handlerFn(acc, parse(jsData))
-    | NoHandler => parse(jsData)
+    | Handler(handlerFn) => handlerFn(acc, parse(subscriptionResult))
+    | NoHandler => parse(subscriptionResult)
     };
 
-  let (jsResponse, _) = useSubscriptionJs(args, Some(handler'));
+  let (responseJs, executeSubscriptionJs) =
+    useSubscriptionJs(args, Some(h));
 
-  UrqlGuaranteedMemo.useGuaranteedMemo1(urqlResponseToReason, jsResponse);
+  let response = subscriptionResponseToReason(responseJs);
+  let executeSubscription = (~context=?, ()) => {
+    let ctx = UrqlClientTypes.decodeOperationRequestPolicy(context);
+    executeSubscriptionJs(ctx);
+  };
+
+  (response, executeSubscription);
 };

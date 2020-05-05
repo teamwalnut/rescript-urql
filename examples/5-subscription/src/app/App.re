@@ -7,6 +7,5 @@ let make = () =>
       width="1000"
       style={ReactDOMRe.Style.make(~border="1px solid blue", ())}>
       <Circles />
-      <Squares />
     </svg>
   </div>;
