@@ -9,7 +9,7 @@
     "build": "bsb -make-world",
     "start": "bsb -make-world -w",
     "clean": "bsb -clean-world",
-    "start:demo": "webpack-dev-server --hot"
+    "start:demo": "webpack-dev-server"
   },
   "dependencies": {
     "bs-css": "^8.0.2",

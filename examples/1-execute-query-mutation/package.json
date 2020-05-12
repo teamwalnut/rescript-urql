@@ -9,7 +9,7 @@
     "build": "bsb -make-world",
     "start": "bsb -make-world -w",
     "clean": "bsb -clean-world",
-    "start:demo": "webpack-dev-server --hot"
+    "start:demo": "webpack-dev-server"
   },
   "dependencies": {
     "bs-css": "^8.0.2",
@@ -17,7 +17,7 @@
     "reason-urql": "link:../../"
   },
   "devDependencies": {
-    "@baransu/graphql_ppx_re": "^0.4.6",
+    "@baransu/graphql_ppx_re": "^0.7.1",
     "bs-platform": "7.2.2",
     "webpack": "^4.29.6",
     "webpack-cli": "^3.2.3",

@@ -1,8 +1,8 @@
 /**
  * The handler type used to type the optional accumulator function
  * returned by useSubscription. handler is a GADT used to support
- * proper type inference for polymorphic useSubscription.
- */
+ * proper type inference for useSubscription.
+ */;
 type handler('acc, 'response, 'ret) =
   | Handler((option('acc), 'response) => 'acc)
     : handler('acc, 'response, 'acc)
@@ -12,11 +12,11 @@ type useSubscriptionArgs = {
   query: string,
   variables: Js.Json.t,
   pause: option(bool),
-  context: option(UrqlClientTypes.partialOperationContextJs),
+  context: option(UrqlClientTypes.PartialOperationContextJs.t),
 };
 
 type executeSubscriptionJs =
-  option(UrqlClientTypes.partialOperationContextJs) => unit;
+  option(UrqlClientTypes.PartialOperationContextJs.t) => unit;
 
 [@bs.module "urql"]
 external useSubscriptionJs:
@@ -51,6 +51,22 @@ let subscriptionResponseToReason = result => {
   UrqlTypes.{fetching, data, error, response, extensions};
 };
 
+/**
+ * The useSubscription hook.
+ *
+ * Accepts the following arguments:
+ *
+ * request – a Js.t containing the query and variables corresponding
+ * to the GraphQL subscription, and a parse function for decoding the JSON response.
+ *
+ * handler – an optional function to accumulate subscription responses.
+ *
+ * pause – an optional boolean flag instructing execution to be paused. The
+ * subscription will only be run when pause becomes true.
+ *
+ * context – a partial operation context to alter the execution conditions of
+ * the subscription.
+ */;
 let useSubscription =
     (
       type acc,
@@ -62,13 +78,15 @@ let useSubscription =
       ~context=?,
       (),
     ) => {
+  let query = request##query;
+  let variables = request##variables;
   let parse = request##parse;
 
   let args = {
-    query: request##query,
-    variables: request##variables,
+    query,
+    variables,
     pause,
-    context: UrqlClientTypes.decodeOperationRequestPolicy(context),
+    context: context->UrqlClientTypes.decodePartialOperationContext,
   };
 
   let h = (acc, subscriptionResult) =>
@@ -82,7 +100,7 @@ let useSubscription =
 
   let response = subscriptionResponseToReason(responseJs);
   let executeSubscription = (~context=?, ()) => {
-    let ctx = UrqlClientTypes.decodeOperationRequestPolicy(context);
+    let ctx = UrqlClientTypes.decodePartialOperationContext(context);
     executeSubscriptionJs(ctx);
   };
 

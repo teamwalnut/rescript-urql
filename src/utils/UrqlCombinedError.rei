@@ -44,13 +44,6 @@ type combinedError = {
   message: string,
 };
 
-let combinedErrorToRecord = (err: combinedErrorJs): combinedError => {
-  {
-    networkError: err##networkError->Js.Nullable.toOption,
-    graphQLErrors: err##graphQLErrors->Js.Nullable.toOption,
-    response: err##response->Js.Nullable.toOption,
-    message: err##message,
-  };
-};
+let combinedErrorToRecord: combinedErrorJs => combinedError;
 
 type t = combinedError;

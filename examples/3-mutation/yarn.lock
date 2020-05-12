@@ -26,9 +26,9 @@
     to-fast-properties "^2.0.0"
 
 "@baransu/graphql_ppx_re@^0.4.6":
-  version "0.4.6"
-  resolved "https://registry.yarnpkg.com/@baransu/graphql_ppx_re/-/graphql_ppx_re-0.4.6.tgz#cd4e20a5c5496a665e08aca0f4dea78ecca2e0d7"
-  integrity sha512-BlVNBF4926NPdhODAdemGeCFsPw7HNWLo3o2kQM2kr+6XXrog86etwRN/2/4Xa8KUzqKWM2ohjJEbbZE/cIHyQ==
+  version "0.4.9"
+  resolved "https://registry.yarnpkg.com/@baransu/graphql_ppx_re/-/graphql_ppx_re-0.4.9.tgz#8cdc034d6c5c9829d296f8bfe636da91dc03b968"
+  integrity sha512-FQnStD9Pr+MCVkQdpY7+qVaJuhifzCvcYAzL7KlV0zWS6PIvZTY8M1Dllns1adBAuaGL+RBIwXMHnV2UKwCPcw==
 
 "@emotion/babel-utils@^0.6.4":
   version "0.6.10"

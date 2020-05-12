@@ -1,8 +1,7 @@
 module UrqlTypes = UrqlTypes;
 
-module Client = {
-  include UrqlClient;
-};
+module Client = UrqlClient;
+module ClientTypes = UrqlClientTypes;
 
 module Context = UrqlContext;
 module Provider = UrqlContext.Provider;

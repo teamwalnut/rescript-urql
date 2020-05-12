@@ -44,7 +44,7 @@ let unwrapFetchImpl = (type a, fetch: option(fetchImpl(a))): option(a) => {
 type clientOptions('fetchOptions, 'fetchImpl) = {
   url: string,
   fetchOptions: option('fetchOptions),
-  exchanges: array(UrqlExchanges.exchange),
+  exchanges: array(UrqlExchanges.t),
   suspense: bool,
   fetch: option('fetchImpl),
   requestPolicy: string,
@@ -99,32 +99,6 @@ let urqlClientResponseToReason =
   {data, error, response};
 };
 
-/* A function to convert a partialOperationContext to a partialOperationContextJs. */
-// let partialOpCtxToPartialOpCtxJs = opts =>
-//   switch (opts) {
-//   | Some(o) =>
-//     let url = o->ClientTypes.partialOpUrlGet;
-//     let pollInterval = o->ClientTypes.partialOpPollIntervalGet;
-//     let fetchOptions = o->ClientTypes.partialOpFetchOptionsGet;
-//     let requestPolicy =
-//       o
-//       ->ClientTypes.partialOpRequestPolicyGet
-//       ->Belt.Option.map(UrqlTypes.requestPolicyToJs);
-//     let debugMeta = o->ClientTypes.partialOpDebugMetaGet;
-
-//     Some(
-//       ClientTypes.partialOperationContextJs(
-//         ~partialOpUrlJs=?url,
-//         ~partialOpFetchOptionsJs=?fetchOptions,
-//         ~partialOpRequestPolicyJs=?requestPolicy,
-//         ~partialOpDebugMetaJs=?debugMeta,
-//         ~partialOpPollIntervalJs=?pollInterval,
-//         (),
-//       ),
-//     );
-//   | None => None
-//   };
-
 /* Execution methods on the client. These allow you to imperatively execute GraphQL
    operations outside of components or hooks. */
 [@bs.send]
@@ -132,7 +106,7 @@ external executeQueryJs:
   (
     ~client: t,
     ~query: UrqlTypes.graphqlRequest,
-    ~opts: UrqlClientTypes.partialOperationContextJs=?,
+    ~opts: UrqlClientTypes.PartialOperationContextJs.t=?,
     unit
   ) =>
   Wonka.Types.sourceT(UrqlClientTypes.operationResult) =
@@ -153,7 +127,7 @@ let executeQuery =
       (),
     );
   let parse = request##parse;
-  let optsJs = UrqlClientTypes.decodeOperationRequestPolicy(opts);
+  let optsJs = UrqlClientTypes.decodePartialOperationContext(opts);
 
   executeQueryJs(~client, ~query=req, ~opts=?optsJs, ())
   |> Wonka.map((. result) => urqlClientResponseToReason(~parse, ~result));
@@ -164,7 +138,7 @@ external executeMutationJs:
   (
     ~client: t,
     ~mutation: UrqlTypes.graphqlRequest,
-    ~opts: UrqlClientTypes.partialOperationContextJs=?,
+    ~opts: UrqlClientTypes.PartialOperationContextJs.t=?,
     unit
   ) =>
   Wonka.Types.sourceT(UrqlClientTypes.operationResult) =
@@ -185,7 +159,7 @@ let executeMutation =
       (),
     );
   let parse = request##parse;
-  let optsJs = UrqlClientTypes.decodeOperationRequestPolicy(opts);
+  let optsJs = UrqlClientTypes.decodePartialOperationContext(opts);
 
   executeMutationJs(~client, ~mutation=req, ~opts=?optsJs, ())
   |> Wonka.map((. result) => urqlClientResponseToReason(~parse, ~result));
@@ -196,7 +170,7 @@ external executeSubscriptionJs:
   (
     ~client: t,
     ~subscription: UrqlTypes.graphqlRequest,
-    ~opts: UrqlClientTypes.partialOperationContextJs=?,
+    ~opts: UrqlClientTypes.PartialOperationContextJs.t=?,
     unit
   ) =>
   Wonka.Types.sourceT(UrqlClientTypes.operationResult) =
@@ -217,7 +191,7 @@ let executeSubscription =
       (),
     );
   let parse = request##parse;
-  let optsJs = UrqlClientTypes.decodeOperationRequestPolicy(opts);
+  let optsJs = UrqlClientTypes.decodePartialOperationContext(opts);
 
   executeSubscriptionJs(~client, ~subscription=req, ~opts=?optsJs, ())
   |> Wonka.map((. result) => urqlClientResponseToReason(~parse, ~result));

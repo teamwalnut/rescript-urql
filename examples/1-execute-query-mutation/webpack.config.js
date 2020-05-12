@@ -6,10 +6,10 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, "build"),
     publicPath: "/public/",
-    filename: "index.js"
+    filename: "index.js",
   },
   devServer: {
-    open: true,
-    contentBase: path.resolve(__dirname, "public")
-  }
+    contentBase: path.resolve(__dirname, "public"),
+    port: 3000,
+  },
 };

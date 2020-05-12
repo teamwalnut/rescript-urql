@@ -10,21 +10,10 @@ type executionResult = {
 
 /* OperationType for the active operation.
    Use with operationTypeToJs for proper conversion to strings. */
-[@bs.deriving jsConverter]
-type operationType = [
-  | [@bs.as "query"] `Query
-  | [@bs.as "mutation"] `Mutation
-  | [@bs.as "subscription"] `Subscription
-  | [@bs.as "teardown"] `Teardown
-];
+type operationType = [ | `Query | `Mutation | `Subscription | `Teardown];
 
 /* Cache outcomes for operations. */
-[@bs.deriving jsConverter]
-type cacheOutcome = [
-  | [@bs.as "miss"] `Miss
-  | [@bs.as "partial"] `Partial
-  | [@bs.as "hit"] `Hit
-];
+type cacheOutcome = [ | `Miss | `Partial | `Hit];
 
 /* Debug information on operations. */
 type operationDebugMeta = {
@@ -60,7 +49,7 @@ type partialOperationContext = {
   pollInterval: int,
 };
 
-module PartialOperationContextJs = {
+module PartialOperationContextJs: {
   [@bs.deriving {abstract: light}]
   type t = {
     [@bs.optional]
@@ -76,42 +65,19 @@ module PartialOperationContextJs = {
   };
 };
 
-let decodePartialOperationContext = (opts: option(partialOperationContext)) => {
-  switch (opts) {
-  | Some(o) =>
-    let ctx =
-      PartialOperationContextJs.t(
-        ~fetchOptions=?o->fetchOptions,
-        ~requestPolicy=?
-          o->requestPolicy->Belt.Option.map(UrqlTypes.requestPolicyToJs),
-        ~url=?o->url,
-        ~debugMeta=?o->debugMeta,
-        ~pollInterval=?o->pollInterval,
-        (),
-      );
-    Some(ctx);
-  | None => None
-  };
-};
+let decodePartialOperationContext:
+  option(partialOperationContext) => option(PartialOperationContextJs.t);
 
-let createOperationContext =
-    (
-      ~fetchOptions=?,
-      ~requestPolicy=?,
-      ~url=?,
-      ~debugMeta=?,
-      ~pollInterval=?,
-      (),
-    ) => {
-  partialOperationContext(
-    ~fetchOptions?,
-    ~requestPolicy?,
-    ~url?,
-    ~debugMeta?,
-    ~pollInterval?,
-    (),
-  );
-};
+let createOperationContext:
+  (
+    ~fetchOptions: Fetch.requestInit=?,
+    ~requestPolicy: UrqlTypes.requestPolicy=?,
+    ~url: string=?,
+    ~debugMeta: operationDebugMeta=?,
+    ~pollInterval: int=?,
+    unit
+  ) =>
+  partialOperationContext;
 
 /* The active GraphQL operation. */
 type operation = {

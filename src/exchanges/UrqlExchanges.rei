@@ -7,18 +7,17 @@ type exchangeInput = {
   client: UrqlClientTypes.t,
 };
 
-type exchange = exchangeInput => exchangeIO;
+type t = exchangeInput => exchangeIO;
 
-[@bs.module "urql"] external cacheExchange: exchange = "cacheExchange";
-[@bs.module "urql"] external debugExchange: exchange = "debugExchange";
-[@bs.module "urql"] external dedupExchange: exchange = "dedupExchange";
+[@bs.module "urql"] external cacheExchange: t = "cacheExchange";
+[@bs.module "urql"] external debugExchange: t = "debugExchange";
+[@bs.module "urql"] external dedupExchange: t = "dedupExchange";
 [@bs.module "urql"]
 external fallbackExchangeIO: exchangeIO = "fallbackExchangeIO";
-[@bs.module "urql"] external fetchExchange: exchange = "fetchExchange";
+[@bs.module "urql"] external fetchExchange: t = "fetchExchange";
 [@bs.module "urql"]
-external composeExchanges: array(exchange) => exchange = "composeExchanges";
-[@bs.module "urql"]
-external defaultExchanges: array(exchange) = "defaultExchanges";
+external composeExchanges: array(t) => t = "composeExchanges";
+[@bs.module "urql"] external defaultExchanges: array(t) = "defaultExchanges";
 
 /* Specific types for the subscriptionExchange. */
 type observerLike('value) = {
@@ -46,7 +45,7 @@ type subscriptionForwarder =
 type subscriptionExchangeOpts = {forwardSubscription: subscriptionForwarder};
 
 [@bs.module "urql"]
-external subscriptionExchange: subscriptionExchangeOpts => exchange =
+external subscriptionExchange: subscriptionExchangeOpts => t =
   "subscriptionExchange";
 
 /* Specific types for the ssrExchange. */
@@ -66,12 +65,10 @@ type ssrExchangeParams = {
 };
 
 [@bs.send]
-external restoreData: (~exchange: exchange, ~restore: Js.Json.t) => Js.Json.t =
+external restoreData: (~exchange: t, ~restore: Js.Json.t) => Js.Json.t =
   "restoreData";
-[@bs.send]
-external extractData: (~exchange: exchange) => Js.Json.t = "extractData";
+[@bs.send] external extractData: (~exchange: t) => Js.Json.t = "extractData";
 
 [@bs.module "urql"]
-external ssrExchange:
-  (~ssrExchangeParams: ssrExchangeParams=?, unit) => exchange =
+external ssrExchange: (~ssrExchangeParams: ssrExchangeParams=?, unit) => t =
   "ssrExchange";

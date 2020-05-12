@@ -88,20 +88,7 @@ let make =
         emoji={j|✋|j}
         count={string_of_int(pats)}
         hex="db4d3f"
-        onClick={_ =>
-          executePatMutation(
-            ~key=id,
-            ~context=
-              Some(
-                Client.ClientTypes.partialOperationContext(
-                  ~partialOpRequestPolicy=`NetworkOnly,
-                  (),
-                ),
-              ),
-            (),
-          )
-          |> ignore
-        }
+        onClick={_ => executePatMutation(~key=id, ()) |> ignore}
       />
       <EmojiButton
         emoji={j|🍖|j}

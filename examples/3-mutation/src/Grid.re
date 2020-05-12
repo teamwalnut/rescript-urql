@@ -1,5 +1,4 @@
 open ReasonUrql;
-open Client;
 
 type dog = {
   key: string,
@@ -50,7 +49,7 @@ let make = (~client: Client.t) => {
       let query =
         Client.executeQuery(~client, ~request, ())
         |> Wonka.subscribe((. data) =>
-             switch (data.response) {
+             switch (ClientTypes.(data.response)) {
              | Data(d) => dispatch({
                             payload: {
                               dogs: d##dogs,

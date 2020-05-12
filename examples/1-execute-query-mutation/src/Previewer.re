@@ -1,7 +1,7 @@
 open ReasonUrql;
-open Client;
 
-let client = make(~url="https://formidadog-ql.now.sh", ());
+let client = Client.make(~url="https://formidadog-ql.now.sh", ());
+Js.log(client);
 
 module GetAllDogs = [%graphql
   {|
@@ -59,18 +59,18 @@ let make = () => {
     );
 
   let executeQuery = () => {
-    query(
+    Client.query(
       ~client,
       ~request=queryRequest,
       ~opts=
-        Client.ClientTypes.partialOperationContext(
-          ~partialOpRequestPolicy=`CacheAndNetwork,
+        ClientTypes.createOperationContext(
+          ~requestPolicy=`CacheAndNetwork,
           (),
         ),
       (),
     )
     |> Js.Promise.then_(data =>
-         switch (data.response) {
+         switch (ClientTypes.(data.response)) {
          | Data(d) =>
            switch (Js.Json.stringifyAny(d)) {
            | Some(s) =>
@@ -91,9 +91,9 @@ let make = () => {
   };
 
   let executeMutation = () =>
-    executeMutation(~client, ~request=mutationRequest, ())
+    Client.executeMutation(~client, ~request=mutationRequest, ())
     |> Wonka.subscribe((. data) =>
-         switch (data.response) {
+         switch (ClientTypes.(data.response)) {
          | Data(d) =>
            switch (Js.Json.stringifyAny(d)) {
            | Some(s) => dispatch(SetMutation(s))
