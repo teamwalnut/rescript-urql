@@ -6,8 +6,10 @@ type exchangeInput = {
   forward: exchangeIO,
   client: UrqlClientTypes.t,
 };
-
-type t = exchangeInput => exchangeIO;
+type t =
+  exchangeInput =>
+  (. Wonka.Types.sourceT(UrqlClientTypes.operation)) =>
+  Wonka.Types.sourceT(UrqlClientTypes.operationResult);
 
 [@bs.module "urql"] external cacheExchange: t = "cacheExchange";
 [@bs.module "urql"] external debugExchange: t = "debugExchange";

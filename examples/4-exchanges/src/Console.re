@@ -47,7 +47,8 @@ let make = (~client) => {
              |> ignore
            | _ => ()
            }
-         );
+         )
+      |> ignore;
 
       None;
     },

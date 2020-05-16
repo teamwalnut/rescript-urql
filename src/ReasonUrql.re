@@ -13,7 +13,7 @@ module Mutation = UrqlMutation;
 
 module Subscription = UrqlSubscription;
 
-module SubscriptionWithHandler = UrqlSubscription;
+module SubscriptionWithHandler = UrqlSubscriptionWithHandler;
 
 module Request = UrqlRequest;
 

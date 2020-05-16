@@ -43,16 +43,20 @@ let make = () => {
   | Fetching => <text> "Loading"->React.string </text>
   | Data(d) =>
     d
-    |> Array.mapi((index, datum) =>
+    |> Array.to_list
+    |> List.mapi((index, datum) => {
+         let cx = datum##newNumber;
+         let cy = index === 0 ? datum##newNumber : d[index - 1]##newNumber;
          <circle
-           key={string_of_int(index) ++ string_of_int(datum##newNumber)}
-           cx=datum##newNumber
-           cy={index === 0 ? datum##newNumber : d[index - 1]##newNumber}
+           key={string_of_int(index)}
+           cx
+           cy
            stroke={getRandomHex()}
            fill="none"
            r={getRandomInt(30) |> string_of_int}
-         />
-       )
+         />;
+       })
+    |> Array.of_list
     |> React.array
   | Error(_e) => <text> "Error"->React.string </text>
   | NotFound => <text> "Not Found"->React.string </text>

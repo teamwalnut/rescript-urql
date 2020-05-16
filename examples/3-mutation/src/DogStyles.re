@@ -3,7 +3,7 @@ open Css;
 let container =
   style([
     justifySelf(center),
-    fontFamily("'Space Mono', monospace"),
+    fontFamily(`custom("'Space Mono', monospace")),
     padding(px(12)),
   ]);
 
@@ -15,8 +15,8 @@ let image =
     borderRadius(pct(50.)),
     border(px(3), solid, hex("222")),
     boxShadows([
-      boxShadow(~x=zero, ~y=zero, ~spread=px(3), rgba(0, 0, 0, 0.5)),
-      boxShadow(~x=zero, ~y=zero, ~spread=px(6), rgba(0, 0, 0, 0.25)),
+      Shadow.box(~x=zero, ~y=zero, ~spread=px(3), rgba(0, 0, 0, 0.5)),
+      Shadow.box(~x=zero, ~y=zero, ~spread=px(6), rgba(0, 0, 0, 0.25)),
     ]),
   ]);
 

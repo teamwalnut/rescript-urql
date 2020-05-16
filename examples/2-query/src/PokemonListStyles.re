@@ -8,7 +8,7 @@ module Styles = {
       gridTemplateColumns([rem(15.), `fr(1.)]),
       height(pct(100.)),
       width(pct(100.)),
-      fontFamily("Roboto"),
+      fontFamily(`custom("'Roboto', sans-serif")),
     ]);
 
   let aside =

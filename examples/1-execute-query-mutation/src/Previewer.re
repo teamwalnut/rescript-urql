@@ -1,7 +1,6 @@
 open ReasonUrql;
 
 let client = Client.make(~url="https://formidadog-ql.now.sh", ());
-Js.log(client);
 
 module GetAllDogs = [%graphql
   {|
