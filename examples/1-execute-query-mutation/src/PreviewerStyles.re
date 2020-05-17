@@ -15,7 +15,7 @@ let section = style([margin(px(10))]);
 let title =
   style([
     fontSize(rem(1.5)),
-    fontFamily(`custom("Space Mono, 'sans-serif'")),
+    fontFamily(`custom("'Space Mono', sans-serif")),
     margin(px(5)),
   ]);
 
@@ -38,7 +38,7 @@ let code = bgColor =>
     padding(px(20)),
     opacity(0.5),
     whiteSpace(`pre),
-    fontFamily(`custom("Space Mono, 'sans-serif'")),
+    fontFamily(`custom("'Space Mono', sans-serif")),
     borderRadius(px(5)),
     maxHeight(px(200)),
     overflow(`auto),

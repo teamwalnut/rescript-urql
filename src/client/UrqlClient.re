@@ -81,24 +81,6 @@ let make =
   client(options);
 };
 
-/* A function to convert the JS response from the client to a Reason record. */
-let urqlClientResponseToReason =
-    (~parse: Js.Json.t => 'response, ~result: UrqlClientTypes.operationResult)
-    : UrqlClientTypes.clientResponse('response) => {
-  let data = result.data->Belt.Option.map(parse);
-  let error =
-    result.error->Belt.Option.map(UrqlCombinedError.combinedErrorToRecord);
-
-  let response =
-    switch (data, error) {
-    | (Some(data), _) => UrqlClientTypes.Data(data)
-    | (None, Some(error)) => Error(error)
-    | (None, None) => NotFound
-    };
-
-  {data, error, response};
-};
-
 /* Execution methods on the client. These allow you to imperatively execute GraphQL
    operations outside of components or hooks. */
 [@bs.send]
@@ -112,14 +94,7 @@ external executeQueryJs:
   Wonka.Types.sourceT(UrqlClientTypes.operationResult) =
   "executeQuery";
 
-let executeQuery =
-    (
-      ~client: t,
-      ~request: UrqlTypes.request('response),
-      ~opts: option(UrqlClientTypes.partialOperationContext)=?,
-      (),
-    )
-    : Wonka.Types.sourceT(UrqlClientTypes.clientResponse('response)) => {
+let executeQuery = (~client, ~request, ~opts=?, ()) => {
   let req =
     UrqlRequest.createRequest(
       ~query=request##query,
@@ -130,7 +105,9 @@ let executeQuery =
   let optsJs = UrqlClientTypes.decodePartialOperationContext(opts);
 
   executeQueryJs(~client, ~query=req, ~opts=?optsJs, ())
-  |> Wonka.map((. result) => urqlClientResponseToReason(~parse, ~result));
+  |> Wonka.map((. response) =>
+       UrqlResponse.urqlClientResponseToReason(~response, ~parse)
+     );
 };
 
 [@bs.send]
@@ -144,14 +121,7 @@ external executeMutationJs:
   Wonka.Types.sourceT(UrqlClientTypes.operationResult) =
   "executeMutation";
 
-let executeMutation =
-    (
-      ~client: t,
-      ~request: UrqlTypes.request('response),
-      ~opts: option(UrqlClientTypes.partialOperationContext)=?,
-      (),
-    )
-    : Wonka.Types.sourceT(UrqlClientTypes.clientResponse('response)) => {
+let executeMutation = (~client, ~request, ~opts=?, ()) => {
   let req =
     UrqlRequest.createRequest(
       ~query=request##query,
@@ -162,7 +132,9 @@ let executeMutation =
   let optsJs = UrqlClientTypes.decodePartialOperationContext(opts);
 
   executeMutationJs(~client, ~mutation=req, ~opts=?optsJs, ())
-  |> Wonka.map((. result) => urqlClientResponseToReason(~parse, ~result));
+  |> Wonka.map((. response) =>
+       UrqlResponse.urqlClientResponseToReason(~response, ~parse)
+     );
 };
 
 [@bs.send]
@@ -176,14 +148,7 @@ external executeSubscriptionJs:
   Wonka.Types.sourceT(UrqlClientTypes.operationResult) =
   "executeSubscription";
 
-let executeSubscription =
-    (
-      ~client: t,
-      ~request: UrqlTypes.request('response),
-      ~opts: option(UrqlClientTypes.partialOperationContext)=?,
-      (),
-    )
-    : Wonka.Types.sourceT(UrqlClientTypes.clientResponse('response)) => {
+let executeSubscription = (~client, ~request, ~opts=?, ()) => {
   let req =
     UrqlRequest.createRequest(
       ~query=request##query,
@@ -194,28 +159,18 @@ let executeSubscription =
   let optsJs = UrqlClientTypes.decodePartialOperationContext(opts);
 
   executeSubscriptionJs(~client, ~subscription=req, ~opts=?optsJs, ())
-  |> Wonka.map((. result) => urqlClientResponseToReason(~parse, ~result));
+  |> Wonka.map((. response) =>
+       UrqlResponse.urqlClientResponseToReason(~response, ~parse)
+     );
 };
 
-let query =
-    (
-      ~client: t,
-      ~request: UrqlTypes.request('response),
-      ~opts: option(UrqlClientTypes.partialOperationContext)=?,
-      (),
-    ) => {
+let query = (~client, ~request, ~opts=?, ()) => {
   executeQuery(~client, ~request, ~opts?, ())
   |> Wonka.take(1)
   |> Wonka.toPromise;
 };
 
-let mutation =
-    (
-      ~client: t,
-      ~request: UrqlTypes.request('response),
-      ~opts: option(UrqlClientTypes.partialOperationContext)=?,
-      (),
-    ) => {
+let mutation = (~client, ~request, ~opts=?, ()) => {
   executeMutation(~client, ~request, ~opts?, ())
   |> Wonka.take(1)
   |> Wonka.toPromise;

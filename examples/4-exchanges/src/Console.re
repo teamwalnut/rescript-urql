@@ -30,27 +30,43 @@ module LikeDog = [%graphql
 let make = (~client) => {
   React.useEffect1(
     () => {
-      Client.executeQuery(~client, ~request=queryRequest, ())
-      |> Wonka.subscribe((. data) =>
-           switch (ClientTypes.(data.response)) {
-           | Data(d) =>
-             Js_global.setInterval(
-               () => {
-                 d##dogs->Belt.Array.shuffleInPlace;
-                 let mutationRequest = LikeDog.make(~key=d##dogs[0]##key, ());
-                 Client.executeMutation(~client, ~request=mutationRequest, ())
-                 |> Wonka.subscribe((. response) => Js.log(response))
-                 |> ignore;
-               },
-               5000,
-             )
-             |> ignore
-           | _ => ()
-           }
-         )
-      |> ignore;
+      let mutSub = ref(() => {});
 
-      None;
+      let subscription =
+        Client.executeQuery(~client, ~request=queryRequest, ())
+        |> Wonka.subscribe((. data) =>
+             switch (ClientTypes.(data.response)) {
+             | Data(d) =>
+               Js_global.setInterval(
+                 () => {
+                   d##dogs->Belt.Array.shuffleInPlace;
+                   let mutationRequest =
+                     LikeDog.make(~key=d##dogs[0]##key, ());
+
+                   let mutationSubscription =
+                     Client.executeMutation(
+                       ~client,
+                       ~request=mutationRequest,
+                       (),
+                     )
+                     |> Wonka.subscribe((. response) => Js.log(response));
+
+                   mutSub := mutationSubscription;
+                   ();
+                 },
+                 5000,
+               )
+               |> ignore
+             | _ => ()
+             }
+           );
+
+      Some(
+        () => {
+          subscription.unsubscribe();
+          mutSub^.unsubscribe();
+        },
+      );
     },
     [|client|],
   );
