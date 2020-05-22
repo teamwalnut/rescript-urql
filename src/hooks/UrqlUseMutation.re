@@ -33,12 +33,12 @@ let useMutation = (~request) => {
   let variables = request##variables;
   let parse = request##parse;
 
-  let (responseJs, executeMutationJs) = useMutationJs(query);
+  let (stateJs, executeMutationJs) = useMutationJs(query);
 
-  let response =
+  let state =
     React.useMemo2(
-      () => UrqlResponse.urqlResponseToReason(~response=responseJs, ~parse),
-      (responseJs, parse),
+      () => UrqlResponse.urqlResponseToReason(~response=stateJs, ~parse),
+      (stateJs, parse),
     );
 
   let executeMutation =
@@ -50,7 +50,7 @@ let useMutation = (~request) => {
       (executeMutationJs, variables),
     );
 
-  (response, executeMutation);
+  (state, executeMutation);
 };
 
 /**
@@ -64,12 +64,12 @@ let useMutation = (~request) => {
  */
 let useDynamicMutation = definition => {
   let (parse, query, composeVariables) = definition;
-  let (responseJs, executeMutationJs) = useMutationJs(query);
+  let (stateJs, executeMutationJs) = useMutationJs(query);
 
-  let response =
+  let state =
     React.useMemo2(
-      () => UrqlResponse.urqlResponseToReason(~response=responseJs, ~parse),
-      (responseJs, parse),
+      () => UrqlResponse.urqlResponseToReason(~response=stateJs, ~parse),
+      (stateJs, parse),
     );
 
   let executeMutation =
@@ -83,5 +83,5 @@ let useDynamicMutation = definition => {
       (composeVariables, executeMutationJs),
     );
 
-  (response, executeMutation);
+  (state, executeMutation);
 };

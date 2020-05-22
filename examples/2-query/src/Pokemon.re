@@ -1,5 +1,4 @@
 open ReasonUrql;
-open Hooks;
 open PokemonStyles;
 
 module GetPokemon = [%graphql
@@ -23,7 +22,7 @@ module GetPokemon = [%graphql
 [@react.component]
 let make = (~pokemon: string) => {
   let request = GetPokemon.make(~name=pokemon, ());
-  let ({response}, _) = useQuery(~request, ());
+  let (Hooks.{response}, _) = Hooks.useQuery(~request, ());
 
   switch (response) {
   | Data(data) =>

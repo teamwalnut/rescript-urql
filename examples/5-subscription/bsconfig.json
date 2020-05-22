@@ -29,5 +29,5 @@
   "warnings": {
     "error": "+5"
   },
-  "ppx-flags": ["@baransu/graphql_ppx_re/ppx6"]
+  "ppx-flags": ["@baransu/graphql_ppx_re/ppx"]
 }

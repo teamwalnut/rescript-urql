@@ -76,7 +76,7 @@ module PartialOperationContextJs = {
   };
 };
 
-let decodePartialOperationContext = (opts: option(partialOperationContext)) => {
+let decodePartialOperationContext = opts => {
   switch (opts) {
   | Some(o) =>
     let ctx =

@@ -6,6 +6,7 @@ type exchangeInput = {
   forward: exchangeIO,
   client: UrqlClientTypes.t,
 };
+
 type t =
   exchangeInput =>
   (. Wonka.Types.sourceT(UrqlClientTypes.operation)) =>

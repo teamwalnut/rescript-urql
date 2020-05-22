@@ -1,8 +1,30 @@
-# `Client`
+# Client and Provider
 
-The client is the central orchestrator of `reason-urql`, and is responsible for executing queries, mutations, and subscriptions passed to `useQuery`, `useMutation`, `useDynamicMutation` and `useSubscription` hooks or to the `Query`, `Mutation`, `Subscription`, and `SubscriptionWithHandler` components.
+The client is the central orchestrator of `reason-urql`, and is responsible for executing queries, mutations, and subscriptions passed to `useQuery`, `useMutation`, `useDynamicMutation` and `useSubscription` hooks or to the `Query`, `Mutation`, `Subscription`, and `SubscriptionWithHandler` components. The `Provider` wraps the root of your application and passes your `reason-urql` client instance, via React context, to components and hooks in your React tree.
 
-## API
+## `Provider`
+
+The `Provider`'s responsibility is to pass the `reason-urql` client instance down to `Query`, `Mutation`, `Subscription`, and `SubscriptionWithHandler` components or `useQuery`, `useMutation`, and `useSubcription` hooks through context. Wrap the root of your application with `Provider`.
+
+### Props
+
+| Prop    | Type       | Description                 |
+| ------- | ---------- | --------------------------- |
+| `value` | `Client.t` | The `urql` client instance. |
+
+### Example
+
+```reason
+open ReasonUrql;
+
+let client = Client.make(~url="https://localhost:3000/graphql", ());
+
+ReactDOMRe.renderToElementWithId(<Provider value=client><App /></Provider>, "root");
+```
+
+## Client
+
+The client executes all requests in `reason-urql` and delegates all incoming responses to subscribed components and hooks. Its full API is below; you can also look at its associated [interface file](../src/client/UrqlClient.rei).
 
 ### Client.make
 

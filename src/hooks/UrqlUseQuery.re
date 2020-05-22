@@ -71,12 +71,12 @@ let useQuery =
     context: ctx,
   };
 
-  let (responseJs, executeQueryJs) = useQueryJs(args);
+  let (stateJs, executeQueryJs) = useQueryJs(args);
 
-  let response =
+  let state =
     React.useMemo2(
-      () => UrqlResponse.urqlResponseToReason(~response=responseJs, ~parse),
-      (responseJs, parse),
+      () => UrqlResponse.urqlResponseToReason(~response=stateJs, ~parse),
+      (stateJs, parse),
     );
 
   let executeQuery =
@@ -88,5 +88,5 @@ let useQuery =
       [|executeQueryJs|],
     );
 
-  (response, executeQuery);
+  (state, executeQuery);
 };

@@ -1,5 +1,4 @@
 open ReasonUrql;
-open Hooks;
 
 module SubscribeRandomInt = [%graphql
   {|
@@ -32,8 +31,8 @@ let getRandomHex = () => {
 
 [@react.component]
 let make = () => {
-  let ({response}, _) =
-    useSubscription(
+  let (Hooks.{response}, _) =
+    Hooks.useSubscription(
       ~request=SubscribeRandomInt.make(),
       ~handler=Handler(handler),
       (),
