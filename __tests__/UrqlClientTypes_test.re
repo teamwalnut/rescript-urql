@@ -59,7 +59,7 @@ describe("UrqlClientTypes", () => {
     );
   });
 
-  describe("createPartialOperationContext", () => {
+  describe("createOperationContext", () => {
     it(
       "should create a partialOperationContext with only the supplied fields",
       () => {

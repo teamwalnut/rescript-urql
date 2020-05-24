@@ -5,6 +5,46 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.0] - 2020-05-23
+
+This release includes full support for BuckleScript 7 and widely reorganizes `reason-urql` to be more modular and easier to contribute to. Most of the public API has stayed the same, with some exceptions (documented below).
+
+Users who upgrade to v2 should be on BuckleScript 7, as this library relies heavily on [direct record to object compilation](https://reasonml.org/docs/reason-compiler/latest/object#records-as-objects).
+
+### Added
+
+- `createOperationContext` function – this allows you to create a partial operation context by supplying a portion of the parameters you want to alter on subsequent request operations. Replaces `Client.ClientTypes.partialOperationContext` `[@bs.deriving abstract]`. Available in the `ClientTypes` module.
+- Interface files (`.rei`) were added for all `modules` in the library.
+- `useSemanticGuarantee` hook – a drop in replacement for `useMemo` that is guaranteed to only update when the previous dependency value is not shallowly equal to the current dependency value.
+
+### Changed
+
+- `Client.ClientTypes` was moved to a top-level module, now accessible at the same level as all other modules from `reason-urql` i.e.:
+
+```reason
+open ReasonUrql;
+
+/* ClientTypes is now in scope. */
+```
+
+- `ssrExchange` now accepts `ssrExchangeParams` as its first labeled argument, not `ssrExchangeOpts`. `ssrExchangeParams` is also a record type while `ssrExchangeOpts` was a `[@bs.deriving abstract]`. This brings it more in line with `urql`'s implementation.
+- `serializedResult` is now a record type rather than a `[@bs.deriving abstract]`.
+- `reason-urql` components now use `reason-urql`'s hooks under the hood. This is akin to `urql`'s own architecture.
+- The signature of exchanges has changed to properly support uncurrying syntax.
+- `subscriptionExchangeOpts` is now a record type rather than a `[@bs.deriving abstract]`.
+- Local binding of `graphQLError` is now a record type rather than a `[@bs.deriving abstract]`.
+
+```reason
+type t =
+  exchangeInput =>
+  (. Wonka.Types.sourceT(UrqlClientTypes.operation)) =>
+  Wonka.Types.sourceT(UrqlClientTypes.operationResult);
+```
+
+### Removed
+
+- `Client` methods for `executeRequestOperation`, `reexecuteOperation`, `createRequestOperation`, and `dispatchOperation`. These are no longer in `urql`'s public facing API.
+
 ## [1.7.0] - 2020-04-16
 
 This release migrates our dependency on `urql` to v1.5.1. It also migrates our `devDependency` on `bs-platform` (the BuckleScript compiler), to v7.2.2. While we don't expect this to affect end users still on BuckleScript v6, there may be small bugfixes and optimizations coming in the near future to support this migration.
