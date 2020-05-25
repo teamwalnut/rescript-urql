@@ -41,9 +41,8 @@ let make = () => {
         Array.mapi(
           (index, datum) =>
             <rect
-              x={
-                datum##newFloat;
-              }
+              key={datum##newFloat ++ string_of_int(index)}
+              x={datum##newFloat}
               y={index === 0 ? datum##newFloat : d[index - 1]##newFloat}
               stroke={getRandomHex()}
               fill="none"

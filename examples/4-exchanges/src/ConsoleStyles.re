@@ -5,7 +5,7 @@ let console =
 
 let title =
   style([
-    fontFamily("'Space Mono', monospace"),
+    fontFamily(`custom("'Space Mono', monospace")),
     fontSize(rem(3.)),
     margin(auto),
     padding(pct(10.)),

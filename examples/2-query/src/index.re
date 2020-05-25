@@ -27,12 +27,7 @@ let flattenPokemon = pokemons =>
 
 ReactDOMRe.renderToElementWithId(
   <Provider value=client>
-    <Query
-      request
-      context={Client.ClientTypes.partialOperationContext(
-        ~partialOpRequestPolicy=`CacheFirst,
-        (),
-      )}>
+    <Query request requestPolicy=`CacheFirst>
       ...{({response}) =>
         switch (response) {
         | Data(data) =>
@@ -55,13 +50,8 @@ ReactDOMRe.renderToElementWithId(
             <div>
               {gqle
                |> Array.to_list
-               |> List.map(e => {
-                    let msg =
-                      Belt.Option.getWithDefault(
-                        Js.Nullable.toOption(CombinedError.messageGet(e)),
-                        "GraphQL error",
-                      );
-                    "[GraphQLError: " ++ msg ++ "]";
+               |> List.map((e: CombinedError.graphQLError) => {
+                    "[GraphQLError: " ++ e.message ++ "]"
                   })
                |> String.concat(", ")
                |> React.string}

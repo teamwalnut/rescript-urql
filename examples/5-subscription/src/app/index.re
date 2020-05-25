@@ -1,16 +1,16 @@
 open ReasonUrql;
-open SubscriptionsTransportWS;
 
 let client =
-  subscriptionClient(
+  SubscriptionsTransportWS.make(
     ~url="ws://localhost:4001/graphql",
-    ~subscriptionClientConfig=subscriptionClientConfig(),
+    ~subscriptionClientConfig=SubscriptionsTransportWS.makeClientOptions(),
+    (),
   );
 
 let forwardSubscription = operation => client##request(operation);
 
 let subscriptionExchangeOpts =
-  Exchanges.subscriptionExchangeOpts(~forwardSubscription);
+  Exchanges.{forwardSubscription: forwardSubscription};
 
 let subscriptionExchange =
   Exchanges.subscriptionExchange(subscriptionExchangeOpts);

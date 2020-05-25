@@ -1,48 +1,24 @@
-/**
- * The type of executeMutation – a function returned by
- * useMutation to imperatively execute the mutation.
- */
 type executeMutationJs =
-  (
-    option(Js.Json.t),
-    option(UrqlClient.ClientTypes.partialOperationContextJs)
-  ) =>
-  Js.Promise.t(UrqlClient.ClientTypes.operationResult);
+  (option(Js.Json.t), option(UrqlClientTypes.PartialOperationContextJs.t)) =>
+  Js.Promise.t(UrqlClientTypes.operationResult);
+
+type executeMutation =
+  (~context: UrqlClientTypes.partialOperationContext=?, unit) =>
+  Js.Promise.t(UrqlClientTypes.operationResult);
+
+type useMutationResponseJs('extensions) = (
+  UrqlTypes.jsHookResponse(Js.Json.t, 'extensions),
+  executeMutationJs,
+);
+
+type useMutationResponse('response, 'extensions) = (
+  UrqlTypes.hookResponse('response, 'extensions),
+  executeMutation,
+);
 
 [@bs.module "urql"]
-external useMutationJs:
-  string => (UrqlTypes.jsResponse(Js.Json.t, 'extensions), executeMutationJs) =
+external useMutationJs: string => useMutationResponseJs('extensions) =
   "useMutation";
-
-/**
- * A function for converting the response to useQuery from the JavaScript
- * representation to a typed Reason record.
- */
-let urqlResponseToReason =
-    (
-      parse: Js.Json.t => 'response,
-      result: UrqlTypes.jsResponse(Js.Json.t, 'extensions),
-    )
-    : UrqlTypes.hookResponse('response, 'extensions) => {
-  let data =
-    result->UrqlTypes.jsDataGet->Js.Nullable.toOption->Belt.Option.map(parse);
-  let error =
-    result
-    ->UrqlTypes.jsErrorGet
-    ->Belt.Option.map(UrqlCombinedError.combinedErrorToRecord);
-  let fetching = result->UrqlTypes.fetchingGet;
-  let extensions = result->UrqlTypes.extensionsGet->Js.Nullable.toOption;
-
-  let response =
-    switch (fetching, data, error) {
-    | (true, _, _) => UrqlTypes.Fetching
-    | (false, _, Some(error)) => Error(error)
-    | (false, Some(data), _) => Data(data)
-    | (false, None, None) => NotFound
-    };
-
-  {fetching, data, error, response, extensions};
-};
 
 /**
  * The useMutation hook.
@@ -51,46 +27,61 @@ let urqlResponseToReason =
  *
  * request – a Js.t containing the query and variables corresponding
  * to the GraphQL mutation, and a parse function for decoding the JSON response.
- */;
+ */
 let useMutation = (~request) => {
-  let (responseJs, executeMutationJs) = useMutationJs(request##query);
+  let query = request##query;
+  let variables = request##variables;
+  let parse = request##parse;
 
-  let response =
+  let (stateJs, executeMutationJs) = useMutationJs(query);
+
+  let state =
     React.useMemo2(
-      () => responseJs |> urqlResponseToReason(request##parse),
-      (request##parse, responseJs),
+      () => UrqlResponse.urqlResponseToReason(~response=stateJs, ~parse),
+      (stateJs, parse),
     );
 
   let executeMutation =
     React.useMemo2(
       ((), ~context=?, ()) => {
-        let ctxJs = UrqlClient.partialOpCtxToPartialOpCtxJs(context);
-        executeMutationJs(Some(request##variables), ctxJs);
+        let ctx = UrqlClientTypes.decodePartialOperationContext(context);
+        executeMutationJs(Some(variables), ctx);
       },
-      (executeMutationJs, request##variables),
+      (executeMutationJs, variables),
     );
 
-  (response, executeMutation);
+  (state, executeMutation);
 };
 
+/**
+ * The useDynamicMutation hook.
+ *
+ * Accepts the following arguments:
+ *
+ * definition – a tuple on the graphql_ppx_re module representing your mutation.
+ * Allows for proper type inference of results on mutations executed with variables
+ * passed at runtime.
+ */
 let useDynamicMutation = definition => {
   let (parse, query, composeVariables) = definition;
-  let (responseJs, executeMutationJs) = useMutationJs(query);
+  let (stateJs, executeMutationJs) = useMutationJs(query);
 
-  let response =
+  let state =
     React.useMemo2(
-      () => responseJs |> urqlResponseToReason(parse),
-      (parse, responseJs),
+      () => UrqlResponse.urqlResponseToReason(~response=stateJs, ~parse),
+      (stateJs, parse),
     );
 
   let executeMutation =
     React.useMemo2(
       ((), ~context=None) => {
-        let ctxJs = UrqlClient.partialOpCtxToPartialOpCtxJs(context);
-        composeVariables(request => executeMutationJs(Some(request), ctxJs));
+        let ctx = UrqlClientTypes.decodePartialOperationContext(context);
+        composeVariables(variables =>
+          executeMutationJs(Some(variables), ctx)
+        );
       },
-      (executeMutationJs, composeVariables),
+      (composeVariables, executeMutationJs),
     );
 
-  (response, executeMutation);
+  (state, executeMutation);
 };

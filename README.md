@@ -31,9 +31,9 @@ Reason bindings for Formidable's Universal React Query Library, [`urql`](https:/
 yarn add reason-urql
 ```
 
-#### 2. Add `graphql_ppx_re` or `graphql_ppx`.
+#### 2. Add `graphql_ppx_re`.
 
-To get the most out of compile time type checks for your GraphQL queries, mutations, and subscriptions, we recommend using one of the PPX rewriters available for Reason / OCaml. Currently, there are two options in the community – [`graphql_ppx_re`](https://github.com/baransu/graphql_ppx_re), which is under active maintenance, and [`graphql_ppx`](https://github.com/mhallin/graphql_ppx), which is no longer actively maintained. We strongly encourage use of `graphql_ppx_re`, as `useDynamicMutation` makes direct use of some of its newer internals. If using `bs-platform@6.x.x`, you'll _have_ to use `graphql_ppx_re`.
+To get the most out of compile time type checks for your GraphQL queries, mutations, and subscriptions, we recommend using [`graphql_ppx_re`](https://github.com/reasonml-community/graphql_ppx). `useDynamicMutation` in particular takes advantage of some of its internals for an excellent experience writing type safe code to access your GraphQL responses.
 
 ```sh
 yarn add @baransu/graphql_ppx_re --dev
@@ -41,7 +41,7 @@ yarn add @baransu/graphql_ppx_re --dev
 
 #### 3. Update `bsconfig.json`.
 
-Add `reason-urql` to your `bs-dependencies` and `graphql_ppx_re` or `graphql_ppx` (depending on which library you're using) to your `ppx_flags` in `bsconfig.json`.
+Add `reason-urql` to your `bs-dependencies` and `graphql_ppx_re` to your `ppx_flags` in `bsconfig.json`.
 
 ```json
 {
@@ -50,35 +50,17 @@ Add `reason-urql` to your `bs-dependencies` and `graphql_ppx_re` or `graphql_ppx
 }
 ```
 
-If you're using `bs-platform@6.x.x`, you'll need to use `@baransu/graphql_ppx_re/ppx6`:
-
-```json
-{
-  "ppx-flags": ["@baransu/graphql_ppx_re/ppx6"]
-}
-```
-
 #### 4. Send an introspection query to your API.
 
-Finally, you'll need to send an introspection query to your GraphQl API, using a tool like [`graphql-cli`](https://github.com/Urigo/graphql-cli/). You should generate a file called `graphql_schema.json` at the root of your project that your chosen PPX preprocessor can use to type check your queries. **You should check this file into version control** and keep it updated as your API changes.
+Finally, you'll need to send an introspection query to your GraphQl API, using a tool like [`graphql-cli`](https://github.com/Urigo/graphql-cli/). You should generate a file called `graphql_schema.json` at the root of your project that `graphql_ppx_re` can use to type check your queries. **You should check this file into version control** and keep it updated as your API changes.
 
-If using `grapqhl_ppx_re`, follow the instructions [here](https://github.com/baransu/graphql_ppx_re#usage).
-
-If using `graphql_ppx`, you'll already have a little utility to help you generate the `graphql_schema.json` file:
+For additional instructions, head [here](https://github.com/reasonml-community/graphql_ppx#usage).
 
 ```sh
-yarn send-introspection-query <your_graphql_endpoint>
+npx get-graphql-schema ENDPOINT_URL -j > graphql_schema.json
 ```
 
-Simply re-run this script at anytime to regenerate the `graphql_schema.json` file according to your latest backend schema. See the [docs for `graphql_ppx_re`](https://github.com/baransu/graphql_ppx_re#usage) and the docs for [`grapqhl_ppx`](https://github.com/mhallin/graphql_ppx) for more assistance.
-
-### Older Versions
-
-Before version 1.0.0, `reason-urql` listed `urql` as a peer dependency. If using `v0.1.1` or earlier of `reason-urql`, make sure to install the correct version of `urql`.
-
-```sh
-yarn add reason-urql@0.1.1 urql@0.2.2
-```
+Simply re-run this script at anytime to regenerate the `graphql_schema.json` file according to your latest backend schema.
 
 ## 💻 Example Projects
 
@@ -98,7 +80,7 @@ yarn start
 yarn start:demo
 ```
 
-The example will start up at `http://localhost:8080`. Edit the example freely to watch changes take effect.
+The example will start up at `http://localhost:3000`. Edit the example freely to watch changes take effect.
 
 ### Editing `reason-urql` source files
 

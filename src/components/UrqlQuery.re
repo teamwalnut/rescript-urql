@@ -1,84 +1,41 @@
-[@bs.deriving abstract]
-type queryRenderPropsJs('extensions) = {
-  fetching: bool,
-  data: Js.Nullable.t(Js.Json.t),
-  error: Js.Nullable.t(UrqlCombinedError.combinedErrorJs),
-  executeQuery:
-    option(UrqlClient.ClientTypes.partialOperationContextJs) => unit,
-  extensions: Js.Nullable.t('extensions),
-};
-
 type queryRenderProps('response, 'extensions) = {
   fetching: bool,
   data: option('response),
   error: option(UrqlCombinedError.t),
   executeQuery:
-    (~context: UrqlClient.ClientTypes.partialOperationContext=?, unit) => unit,
+    (~context: UrqlClientTypes.partialOperationContext=?, unit) => unit,
   response: UrqlTypes.response('response),
   extensions: option('extensions),
-};
-
-module QueryJs = {
-  [@bs.module "urql"] [@react.component]
-  external make:
-    (
-      ~query: string,
-      ~variables: Js.Json.t,
-      ~requestPolicy: string,
-      ~pause: bool=?,
-      ~pollInterval: int=?,
-      ~context: UrqlClient.ClientTypes.partialOperationContextJs=?,
-      ~children: queryRenderPropsJs('extensions) => React.element
-    ) =>
-    React.element =
-    "Query";
-};
-
-let urqlQueryResponseToReason =
-    (parse: Js.Json.t => 'response, result: queryRenderPropsJs('extensions))
-    : queryRenderProps('response, 'extensions) => {
-  let data = result->dataGet->Js.Nullable.toOption->Belt.Option.map(parse);
-  let error =
-    result
-    ->errorGet
-    ->Js.Nullable.toOption
-    ->Belt.Option.map(UrqlCombinedError.combinedErrorToRecord);
-  let fetching = result->fetchingGet;
-  let executeQuery = (~context=?, ()) =>
-    result->executeQueryGet(context->UrqlClient.partialOpCtxToPartialOpCtxJs);
-  let extensions = result->extensionsGet->Js.Nullable.toOption;
-
-  let response =
-    switch (fetching, data, error) {
-    | (true, _, _) => UrqlTypes.Fetching
-    | (false, _, Some(error)) => Error(error)
-    | (false, Some(data), _) => Data(data)
-    | (false, None, None) => NotFound
-    };
-
-  {fetching, data, error, executeQuery, response, extensions};
 };
 
 [@react.component]
 let make =
     (
-      ~request: UrqlTypes.request('response),
-      ~requestPolicy: UrqlTypes.requestPolicy=`CacheFirst,
-      ~pause: option(bool)=?,
-      ~pollInterval: option(int)=?,
-      ~context: option(UrqlClient.ClientTypes.partialOperationContext)=?,
-      ~children: queryRenderProps('response, 'extension) => React.element,
+      ~request,
+      ~requestPolicy=?,
+      ~pause=?,
+      ~pollInterval=?,
+      ~context=?,
+      ~children,
     ) => {
-  let query = request##query;
-  let variables = request##variables;
-  let parse = request##parse;
-  <QueryJs
-    query
-    variables
-    requestPolicy={UrqlTypes.requestPolicyToJs(requestPolicy)}
-    ?pause
-    ?pollInterval
-    context=?{UrqlClient.partialOpCtxToPartialOpCtxJs(context)}>
-    {result => result |> urqlQueryResponseToReason(parse) |> children}
-  </QueryJs>;
+  let (state, executeQuery) =
+    UrqlUseQuery.useQuery(
+      ~request,
+      ~requestPolicy?,
+      ~pause?,
+      ~pollInterval?,
+      ~context?,
+      (),
+    );
+
+  let result = {
+    fetching: state.fetching,
+    data: state.data,
+    error: state.error,
+    response: state.response,
+    extensions: state.extensions,
+    executeQuery,
+  };
+
+  children(result);
 };

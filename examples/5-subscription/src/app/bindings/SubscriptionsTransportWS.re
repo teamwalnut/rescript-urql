@@ -1,41 +1,90 @@
-[@bs.deriving abstract]
+open ReasonUrql;
+
 type subscriptionClientOptions = {
-  [@bs.optional]
-  timeout: int,
-  [@bs.optional] [@bs.as "lazy"]
-  lazy_: bool,
-  [@bs.optional]
-  reconnect: bool,
-  [@bs.optional]
-  reconnectionAttempts: int,
-  [@bs.optional]
-  connectionCallback: Js.Exn.t => unit,
-  [@bs.optional]
-  inactivityTimer: int,
+  timeout: option(int),
+  [@bs.as "lazy"]
+  lazy_: option(bool),
+  reconnect: option(bool),
+  reconnectionAttempts: option(int),
+  connectionCallback: option(Js.Exn.t => unit),
+  inactivityTimer: option(int),
 };
 
 type websocketImpl;
 
-[@bs.deriving abstract]
 type subscriptionClientConfig = {
-  [@bs.optional]
-  options: subscriptionClientOptions,
-  [@bs.optional]
-  websocketImpl,
+  options: option(subscriptionClientOptions),
+  websocketImpl: option(websocketImpl),
 };
 
-type client = {
+let makeClientOptions =
+    (
+      ~timeout=?,
+      ~lazy_=?,
+      ~reconnect=?,
+      ~reconnectionAttempts=?,
+      ~connectionCallback=?,
+      ~inactivityTimer=?,
+      (),
+    ) => {
+  {
+    timeout,
+    lazy_,
+    reconnect,
+    reconnectionAttempts,
+    connectionCallback,
+    inactivityTimer,
+  };
+};
+
+type t = {
   .
   [@bs.meth]
   "request":
-    UrqlClient.UrqlExchanges.subscriptionOperation =>
-    UrqlClient.UrqlExchanges.observableLike(
-      UrqlClient.ClientTypes.executionResult,
-    ),
+    Exchanges.subscriptionOperation =>
+    Exchanges.observableLike(ClientTypes.executionResult),
 };
 
 [@bs.new] [@bs.module "subscriptions-transport-ws"]
 external subscriptionClient:
-  (~url: string, ~subscriptionClientConfig: subscriptionClientConfig=?) =>
-  client =
+  (
+    ~url: string,
+    ~subscriptionClientConfig: subscriptionClientConfig=?,
+    unit
+  ) =>
+  t =
   "SubscriptionClient";
+
+let make = (~url, ~subscriptionClientConfig=?, ()) => {
+  switch (subscriptionClientConfig) {
+  | Some(config) =>
+    let {
+      timeout,
+      lazy_,
+      reconnect,
+      reconnectionAttempts,
+      connectionCallback,
+      inactivityTimer,
+    } = config;
+
+    let clientOptions =
+      makeClientOptions(
+        ~timeout?,
+        ~lazy_?,
+        ~reconnect?,
+        ~reconnectionAttempts?,
+        ~connectionCallback?,
+        ~inactivityTimer?,
+        (),
+      );
+    subscriptionClient(
+      ~url,
+      ~subscriptionClientConfig={
+        options: Some(clientOptions),
+        websocketImpl: None,
+      },
+      (),
+    );
+  | None => subscriptionClient(~url, ())
+  };
+};

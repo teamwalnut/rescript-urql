@@ -9,18 +9,18 @@
     "build": "bsb -make-world",
     "start": "bsb -make-world -w",
     "clean": "bsb -clean-world",
-    "start:demo": "webpack-dev-server --hot"
+    "start:demo": "webpack-dev-server"
   },
   "dependencies": {
-    "bs-css": "^8.0.4",
-    "reason-react": "0.7.0",
+    "bs-css-emotion": "^1.2.0",
+    "reason-react": "^0.7.0",
     "reason-urql": "link:../../"
   },
   "devDependencies": {
-    "@baransu/graphql_ppx_re": "^0.4.6",
-    "bs-platform": "7.2.2",
-    "webpack": "^4.29.6",
-    "webpack-cli": "^3.2.3",
-    "webpack-dev-server": "^3.2.1"
+    "@baransu/graphql_ppx_re": "^0.7.1",
+    "bs-platform": "7.3.2",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.11",
+    "webpack-dev-server": "^3.11.0"
   }
 }
