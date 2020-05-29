@@ -39,6 +39,7 @@ let make = () => {
     );
 
   switch (response) {
+  | Init => <text> "Init"->React.string </text>
   | Fetching => <text> "Loading"->React.string </text>
   | Data(d) =>
     d
@@ -58,6 +59,6 @@ let make = () => {
     |> Array.of_list
     |> React.array
   | Error(_e) => <text> "Error"->React.string </text>
-  | NotFound => <text> "Not Found"->React.string </text>
+  | Empty => <text> "Empty"->React.string </text>
   };
 };

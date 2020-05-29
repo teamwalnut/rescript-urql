@@ -31,7 +31,12 @@ describe("UrqlResponse", () => {
             extensions: None,
           };
         let parse = _json => ();
-        let result = UrqlResponse.urqlResponseToReason(~response, ~parse);
+        let result =
+          UrqlResponse.urqlResponseToReason(
+            ~response,
+            ~parse,
+            ~hasExecuted=true,
+          );
 
         Expect.(expect(result.response) |> toEqual(UrqlTypes.Fetching));
       },
@@ -48,7 +53,12 @@ describe("UrqlResponse", () => {
           extensions: None,
         };
       let parse = json => Js.Json.decodeString(json);
-      let result = UrqlResponse.urqlResponseToReason(~response, ~parse);
+      let result =
+        UrqlResponse.urqlResponseToReason(
+          ~response,
+          ~parse,
+          ~hasExecuted=true,
+        );
 
       Expect.(
         expect(result.response) |> toEqual(UrqlTypes.Data(Some("Hello")))
@@ -66,12 +76,17 @@ describe("UrqlResponse", () => {
           extensions: None,
         };
       let parse = _json => ();
-      let result = UrqlResponse.urqlResponseToReason(~response, ~parse);
+      let result =
+        UrqlResponse.urqlResponseToReason(
+          ~response,
+          ~parse,
+          ~hasExecuted=true,
+        );
 
       Expect.(expect(result.response) |> toEqual(UrqlTypes.Error(error)));
     });
 
-    it("should return NotFound constructor if none of the above apply", () => {
+    it("should return Init constructor if hasExecuted is false", () => {
       let response =
         UrqlTypes.{
           fetching: false,
@@ -80,10 +95,37 @@ describe("UrqlResponse", () => {
           extensions: None,
         };
       let parse = _json => ();
-      let result = UrqlResponse.urqlResponseToReason(~response, ~parse);
+      let result =
+        UrqlResponse.urqlResponseToReason(
+          ~response,
+          ~parse,
+          ~hasExecuted=false,
+        );
 
-      Expect.(expect(result.response) |> toEqual(UrqlTypes.NotFound));
+      Expect.(expect(result.response) |> toEqual(UrqlTypes.Init));
     });
+
+    it(
+      "should return Empty constructor if hasExecuted is true and no data or errors have been received",
+      () => {
+        let response =
+          UrqlTypes.{
+            fetching: false,
+            data: None,
+            error: None,
+            extensions: None,
+          };
+        let parse = _json => ();
+        let result =
+          UrqlResponse.urqlResponseToReason(
+            ~response,
+            ~parse,
+            ~hasExecuted=true,
+          );
+
+        Expect.(expect(result.response) |> toEqual(UrqlTypes.Empty));
+      },
+    );
   });
 
   describe("urqlClientResponseToReason", () => {
@@ -137,12 +179,14 @@ describe("UrqlResponse", () => {
       );
     });
 
-    it("should return NotFound constructor if none of the above apply", () => {
+    it(
+      "should return Empty constructor if neither data nor an error are returned",
+      () => {
       let response = UrqlClientTypes.{data: None, error: None, operation};
       let parse = _json => ();
       let result = UrqlResponse.urqlClientResponseToReason(~response, ~parse);
 
-      Expect.(expect(result.response) |> toEqual(UrqlClientTypes.NotFound));
+      Expect.(expect(result.response) |> toEqual(UrqlClientTypes.Empty));
     });
   });
 });

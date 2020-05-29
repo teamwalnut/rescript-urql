@@ -24,10 +24,10 @@ In this section, we cover the hooks and components exposed by `reasonn-urql`.
 
 `useQuery` returns a tuple containing the result of executing your GraphQL query, `result`, and a function for re-executing the query imperatively, `executeQuery`.
 
-| Return Value   | Type                                                              | Description                                                                                                                                                                                                                       |
-| -------------- | ----------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `result`       | `UrqlTypes.hookResponse('response)`                               | A record containing fields for `fetching`, `data`, `error`, and `response`. `response` is a variant containing constructors for `Data`, `Error`, `Fetching` and `NotFound`. Useful for pattern matching to render conditional UI. |
-| `executeQuery` | `(~context: ClientTypes.partialOperationContext=?, unit) => unit` | A function for imperatively re-executing the query. Accepts a single optional labeled argument, `context`, for altering the query execution. Use `ClientTypes.createOperationContext` to supply the `context` argument.           |
+| Return Value   | Type                                                              | Description                                                                                                                                                                                                                                   |
+| -------------- | ----------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `result`       | `UrqlTypes.hookResponse('response)`                               | A record containing fields for `fetching`, `data`, `error`, and `response`. `response` is a variant containing constructors for `Init`, `Fetching`, `Data(d)`, `Error(e)`, and `Empty`. Useful for pattern matching to render conditional UI. |
+| `executeQuery` | `(~context: ClientTypes.partialOperationContext=?, unit) => unit` | A function for imperatively re-executing the query. Accepts a single optional labeled argument, `context`, for altering the query execution. Use `ClientTypes.createOperationContext` to supply the `context` argument.                       |
 
 #### Example
 
@@ -72,7 +72,7 @@ let make = () => {
          </button>
       </div>
     | Error(_e) => <div> "Error"->React.string </div>
-    | NotFound => <div> "NotFound"->React.string </div>
+    | Init => <div> "Init"->React.string </div>
   }
 }
 ```
@@ -93,10 +93,10 @@ Check out `examples/2-query` to see an example of using the `useQuery` hook.
 
 `useMutation` returns a tuple containing the result of executing your GraphQL mutation as a record, `result`, and a function for executing the mutation imperatively, `executeMutation`. By default, `useMutation` **does not** execute your mutation when your component renders – rather, it is up to you to call `executeMutation` when you want to by attaching it to on an event handler or running it inside of an effect. Read more on the [`urql` docs](https://formidable.com/open-source/urql/docs/basics/mutations/#sending-a-mutation).
 
-| Return Value      | Type                                                                                                   | Description                                                                                                                                                                                                                       |
-| ----------------- | ------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `result`          | `UrqlTypes.hookResponse('response)`                                                                    | A record containing fields for `fetching`, `data`, `error`, and `response`. `response` is a variant containing constructors for `Data`, `Error`, `Fetching` and `NotFound`. Useful for pattern matching to render conditional UI. |
-| `executeMutation` | `(~context: ClientTypes.partialOperationContext=?, unit) => Js.Promise.t(ClientTypes.operationResult)` | A function for imperatively executing the mutation. Accepts a single labeled argument, `context`, for altering the mutation execution. Use `ClientTypes.createOperationContext` to supply the `context` argument.                 |
+| Return Value      | Type                                                                                                   | Description                                                                                                                                                                                                                                   |
+| ----------------- | ------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `result`          | `UrqlTypes.hookResponse('response)`                                                                    | A record containing fields for `fetching`, `data`, `error`, and `response`. `response` is a variant containing constructors for `Init`, `Fetching`, `Data(d)`, `Error(e)`, and `Empty`. Useful for pattern matching to render conditional UI. |
+| `executeMutation` | `(~context: ClientTypes.partialOperationContext=?, unit) => Js.Promise.t(ClientTypes.operationResult)` | A function for imperatively executing the mutation. Accepts a single labeled argument, `context`, for altering the mutation execution. Use `ClientTypes.createOperationContext` to supply the `context` argument.                             |
 
 #### Example
 
@@ -144,7 +144,7 @@ A good example of a case where `useDynamicMutation` comes in handy is when you n
 
 | Return Value      | Type                                                                                                                           | Description                                                                                                                                                                                                                                                                                                                                                                                                 |
 | ----------------- | ------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `result`          | `UrqlTypes.hookResponse('response)`                                                                                            | A record containing fields for `fetching`, `data`, `error`, and `response`. `response` is a variant containing constructors for `Data`, `Error`, `Fetching` and `NotFound`. Useful for pattern matching to render conditional UI.                                                                                                                                                                           |
+| `result`          | `UrqlTypes.hookResponse('response)`                                                                                            | A record containing fields for `fetching`, `data`, `error`, and `response`. `response` is a variant containing constructors for `Init`, `Fetching`, `Data(d)`, `Error(e)`, and `Empty`. Useful for pattern matching to render conditional UI.                                                                                                                                                               |
 | `executeMutation` | `(~myVar1, ~myVar2, ..., ~context: ClientTypes.partialOperationContext)=?, unit) => Js.Promise.t(ClientTypes.operationResult)` | A function for imperatively executing the mutation, which accepts all the variables of your mutation as named arguments. Also accepts an optional `partialOperationContext` using the labeled argument `context`. Use `ClientTypes.createOperationContext` to supply the `context` argument. You must use a final positional `unit` argument, `()`, to indicate that you've finished applying the function. |
 
 #### Example
@@ -217,10 +217,10 @@ If using the `useSubscription` hook, be sure your client is configured with the 
 
 `useSubscription` returns a tuple containing the result of executing your GraphQL subscription, `result`, and a function for re-executing the subscription imperatively, `executeSubscription`.
 
-| Return Value          | Type                                                         | Description                                                                                                                                                                                                                           |
-| --------------------- | ------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `result`              | `UrqlTypes.hookResponse('response)`                          | A record containing fields for `fetching`, `data`, `error`, and `response`. `response` is a variant containing constructors for `Data`, `Error`, `Fetching` and `NotFound`. Useful for pattern matching to render conditional UI.     |
-| `executeSubscription` | `(~context: Client.partialOperationContext=?, unit) => unit` | A function for imperatively re-executing the subscription. Accepts a single optional labeled argument, `context`, for altering the subscription execution. Use `ClientTypes.createOperationContext` to supply the `context` argument. |
+| Return Value          | Type                                                         | Description                                                                                                                                                                                                                                   |
+| --------------------- | ------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `result`              | `UrqlTypes.hookResponse('response)`                          | A record containing fields for `fetching`, `data`, `error`, and `response`. `response` is a variant containing constructors for `Init`, `Fetching`, `Data(d)`, `Error(e)`, and `Empty`. Useful for pattern matching to render conditional UI. |
+| `executeSubscription` | `(~context: Client.partialOperationContext=?, unit) => unit` | A function for imperatively re-executing the subscription. Accepts a single optional labeled argument, `context`, for altering the subscription execution. Use `ClientTypes.createOperationContext` to supply the `context` argument.         |
 
 #### Example
 
@@ -267,7 +267,7 @@ let make = () => {
       )
       |> React.array
     | Error(_e) => <div> "Error"->React.string </div>
-    | NotFound => <div> "NotFound"->React.string </div>
+    | Init => <div> "Init"->React.string </div>
   }
 }
 ```
@@ -336,13 +336,13 @@ The `Query` allows you to query your GraphQL API and render UI with the returned
 
 `Query`'s render prop is a record containing the following fields.
 
-| Prop           | Type                                                              | Description                                                                                                                             |
-| -------------- | ----------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| `fetching`     | `bool`                                                            | A boolean flag to indicate if the request is currently executing.                                                                       |
-| `data`         | `Js.Json.t`                                                       | The raw JSON data returned by your GraphQL API.                                                                                         |
-| `error`        | `CombinedError.t`                                                 | The error(s), if any, returned by the GraphQL operation.                                                                                |
-| `executeQuery` | `(~context: ClientTypes.partialOperationContext=?, unit) => unit` | A callback to imperatively re-execute the query operation. Accepts a partial operation context to modify execution of the query.        |
-| `response`     | `UrqlTypes.response('response)`                                   | A variant containing constructors for `Data`, `Error`, `Fetching` and `NotFound`. Useful for pattern matching to render conditional UI. |
+| Prop           | Type                                                              | Description                                                                                                                                         |
+| -------------- | ----------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `fetching`     | `bool`                                                            | A boolean flag to indicate if the request is currently executing.                                                                                   |
+| `data`         | `Js.Json.t`                                                       | The raw JSON data returned by your GraphQL API.                                                                                                     |
+| `error`        | `CombinedError.t`                                                 | The error(s), if any, returned by the GraphQL operation.                                                                                            |
+| `executeQuery` | `(~context: ClientTypes.partialOperationContext=?, unit) => unit` | A callback to imperatively re-execute the query operation. Accepts a partial operation context to modify execution of the query.                    |
+| `response`     | `UrqlTypes.response('response)`                                   | A variant containing constructors for `Init`, `Fetching`, `Data(d)`, `Error(e)`, and `Empty`. Useful for pattern matching to render conditional UI. |
 
 #### Example
 
@@ -379,7 +379,7 @@ let make = () => {
             </button>
           </div>
         | Error(_e) => <div> "Error"->React.string </div>
-        | NotFound => <div> "NotFound"->React.string </div>
+        | Init => <div> "Init"->React.string </div>
       }
     }}
   </Query>
@@ -408,7 +408,7 @@ The `Mutation` component allows you to imperatively execute mutations. Use this 
 | `data`            | `'response`                                                                                            | The data returned by your GraphQL API.                                                                                                                                                                            |
 | `error`           | `CombinedError.t`                                                                                      | The error(s), if any, returned by the GraphQL operation.                                                                                                                                                          |
 | `executeMutation` | `(~context: ClientTypes.partialOperationContext=?, unit) => Js.Promise.t(ClientTypes.operationResult)` | A function for imperatively executing the mutation. Accepts a single labeled argument, `context`, for altering the mutation execution. Use `ClientTypes.createOperationContext` to supply the `context` argument. |
-| `response`        | `UrqlTypes.response('response)`                                                                        | A variant containing constructors for `Data`, `Error`, `Fetching` and `NotFound`. Useful for pattern matching to render conditional UI.                                                                           |
+| `response`        | `UrqlTypes.response('response)`                                                                        | A variant containing constructors for `Init`, `Fetching`, `Data(d)`, `Error(e)`, and `Empty`. Useful for pattern matching to render conditional UI.                                                               |
 
 #### Example
 
@@ -455,12 +455,12 @@ If using the `Subscription` component, be sure your client is configured with th
 
 #### Render Props
 
-| Prop       | Type                            | Description                                                                                                                             |
-| ---------- | ------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| `fetching` | `bool`                          | A boolean flag to indicate if the request is currently executing.                                                                       |
-| `data`     | `'response`                     | The data returned by your GraphQL API.                                                                                                  |
-| `error`    | `CombinedError.t`               | The error(s), if any, returned by the GraphQL operation.                                                                                |
-| `response` | `UrqlTypes.response('response)` | A variant containing constructors for `Data`, `Error`, `Fetching` and `NotFound`. Useful for pattern matching to render conditional UI. |
+| Prop       | Type                            | Description                                                                                                                                         |
+| ---------- | ------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `fetching` | `bool`                          | A boolean flag to indicate if the request is currently executing.                                                                                   |
+| `data`     | `'response`                     | The data returned by your GraphQL API.                                                                                                              |
+| `error`    | `CombinedError.t`               | The error(s), if any, returned by the GraphQL operation.                                                                                            |
+| `response` | `UrqlTypes.response('response)` | A variant containing constructors for `Init`, `Fetching`, `Data(d)`, `Error(e)`, and `Empty`. Useful for pattern matching to render conditional UI. |
 
 #### Example
 
@@ -491,7 +491,7 @@ let make = () => {
             {js|The most recent message is: $d##newMessage##message|js}->React.string
           </div>
         | Error(_e) => <div> "Error"->React.string </div>
-        | NotFound => <div> "NotFound"->React.string </div>
+        | Init => <div> "Init"->React.string </div>
       }
     }
   </Subscription>
@@ -513,12 +513,12 @@ If using the `SubscriptionWithHandler` component, be sure your client is configu
 
 #### Render Props
 
-| Prop       | Type                            | Description                                                                                                                             |
-| ---------- | ------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| `fetching` | `bool`                          | A boolean flag to indicate if the request is currently executing.                                                                       |
-| `data`     | `'response`                     | The data returned by your GraphQL API.                                                                                                  |
-| `error`    | `CombinedError.t`               | The error(s), if any, returned by the GraphQL operation.                                                                                |
-| `response` | `UrqlTypes.response('response)` | A variant containing constructors for `Data`, `Error`, `Fetching` and `NotFound`. Useful for pattern matching to render conditional UI. |
+| Prop       | Type                            | Description                                                                                                                                         |
+| ---------- | ------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `fetching` | `bool`                          | A boolean flag to indicate if the request is currently executing.                                                                                   |
+| `data`     | `'response`                     | The data returned by your GraphQL API.                                                                                                              |
+| `error`    | `CombinedError.t`               | The error(s), if any, returned by the GraphQL operation.                                                                                            |
+| `response` | `UrqlTypes.response('response)` | A variant containing constructors for `Init`, `Fetching`, `Data(d)`, `Error(e)`, and `Empty`. Useful for pattern matching to render conditional UI. |
 
 #### Example
 
@@ -563,7 +563,7 @@ let make = () => {
         )
         |> React.array
       | Error(_e) => <div> "Error"->React.string </div>
-      | NotFound => <div> "NotFound"->React.string </div>
+      | Init => <div> "Init"->React.string </div>
     }
   }
   </SubscriptionWithHandler>

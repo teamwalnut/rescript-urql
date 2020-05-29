@@ -100,7 +100,7 @@ type operationResult = {
 type response('response) =
   | Data('response)
   | Error(UrqlCombinedError.t)
-  | NotFound;
+  | Empty;
 
 type clientResponse('response) = {
   data: option('response),

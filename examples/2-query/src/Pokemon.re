@@ -25,6 +25,7 @@ let make = (~pokemon: string) => {
   let (Hooks.{response}, _) = Hooks.useQuery(~request, ());
 
   switch (response) {
+  | Init => <div> "Init"->React.string </div>
   | Data(data) =>
     switch (data##pokemon) {
     | Some(pokemon) =>
@@ -69,6 +70,6 @@ let make = (~pokemon: string) => {
     }
   | Fetching => <div> "Loading"->React.string </div>
   | Error(e) => <div> e.message->React.string </div>
-  | NotFound => <div> "Not Found"->React.string </div>
+  | Empty => <div> "Empty"->React.string </div>
   };
 };

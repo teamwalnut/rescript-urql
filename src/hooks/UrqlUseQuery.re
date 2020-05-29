@@ -72,16 +72,28 @@ let useQuery =
   };
 
   let (stateJs, executeQueryJs) = useQueryJs(args);
+  let hasExecuted = React.useRef(false);
 
   let state =
-    React.useMemo2(
-      () => UrqlResponse.urqlResponseToReason(~response=stateJs, ~parse),
-      (stateJs, parse),
+    React.useMemo3(
+      () =>
+        UrqlResponse.urqlResponseToReason(
+          ~response=stateJs,
+          ~parse,
+          ~hasExecuted=
+            hasExecuted->React.Ref.current
+            || !pause->Belt.Option.getWithDefault(false),
+        ),
+      (stateJs, parse, pause),
     );
 
   let executeQuery =
     React.useMemo1(
       ((), ~context=?, ()) => {
+        if (!hasExecuted->React.Ref.current) {
+          hasExecuted->React.Ref.setCurrent(true);
+        };
+
         let ctx = UrqlClientTypes.decodePartialOperationContext(context);
         executeQueryJs(ctx);
       },

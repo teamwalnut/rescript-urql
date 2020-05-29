@@ -26,10 +26,11 @@ type request('response) = {
 
 /* The response variant wraps the parsed result of executing a GraphQL operation. */
 type response('response) =
+  | Init
   | Fetching
   | Data('response)
   | Error(UrqlCombinedError.t)
-  | NotFound;
+  | Empty;
 
 type hookResponse('response, 'extensions) = {
   fetching: bool,

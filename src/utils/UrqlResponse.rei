@@ -1,7 +1,8 @@
 let urqlResponseToReason:
   (
     ~response: UrqlTypes.jsHookResponse(Js.Json.t, 'extensions),
-    ~parse: Js.Json.t => 'response
+    ~parse: Js.Json.t => 'response,
+    ~hasExecuted: bool
   ) =>
   UrqlTypes.hookResponse('response, 'extensions);
 

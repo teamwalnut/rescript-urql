@@ -34,16 +34,25 @@ let useMutation = (~request) => {
   let parse = request##parse;
 
   let (stateJs, executeMutationJs) = useMutationJs(query);
+  let hasExecuted = React.useRef(false);
 
   let state =
     React.useMemo2(
-      () => UrqlResponse.urqlResponseToReason(~response=stateJs, ~parse),
+      () =>
+        UrqlResponse.urqlResponseToReason(
+          ~response=stateJs,
+          ~parse,
+          ~hasExecuted=hasExecuted->React.Ref.current,
+        ),
       (stateJs, parse),
     );
 
   let executeMutation =
     React.useMemo2(
       ((), ~context=?, ()) => {
+        if (!hasExecuted->React.Ref.current) {
+          hasExecuted->React.Ref.setCurrent(true);
+        };
         let ctx = UrqlClientTypes.decodePartialOperationContext(context);
         executeMutationJs(Some(variables), ctx);
       },
@@ -65,16 +74,25 @@ let useMutation = (~request) => {
 let useDynamicMutation = definition => {
   let (parse, query, composeVariables) = definition;
   let (stateJs, executeMutationJs) = useMutationJs(query);
+  let hasExecuted = React.useRef(false);
 
   let state =
     React.useMemo2(
-      () => UrqlResponse.urqlResponseToReason(~response=stateJs, ~parse),
+      () =>
+        UrqlResponse.urqlResponseToReason(
+          ~response=stateJs,
+          ~parse,
+          ~hasExecuted=hasExecuted->React.Ref.current,
+        ),
       (stateJs, parse),
     );
 
   let executeMutation =
     React.useMemo2(
       ((), ~context=None) => {
+        if (!hasExecuted->React.Ref.current) {
+          hasExecuted->React.Ref.setCurrent(true);
+        };
         let ctx = UrqlClientTypes.decodePartialOperationContext(context);
         composeVariables(variables =>
           executeMutationJs(Some(variables), ctx)

@@ -36,6 +36,7 @@ let make = () => {
   <SubscriptionWithHandler request handler>
     ...{({response}) =>
       switch (response) {
+      | Init => <text> "Init"->React.string </text>
       | Fetching => <text> "Loading"->React.string </text>
       | Data(d) =>
         Array.mapi(
@@ -53,7 +54,7 @@ let make = () => {
         )
         |> React.array
       | Error(_e) => <text> "Error"->React.string </text>
-      | NotFound => <text> "Not Found"->React.string </text>
+      | Empty => <text> "Empty"->React.string </text>
       }
     }
   </SubscriptionWithHandler>;

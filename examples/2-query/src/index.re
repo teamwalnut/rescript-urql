@@ -30,6 +30,7 @@ ReactDOMRe.renderToElementWithId(
     <Query request requestPolicy=`CacheFirst>
       ...{({response}) =>
         switch (response) {
+        | Init => <div> "Init"->React.string </div>
         | Data(data) =>
           switch (data##pokemons) {
           | Some(pokemons) =>
@@ -58,7 +59,7 @@ ReactDOMRe.renderToElementWithId(
             </div>
           | _ => <div> "Unknown error."->React.string </div>
           }
-        | NotFound => <div> "Not Found"->React.string </div>
+        | Empty => <div> "Empty"->React.string </div>
         }
       }
     </Query>

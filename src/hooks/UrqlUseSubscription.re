@@ -32,20 +32,20 @@ type useSubscriptionResponse('response, 'extensions) = (
   executeSubscription,
 );
 
-let subscriptionResponseToReason = result => {
-  let data = UrqlTypes.(result.data);
+let subscriptionResponseToReason = (~response, ~hasExecuted) => {
+  let data = UrqlTypes.(response.data);
   let error =
-    result.error->Belt.Option.map(UrqlCombinedError.combinedErrorToRecord);
-  let fetching = result.fetching;
-  let extensions = result.extensions;
+    response.error->Belt.Option.map(UrqlCombinedError.combinedErrorToRecord);
+  let fetching = response.fetching;
+  let extensions = response.extensions;
 
   let response =
-    switch (fetching, data, error) {
-    | (true, None, _) => UrqlTypes.Fetching
-    | (false, _, Some(error)) => Error(error)
-    | (true, Some(data), _) => Data(data)
-    | (false, Some(data), _) => Data(data)
-    | (false, None, None) => NotFound
+    switch (fetching, data, error, hasExecuted) {
+    | (false, None, None, false) => UrqlTypes.Init
+    | (true, None, _, _) => Fetching
+    | (_, Some(data), _, _) => Data(data)
+    | (false, _, Some(error), _) => Error(error)
+    | (false, None, None, true) => Empty
     };
 
   UrqlTypes.{fetching, data, error, response, extensions};
@@ -97,12 +97,32 @@ let useSubscription =
 
   let (responseJs, executeSubscriptionJs) =
     useSubscriptionJs(args, Some(h));
+  let hasExecuted = React.useRef(false);
 
-  let response = subscriptionResponseToReason(responseJs);
-  let executeSubscription = (~context=?, ()) => {
-    let ctx = UrqlClientTypes.decodePartialOperationContext(context);
-    executeSubscriptionJs(ctx);
-  };
+  let response =
+    React.useMemo2(
+      () =>
+        subscriptionResponseToReason(
+          ~response=responseJs,
+          ~hasExecuted=
+            hasExecuted->React.Ref.current
+            || !pause->Belt.Option.getWithDefault(false),
+        ),
+      (responseJs, pause),
+    );
+
+  let executeSubscription =
+    React.useMemo1(
+      ((), ~context=?, ()) => {
+        if (!hasExecuted->React.Ref.current) {
+          hasExecuted->React.Ref.setCurrent(true);
+        };
+
+        let ctx = UrqlClientTypes.decodePartialOperationContext(context);
+        executeSubscriptionJs(ctx);
+      },
+      [|executeSubscriptionJs|],
+    );
 
   (response, executeSubscription);
 };
