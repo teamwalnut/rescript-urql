@@ -16,7 +16,7 @@ The `client` accepts a few other configuration options, including `fetchOptions`
 
 ## Linking Client with Provider
 
-Once you have your `Client` setup, you'll need to pass it to your `Provider`, which should wrap the root level of your application. This allows `reason-urql`'s components and hooks to access the `Client` to execute operations lower down in your React tree.
+Once you have your `Client` setup, you'll need to pass it to your `Provider`, which should wrap the root level of your application. This allows `reason-urql`'s hooks to access the `Client` to execute operations lower down in your React tree.
 
 ```reason
 open ReasonUrql;

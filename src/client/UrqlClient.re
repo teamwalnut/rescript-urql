@@ -82,7 +82,7 @@ let make =
 };
 
 /* Execution methods on the client. These allow you to imperatively execute GraphQL
-   operations outside of components or hooks. */
+   operations outside of the provided hooks. */
 [@bs.send]
 external executeQueryJs:
   (
