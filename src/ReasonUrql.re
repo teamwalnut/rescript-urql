@@ -7,14 +7,6 @@ module Context = UrqlContext;
 module Provider = UrqlContext.Provider;
 module Consumer = UrqlContext.Consumer;
 
-module Query = UrqlQuery;
-
-module Mutation = UrqlMutation;
-
-module Subscription = UrqlSubscription;
-
-module SubscriptionWithHandler = UrqlSubscriptionWithHandler;
-
 module Request = UrqlRequest;
 
 module CombinedError = UrqlCombinedError;
