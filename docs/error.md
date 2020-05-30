@@ -1,6 +1,6 @@
 ## `CombinedError`
 
-Errors in `reason-urql` are handed to your components and hooks via a record of type `CombinedError.t`. The record has the following type:
+Errors in `reason-urql` are handed to your hooks via a record of type `CombinedError.t`. The record has the following type:
 
 ```reason
 type t = {

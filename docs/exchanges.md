@@ -39,7 +39,7 @@ The `debugExchange` is useful for tracking how operations are passing through th
 
 #### `subscriptionExchange`
 
-The `subscriptionExchange` should be used in the event that you intend to support GraphQL subscriptions in your application through use of `useSubscription`, the `Subscription` or `SubscriptionWithHandler` components, or the client's `executeSubscription` method.
+The `subscriptionExchange` should be used in the event that you intend to support GraphQL subscriptions in your application through use of `useSubscription` or the client's `executeSubscription` method.
 
 In order to use the `subscriptionExchange`, you'll need to do a little bit of setup. Specifically, you'll need to configure a subscription client of some kind that will handle the websocket connection to your GraphQL API. In `examples/5-subscription` we have some simple bindings to `subscriptions-transport-ws` that allow us to use this protocol (which is supported by Apollo). Here's an example of how to set everything up:
 
