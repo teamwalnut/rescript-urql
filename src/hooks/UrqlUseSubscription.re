@@ -12,11 +12,10 @@ type useSubscriptionArgs = {
   query: string,
   variables: Js.Json.t,
   pause: option(bool),
-  context: option(UrqlClientTypes.PartialOperationContextJs.t),
+  context: UrqlOperations.partialOperationContext,
 };
 
-type executeSubscriptionJs =
-  option(UrqlClientTypes.PartialOperationContextJs.t) => unit;
+type executeSubscriptionJs = UrqlOperations.partialOperationContext => unit;
 
 [@bs.module "urql"]
 external useSubscriptionJs:
@@ -25,7 +24,15 @@ external useSubscriptionJs:
   "useSubscription";
 
 type executeSubscription =
-  (~context: UrqlClientTypes.partialOperationContext=?, unit) => unit;
+  (
+    ~fetchOptions: Fetch.requestInit=?,
+    ~requestPolicy: UrqlTypes.requestPolicy=?,
+    ~url: string=?,
+    ~meta: UrqlOperations.operationDebugMeta=?,
+    ~pollInterval: int=?,
+    unit
+  ) =>
+  unit;
 
 type useSubscriptionResponse('response, 'extensions) = (
   UrqlTypes.hookResponse('response, 'extensions),
@@ -51,22 +58,6 @@ let subscriptionResponseToReason = result => {
   UrqlTypes.{fetching, data, error, response, extensions};
 };
 
-/**
- * The useSubscription hook.
- *
- * Accepts the following arguments:
- *
- * request – a Js.t containing the query and variables corresponding
- * to the GraphQL subscription, and a parse function for decoding the JSON response.
- *
- * handler – an optional function to accumulate subscription responses.
- *
- * pause – an optional boolean flag instructing execution to be paused. The
- * subscription will only be run when pause becomes true.
- *
- * context – a partial operation context to alter the execution conditions of
- * the subscription.
- */;
 let useSubscription =
     (
       type acc,
@@ -75,19 +66,33 @@ let useSubscription =
       ~request: UrqlTypes.request(response),
       ~handler: handler(acc, response, ret),
       ~pause=?,
-      ~context=?,
+      ~fetchOptions=?,
+      ~requestPolicy=?,
+      ~url=?,
+      ~meta=?,
+      ~pollInterval=?,
       (),
     ) => {
   let query = request##query;
   let variables = request##variables;
   let parse = request##parse;
+  let context =
+    React.useMemo5(
+      () => {
+        UrqlOperations.partialOperationContext(
+          ~fetchOptions?,
+          ~url?,
+          ~meta?,
+          ~pollInterval?,
+          ~requestPolicy=?
+            Belt.Option.map(requestPolicy, UrqlTypes.requestPolicyToJs),
+          (),
+        )
+      },
+      (fetchOptions, url, meta, pollInterval, requestPolicy),
+    );
 
-  let args = {
-    query,
-    variables,
-    pause,
-    context: context->UrqlClientTypes.decodePartialOperationContext,
-  };
+  let args = {query, variables, pause, context};
 
   let h = (acc, subscriptionResult) =>
     switch (handler) {
@@ -99,10 +104,31 @@ let useSubscription =
     useSubscriptionJs(args, Some(h));
 
   let response = subscriptionResponseToReason(responseJs);
-  let executeSubscription = (~context=?, ()) => {
-    let ctx = UrqlClientTypes.decodePartialOperationContext(context);
-    executeSubscriptionJs(ctx);
-  };
+  let executeSubscription =
+    React.useMemo5(
+      (
+        (),
+        ~fetchOptions=?,
+        ~requestPolicy=?,
+        ~url=?,
+        ~meta=?,
+        ~pollInterval=?,
+        (),
+      ) => {
+        let ctx =
+          UrqlOperations.partialOperationContext(
+            ~fetchOptions?,
+            ~requestPolicy=?
+              Belt.Option.map(requestPolicy, UrqlTypes.requestPolicyToJs),
+            ~url?,
+            ~meta?,
+            ~pollInterval?,
+            (),
+          );
+        executeSubscriptionJs(ctx);
+      },
+      (fetchOptions, requestPolicy, url, meta, pollInterval),
+    );
 
   (response, executeSubscription);
 };

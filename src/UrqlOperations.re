@@ -1,5 +1,3 @@
-type t;
-
 /* The result of executing a GraphQL request.
    Consists of optional data and errors fields. */
 type executionResult = {
@@ -43,74 +41,18 @@ type operationContext = {
   pollInterval: option(int),
 };
 
-/* A partial operation context, which can be passed as the second
-   optional argument to executeQuery, executeMutation, and executeSubscription.
-   Simply makes all properties on operationContext optional. */
 [@bs.deriving {abstract: light}]
 type partialOperationContext = {
   [@bs.optional]
   fetchOptions: Fetch.requestInit,
   [@bs.optional]
-  requestPolicy: UrqlTypes.requestPolicy,
+  requestPolicy: string,
   [@bs.optional]
   url: string,
   [@bs.optional]
-  debugMeta: operationDebugMeta,
+  meta: operationDebugMeta,
   [@bs.optional]
   pollInterval: int,
-};
-
-module PartialOperationContextJs = {
-  [@bs.deriving {abstract: light}]
-  type t = {
-    [@bs.optional]
-    fetchOptions: Fetch.requestInit,
-    [@bs.optional]
-    requestPolicy: string,
-    [@bs.optional]
-    url: string,
-    [@bs.optional]
-    debugMeta: operationDebugMeta,
-    [@bs.optional]
-    pollInterval: int,
-  };
-};
-
-let decodePartialOperationContext = opts => {
-  switch (opts) {
-  | Some(o) =>
-    let ctx =
-      PartialOperationContextJs.t(
-        ~fetchOptions=?o->fetchOptions,
-        ~requestPolicy=?
-          o->requestPolicy->Belt.Option.map(UrqlTypes.requestPolicyToJs),
-        ~url=?o->url,
-        ~debugMeta=?o->debugMeta,
-        ~pollInterval=?o->pollInterval,
-        (),
-      );
-    Some(ctx);
-  | None => None
-  };
-};
-
-let createOperationContext =
-    (
-      ~fetchOptions=?,
-      ~requestPolicy=?,
-      ~url=?,
-      ~debugMeta=?,
-      ~pollInterval=?,
-      (),
-    ) => {
-  partialOperationContext(
-    ~fetchOptions?,
-    ~requestPolicy?,
-    ~url?,
-    ~debugMeta?,
-    ~pollInterval?,
-    (),
-  );
 };
 
 /* The active GraphQL operation. */

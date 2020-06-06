@@ -1,5 +1,4 @@
-/* RequestPolicy to be used for queries.
-   Use with requestPolicyToJs for proper conversion to string. */
+/* RequestPolicy to be used for queries. */
 [@bs.deriving jsConverter]
 type requestPolicy = [
   | [@bs.as "cache-first"] `CacheFirst

@@ -28,8 +28,7 @@
   "dependencies": {
     "bs-fetch": "^0.5.2",
     "graphql": "^14.1.1",
-    "urql": "1.5.1",
-    "wonka": "^3.2.2"
+    "urql": "1.6.3"
   },
   "devDependencies": {
     "@babel/plugin-transform-modules-commonjs": "^7.9.6",

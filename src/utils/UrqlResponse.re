@@ -19,23 +19,3 @@ let urqlResponseToReason = (~response, ~parse) => {
 
   UrqlTypes.{fetching, data, error, response, extensions};
 };
-
-/**
- * A function to convert the JS response from a client.execute*
- * methods to typed a Reason record.
- */
-let urqlClientResponseToReason =
-    (~response: UrqlClientTypes.operationResult, ~parse) => {
-  let data = UrqlClientTypes.(response.data)->Belt.Option.map(parse);
-  let error =
-    response.error->Belt.Option.map(UrqlCombinedError.combinedErrorToRecord);
-
-  let response =
-    switch (data, error) {
-    | (Some(data), _) => UrqlClientTypes.Data(data)
-    | (None, Some(error)) => Error(error)
-    | (None, None) => NotFound
-    };
-
-  UrqlClientTypes.{data, error, response};
-};
