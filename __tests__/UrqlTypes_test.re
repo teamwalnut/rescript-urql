@@ -3,22 +3,6 @@ open Jest;
 let it = test;
 
 describe("UrqlTypes", () => {
-  /* Reused error Js.t and record across tests. */
-  let errorJs = {
-    "message": "Error returned by GraphQL API",
-    "graphQLErrors": Js.Nullable.null,
-    "networkError": Js.Nullable.null,
-    "response": Js.Nullable.null,
-  };
-
-  let error =
-    UrqlCombinedError.{
-      message: "Error returned by GraphQL API",
-      graphQLErrors: None,
-      networkError: None,
-      response: None,
-    };
-
   describe("urqlResponseToReason", () => {
     it(
       "should correctly return Fetching constructor if fetching is true and no data has been received",
@@ -58,6 +42,21 @@ describe("UrqlTypes", () => {
     it(
       "should return Error constructor if the GraphQL API responded with an error",
       () => {
+      let errorJs = {
+        "message": "Error returned by GraphQL API",
+        "graphQLErrors": Js.Nullable.null,
+        "networkError": Js.Nullable.null,
+        "response": Js.Nullable.null,
+      };
+
+      let error =
+        UrqlCombinedError.{
+          message: "Error returned by GraphQL API",
+          graphQLErrors: None,
+          networkError: None,
+          response: None,
+        };
+
       let response =
         UrqlTypes.{
           fetching: false,
@@ -84,5 +83,5 @@ describe("UrqlTypes", () => {
 
       Expect.(expect(result.response) |> toEqual(UrqlTypes.NotFound));
     });
-  });
+  })
 });

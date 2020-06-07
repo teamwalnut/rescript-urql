@@ -106,7 +106,7 @@ let useSubscription =
 
   let response = subscriptionResponseToReason(responseJs);
   let executeSubscription =
-    React.useMemo5(
+    React.useMemo1(
       (
         (),
         ~fetchOptions=?,
@@ -128,7 +128,7 @@ let useSubscription =
           );
         executeSubscriptionJs(ctx);
       },
-      (fetchOptions, requestPolicy, url, meta, pollInterval),
+      [|executeSubscriptionJs|],
     );
 
   (response, executeSubscription);

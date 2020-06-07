@@ -108,10 +108,7 @@ let useDynamicMutation = definition => {
         ~pollInterval?,
         (),
       );
-    composeVariables(variables => {
-      Js.log2("variables", variables);
-      executeMutationJs(variables, ctx);
-    });
+    composeVariables(variables => executeMutationJs(variables, ctx));
   };
 
   (state, executeMutation);
