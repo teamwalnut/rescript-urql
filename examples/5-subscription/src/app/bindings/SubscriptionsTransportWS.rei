@@ -34,7 +34,7 @@ type t = {
   [@bs.meth]
   "request":
     Exchanges.subscriptionOperation =>
-    Exchanges.observableLike(UrqlOperations.executionResult),
+    Exchanges.observableLike(UrqlTypes.executionResult),
 };
 
 let make:

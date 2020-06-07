@@ -45,6 +45,28 @@ type jsHookResponse('response, 'extensions) = {
   extensions: option('extensions),
 };
 
+/**
+ * A function for converting the response to an urql hook from its
+ * JavaScript representation to a typed Reason record.
+ */
+let urqlResponseToReason = (~response, ~parse) => {
+  let data = Belt.Option.map(response.data, parse);
+  let error =
+    Belt.Option.map(response.error, UrqlCombinedError.combinedErrorToRecord);
+  let fetching = response.fetching;
+  let extensions = response.extensions;
+
+  let response =
+    switch (fetching, data, error) {
+    | (true, None, _) => Fetching
+    | (_, Some(data), _) => Data(data)
+    | (false, _, Some(error)) => Error(error)
+    | (false, None, None) => NotFound
+    };
+
+  {fetching, data, error, response, extensions};
+};
+
 type graphqlDefinition('parseResult, 'composeReturnType, 'hookReturnType) = (
   // `parse`
   Js.Json.t => 'parseResult,
@@ -53,3 +75,76 @@ type graphqlDefinition('parseResult, 'composeReturnType, 'hookReturnType) = (
   // `composeVariables`
   (Js.Json.t => 'composeReturnType) => 'hookReturnType,
 );
+
+/* The result of executing a GraphQL request.
+   Consists of optional data and errors fields. */
+type executionResult = {
+  errors: option(array(UrqlCombinedError.graphQLError)),
+  data: option(Js.Json.t),
+  extensions: Js.Json.t,
+};
+
+/* OperationType for the active operation.
+   Use with operationTypeToJs for proper conversion to strings. */
+[@bs.deriving jsConverter]
+type operationType = [
+  | [@bs.as "query"] `Query
+  | [@bs.as "mutation"] `Mutation
+  | [@bs.as "subscription"] `Subscription
+  | [@bs.as "teardown"] `Teardown
+];
+
+/* Cache outcomes for operations. */
+[@bs.deriving jsConverter]
+type cacheOutcome = [
+  | [@bs.as "miss"] `Miss
+  | [@bs.as "partial"] `Partial
+  | [@bs.as "hit"] `Hit
+];
+
+/* Debug information on operations. */
+type operationDebugMeta = {
+  source: option(string),
+  cacheOutcome: option(cacheOutcome),
+  networkLatency: option(int),
+  startTime: option(int),
+};
+
+/* The operation context object for a request. */
+type operationContext = {
+  fetchOptions: option(Fetch.requestInit),
+  requestPolicy,
+  url: string,
+  meta: option(operationDebugMeta),
+  pollInterval: option(int),
+};
+
+[@bs.deriving {abstract: light}]
+type partialOperationContext = {
+  [@bs.optional]
+  fetchOptions: Fetch.requestInit,
+  [@bs.optional]
+  requestPolicy: string,
+  [@bs.optional]
+  url: string,
+  [@bs.optional]
+  meta: operationDebugMeta,
+  [@bs.optional]
+  pollInterval: int,
+};
+
+/* The active GraphQL operation. */
+type operation = {
+  key: int,
+  query: string,
+  variables: option(Js.Json.t),
+  operationName: operationType,
+  context: operationContext,
+};
+
+/* The result of the GraphQL operation. */
+type operationResult = {
+  operation,
+  data: option(Js.Json.t),
+  error: option(UrqlCombinedError.combinedErrorJs),
+};

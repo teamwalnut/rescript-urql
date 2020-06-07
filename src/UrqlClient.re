@@ -45,8 +45,8 @@ module Exchanges = {
   type client = t;
 
   type exchangeIO =
-    Wonka.Types.sourceT(UrqlOperations.operation) =>
-    Wonka.Types.sourceT(UrqlOperations.operationResult);
+    Wonka.Types.sourceT(UrqlTypes.operation) =>
+    Wonka.Types.sourceT(UrqlTypes.operationResult);
 
   type exchangeInput = {
     forward: exchangeIO,
@@ -55,8 +55,8 @@ module Exchanges = {
 
   type t =
     exchangeInput =>
-    (. Wonka.Types.sourceT(UrqlOperations.operation)) =>
-    Wonka.Types.sourceT(UrqlOperations.operationResult);
+    (. Wonka.Types.sourceT(UrqlTypes.operation)) =>
+    Wonka.Types.sourceT(UrqlTypes.operationResult);
 
   [@bs.module "urql"] external cacheExchange: t = "cacheExchange";
   [@bs.module "urql"] external debugExchange: t = "debugExchange";
@@ -86,11 +86,11 @@ module Exchanges = {
     query: string,
     variables: option(Js.Json.t),
     key: string,
-    context: UrqlOperations.operationContext,
+    context: UrqlTypes.operationContext,
   };
 
   type subscriptionForwarder =
-    subscriptionOperation => observableLike(UrqlOperations.executionResult);
+    subscriptionOperation => observableLike(UrqlTypes.executionResult);
 
   type subscriptionExchangeOpts = {
     forwardSubscription: subscriptionForwarder,
@@ -180,7 +180,7 @@ type clientResponse('response) = {
  * methods to typed a Reason record.
  */
 let urqlClientResponseToReason =
-    (~response: UrqlOperations.operationResult, ~parse) => {
+    (~response: UrqlTypes.operationResult, ~parse) => {
   let data = response.data->Belt.Option.map(parse);
   let error =
     response.error->Belt.Option.map(UrqlCombinedError.combinedErrorToRecord);
@@ -195,6 +195,11 @@ let urqlClientResponseToReason =
   {data, error, response};
 };
 
+[@bs.val] [@bs.module "urql"]
+external createRequest:
+  (~query: string, ~variables: Js.Json.t=?, unit) => UrqlTypes.graphqlRequest =
+  "createRequest";
+
 /* Execution methods on the client. These allow you to imperatively execute GraphQL
    operations outside of the provided hooks. */
 [@bs.send]
@@ -202,10 +207,10 @@ external executeQueryJs:
   (
     ~client: t,
     ~query: UrqlTypes.graphqlRequest,
-    ~opts: UrqlOperations.partialOperationContext=?,
+    ~opts: UrqlTypes.partialOperationContext=?,
     unit
   ) =>
-  Wonka.Types.sourceT(UrqlOperations.operationResult) =
+  Wonka.Types.sourceT(UrqlTypes.operationResult) =
   "executeQuery";
 
 let executeQuery =
@@ -220,14 +225,10 @@ let executeQuery =
       (),
     ) => {
   let req =
-    UrqlRequest.createRequest(
-      ~query=request##query,
-      ~variables=request##variables,
-      (),
-    );
+    createRequest(~query=request##query, ~variables=request##variables, ());
   let parse = request##parse;
   let optsJs =
-    UrqlOperations.partialOperationContext(
+    UrqlTypes.partialOperationContext(
       ~fetchOptions?,
       ~requestPolicy=?
         Belt.Option.map(requestPolicy, UrqlTypes.requestPolicyToJs),
@@ -246,10 +247,10 @@ external executeMutationJs:
   (
     ~client: t,
     ~mutation: UrqlTypes.graphqlRequest,
-    ~opts: UrqlOperations.partialOperationContext=?,
+    ~opts: UrqlTypes.partialOperationContext=?,
     unit
   ) =>
-  Wonka.Types.sourceT(UrqlOperations.operationResult) =
+  Wonka.Types.sourceT(UrqlTypes.operationResult) =
   "executeMutation";
 
 let executeMutation =
@@ -264,14 +265,10 @@ let executeMutation =
       (),
     ) => {
   let req =
-    UrqlRequest.createRequest(
-      ~query=request##query,
-      ~variables=request##variables,
-      (),
-    );
+    createRequest(~query=request##query, ~variables=request##variables, ());
   let parse = request##parse;
   let optsJs =
-    UrqlOperations.partialOperationContext(
+    UrqlTypes.partialOperationContext(
       ~fetchOptions?,
       ~requestPolicy=?
         Belt.Option.map(requestPolicy, UrqlTypes.requestPolicyToJs),
@@ -290,10 +287,10 @@ external executeSubscriptionJs:
   (
     ~client: t,
     ~subscription: UrqlTypes.graphqlRequest,
-    ~opts: UrqlOperations.partialOperationContext=?,
+    ~opts: UrqlTypes.partialOperationContext=?,
     unit
   ) =>
-  Wonka.Types.sourceT(UrqlOperations.operationResult) =
+  Wonka.Types.sourceT(UrqlTypes.operationResult) =
   "executeSubscription";
 
 let executeSubscription =
@@ -308,14 +305,10 @@ let executeSubscription =
       (),
     ) => {
   let req =
-    UrqlRequest.createRequest(
-      ~query=request##query,
-      ~variables=request##variables,
-      (),
-    );
+    createRequest(~query=request##query, ~variables=request##variables, ());
   let parse = request##parse;
   let optsJs =
-    UrqlOperations.partialOperationContext(
+    UrqlTypes.partialOperationContext(
       ~fetchOptions?,
       ~requestPolicy=?
         Belt.Option.map(requestPolicy, UrqlTypes.requestPolicyToJs),

@@ -3,11 +3,11 @@ type executeMutation =
     ~fetchOptions: Fetch.requestInit=?,
     ~requestPolicy: UrqlTypes.requestPolicy=?,
     ~url: string=?,
-    ~meta: UrqlOperations.operationDebugMeta=?,
+    ~meta: UrqlTypes.operationDebugMeta=?,
     ~pollInterval: int=?,
     unit
   ) =>
-  Js.Promise.t(UrqlOperations.operationResult);
+  Js.Promise.t(UrqlTypes.operationResult);
 
 type useMutationResponse('response, 'extensions) = (
   UrqlTypes.hookResponse('response, 'extensions),
@@ -21,7 +21,7 @@ let useMutation:
 let useDynamicMutation:
   UrqlTypes.graphqlDefinition(
     'parse,
-    Js.Promise.t(UrqlOperations.operationResult),
+    Js.Promise.t(UrqlTypes.operationResult),
     'executeMutation,
   ) =>
   (
@@ -30,7 +30,7 @@ let useDynamicMutation:
       ~fetchOptions: Fetch.requestInit=?,
       ~requestPolicy: UrqlTypes.requestPolicy=?,
       ~url: string=?,
-      ~meta: UrqlOperations.operationDebugMeta=?,
+      ~meta: UrqlTypes.operationDebugMeta=?,
       ~pollInterval: int=?
     ) =>
     'executeMutation,

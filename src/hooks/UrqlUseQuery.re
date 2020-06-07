@@ -1,4 +1,4 @@
-type executeQueryJs = UrqlOperations.partialOperationContext => unit;
+type executeQueryJs = UrqlTypes.partialOperationContext => unit;
 
 type useQueryResponseJs('extensions) = (
   UrqlTypes.jsHookResponse(Js.Json.t, 'extensions),
@@ -10,7 +10,7 @@ type executeQuery =
     ~fetchOptions: Fetch.requestInit=?,
     ~requestPolicy: UrqlTypes.requestPolicy=?,
     ~url: string=?,
-    ~meta: UrqlOperations.operationDebugMeta=?,
+    ~meta: UrqlTypes.operationDebugMeta=?,
     ~pollInterval: int=?,
     unit
   ) =>
@@ -26,7 +26,7 @@ type useQueryArgs = {
   variables: Js.Json.t,
   requestPolicy: option(string),
   pause: option(bool),
-  context: UrqlOperations.partialOperationContext,
+  context: UrqlTypes.partialOperationContext,
 };
 
 [@bs.module "urql"]
@@ -55,7 +55,7 @@ let useQuery =
   let context =
     React.useMemo4(
       () => {
-        UrqlOperations.partialOperationContext(
+        UrqlTypes.partialOperationContext(
           ~fetchOptions?,
           ~url?,
           ~meta?,
@@ -72,7 +72,7 @@ let useQuery =
 
   let state =
     React.useMemo2(
-      () => UrqlResponse.urqlResponseToReason(~response=stateJs, ~parse),
+      () => UrqlTypes.urqlResponseToReason(~response=stateJs, ~parse),
       (stateJs, parse),
     );
 
@@ -88,7 +88,7 @@ let useQuery =
         (),
       ) => {
         let ctx =
-          UrqlOperations.partialOperationContext(
+          UrqlTypes.partialOperationContext(
             ~fetchOptions?,
             ~requestPolicy=?
               Belt.Option.map(requestPolicy, UrqlTypes.requestPolicyToJs),

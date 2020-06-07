@@ -46,6 +46,13 @@ type jsHookResponse('response, 'extensions) = {
   extensions: option('extensions),
 };
 
+let urqlResponseToReason:
+  (
+    ~response: jsHookResponse(Js.Json.t, 'extensions),
+    ~parse: Js.Json.t => 'response
+  ) =>
+  hookResponse('response, 'extensions);
+
 type graphqlDefinition('parseResult, 'composeReturnType, 'hookReturnType) = (
   // `parse`
   Js.Json.t => 'parseResult,
@@ -54,3 +61,66 @@ type graphqlDefinition('parseResult, 'composeReturnType, 'hookReturnType) = (
   // `composeVariables`
   (Js.Json.t => 'composeReturnType) => 'hookReturnType,
 );
+
+/* The result of executing a GraphQL request.
+   Consists of optional data and errors fields. */
+type executionResult = {
+  errors: option(array(UrqlCombinedError.graphQLError)),
+  data: option(Js.Json.t),
+  extensions: Js.Json.t,
+};
+
+/* OperationType for the active operation.
+   Use with operationTypeToJs for proper conversion to strings. */
+type operationType = [ | `Query | `Mutation | `Subscription | `Teardown];
+
+/* Cache outcomes for operations. */
+[@bs.deriving jsConverter]
+type cacheOutcome = [ | `Miss | `Partial | `Hit];
+
+/* Debug information on operations. */
+type operationDebugMeta = {
+  source: option(string),
+  cacheOutcome: option(cacheOutcome),
+  networkLatency: option(int),
+  startTime: option(int),
+};
+
+/* The operation context object for a request. */
+type operationContext = {
+  fetchOptions: option(Fetch.requestInit),
+  requestPolicy,
+  url: string,
+  meta: option(operationDebugMeta),
+  pollInterval: option(int),
+};
+
+[@bs.deriving {abstract: light}]
+type partialOperationContext = {
+  [@bs.optional]
+  fetchOptions: Fetch.requestInit,
+  [@bs.optional]
+  requestPolicy: string,
+  [@bs.optional]
+  url: string,
+  [@bs.optional]
+  meta: operationDebugMeta,
+  [@bs.optional]
+  pollInterval: int,
+};
+
+/* The active GraphQL operation. */
+type operation = {
+  key: int,
+  query: string,
+  variables: option(Js.Json.t),
+  operationName: operationType,
+  context: operationContext,
+};
+
+/* The result of the GraphQL operation. */
+type operationResult = {
+  operation,
+  data: option(Js.Json.t),
+  error: option(UrqlCombinedError.combinedErrorJs),
+};

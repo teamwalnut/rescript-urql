@@ -2,7 +2,7 @@ open Jest;
 
 let it = test;
 
-describe("UrqlResponse", () => {
+describe("UrqlTypes", () => {
   /* Reused error Js.t and record across tests. */
   let errorJs = {
     "message": "Error returned by GraphQL API",
@@ -31,7 +31,7 @@ describe("UrqlResponse", () => {
             extensions: None,
           };
         let parse = _json => ();
-        let result = UrqlResponse.urqlResponseToReason(~response, ~parse);
+        let result = UrqlTypes.urqlResponseToReason(~response, ~parse);
 
         Expect.(expect(result.response) |> toEqual(UrqlTypes.Fetching));
       },
@@ -48,7 +48,7 @@ describe("UrqlResponse", () => {
           extensions: None,
         };
       let parse = json => Js.Json.decodeString(json);
-      let result = UrqlResponse.urqlResponseToReason(~response, ~parse);
+      let result = UrqlTypes.urqlResponseToReason(~response, ~parse);
 
       Expect.(
         expect(result.response) |> toEqual(UrqlTypes.Data(Some("Hello")))
@@ -66,7 +66,7 @@ describe("UrqlResponse", () => {
           extensions: None,
         };
       let parse = _json => ();
-      let result = UrqlResponse.urqlResponseToReason(~response, ~parse);
+      let result = UrqlTypes.urqlResponseToReason(~response, ~parse);
 
       Expect.(expect(result.response) |> toEqual(UrqlTypes.Error(error)));
     });
@@ -80,7 +80,7 @@ describe("UrqlResponse", () => {
           extensions: None,
         };
       let parse = _json => ();
-      let result = UrqlResponse.urqlResponseToReason(~response, ~parse);
+      let result = UrqlTypes.urqlResponseToReason(~response, ~parse);
 
       Expect.(expect(result.response) |> toEqual(UrqlTypes.NotFound));
     });

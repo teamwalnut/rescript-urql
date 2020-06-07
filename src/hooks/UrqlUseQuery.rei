@@ -3,7 +3,7 @@ type executeQuery =
     ~fetchOptions: Fetch.requestInit=?,
     ~requestPolicy: UrqlTypes.requestPolicy=?,
     ~url: string=?,
-    ~meta: UrqlOperations.operationDebugMeta=?,
+    ~meta: UrqlTypes.operationDebugMeta=?,
     ~pollInterval: int=?,
     unit
   ) =>
@@ -21,7 +21,7 @@ let useQuery:
     ~fetchOptions: Fetch.requestInit=?,
     ~requestPolicy: UrqlTypes.requestPolicy=?,
     ~url: string=?,
-    ~meta: UrqlOperations.operationDebugMeta=?,
+    ~meta: UrqlTypes.operationDebugMeta=?,
     ~pollInterval: int=?,
     unit
   ) =>

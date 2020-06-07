@@ -12,10 +12,10 @@ type useSubscriptionArgs = {
   query: string,
   variables: Js.Json.t,
   pause: option(bool),
-  context: UrqlOperations.partialOperationContext,
+  context: UrqlTypes.partialOperationContext,
 };
 
-type executeSubscriptionJs = UrqlOperations.partialOperationContext => unit;
+type executeSubscriptionJs = UrqlTypes.partialOperationContext => unit;
 
 [@bs.module "urql"]
 external useSubscriptionJs:
@@ -28,7 +28,7 @@ type executeSubscription =
     ~fetchOptions: Fetch.requestInit=?,
     ~requestPolicy: UrqlTypes.requestPolicy=?,
     ~url: string=?,
-    ~meta: UrqlOperations.operationDebugMeta=?,
+    ~meta: UrqlTypes.operationDebugMeta=?,
     ~pollInterval: int=?,
     unit
   ) =>
@@ -39,7 +39,8 @@ type useSubscriptionResponse('response, 'extensions) = (
   executeSubscription,
 );
 
-let subscriptionResponseToReason = result => {
+let subscriptionResponseToReason =
+    (result: UrqlTypes.jsHookResponse('ret, 'extensionns)) => {
   let data = UrqlTypes.(result.data);
   let error =
     result.error->Belt.Option.map(UrqlCombinedError.combinedErrorToRecord);
@@ -79,7 +80,7 @@ let useSubscription =
   let context =
     React.useMemo5(
       () => {
-        UrqlOperations.partialOperationContext(
+        UrqlTypes.partialOperationContext(
           ~fetchOptions?,
           ~url?,
           ~meta?,
@@ -116,7 +117,7 @@ let useSubscription =
         (),
       ) => {
         let ctx =
-          UrqlOperations.partialOperationContext(
+          UrqlTypes.partialOperationContext(
             ~fetchOptions?,
             ~requestPolicy=?
               Belt.Option.map(requestPolicy, UrqlTypes.requestPolicyToJs),
