@@ -69,6 +69,4 @@ module Styles = {
     style([fontSize(rem(2.)), margin(zero), padding(rem(0.5))]);
   let dexSubTitle =
     style([fontSize(rem(1.5)), margin(zero), padding(rem(0.25))]);
-  let dexGrid =
-    style([display(grid), gridTemplateColumns([`fr(1.), `fr(1.)])]);
 };

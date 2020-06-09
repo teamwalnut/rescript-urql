@@ -1,10 +1,17 @@
 type executeMutationJs =
-  (option(Js.Json.t), option(UrqlClientTypes.PartialOperationContextJs.t)) =>
-  Js.Promise.t(UrqlClientTypes.operationResult);
+  (Js.Json.t, UrqlTypes.partialOperationContext) =>
+  Js.Promise.t(UrqlTypes.operationResult);
 
 type executeMutation =
-  (~context: UrqlClientTypes.partialOperationContext=?, unit) =>
-  Js.Promise.t(UrqlClientTypes.operationResult);
+  (
+    ~fetchOptions: Fetch.requestInit=?,
+    ~requestPolicy: UrqlTypes.requestPolicy=?,
+    ~url: string=?,
+    ~meta: UrqlTypes.operationDebugMeta=?,
+    ~pollInterval: int=?,
+    unit
+  ) =>
+  Js.Promise.t(UrqlTypes.operationResult);
 
 type useMutationResponseJs('extensions) = (
   UrqlTypes.jsHookResponse(Js.Json.t, 'extensions),
@@ -37,15 +44,32 @@ let useMutation = (~request) => {
 
   let state =
     React.useMemo2(
-      () => UrqlResponse.urqlResponseToReason(~response=stateJs, ~parse),
+      () => UrqlTypes.urqlResponseToReason(~response=stateJs, ~parse),
       (stateJs, parse),
     );
 
   let executeMutation =
     React.useMemo2(
-      ((), ~context=?, ()) => {
-        let ctx = UrqlClientTypes.decodePartialOperationContext(context);
-        executeMutationJs(Some(variables), ctx);
+      (
+        (),
+        ~fetchOptions=?,
+        ~requestPolicy=?,
+        ~url=?,
+        ~meta=?,
+        ~pollInterval=?,
+        (),
+      ) => {
+        let ctx =
+          UrqlTypes.partialOperationContext(
+            ~fetchOptions?,
+            ~requestPolicy=?
+              Belt.Option.map(requestPolicy, UrqlTypes.requestPolicyToJs),
+            ~url?,
+            ~meta?,
+            ~pollInterval?,
+            (),
+          );
+        executeMutationJs(variables, ctx);
       },
       (executeMutationJs, variables),
     );
@@ -68,20 +92,24 @@ let useDynamicMutation = definition => {
 
   let state =
     React.useMemo2(
-      () => UrqlResponse.urqlResponseToReason(~response=stateJs, ~parse),
+      () => UrqlTypes.urqlResponseToReason(~response=stateJs, ~parse),
       (stateJs, parse),
     );
 
   let executeMutation =
-    React.useMemo2(
-      ((), ~context=None) => {
-        let ctx = UrqlClientTypes.decodePartialOperationContext(context);
-        composeVariables(variables =>
-          executeMutationJs(Some(variables), ctx)
-        );
-      },
-      (composeVariables, executeMutationJs),
-    );
+      (~fetchOptions=?, ~requestPolicy=?, ~url=?, ~meta=?, ~pollInterval=?) => {
+    let ctx =
+      UrqlTypes.partialOperationContext(
+        ~fetchOptions?,
+        ~requestPolicy=?
+          Belt.Option.map(requestPolicy, UrqlTypes.requestPolicyToJs),
+        ~url?,
+        ~meta?,
+        ~pollInterval?,
+        (),
+      );
+    composeVariables(variables => executeMutationJs(variables, ctx));
+  };
 
   (state, executeMutation);
 };

@@ -61,15 +61,11 @@ let make = () => {
     Client.query(
       ~client,
       ~request=queryRequest,
-      ~opts=
-        ClientTypes.createOperationContext(
-          ~requestPolicy=`CacheAndNetwork,
-          (),
-        ),
+      ~requestPolicy=`CacheAndNetwork,
       (),
     )
     |> Js.Promise.then_(data =>
-         switch (ClientTypes.(data.response)) {
+         switch (Client.(data.response)) {
          | Data(d) =>
            switch (Js.Json.stringifyAny(d)) {
            | Some(s) =>
@@ -92,7 +88,7 @@ let make = () => {
   let executeMutation = () =>
     Client.executeMutation(~client, ~request=mutationRequest, ())
     |> Wonka.subscribe((. data) =>
-         switch (ClientTypes.(data.response)) {
+         switch (Client.(data.response)) {
          | Data(d) =>
            switch (Js.Json.stringifyAny(d)) {
            | Some(s) => dispatch(SetMutation(s))

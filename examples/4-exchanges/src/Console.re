@@ -30,12 +30,12 @@ module LikeDog = [%graphql
 let make = (~client) => {
   React.useEffect1(
     () => {
-      let mutSub = ref(() => {});
+      let mutSub = ref(Wonka_types.{unsubscribe: () => ()});
 
       let subscription =
         Client.executeQuery(~client, ~request=queryRequest, ())
         |> Wonka.subscribe((. data) =>
-             switch (ClientTypes.(data.response)) {
+             switch (Client.(data.response)) {
              | Data(d) =>
                Js_global.setInterval(
                  () => {

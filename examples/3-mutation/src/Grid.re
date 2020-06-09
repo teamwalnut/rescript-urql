@@ -49,7 +49,7 @@ let make = (~client: Client.t) => {
       let query =
         Client.executeQuery(~client, ~request, ())
         |> Wonka.subscribe((. data) =>
-             switch (ClientTypes.(data.response)) {
+             switch (Client.(data.response)) {
              | Data(d) => dispatch({
                             payload: {
                               dogs: d##dogs,

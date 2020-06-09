@@ -4,7 +4,15 @@ type handler('acc, 'response, 'ret) =
   | NoHandler: handler('response, 'response, 'response);
 
 type executeSubscription =
-  (~context: UrqlClientTypes.partialOperationContext=?, unit) => unit;
+  (
+    ~fetchOptions: Fetch.requestInit=?,
+    ~requestPolicy: UrqlTypes.requestPolicy=?,
+    ~url: string=?,
+    ~meta: UrqlTypes.operationDebugMeta=?,
+    ~pollInterval: int=?,
+    unit
+  ) =>
+  unit;
 
 type useSubscriptionResponse('response, 'extensions) = (
   UrqlTypes.hookResponse('response, 'extensions),
@@ -16,7 +24,11 @@ let useSubscription:
     ~request: UrqlTypes.request('response),
     ~handler: handler('acc, 'response, 'ret),
     ~pause: bool=?,
-    ~context: UrqlClientTypes.partialOperationContext=?,
+    ~fetchOptions: Fetch.requestInit=?,
+    ~requestPolicy: UrqlTypes.requestPolicy=?,
+    ~url: string=?,
+    ~meta: UrqlTypes.operationDebugMeta=?,
+    ~pollInterval: int=?,
     unit
   ) =>
   useSubscriptionResponse('ret, 'extensions);

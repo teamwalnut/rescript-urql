@@ -1,5 +1,4 @@
-type executeQueryJs =
-  option(UrqlClientTypes.PartialOperationContextJs.t) => unit;
+type executeQueryJs = UrqlTypes.partialOperationContext => unit;
 
 type useQueryResponseJs('extensions) = (
   UrqlTypes.jsHookResponse(Js.Json.t, 'extensions),
@@ -7,7 +6,15 @@ type useQueryResponseJs('extensions) = (
 );
 
 type executeQuery =
-  (~context: UrqlClientTypes.partialOperationContext=?, unit) => unit;
+  (
+    ~fetchOptions: Fetch.requestInit=?,
+    ~requestPolicy: UrqlTypes.requestPolicy=?,
+    ~url: string=?,
+    ~meta: UrqlTypes.operationDebugMeta=?,
+    ~pollInterval: int=?,
+    unit
+  ) =>
+  unit;
 
 type useQueryResponse('response, 'extensions) = (
   UrqlTypes.hookResponse('response, 'extensions),
@@ -19,70 +26,77 @@ type useQueryArgs = {
   variables: Js.Json.t,
   requestPolicy: option(string),
   pause: option(bool),
-  context: option(UrqlClientTypes.PartialOperationContextJs.t),
-  pollInterval: option(int),
+  context: UrqlTypes.partialOperationContext,
 };
 
 [@bs.module "urql"]
 external useQueryJs: useQueryArgs => useQueryResponseJs('extensions) =
   "useQuery";
 
-/**
- * The useQuery hook.
- *
- * Accepts the following arguments:
- *
- * request – a Js.t containing the query and variables corresponding
- * to the GraphQL query, and a parse function for decoding the JSON response.
- *
- * requestPolicy - the request policy used to execute the query.
- * Can be one of `CacheFirst, `CacheOnly, `NetworkOnly, and `CacheAndNetwork.
- *
- * pause - prevent eager execution of the query.
- * The query will only execute when pause becomes false.
- *
- * pollInterval – execute this query on a regular interval. Provided in unit ms.
- *
- * context – a partial operation context to alter the execution conditions of
- * the query.
- */;
 let useQuery =
-    (~request, ~requestPolicy=?, ~pause=?, ~pollInterval=?, ~context=?, ()) => {
+    (
+      ~request,
+      ~pause=?,
+      ~fetchOptions=?,
+      ~requestPolicy=?,
+      ~url=?,
+      ~meta=?,
+      ~pollInterval=?,
+      (),
+    ) => {
   let query = request##query;
   let variables = request##variables;
   let parse = request##parse;
   let rp =
     UrqlUseSemanticGuarantee.useSemanticGuarantee(
-      () => requestPolicy->Belt.Option.map(UrqlTypes.requestPolicyToJs),
+      () => Belt.Option.map(requestPolicy, UrqlTypes.requestPolicyToJs),
       requestPolicy,
     );
-  let ctx =
-    UrqlUseSemanticGuarantee.useSemanticGuarantee(
-      () => context->UrqlClientTypes.decodePartialOperationContext,
-      context,
+  let context =
+    React.useMemo4(
+      () => {
+        UrqlTypes.partialOperationContext(
+          ~fetchOptions?,
+          ~url?,
+          ~meta?,
+          ~pollInterval?,
+          (),
+        )
+      },
+      (fetchOptions, url, meta, pollInterval),
     );
 
-  let args = {
-    query,
-    variables,
-    requestPolicy: rp,
-    pause,
-    pollInterval,
-    context: ctx,
-  };
+  let args = {query, variables, requestPolicy: rp, pause, context};
 
   let (stateJs, executeQueryJs) = useQueryJs(args);
 
   let state =
     React.useMemo2(
-      () => UrqlResponse.urqlResponseToReason(~response=stateJs, ~parse),
+      () => UrqlTypes.urqlResponseToReason(~response=stateJs, ~parse),
       (stateJs, parse),
     );
 
   let executeQuery =
     React.useMemo1(
-      ((), ~context=?, ()) => {
-        let ctx = UrqlClientTypes.decodePartialOperationContext(context);
+      (
+        (),
+        ~fetchOptions=?,
+        ~requestPolicy=?,
+        ~url=?,
+        ~meta=?,
+        ~pollInterval=?,
+        (),
+      ) => {
+        let ctx =
+          UrqlTypes.partialOperationContext(
+            ~fetchOptions?,
+            ~requestPolicy=?
+              Belt.Option.map(requestPolicy, UrqlTypes.requestPolicyToJs),
+            ~url?,
+            ~meta?,
+            ~pollInterval?,
+            (),
+          );
         executeQueryJs(ctx);
       },
       [|executeQueryJs|],

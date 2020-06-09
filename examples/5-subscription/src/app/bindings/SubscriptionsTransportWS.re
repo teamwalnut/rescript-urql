@@ -42,7 +42,7 @@ type t = {
   [@bs.meth]
   "request":
     Exchanges.subscriptionOperation =>
-    Exchanges.observableLike(ClientTypes.executionResult),
+    Exchanges.observableLike(UrqlTypes.executionResult),
 };
 
 [@bs.new] [@bs.module "subscriptions-transport-ws"]

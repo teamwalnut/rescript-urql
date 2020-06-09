@@ -1,17 +1,14 @@
 module UrqlTypes = UrqlTypes;
 
 module Client = UrqlClient;
-module ClientTypes = UrqlClientTypes;
 
 module Context = UrqlContext;
 module Provider = UrqlContext.Provider;
 module Consumer = UrqlContext.Consumer;
 
-module Request = UrqlRequest;
-
 module CombinedError = UrqlCombinedError;
 
-module Exchanges = UrqlExchanges;
+module Exchanges = UrqlClient.Exchanges;
 
 module Hooks = {
   type hookResponse('ret, 'extensions) =

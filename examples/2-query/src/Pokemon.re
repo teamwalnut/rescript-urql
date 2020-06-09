@@ -54,7 +54,7 @@ let make = (~pokemon: string) => {
               </h2>
               {switch (height##maximum, weight##maximum) {
                | (Some(heightMax), Some(weightMax)) =>
-                 <div className=Styles.dexGrid>
+                 <div>
                    <p> {("Height: " ++ heightMax)->React.string} </p>
                    <p> {("Weight: " ++ weightMax)->React.string} </p>
                  </div>
