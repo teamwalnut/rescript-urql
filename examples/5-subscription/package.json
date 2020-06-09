@@ -20,7 +20,7 @@
   },
   "devDependencies": {
     "@baransu/graphql_ppx_re": "^0.7.1",
-    "apollo-server-express": "^2.13.1",
+    "apollo-server-express": "^2.14.2",
     "bs-platform": "7.3.2",
     "cors": "^2.8.5",
     "express": "^4.17.1",
