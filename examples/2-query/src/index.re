@@ -4,6 +4,6 @@ open ReasonUrql;
 let client = Client.make(~url="https://graphql-pokemon.now.sh", ());
 
 ReactDOMRe.renderToElementWithId(
-  <Provider value=client> <Container /> </Provider>,
+  <Context.Provider value=client> <Container /> </Context.Provider>,
   "root",
 );

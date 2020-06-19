@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`UrqlClient Client with default requestPolicy should accept a default requestPolicy 1`] = `
+exports[`Client Client with default requestPolicy should accept a default requestPolicy 1`] = `
 Client {
   "activeOperations": Object {},
   "createOperationContext": [Function],
@@ -21,7 +21,7 @@ Client {
 }
 `;
 
-exports[`UrqlClient Client with exchanges provided should instantiate a client with exchanges 1`] = `
+exports[`Client Client with exchanges provided should instantiate a client with exchanges 1`] = `
 Client {
   "activeOperations": Object {},
   "createOperationContext": [Function],
@@ -42,7 +42,7 @@ Client {
 }
 `;
 
-exports[`UrqlClient Client with fetchOptions provided should instantiate a client instance with fetchOptions provided as FetchFn 1`] = `
+exports[`Client Client with fetchOptions provided should instantiate a client instance with fetchOptions provided as FetchFn 1`] = `
 Client {
   "activeOperations": Object {},
   "createOperationContext": [Function],
@@ -63,7 +63,7 @@ Client {
 }
 `;
 
-exports[`UrqlClient Client with fetchOptions provided should instantiate a client instance with fetchOptions provided as FetchOpts 1`] = `
+exports[`Client Client with fetchOptions provided should instantiate a client instance with fetchOptions provided as FetchOpts 1`] = `
 Client {
   "activeOperations": Object {},
   "createOperationContext": [Function],
@@ -91,7 +91,7 @@ Client {
 }
 `;
 
-exports[`UrqlClient Client with only a url provided should instantiate a client instance 1`] = `
+exports[`Client Client with only a url provided should instantiate a client instance 1`] = `
 Client {
   "activeOperations": Object {},
   "createOperationContext": [Function],
@@ -112,7 +112,7 @@ Client {
 }
 `;
 
-exports[`UrqlClient Client with suspense flag should accept a suspense flag to enable experimental SSR mode 1`] = `
+exports[`Client Client with suspense flag should accept a suspense flag to enable experimental SSR mode 1`] = `
 Client {
   "activeOperations": Object {},
   "createOperationContext": [Function],
@@ -133,9 +133,9 @@ Client {
 }
 `;
 
-exports[`UrqlClient ssrExchange should exist and be callable 1`] = `[Function]`;
+exports[`Client ssrExchange should exist and be callable 1`] = `[Function]`;
 
-exports[`UrqlClient with custom fetch implementation should accept a custom fetch implementation 1`] = `
+exports[`Client with custom fetch implementation should accept a custom fetch implementation 1`] = `
 Client {
   "activeOperations": Object {},
   "createOperationContext": [Function],
@@ -156,7 +156,7 @@ Client {
 }
 `;
 
-exports[`UrqlClient with custom fetch implementation should work with a fetcher using Fetch.request 1`] = `
+exports[`Client with custom fetch implementation should work with a fetcher using Fetch.request 1`] = `
 Client {
   "activeOperations": Object {},
   "createOperationContext": [Function],

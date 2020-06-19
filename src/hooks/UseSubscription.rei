@@ -6,28 +6,28 @@ type handler('acc, 'response, 'ret) =
 type executeSubscription =
   (
     ~fetchOptions: Fetch.requestInit=?,
-    ~requestPolicy: UrqlTypes.requestPolicy=?,
+    ~requestPolicy: Types.requestPolicy=?,
     ~url: string=?,
-    ~meta: UrqlTypes.operationDebugMeta=?,
+    ~meta: Types.operationDebugMeta=?,
     ~pollInterval: int=?,
     unit
   ) =>
   unit;
 
 type useSubscriptionResponse('response, 'extensions) = (
-  UrqlTypes.hookResponse('response, 'extensions),
+  Types.hookResponse('response, 'extensions),
   executeSubscription,
 );
 
 let useSubscription:
   (
-    ~request: UrqlTypes.request('response),
+    ~request: Types.request('response),
     ~handler: handler('acc, 'response, 'ret),
     ~pause: bool=?,
     ~fetchOptions: Fetch.requestInit=?,
-    ~requestPolicy: UrqlTypes.requestPolicy=?,
+    ~requestPolicy: Types.requestPolicy=?,
     ~url: string=?,
-    ~meta: UrqlTypes.operationDebugMeta=?,
+    ~meta: Types.operationDebugMeta=?,
     ~pollInterval: int=?,
     unit
   ) =>

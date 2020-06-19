@@ -33,8 +33,8 @@ type t = {
   .
   [@bs.meth]
   "request":
-    Exchanges.subscriptionOperation =>
-    Exchanges.observableLike(UrqlTypes.executionResult),
+    Client.Exchanges.subscriptionOperation =>
+    Client.Exchanges.observableLike(Types.executionResult),
 };
 
 let make:

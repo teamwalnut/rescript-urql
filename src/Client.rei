@@ -25,8 +25,8 @@ module Exchanges: {
   type client = t;
 
   type exchangeIO =
-    Wonka.Types.sourceT(UrqlTypes.operation) =>
-    Wonka.Types.sourceT(UrqlTypes.operationResult);
+    Wonka.Types.sourceT(Types.operation) =>
+    Wonka.Types.sourceT(Types.operationResult);
 
   type exchangeInput = {
     forward: exchangeIO,
@@ -35,8 +35,8 @@ module Exchanges: {
 
   type t =
     exchangeInput =>
-    (. Wonka.Types.sourceT(UrqlTypes.operation)) =>
-    Wonka.Types.sourceT(UrqlTypes.operationResult);
+    (. Wonka.Types.sourceT(Types.operation)) =>
+    Wonka.Types.sourceT(Types.operationResult);
 
   [@bs.module "urql"] external cacheExchange: t = "cacheExchange";
   [@bs.module "urql"] external debugExchange: t = "debugExchange";
@@ -66,11 +66,11 @@ module Exchanges: {
     query: string,
     variables: option(Js.Json.t),
     key: string,
-    context: UrqlTypes.operationContext,
+    context: Types.operationContext,
   };
 
   type subscriptionForwarder =
-    subscriptionOperation => observableLike(UrqlTypes.executionResult);
+    subscriptionOperation => observableLike(Types.executionResult);
   type subscriptionExchangeOpts = {
     forwardSubscription: subscriptionForwarder,
   };
@@ -108,7 +108,7 @@ let make:
   (
     ~url: string,
     ~fetchOptions: fetchOptions('a)=?,
-    ~requestPolicy: UrqlTypes.requestPolicy=?,
+    ~requestPolicy: Types.requestPolicy=?,
     ~exchanges: array(Exchanges.t)=?,
     ~suspense: bool=?,
     ~fetch: fetchImpl('a)=?,
@@ -118,28 +118,28 @@ let make:
 
 type response('response) =
   | Data('response)
-  | Error(UrqlCombinedError.t)
+  | Error(CombinedError.t)
   | Empty;
 
 type clientResponse('response) = {
   data: option('response),
-  error: option(UrqlCombinedError.t),
+  error: option(CombinedError.t),
   response: response('response),
 };
 
 let urqlClientResponseToReason:
-  (~response: UrqlTypes.operationResult, ~parse: Js.Json.t => 'response) =>
+  (~response: Types.operationResult, ~parse: Js.Json.t => 'response) =>
   clientResponse('response);
 
 let executeQuery:
   (
     ~client: t,
-    ~request: UrqlTypes.request('response),
+    ~request: Types.request('response),
     ~fetchOptions: Fetch.requestInit=?,
-    ~requestPolicy: UrqlTypes.requestPolicy=?,
+    ~requestPolicy: Types.requestPolicy=?,
     ~url: string=?,
     ~pollInterval: int=?,
-    ~meta: UrqlTypes.operationDebugMeta=?,
+    ~meta: Types.operationDebugMeta=?,
     unit
   ) =>
   Wonka.Types.sourceT(clientResponse('response));
@@ -147,12 +147,12 @@ let executeQuery:
 let executeMutation:
   (
     ~client: t,
-    ~request: UrqlTypes.request('response),
+    ~request: Types.request('response),
     ~fetchOptions: Fetch.requestInit=?,
-    ~requestPolicy: UrqlTypes.requestPolicy=?,
+    ~requestPolicy: Types.requestPolicy=?,
     ~url: string=?,
     ~pollInterval: int=?,
-    ~meta: UrqlTypes.operationDebugMeta=?,
+    ~meta: Types.operationDebugMeta=?,
     unit
   ) =>
   Wonka.Types.sourceT(clientResponse('response));
@@ -160,12 +160,12 @@ let executeMutation:
 let executeSubscription:
   (
     ~client: t,
-    ~request: UrqlTypes.request('response),
+    ~request: Types.request('response),
     ~fetchOptions: Fetch.requestInit=?,
-    ~requestPolicy: UrqlTypes.requestPolicy=?,
+    ~requestPolicy: Types.requestPolicy=?,
     ~url: string=?,
     ~pollInterval: int=?,
-    ~meta: UrqlTypes.operationDebugMeta=?,
+    ~meta: Types.operationDebugMeta=?,
     unit
   ) =>
   Wonka.Types.sourceT(clientResponse('response));
@@ -173,12 +173,12 @@ let executeSubscription:
 let query:
   (
     ~client: t,
-    ~request: UrqlTypes.request('response),
+    ~request: Types.request('response),
     ~fetchOptions: Fetch.requestInit=?,
-    ~requestPolicy: UrqlTypes.requestPolicy=?,
+    ~requestPolicy: Types.requestPolicy=?,
     ~url: string=?,
     ~pollInterval: int=?,
-    ~meta: UrqlTypes.operationDebugMeta=?,
+    ~meta: Types.operationDebugMeta=?,
     unit
   ) =>
   Js.Promise.t(clientResponse('response));
@@ -186,12 +186,12 @@ let query:
 let mutation:
   (
     ~client: t,
-    ~request: UrqlTypes.request('response),
+    ~request: Types.request('response),
     ~fetchOptions: Fetch.requestInit=?,
-    ~requestPolicy: UrqlTypes.requestPolicy=?,
+    ~requestPolicy: Types.requestPolicy=?,
     ~url: string=?,
     ~pollInterval: int=?,
-    ~meta: UrqlTypes.operationDebugMeta=?,
+    ~meta: Types.operationDebugMeta=?,
     unit
   ) =>
   Js.Promise.t(clientResponse('response));

@@ -2,22 +2,17 @@ open Jest;
 
 let it = test;
 
-describe("UrqlTypes", () => {
+describe("Types", () => {
   describe("urqlResponseToReason", () => {
     it(
       "should correctly return Fetching constructor if fetching is true and no data has been received",
       () => {
         let response =
-          UrqlTypes.{
-            fetching: true,
-            data: None,
-            error: None,
-            extensions: None,
-          };
+          Types.{fetching: true, data: None, error: None, extensions: None};
         let parse = _json => ();
-        let result = UrqlTypes.urqlResponseToReason(~response, ~parse);
+        let result = Types.urqlResponseToReason(~response, ~parse);
 
-        Expect.(expect(result.response) |> toEqual(UrqlTypes.Fetching));
+        Expect.(expect(result.response) |> toEqual(Types.Fetching));
       },
     );
 
@@ -25,17 +20,17 @@ describe("UrqlTypes", () => {
       "should return Data constructor if the GraphQL API responded with data",
       () => {
       let response =
-        UrqlTypes.{
+        Types.{
           fetching: false,
           data: Some(Js.Json.string("Hello")),
           error: None,
           extensions: None,
         };
       let parse = json => Js.Json.decodeString(json);
-      let result = UrqlTypes.urqlResponseToReason(~response, ~parse);
+      let result = Types.urqlResponseToReason(~response, ~parse);
 
       Expect.(
-        expect(result.response) |> toEqual(UrqlTypes.Data(Some("Hello")))
+        expect(result.response) |> toEqual(Types.Data(Some("Hello")))
       );
     });
 
@@ -50,7 +45,7 @@ describe("UrqlTypes", () => {
       };
 
       let error =
-        UrqlCombinedError.{
+        CombinedError.{
           message: "Error returned by GraphQL API",
           graphQLErrors: None,
           networkError: None,
@@ -58,30 +53,25 @@ describe("UrqlTypes", () => {
         };
 
       let response =
-        UrqlTypes.{
+        Types.{
           fetching: false,
           data: None,
           error: Some(errorJs),
           extensions: None,
         };
       let parse = _json => ();
-      let result = UrqlTypes.urqlResponseToReason(~response, ~parse);
+      let result = Types.urqlResponseToReason(~response, ~parse);
 
-      Expect.(expect(result.response) |> toEqual(UrqlTypes.Error(error)));
+      Expect.(expect(result.response) |> toEqual(Types.Error(error)));
     });
 
     it("should return NotFound constructor if none of the above apply", () => {
       let response =
-        UrqlTypes.{
-          fetching: false,
-          data: None,
-          error: None,
-          extensions: None,
-        };
+        Types.{fetching: false, data: None, error: None, extensions: None};
       let parse = _json => ();
-      let result = UrqlTypes.urqlResponseToReason(~response, ~parse);
+      let result = Types.urqlResponseToReason(~response, ~parse);
 
-      Expect.(expect(result.response) |> toEqual(UrqlTypes.NotFound));
+      Expect.(expect(result.response) |> toEqual(Types.NotFound));
     });
   })
 });

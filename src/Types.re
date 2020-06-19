@@ -27,13 +27,13 @@ type request('response) = {
 type response('response) =
   | Fetching
   | Data('response)
-  | Error(UrqlCombinedError.t)
+  | Error(CombinedError.t)
   | NotFound;
 
 type hookResponse('response, 'extensions) = {
   fetching: bool,
   data: option('response),
-  error: option(UrqlCombinedError.t),
+  error: option(CombinedError.t),
   response: response('response),
   extensions: option('extensions),
 };
@@ -41,7 +41,7 @@ type hookResponse('response, 'extensions) = {
 type jsHookResponse('response, 'extensions) = {
   fetching: bool,
   data: option('response),
-  error: option(UrqlCombinedError.combinedErrorJs),
+  error: option(CombinedError.combinedErrorJs),
   extensions: option('extensions),
 };
 
@@ -52,7 +52,7 @@ type jsHookResponse('response, 'extensions) = {
 let urqlResponseToReason = (~response, ~parse) => {
   let data = Belt.Option.map(response.data, parse);
   let error =
-    Belt.Option.map(response.error, UrqlCombinedError.combinedErrorToRecord);
+    Belt.Option.map(response.error, CombinedError.combinedErrorToRecord);
   let fetching = response.fetching;
   let extensions = response.extensions;
 
@@ -79,7 +79,7 @@ type graphqlDefinition('parseResult, 'composeReturnType, 'hookReturnType) = (
 /* The result of executing a GraphQL request.
    Consists of optional data and errors fields. */
 type executionResult = {
-  errors: option(array(UrqlCombinedError.graphQLError)),
+  errors: option(array(CombinedError.graphQLError)),
   data: option(Js.Json.t),
   extensions: Js.Json.t,
 };
@@ -146,5 +146,5 @@ type operation = {
 type operationResult = {
   operation,
   data: option(Js.Json.t),
-  error: option(UrqlCombinedError.combinedErrorJs),
+  error: option(CombinedError.combinedErrorJs),
 };

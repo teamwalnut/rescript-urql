@@ -1,5 +1,6 @@
 {
   "name": "reason-urql",
+  "namespace": true,
   "reason": {
     "react-jsx": 3
   },
@@ -22,7 +23,6 @@
     }
   ],
   "suffix": ".bs.js",
-  "namespace": false,
   "bs-dependencies": ["reason-react", "wonka", "bs-fetch"],
   "bs-dev-dependencies": ["@glennsl/bs-jest"],
   "refmt": 3,

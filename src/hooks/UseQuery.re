@@ -1,23 +1,23 @@
-type executeQueryJs = UrqlTypes.partialOperationContext => unit;
+type executeQueryJs = Types.partialOperationContext => unit;
 
 type useQueryResponseJs('extensions) = (
-  UrqlTypes.jsHookResponse(Js.Json.t, 'extensions),
+  Types.jsHookResponse(Js.Json.t, 'extensions),
   executeQueryJs,
 );
 
 type executeQuery =
   (
     ~fetchOptions: Fetch.requestInit=?,
-    ~requestPolicy: UrqlTypes.requestPolicy=?,
+    ~requestPolicy: Types.requestPolicy=?,
     ~url: string=?,
-    ~meta: UrqlTypes.operationDebugMeta=?,
+    ~meta: Types.operationDebugMeta=?,
     ~pollInterval: int=?,
     unit
   ) =>
   unit;
 
 type useQueryResponse('response, 'extensions) = (
-  UrqlTypes.hookResponse('response, 'extensions),
+  Types.hookResponse('response, 'extensions),
   executeQuery,
 );
 
@@ -26,7 +26,7 @@ type useQueryArgs = {
   variables: Js.Json.t,
   requestPolicy: option(string),
   pause: option(bool),
-  context: UrqlTypes.partialOperationContext,
+  context: Types.partialOperationContext,
 };
 
 [@bs.module "urql"]
@@ -48,14 +48,14 @@ let useQuery =
   let variables = request##variables;
   let parse = request##parse;
   let rp =
-    UrqlUseSemanticGuarantee.useSemanticGuarantee(
-      () => Belt.Option.map(requestPolicy, UrqlTypes.requestPolicyToJs),
+    UseSemanticGuarantee.useSemanticGuarantee(
+      () => Belt.Option.map(requestPolicy, Types.requestPolicyToJs),
       requestPolicy,
     );
   let context =
     React.useMemo4(
       () => {
-        UrqlTypes.partialOperationContext(
+        Types.partialOperationContext(
           ~fetchOptions?,
           ~url?,
           ~meta?,
@@ -72,7 +72,7 @@ let useQuery =
 
   let state =
     React.useMemo2(
-      () => UrqlTypes.urqlResponseToReason(~response=stateJs, ~parse),
+      () => Types.urqlResponseToReason(~response=stateJs, ~parse),
       (stateJs, parse),
     );
 
@@ -88,10 +88,10 @@ let useQuery =
         (),
       ) => {
         let ctx =
-          UrqlTypes.partialOperationContext(
+          Types.partialOperationContext(
             ~fetchOptions?,
             ~requestPolicy=?
-              Belt.Option.map(requestPolicy, UrqlTypes.requestPolicyToJs),
+              Belt.Option.map(requestPolicy, Types.requestPolicyToJs),
             ~url?,
             ~meta?,
             ~pollInterval?,

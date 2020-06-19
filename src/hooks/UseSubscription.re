@@ -12,51 +12,51 @@ type useSubscriptionArgs = {
   query: string,
   variables: Js.Json.t,
   pause: option(bool),
-  context: UrqlTypes.partialOperationContext,
+  context: Types.partialOperationContext,
 };
 
-type executeSubscriptionJs = UrqlTypes.partialOperationContext => unit;
+type executeSubscriptionJs = Types.partialOperationContext => unit;
 
 [@bs.module "urql"]
 external useSubscriptionJs:
   (useSubscriptionArgs, option((option('acc), Js.Json.t) => 'acc)) =>
-  (UrqlTypes.jsHookResponse('ret, 'extensions), executeSubscriptionJs) =
+  (Types.jsHookResponse('ret, 'extensions), executeSubscriptionJs) =
   "useSubscription";
 
 type executeSubscription =
   (
     ~fetchOptions: Fetch.requestInit=?,
-    ~requestPolicy: UrqlTypes.requestPolicy=?,
+    ~requestPolicy: Types.requestPolicy=?,
     ~url: string=?,
-    ~meta: UrqlTypes.operationDebugMeta=?,
+    ~meta: Types.operationDebugMeta=?,
     ~pollInterval: int=?,
     unit
   ) =>
   unit;
 
 type useSubscriptionResponse('response, 'extensions) = (
-  UrqlTypes.hookResponse('response, 'extensions),
+  Types.hookResponse('response, 'extensions),
   executeSubscription,
 );
 
 let subscriptionResponseToReason =
-    (result: UrqlTypes.jsHookResponse('ret, 'extensionns)) => {
-  let data = UrqlTypes.(result.data);
+    (result: Types.jsHookResponse('ret, 'extensionns)) => {
+  let data = Types.(result.data);
   let error =
-    result.error->Belt.Option.map(UrqlCombinedError.combinedErrorToRecord);
+    result.error->Belt.Option.map(CombinedError.combinedErrorToRecord);
   let fetching = result.fetching;
   let extensions = result.extensions;
 
   let response =
     switch (fetching, data, error) {
-    | (true, None, _) => UrqlTypes.Fetching
+    | (true, None, _) => Types.Fetching
     | (false, _, Some(error)) => Error(error)
     | (true, Some(data), _) => Data(data)
     | (false, Some(data), _) => Data(data)
     | (false, None, None) => NotFound
     };
 
-  UrqlTypes.{fetching, data, error, response, extensions};
+  Types.{fetching, data, error, response, extensions};
 };
 
 let useSubscription =
@@ -64,7 +64,7 @@ let useSubscription =
       type acc,
       type response,
       type ret,
-      ~request: UrqlTypes.request(response),
+      ~request: Types.request(response),
       ~handler: handler(acc, response, ret),
       ~pause=?,
       ~fetchOptions=?,
@@ -80,13 +80,13 @@ let useSubscription =
   let context =
     React.useMemo5(
       () => {
-        UrqlTypes.partialOperationContext(
+        Types.partialOperationContext(
           ~fetchOptions?,
           ~url?,
           ~meta?,
           ~pollInterval?,
           ~requestPolicy=?
-            Belt.Option.map(requestPolicy, UrqlTypes.requestPolicyToJs),
+            Belt.Option.map(requestPolicy, Types.requestPolicyToJs),
           (),
         )
       },
@@ -117,10 +117,10 @@ let useSubscription =
         (),
       ) => {
         let ctx =
-          UrqlTypes.partialOperationContext(
+          Types.partialOperationContext(
             ~fetchOptions?,
             ~requestPolicy=?
-              Belt.Option.map(requestPolicy, UrqlTypes.requestPolicyToJs),
+              Belt.Option.map(requestPolicy, Types.requestPolicyToJs),
             ~url?,
             ~meta?,
             ~pollInterval?,

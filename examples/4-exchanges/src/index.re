@@ -3,7 +3,7 @@ open ReasonUrql;
 /* This is the native debugExchange that ships with `urql`, re-implemented in Reason.
      Typically, you'd just add Exchanges.debugExchange to the Client's exchange array.
    */
-let debugExchange = (Exchanges.{forward}) =>
+let debugExchange = (Client.Exchanges.{forward}) =>
   (. ops) =>
     ops
     |> Wonka.tap((. op) =>
@@ -17,7 +17,7 @@ let debugExchange = (Exchanges.{forward}) =>
 let client =
   Client.make(
     ~url="https://formidadog-ql.now.sh",
-    ~exchanges=[|debugExchange, Exchanges.fetchExchange|],
+    ~exchanges=[|debugExchange, Client.Exchanges.fetchExchange|],
     (),
   );
 
