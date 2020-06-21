@@ -1,27 +1,27 @@
 type executeQuery =
   (
     ~fetchOptions: Fetch.requestInit=?,
-    ~requestPolicy: UrqlTypes.requestPolicy=?,
+    ~requestPolicy: Types.requestPolicy=?,
     ~url: string=?,
-    ~meta: UrqlTypes.operationDebugMeta=?,
+    ~meta: Types.operationDebugMeta=?,
     ~pollInterval: int=?,
     unit
   ) =>
   unit;
 
 type useQueryResponse('response, 'extensions) = (
-  UrqlTypes.hookResponse('response, 'extensions),
+  Types.hookResponse('response, 'extensions),
   executeQuery,
 );
 
 let useQuery:
   (
-    ~request: UrqlTypes.request('response),
+    ~request: Types.request('response),
     ~pause: bool=?,
     ~fetchOptions: Fetch.requestInit=?,
-    ~requestPolicy: UrqlTypes.requestPolicy=?,
+    ~requestPolicy: Types.requestPolicy=?,
     ~url: string=?,
-    ~meta: UrqlTypes.operationDebugMeta=?,
+    ~meta: Types.operationDebugMeta=?,
     ~pollInterval: int=?,
     unit
   ) =>

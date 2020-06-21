@@ -1,25 +1,25 @@
 type executeMutationJs =
-  (Js.Json.t, UrqlTypes.partialOperationContext) =>
-  Js.Promise.t(UrqlTypes.operationResult);
+  (Js.Json.t, Types.partialOperationContext) =>
+  Js.Promise.t(Types.operationResult);
 
 type executeMutation =
   (
     ~fetchOptions: Fetch.requestInit=?,
-    ~requestPolicy: UrqlTypes.requestPolicy=?,
+    ~requestPolicy: Types.requestPolicy=?,
     ~url: string=?,
-    ~meta: UrqlTypes.operationDebugMeta=?,
+    ~meta: Types.operationDebugMeta=?,
     ~pollInterval: int=?,
     unit
   ) =>
-  Js.Promise.t(UrqlTypes.operationResult);
+  Js.Promise.t(Types.operationResult);
 
 type useMutationResponseJs('extensions) = (
-  UrqlTypes.jsHookResponse(Js.Json.t, 'extensions),
+  Types.jsHookResponse(Js.Json.t, 'extensions),
   executeMutationJs,
 );
 
 type useMutationResponse('response, 'extensions) = (
-  UrqlTypes.hookResponse('response, 'extensions),
+  Types.hookResponse('response, 'extensions),
   executeMutation,
 );
 
@@ -44,7 +44,7 @@ let useMutation = (~request) => {
 
   let state =
     React.useMemo2(
-      () => UrqlTypes.urqlResponseToReason(~response=stateJs, ~parse),
+      () => Types.urqlResponseToReason(~response=stateJs, ~parse),
       (stateJs, parse),
     );
 
@@ -60,10 +60,10 @@ let useMutation = (~request) => {
         (),
       ) => {
         let ctx =
-          UrqlTypes.partialOperationContext(
+          Types.partialOperationContext(
             ~fetchOptions?,
             ~requestPolicy=?
-              Belt.Option.map(requestPolicy, UrqlTypes.requestPolicyToJs),
+              Belt.Option.map(requestPolicy, Types.requestPolicyToJs),
             ~url?,
             ~meta?,
             ~pollInterval?,
@@ -92,17 +92,17 @@ let useDynamicMutation = definition => {
 
   let state =
     React.useMemo2(
-      () => UrqlTypes.urqlResponseToReason(~response=stateJs, ~parse),
+      () => Types.urqlResponseToReason(~response=stateJs, ~parse),
       (stateJs, parse),
     );
 
   let executeMutation =
       (~fetchOptions=?, ~requestPolicy=?, ~url=?, ~meta=?, ~pollInterval=?) => {
     let ctx =
-      UrqlTypes.partialOperationContext(
+      Types.partialOperationContext(
         ~fetchOptions?,
         ~requestPolicy=?
-          Belt.Option.map(requestPolicy, UrqlTypes.requestPolicyToJs),
+          Belt.Option.map(requestPolicy, Types.requestPolicyToJs),
         ~url?,
         ~meta?,
         ~pollInterval?,

@@ -3,6 +3,6 @@ open ReasonUrql;
 let client = Client.make(~url="https://formidadog-ql.now.sh", ());
 
 ReactDOMRe.renderToElementWithId(
-  <Provider value=client> <Grid client /> </Provider>,
+  <Context.Provider value=client> <Grid client /> </Context.Provider>,
   "root",
 );
