@@ -134,8 +134,8 @@ The signature of an exchange in `reason-urql` is:
 ```reason
 type t =
   exchangeInput =>
-  (. Wonka.Types.sourceT(UrqlClientTypes.operation)) =>
-  Wonka.Types.sourceT(UrqlClientTypes.operationResult);
+  (. Wonka.Types.sourceT(Types.operation)) =>
+  Wonka.Types.sourceT(Types.operationResult);
 ```
 
 `exchangeInput` here is a record containing two fields:
