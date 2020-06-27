@@ -36,6 +36,7 @@ type hookResponse('response, 'extensions) = {
   error: option(CombinedError.t),
   response: response('response),
   extensions: option('extensions),
+  stale: bool,
 };
 
 type jsHookResponse('response, 'extensions) = {
@@ -43,6 +44,7 @@ type jsHookResponse('response, 'extensions) = {
   data: option('response),
   error: option(CombinedError.combinedErrorJs),
   extensions: option('extensions),
+  stale: bool,
 };
 
 /**
@@ -55,6 +57,7 @@ let urqlResponseToReason = (~response, ~parse) => {
     Belt.Option.map(response.error, CombinedError.combinedErrorToRecord);
   let fetching = response.fetching;
   let extensions = response.extensions;
+  let stale = response.stale;
 
   let response =
     switch (fetching, data, error) {
@@ -64,7 +67,7 @@ let urqlResponseToReason = (~response, ~parse) => {
     | (false, None, None) => NotFound
     };
 
-  {fetching, data, error, response, extensions};
+  {fetching, data, error, response, extensions, stale};
 };
 
 type graphqlDefinition('parseResult, 'composeReturnType, 'hookReturnType) = (
@@ -147,4 +150,5 @@ type operationResult = {
   operation,
   data: option(Js.Json.t),
   error: option(CombinedError.combinedErrorJs),
+  stale: option(bool),
 };
