@@ -37,6 +37,7 @@ type hookResponse('response, 'extensions) = {
   error: option(CombinedError.t),
   response: response('response),
   extensions: option('extensions),
+  stale: bool,
 };
 
 type jsHookResponse('response, 'extensions) = {
@@ -44,6 +45,7 @@ type jsHookResponse('response, 'extensions) = {
   data: option('response),
   error: option(CombinedError.combinedErrorJs),
   extensions: option('extensions),
+  stale: bool,
 };
 
 let urqlResponseToReason:
@@ -123,4 +125,5 @@ type operationResult = {
   operation,
   data: option(Js.Json.t),
   error: option(CombinedError.combinedErrorJs),
+  stale: option(bool),
 };

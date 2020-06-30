@@ -46,6 +46,7 @@ let subscriptionResponseToReason =
     result.error->Belt.Option.map(CombinedError.combinedErrorToRecord);
   let fetching = result.fetching;
   let extensions = result.extensions;
+  let stale = result.stale;
 
   let response =
     switch (fetching, data, error) {
@@ -56,7 +57,7 @@ let subscriptionResponseToReason =
     | (false, None, None) => NotFound
     };
 
-  Types.{fetching, data, error, response, extensions};
+  Types.{fetching, data, error, response, extensions, stale};
 };
 
 let useSubscription =

@@ -8,7 +8,13 @@ describe("Types", () => {
       "should correctly return Fetching constructor if fetching is true and no data has been received",
       () => {
         let response =
-          Types.{fetching: true, data: None, error: None, extensions: None};
+          Types.{
+            fetching: true,
+            data: None,
+            error: None,
+            extensions: None,
+            stale: false,
+          };
         let parse = _json => ();
         let result = Types.urqlResponseToReason(~response, ~parse);
 
@@ -25,6 +31,7 @@ describe("Types", () => {
           data: Some(Js.Json.string("Hello")),
           error: None,
           extensions: None,
+          stale: false,
         };
       let parse = json => Js.Json.decodeString(json);
       let result = Types.urqlResponseToReason(~response, ~parse);
@@ -58,6 +65,7 @@ describe("Types", () => {
           data: None,
           error: Some(errorJs),
           extensions: None,
+          stale: false,
         };
       let parse = _json => ();
       let result = Types.urqlResponseToReason(~response, ~parse);
@@ -67,7 +75,13 @@ describe("Types", () => {
 
     it("should return NotFound constructor if none of the above apply", () => {
       let response =
-        Types.{fetching: false, data: None, error: None, extensions: None};
+        Types.{
+          fetching: false,
+          data: None,
+          error: None,
+          extensions: None,
+          stale: false,
+        };
       let parse = _json => ();
       let result = Types.urqlResponseToReason(~response, ~parse);
 
