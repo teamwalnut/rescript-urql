@@ -28,12 +28,28 @@ let make = () => {
     Hooks.useQuery(~request, ~requestPolicy=`CacheFirst, ());
 
   switch (response) {
+  | Fetching => <div> "Loading"->React.string </div>
   | Data(data) =>
     switch (data##pokemons) {
     | Some(pokemons) => <PokemonList pokemons={pokemons->flattenPokemon} />
     | None => <div> "No Data"->React.string </div>
     }
-  | Fetching => <div> "Loading"->React.string </div>
+  | PartialData(data, e) =>
+    <div>
+      {switch (data##pokemons) {
+       | Some(pokemons) => <PokemonList pokemons={pokemons->flattenPokemon} />
+       | None => <div> "No Data"->React.string </div>
+       }}
+      <p>
+        {e
+         |> Array.to_list
+         |> List.map((e: GraphQLError.t) => {
+              "[GraphQLError: " ++ e.message ++ "]"
+            })
+         |> String.concat(", ")
+         |> React.string}
+      </p>
+    </div>
   | Error(e) =>
     switch (e) {
     | {networkError: Some(ne)} =>
@@ -43,18 +59,8 @@ let make = () => {
          ->Belt.Option.getWithDefault("Network error")
          ->React.string}
       </div>
-    | {graphQLErrors: Some(gqle)} =>
-      <div>
-        {gqle
-         |> Array.to_list
-         |> List.map((e: CombinedError.graphQLError) => {
-              "[GraphQLError: " ++ e.message ++ "]"
-            })
-         |> String.concat(", ")
-         |> React.string}
-      </div>
     | _ => <div> "Unknown error."->React.string </div>
     }
-  | NotFound => <div> "Not Found"->React.string </div>
+  | Empty => <div> "Not Found"->React.string </div>
   };
 };

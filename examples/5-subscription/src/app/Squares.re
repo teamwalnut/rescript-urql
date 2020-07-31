@@ -38,7 +38,8 @@ let make = () => {
 
   switch (response) {
   | Fetching => <text> "Loading"->React.string </text>
-  | Data(d) =>
+  | Data(d)
+  | PartialData(d, _) =>
     Array.mapi(
       (index, datum) =>
         <rect
@@ -54,6 +55,6 @@ let make = () => {
     )
     |> React.array
   | Error(_e) => <text> "Error"->React.string </text>
-  | NotFound => <text> "Not Found"->React.string </text>
+  | Empty => <text> "Not Found"->React.string </text>
   };
 };

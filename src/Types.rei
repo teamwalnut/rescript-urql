@@ -28,8 +28,9 @@ type request('response) = {
 type response('response) =
   | Fetching
   | Data('response)
+  | PartialData('response, array(GraphQLError.t))
   | Error(CombinedError.t)
-  | NotFound;
+  | Empty;
 
 type hookResponse('response, 'extensions) = {
   fetching: bool,
@@ -67,7 +68,7 @@ type graphqlDefinition('parseResult, 'composeReturnType, 'hookReturnType) = (
 /* The result of executing a GraphQL request.
    Consists of optional data and errors fields. */
 type executionResult = {
-  errors: option(array(CombinedError.graphQLError)),
+  errors: option(array(GraphQLError.t)),
   data: option(Js.Json.t),
   extensions: Js.Json.t,
 };

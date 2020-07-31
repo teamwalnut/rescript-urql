@@ -42,11 +42,72 @@ describe("Types", () => {
     });
 
     it(
+      "should return PartialData constructor if the GraphQL API responded with data and an error",
+      () => {
+        let graphQLError =
+          GraphQLError.{
+            message: "Error encountered querying field dogs.",
+            locations: Some([|{line: 2, column: 17}|]),
+            path: None,
+            source: None,
+            nodes: None,
+            positions: None,
+            originalError: None,
+            extensions: None,
+          };
+
+        let errorJs = {
+          "message": "Error returned by GraphQL API",
+          "graphQLErrors": [|graphQLError|],
+          "networkError": Js.Nullable.null,
+          "response": Js.Nullable.null,
+        };
+
+        let error =
+          CombinedError.{
+            message: "Error returned by GraphQL API",
+            graphQLErrors: [|graphQLError|],
+            networkError: None,
+            response: None,
+          };
+
+        let response =
+          Types.{
+            fetching: false,
+            data: Some(Js.Json.string("Hello")),
+            error: Some(errorJs),
+            extensions: None,
+            stale: false,
+          };
+
+        let parse = json => Js.Json.decodeString(json);
+        let result = Types.urqlResponseToReason(~response, ~parse);
+
+        Expect.(
+          expect(result.response)
+          |> toEqual(Types.PartialData(Some("Hello"), error.graphQLErrors))
+        );
+      },
+    );
+
+    it(
       "should return Error constructor if the GraphQL API responded with an error",
       () => {
+      let graphQLError =
+        GraphQLError.{
+          message: "Error encountered querying field dogs.",
+          locations: Some([|{line: 2, column: 17}|]),
+          path: None,
+          source: None,
+          nodes: None,
+          positions: None,
+          originalError: None,
+          extensions: None,
+        };
+
       let errorJs = {
         "message": "Error returned by GraphQL API",
-        "graphQLErrors": Js.Nullable.null,
+        "graphQLErrors": [|graphQLError|],
         "networkError": Js.Nullable.null,
         "response": Js.Nullable.null,
       };
@@ -54,7 +115,7 @@ describe("Types", () => {
       let error =
         CombinedError.{
           message: "Error returned by GraphQL API",
-          graphQLErrors: None,
+          graphQLErrors: [|graphQLError|],
           networkError: None,
           response: None,
         };
@@ -73,7 +134,7 @@ describe("Types", () => {
       Expect.(expect(result.response) |> toEqual(Types.Error(error)));
     });
 
-    it("should return NotFound constructor if none of the above apply", () => {
+    it("should return Empty constructor if none of the above apply", () => {
       let response =
         Types.{
           fetching: false,
@@ -85,7 +146,7 @@ describe("Types", () => {
       let parse = _json => ();
       let result = Types.urqlResponseToReason(~response, ~parse);
 
-      Expect.(expect(result.response) |> toEqual(Types.NotFound));
+      Expect.(expect(result.response) |> toEqual(Types.Empty));
     });
   })
 });

@@ -115,7 +115,7 @@ Imperatively execute a GraphQL query operation.
 | `pollInterval`  | `int=?`                      | Optional. Instructs the client to reexecute the query every `pollInterval` milliseconds.                                                                                                                                                                                |
 | `meta`          | `Types.operationDebugMeta=?` | Optional. Add metadata that is only available in development with devtools.                                                                                                                                                                                             |
 
-`client.executeQuery` returns a [`wonka` `source`](https://wonka.kitten.sh/api/sources) containing the results of executing the query. The result record has a variant type called `response` with constructors for `Data(d)`, `Error(e)`, and `NotFound`, in addition to `data` and `error` fields for accessing the raw response values if desired.
+`client.executeQuery` returns a [`wonka` `source`](https://wonka.kitten.sh/api/sources) containing the results of executing the query. The result record has a variant type called `response` with constructors for `Data(d)`, `Error(e)`, and `Empty`, in addition to `data` and `error` fields for accessing the raw response values if desired.
 
 | Return                                                  | Description                                                                                                                             |
 | ------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
@@ -145,7 +145,7 @@ Client.executeQuery(~client, ~request=GetAllDogs.make(), ())
     switch(Client.(data.response)) {
       | Data(d) => /* Access data returned from executing the request. */
       | Error(e) => /* Access any errors returned from executing the request. */
-      | NotFound => /* Fallback if neither Data nor Error return information. */
+      | Empty => /* Fallback if neither Data nor Error return information. */
     }
   });
 ```
@@ -164,7 +164,7 @@ The same as `Client.executeQuery`, but returns a `Js.Promise.t` rather than a `w
 | `pollInterval`  | `int=?`                      | Optional. Instructs the client to reexecute the query every `pollInterval` milliseconds.                                                                                                                                                                                |
 | `meta`          | `Types.operationDebugMeta=?` | Optional. Add metadata that is only available in development with devtools.                                                                                                                                                                                             |
 
-`Client.query` returns a `Js.Promise.t` containing the results of executing the query. The result record has a variant type called `response` with constructors for `Data(d)`, `Error(e)`, and `NotFound`, in addition to `data` and `error` fields for accessing the raw response values if desired.
+`Client.query` returns a `Js.Promise.t` containing the results of executing the query. The result record has a variant type called `response` with constructors for `Data(d)`, `Error(e)`, and `Empty`, in addition to `data` and `error` fields for accessing the raw response values if desired.
 
 | Return                                           | Description                                                                                                                           |
 | ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------- |
@@ -194,7 +194,7 @@ Client.query(~client, ~request=GetAllDogs.make(), ())
     switch(Client.(data.response)) {
       | Data(d) => /* Access data returned from executing the request. */
       | Error(e) => /* Access any errors returned from executing the request. */
-      | NotFound => /* Fallback if neither Data nor Error return information. */
+      | Empty => /* Fallback if neither Data nor Error return information. */
     }
   });
 ```
@@ -213,7 +213,7 @@ Execute a GraphQL mutation operation.
 | `pollInterval`  | `int=?`                      | Optional. Instructs the client to reexecute the mutation every `pollInterval` milliseconds.                                                                                                                                                                                |
 | `meta`          | `Types.operationDebugMeta=?` | Optional. Add metadata that is only available in development with devtools.                                                                                                                                                                                                |
 
-`Client.executeMutation` returns a [`wonka` `source`](https://wonka.kitten.sh/api/sources) containing the results of executing the mutation. The result record has a variant type called `response` with constructors for `Data(d)`, `Error(e)`, and `NotFound`, in addition to `data` and `error` fields for accessing the raw response values if desired.
+`Client.executeMutation` returns a [`wonka` `source`](https://wonka.kitten.sh/api/sources) containing the results of executing the mutation. The result record has a variant type called `response` with constructors for `Data(d)`, `Error(e)`, and `Empty`, in addition to `data` and `error` fields for accessing the raw response values if desired.
 
 | Return                                                  | Description                                                                                                                                |
 | ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -243,7 +243,7 @@ Client.executeMutation(~client, ~request=LikeDog.make(~key="VmeRTX7j-", ()), ())
     switch(Client.(data.response)) {
       | Data(d) => /* Access data returned from executing the request. */
       | Error(e) => /* Access any errors returned from executing the request. */
-      | NotFound => /* Fallback if neither Data nor Error return information. */
+      | Empty => /* Fallback if neither Data nor Error return information. */
     }
   });
 ```
@@ -262,7 +262,7 @@ The same as `Client.executeMutation`, but returns a `Js.Promise.t` rather than a
 | `pollInterval`  | `int=?`                      | Optional. Instructs the client to reexecute the mutation every `pollInterval` milliseconds.                                                                                                                                                                             |
 | `meta`          | `Types.operationDebugMeta=?` | Optional. Add metadata that is only available in development with devtools.                                                                                                                                                                                             |
 
-`Client.mutation` returns a `Js.Promise.t` containing the results of executing the mutation. The result record has a variant type called `response` with constructors for `Data(d)`, `Error(e)`, and `NotFound`, in addition to `data` and `error` fields for accessing the raw response values if desired.
+`Client.mutation` returns a `Js.Promise.t` containing the results of executing the mutation. The result record has a variant type called `response` with constructors for `Data(d)`, `Error(e)`, and `Empty`, in addition to `data` and `error` fields for accessing the raw response values if desired.
 
 | Return                                           | Description                                                                                                                              |
 | ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------- |
@@ -292,7 +292,7 @@ Client.mutation(~client, ~request=LikeDog.make(~key="VmeRTX7j-", ()), ())
     switch(Client.(data.response)) {
       | Data(d) => /* Access data returned from executing the request. */
       | Error(e) => /* Access any errors returned from executing the request. */
-      | NotFound => /* Fallback if neither Data nor Error return information. */
+      | Empty => /* Fallback if neither Data nor Error return information. */
     }
   });
 ```
@@ -332,7 +332,7 @@ Client.executeSubscription(~client, ~request=SubscribeMessages.make(), ())
     switch(Client.(data.response)) {
       | Data(d) => /* Access data returned from executing the request. */
       | Error(e) => /* Access any errors returned from executing the request. */
-      | NotFound => /* Fallback if neither Data nor Error return information. */
+      | Empty => /* Fallback if neither Data nor Error return information. */
     }
   });
 ```
