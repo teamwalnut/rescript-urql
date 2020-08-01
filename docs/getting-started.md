@@ -59,10 +59,11 @@ let make = () => {
   let (Hooks.{ response }, executeQuery) = Hooks.useQuery(~request, ());
 
   /* Pattern match on the response variant.
-  This variant has constructors for Fetching, Data(d), Error(e), and NotFound. */
+  This variant has constructors for Fetching, Data(d), PartialData(d, e) Error(e), and Empty. */
   switch (response) {
     | Fetching => <LoadingSpinner />
-    | Data(d) => {
+    | Data(d)
+    | PartialData(d, _) => {
       Array.map(dog =>
         <div key=dog##key>
           <span> {j|$dog##name $dog##likes|j}->React.string </span>
@@ -76,7 +77,7 @@ let make = () => {
       | Some(_e) => <div> "Network Error"->React.string </div>
       | None => <div> "Other Error"->React.string </div>
       }
-    | NotFound => <div> "Something went wrong!"->React.string </div>
+    | Empty => <div> "Something went wrong!"->React.string </div>
   }
 }
 ```

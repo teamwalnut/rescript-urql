@@ -1,35 +1,8 @@
-type sourceLocation = {
-  line: int,
-  column: int,
-};
-
-type path;
-type astNode;
-
-type source = {
-  body: string,
-  name: string,
-  locationOffset: sourceLocation,
-};
-
-type extension;
-
-type graphQLError = {
-  message: string,
-  locations: option(array(sourceLocation)),
-  path: option(array(path)),
-  nodes: option(array(astNode)),
-  source: option(source),
-  positions: option(array(int)),
-  originalError: option(Js.Exn.t),
-  extensions: option(Js.Dict.t(extension)),
-};
-
 class type _combinedError =
   [@bs]
   {
     pub networkError: Js.Nullable.t(Js.Exn.t);
-    pub graphQLErrors: Js.Nullable.t(array(graphQLError));
+    pub graphQLErrors: array(GraphQLError.t);
     pub response: Js.Nullable.t(Fetch.response);
     pub message: string;
   };
@@ -39,7 +12,7 @@ type combinedErrorJs = Js.t(_combinedError);
 
 type combinedError = {
   networkError: option(Js.Exn.t),
-  graphQLErrors: option(array(graphQLError)),
+  graphQLErrors: array(GraphQLError.t),
   response: option(Fetch.response),
   message: string,
 };
@@ -47,7 +20,7 @@ type combinedError = {
 let combinedErrorToRecord = (err: combinedErrorJs): combinedError => {
   {
     networkError: err##networkError->Js.Nullable.toOption,
-    graphQLErrors: err##graphQLErrors->Js.Nullable.toOption,
+    graphQLErrors: err##graphQLErrors,
     response: err##response->Js.Nullable.toOption,
     message: err##message,
   };

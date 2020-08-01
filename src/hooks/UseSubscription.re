@@ -50,11 +50,11 @@ let subscriptionResponseToReason =
 
   let response =
     switch (fetching, data, error) {
-    | (true, None, _) => Types.Fetching
-    | (false, _, Some(error)) => Error(error)
-    | (true, Some(data), _) => Data(data)
-    | (false, Some(data), _) => Data(data)
-    | (false, None, None) => NotFound
+    | (true, None, None) => Types.Fetching
+    | (_, Some(d), None) => Data(d)
+    | (_, Some(d), Some(e)) => PartialData(d, e.graphQLErrors)
+    | (_, None, Some(e)) => Error(e)
+    | (false, None, None) => Empty
     };
 
   Types.{fetching, data, error, response, extensions, stale};

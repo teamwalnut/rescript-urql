@@ -27,8 +27,9 @@ type request('response) = {
 type response('response) =
   | Fetching
   | Data('response)
+  | PartialData('response, array(GraphQLError.t))
   | Error(CombinedError.t)
-  | NotFound;
+  | Empty;
 
 type hookResponse('response, 'extensions) = {
   fetching: bool,
@@ -62,9 +63,10 @@ let urqlResponseToReason = (~response, ~parse) => {
   let response =
     switch (fetching, data, error) {
     | (true, None, _) => Fetching
-    | (_, Some(data), _) => Data(data)
-    | (false, _, Some(error)) => Error(error)
-    | (false, None, None) => NotFound
+    | (_, Some(d), None) => Data(d)
+    | (_, Some(d), Some(e)) => PartialData(d, e.graphQLErrors)
+    | (false, _, Some(e)) => Error(e)
+    | (false, None, None) => Empty
     };
 
   {fetching, data, error, response, extensions, stale};
@@ -82,7 +84,7 @@ type graphqlDefinition('parseResult, 'composeReturnType, 'hookReturnType) = (
 /* The result of executing a GraphQL request.
    Consists of optional data and errors fields. */
 type executionResult = {
-  errors: option(array(CombinedError.graphQLError)),
+  errors: option(array(GraphQLError.t)),
   data: option(Js.Json.t),
   extensions: Js.Json.t,
 };
