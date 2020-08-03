@@ -10,7 +10,6 @@ let make = () => {
       ~padding="20px",
       (),
     )}>
-    <ColdStart />
     <Previewer />
   </div>;
 };

@@ -16,7 +16,7 @@ let debugExchange = (Client.Exchanges.{forward}) =>
 
 let client =
   Client.make(
-    ~url="https://formidadog-ql.now.sh",
+    ~url="https://formidadog-ql.netlify.app/graphql",
     ~exchanges=[|debugExchange, Client.Exchanges.fetchExchange|],
     (),
   );
