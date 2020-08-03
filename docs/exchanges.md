@@ -193,7 +193,7 @@ let debugExchange = (Exchanges.{forward}) =>
 
 let client =
   Client.make(
-    ~url="https://formidadog-ql.now.sh",
+    ~url="https://my-graphql-endpoint.com/graphql",
     ~exchanges=[|
       debugExchange,
       Exchanges.dedupExchange,

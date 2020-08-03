@@ -1,6 +1,7 @@
 open ReasonUrql;
 
-let client = Client.make(~url="https://formidadog-ql.now.sh", ());
+let client =
+  Client.make(~url="https://formidadog-ql.netlify.app/graphql", ());
 
 module GetAllDogs = [%graphql
   {|
@@ -58,29 +59,25 @@ let make = () => {
     );
 
   let executeQuery = () => {
-    Client.query(
+    Client.executeQuery(
       ~client,
       ~request=queryRequest,
       ~requestPolicy=`CacheAndNetwork,
       (),
     )
-    |> Js.Promise.then_(data =>
+    |> Wonka.subscribe((. data) =>
          switch (Client.(data.response)) {
          | Data(d) =>
            switch (Js.Json.stringifyAny(d)) {
-           | Some(s) =>
-             dispatch(SetQuery(s));
-             Js.Promise.resolve();
-           | None => Js.Promise.resolve()
+           | Some(s) => dispatch(SetQuery(s))
+           | None => ()
            }
          | Error(e) =>
            switch (Js.Json.stringifyAny(e)) {
-           | Some(s) =>
-             dispatch(SetQuery(s));
-             Js.Promise.resolve();
-           | None => Js.Promise.resolve()
+           | Some(s) => dispatch(SetQuery(s))
+           | None => ()
            }
-         | _ => Js.Promise.resolve()
+         | _ => ()
          }
        );
   };
