@@ -28,7 +28,7 @@
   "dependencies": {
     "bs-fetch": "^0.5.2",
     "graphql": "^14.1.1",
-    "urql": "1.6.3"
+    "urql": "1.7.0"
   },
   "devDependencies": {
     "@babel/plugin-transform-modules-commonjs": "^7.9.6",

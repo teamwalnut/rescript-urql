@@ -34,15 +34,24 @@ let mutationRequest = LikeDog.make(~key="VmeRTX7j-", ());
 type state = {
   query: string,
   mutation: string,
+  fetchingQuery: bool,
+  fetchingMutation: bool,
 };
 
 type action =
   | SetQuery(string)
   | ClearQuery
   | SetMutation(string)
-  | ClearMutation;
+  | ClearMutation
+  | SetQueryFetching(bool)
+  | SetMutationFetching(bool);
 
-let initialState = {query: "", mutation: ""};
+let initialState = {
+  query: "",
+  mutation: "",
+  fetchingQuery: false,
+  fetchingMutation: false,
+};
 
 [@react.component]
 let make = () => {
@@ -54,18 +63,27 @@ let make = () => {
         | ClearQuery => {...state, query: ""}
         | SetMutation(mutation) => {...state, mutation}
         | ClearMutation => {...state, mutation: ""}
+        | SetQueryFetching(fetching) => {...state, fetchingQuery: fetching}
+        | SetMutationFetching(fetching) => {
+            ...state,
+            fetchingMutation: fetching,
+          }
         },
       initialState,
     );
 
   let executeQuery = () => {
+    dispatch(SetQueryFetching(true));
+
     Client.executeQuery(
       ~client,
       ~request=queryRequest,
       ~requestPolicy=`CacheAndNetwork,
       (),
     )
-    |> Wonka.subscribe((. data) =>
+    |> Wonka.subscribe((. data) => {
+         dispatch(SetQueryFetching(false));
+
          switch (Client.(data.response)) {
          | Data(d) =>
            switch (Js.Json.stringifyAny(d)) {
@@ -78,13 +96,17 @@ let make = () => {
            | None => ()
            }
          | _ => ()
-         }
-       );
+         };
+       });
   };
 
-  let executeMutation = () =>
+  let executeMutation = () => {
+    dispatch(SetMutationFetching(true));
+
     Client.executeMutation(~client, ~request=mutationRequest, ())
-    |> Wonka.subscribe((. data) =>
+    |> Wonka.subscribe((. data) => {
+         dispatch(SetMutationFetching(false));
+
          switch (Client.(data.response)) {
          | Data(d) =>
            switch (Js.Json.stringifyAny(d)) {
@@ -97,8 +119,9 @@ let make = () => {
            | None => ()
            }
          | _ => ()
-         }
-       );
+         };
+       });
+  };
 
   <div className=PreviewerStyles.previewer>
     <div className=PreviewerStyles.side>
@@ -120,8 +143,14 @@ let make = () => {
           "Execute Query"->React.string
         </button>
       </section>
-      {switch (String.length(state.query)) {
-       | 0 => React.null
+      {switch (String.length(state.query), state.fetchingQuery) {
+       | (0, false) => React.null
+       | (_, true) =>
+         <section className=PreviewerStyles.section>
+           <span className=PreviewerStyles.title>
+             "Loading"->React.string
+           </span>
+         </section>
        | _ =>
          <section className=PreviewerStyles.section>
            <span className=PreviewerStyles.title>
@@ -157,8 +186,14 @@ let make = () => {
           "Execute Mutation"->React.string
         </button>
       </section>
-      {switch (String.length(state.mutation)) {
-       | 0 => React.null
+      {switch (String.length(state.mutation), state.fetchingMutation) {
+       | (0, false) => React.null
+       | (_, true) =>
+         <section className=PreviewerStyles.section>
+           <span className=PreviewerStyles.title>
+             "Loading"->React.string
+           </span>
+         </section>
        | _ =>
          <section className=PreviewerStyles.section>
            <span className=PreviewerStyles.title>

@@ -4419,10 +4419,10 @@ urix@^0.1.0:
   resolved "https://registry.yarnpkg.com/urix/-/urix-0.1.0.tgz#da937f7a62e21fec1fd18d49b35c2935067a6c72"
   integrity sha1-2pN/emLiH+wf0Y1Js1wpNQZ6bHI=
 
-urql@1.6.3:
-  version "1.6.3"
-  resolved "https://registry.yarnpkg.com/urql/-/urql-1.6.3.tgz#0484a90a01d6fc8d0a6fb96bb4b2b2146a612c0d"
-  integrity sha512-KX8qHTGo8deSg41rrQEk9JhJTz6w/LBCdWhYutYjbCUrkoAF4lEiCkgOEiO0fEf+hpDg0nQTTkHTpRbgQ0yh1g==
+urql@1.7.0:
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/urql/-/urql-1.7.0.tgz#3b5d53451e9b45163288618f2bad6fe0afc02e0e"
+  integrity sha512-mw9gZhq3u33FzT6nLIQGzTF/cVkl3+pM1Jr2mya9pyTQfRBMugurGpZTyIFZKZQK1zjSnO8LbI2gzelydctq3A==
   dependencies:
     react-wonka "^1.0.3"
     wonka "^3.2.1"
