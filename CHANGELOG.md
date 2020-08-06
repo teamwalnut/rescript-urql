@@ -50,6 +50,10 @@ type t =
 - Component bindings for `Query`, `Mutation`, `Subscription`, and `SubscriptionWithHandler` were removed. Just use the hooks APIs!
 - `Client` methods for `executeRequestOperation`, `reexecuteOperation`, `createRequestOperation`, and `dispatchOperation` were removed. These are no longer in `urql`'s public facing API.
 
+### Diff
+
+https://github.com/FormidableLabs/reason-urql/compare/v1.7.0...v2.0.0
+
 ## [1.7.0] - 2020-04-16
 
 This release migrates our dependency on `urql` to v1.5.1. It also migrates our `devDependency` on `bs-platform` (the BuckleScript compiler), to v7.2.2. While we don't expect this to affect end users still on BuckleScript v6, there may be small bugfixes and optimizations coming in the near future to support this migration.

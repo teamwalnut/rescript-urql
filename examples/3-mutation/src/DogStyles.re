@@ -22,4 +22,5 @@ let image =
 
 let title = style([fontSize(rem(1.)), margin(px(0))]);
 
-let buttons = style([display(flexBox), alignItems(center)]);
+let buttons =
+  style([display(flexBox), alignItems(center), position(relative)]);
