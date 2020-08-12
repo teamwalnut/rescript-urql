@@ -362,6 +362,13 @@
   dependencies:
     "@types/node" "*"
 
+"@urql/core@^1.12.3":
+  version "1.12.3"
+  resolved "https://registry.yarnpkg.com/@urql/core/-/core-1.12.3.tgz#74f7b8e073cf706380bb3dd28484b8136cc96905"
+  integrity sha512-e4IXXQ4nes3KyusgYV925DuzfDAfo4ex7Ls3tZfOExkxEcXh0i0XnizXp0rvZmWRch69YCkc+Lh1Gy2aY49HTQ==
+  dependencies:
+    wonka "^4.0.14"
+
 "@webassemblyjs/ast@1.9.0":
   version "1.9.0"
   resolved "https://registry.yarnpkg.com/@webassemblyjs/ast/-/ast-1.9.0.tgz#bd850604b4042459a5a41cd7d338cbed695ed964"
@@ -1144,10 +1151,10 @@ bs-css@12.2.0:
   resolved "https://registry.yarnpkg.com/bs-css/-/bs-css-12.2.0.tgz#926e758d7f95c02f516505ecdcd855e1d9dcb2a0"
   integrity sha512-JDaJAc8XKYZA05G8xVuDhB184yGKgNajdUloPC+OK+J8gGTnv8pfrhWKsFFKry87eJN4kKHhgsbXaN5U70g+3Q==
 
-bs-fetch@^0.5.2:
-  version "0.5.2"
-  resolved "https://registry.yarnpkg.com/bs-fetch/-/bs-fetch-0.5.2.tgz#a9f4582ddb1414d3467b900305c738813481988c"
-  integrity sha512-CYweTJcgLeLOqzR3vNsB+NmyEFhWThnPNdZmmF28nkFmo0CQEf+20eSHZJDO6EuAhhoRqJ0qp2VgxtH6zBB5xA==
+bs-fetch@^0.6.2:
+  version "0.6.2"
+  resolved "https://registry.yarnpkg.com/bs-fetch/-/bs-fetch-0.6.2.tgz#37d982e9f79b9bc44c23e87ae78ccbee1f869adf"
+  integrity sha512-VXEjp8kY3vHPckaoy3d96Bx0KYjJAPLNISBwfpwMN26K6DtuZYwI2HKhx7zeHBajz1bRArfx7O8OOLcdtujMvg==
 
 bs-platform@7.3.2:
   version "7.3.2"
@@ -2466,7 +2473,7 @@ graphql-upload@^8.0.2:
     http-errors "^1.7.3"
     object-path "^0.11.4"
 
-graphql@^14.1.1, graphql@^14.2.1:
+graphql@^14.2.1:
   version "14.2.1"
   resolved "https://registry.yarnpkg.com/graphql/-/graphql-14.2.1.tgz#779529bf9a01e7207b977a54c20670b48ca6e95c"
   integrity sha512-2PL1UbvKeSjy/lUeJqHk+eR9CvuErXoCNwJI4jm3oNFEeY+9ELqHNKO1ZuSxAkasPkpWbmT/iMRMFxd3cEL3tQ==
@@ -2479,6 +2486,11 @@ graphql@^14.5.3:
   integrity sha512-VKzfvHEKybTKjQVpTFrA5yUq2S9ihcZvfJAtsDBBCuV6wauPu1xl/f9ehgVf0FcEJJs4vz6ysb/ZMkGigQZseg==
   dependencies:
     iterall "^1.2.2"
+
+graphql@^15.3.0:
+  version "15.3.0"
+  resolved "https://registry.yarnpkg.com/graphql/-/graphql-15.3.0.tgz#3ad2b0caab0d110e3be4a5a9b2aa281e362b5278"
+  integrity sha512-GTCJtzJmkFLWRfFJuoo9RWWa/FfamUHgiFosxi/X1Ani4AVWbeyBenZTNX6dM+7WSbbFfTo/25eh0LLkwHMw2w==
 
 handle-thing@^2.0.0:
   version "2.0.0"
@@ -4122,11 +4134,6 @@ react-is@^16.8.1:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.8.6.tgz#5bbc1e2d29141c9fbdfed456343fe2bc430a6a16"
   integrity sha512-aUk3bHfZ2bRSVFFbbeVS4i+lNPZr3/WM5jT2J5omUVV1zzcs1nAaf3l51ctA5FFvCRbhrH0bdAsRRQddFJZPtA==
 
-react-wonka@^1.0.3:
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/react-wonka/-/react-wonka-1.0.3.tgz#2d997403be347489e1161cb58d502ac683499847"
-  integrity sha512-7ocCcMnSxc7zD06V6H2Er4PJNbHQL2bityy6aZPrsn2JqJSP4SEkCzdvCk+nQVKDDqO8Lk5L5F9GG7PUB8gGsA==
-
 react@>=16.8.1:
   version "16.8.6"
   resolved "https://registry.yarnpkg.com/react/-/react-16.8.6.tgz#ad6c3a9614fd3a4e9ef51117f54d888da01f2bbe"
@@ -5069,13 +5076,13 @@ url@^0.11.0:
     punycode "1.3.2"
     querystring "0.2.0"
 
-urql@1.7.0:
-  version "1.7.0"
-  resolved "https://registry.yarnpkg.com/urql/-/urql-1.7.0.tgz#3b5d53451e9b45163288618f2bad6fe0afc02e0e"
-  integrity sha512-mw9gZhq3u33FzT6nLIQGzTF/cVkl3+pM1Jr2mya9pyTQfRBMugurGpZTyIFZKZQK1zjSnO8LbI2gzelydctq3A==
+urql@1.10.0:
+  version "1.10.0"
+  resolved "https://registry.yarnpkg.com/urql/-/urql-1.10.0.tgz#609f13891d3c5345635764b71b072edd88a1ae7e"
+  integrity sha512-Cxx1INTWNUMg9A2gyltqNqukOLFVtztkHxFGfv01OvsFAtR+wCmLyJqIzGUZRKVbKepTLocGbelS7QDxtjcqtg==
   dependencies:
-    react-wonka "^1.0.3"
-    wonka "^3.2.1"
+    "@urql/core" "^1.12.3"
+    wonka "^4.0.14"
 
 use@^3.1.0:
   version "3.1.1"
@@ -5331,10 +5338,10 @@ wide-align@^1.1.0:
   dependencies:
     string-width "^1.0.2 || 2"
 
-wonka@^3.2.1:
-  version "3.2.2"
-  resolved "https://registry.yarnpkg.com/wonka/-/wonka-3.2.2.tgz#4d5c79fee2e6042066ba7aa86bd2f180487cc0c3"
-  integrity sha512-btmYyFDuDpJXJfELkFkoTjfyn0M+/a54/kjqt3qGN/h/90A8Ynq8qxG4b0uXBAOvJNRnWnL8+d0C3r6Clt8PYA==
+wonka@^4.0.14:
+  version "4.0.14"
+  resolved "https://registry.yarnpkg.com/wonka/-/wonka-4.0.14.tgz#77d680a84e575ed15a9f975eb87d6c530488f3a4"
+  integrity sha512-v9vmsTxpZjrA8CYfztbuoTQSHEsG3ZH+NCYfasHm0V3GqBupXrjuuz0RJyUaw2cRO7ouW2js0P6i853/qxlDcA==
 
 worker-farm@^1.7.0:
   version "1.7.0"
