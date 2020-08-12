@@ -1,7 +1,7 @@
 # reason-urql
 
 [![npm](https://img.shields.io/npm/v/reason-urql.svg)](https://www.npmjs.com/package/reason-urql)
-[![All Contributors](https://img.shields.io/badge/all_contributors-16-orange.svg)](#contributors)
+[![All Contributors](https://img.shields.io/badge/all_contributors-17-orange.svg)](#contributors)
 [![Build Status](https://travis-ci.com/FormidableLabs/reason-urql.svg?branch=master)](https://travis-ci.com/FormidableLabs/reason-urql)
 [![Maintenance Status][maintenance-image]](#maintenance-status)
 [![Spectrum](https://withspectrum.github.io/badge/badge.svg)](https://spectrum.chat/urql)
@@ -120,14 +120,12 @@ This project follows the [all contributors spec](https://github.com/kentcdodds/a
     <td align="center"><a href="https://khoanguyen.me"><img src="https://avatars2.githubusercontent.com/u/3049054?v=4" width="100px;" alt=""/><br /><sub><b>Khoa Nguyen</b></sub></a><br /><a href="https://github.com/FormidableLabs/reason-urql/commits?author=thangngoc89" title="Code">💻</a> <a href="https://github.com/FormidableLabs/reason-urql/commits?author=thangngoc89" title="Documentation">📖</a></td>
     <td align="center"><a href="https://twitter.com/_philpl"><img src="https://avatars0.githubusercontent.com/u/2041385?v=4" width="100px;" alt=""/><br /><sub><b>Phil Plückthun</b></sub></a><br /><a href="#ideas-kitten" title="Ideas, Planning, & Feedback">🤔</a></td>
     <td align="center"><a href="https://github.com/kiraarghy"><img src="https://avatars2.githubusercontent.com/u/21056165?v=4" width="100px;" alt=""/><br /><sub><b>Kara Stubbs</b></sub></a><br /><a href="https://github.com/FormidableLabs/reason-urql/commits?author=kiraarghy" title="Code">💻</a> <a href="https://github.com/FormidableLabs/reason-urql/commits?author=kiraarghy" title="Tests">⚠️</a> <a href="#example-kiraarghy" title="Examples">💡</a></td>
-  </tr>
-  <tr>
     <td align="center"><a href="https://github.com/oddlyfunctional"><img src="https://avatars1.githubusercontent.com/u/565635?v=4" width="100px;" alt=""/><br /><sub><b>Marcos Felipe Pimenta Rodrigues</b></sub></a><br /><a href="https://github.com/FormidableLabs/reason-urql/commits?author=oddlyfunctional" title="Documentation">📖</a></td>
     <td align="center"><a href="https://github.com/gugahoa"><img src="https://avatars2.githubusercontent.com/u/1438470?v=4" width="100px;" alt=""/><br /><sub><b>Gustavo Aguiar</b></sub></a><br /><a href="https://github.com/FormidableLabs/reason-urql/commits?author=gugahoa" title="Code">💻</a> <a href="#example-gugahoa" title="Examples">💡</a></td>
-    <td align="center"><a href="https://github.com/Schmavery"><img src="https://avatars1.githubusercontent.com/u/2154522?v=4" width="100px;" alt=""/><br /><sub><b>Avery Morin</b></sub></a><br /><a href="#ideas-Schmavery" title="Ideas, Planning, & Feedback">🤔</a> <a href="https://github.com/FormidableLabs/reason-urql/commits?author=Schmavery" title="Code">💻</a> <a href="#example-Schmavery" title="Examples">💡</a> <a href="https://github.com/FormidableLabs/reason-urql/commits?author=Schmavery" title="Documentation">📖</a></td>
-    <td align="center"><a href="https://medium.com/@idkjs"><img src="https://avatars1.githubusercontent.com/u/2370391?v=4" width="100px;" alt=""/><br /><sub><b>Alain Armand</b></sub></a><br /><a href="https://github.com/FormidableLabs/reason-urql/commits?author=idkjs" title="Code">💻</a> <a href="#example-idkjs" title="Examples">💡</a></td>
   </tr>
   <tr>
+    <td align="center"><a href="https://github.com/Schmavery"><img src="https://avatars1.githubusercontent.com/u/2154522?v=4" width="100px;" alt=""/><br /><sub><b>Avery Morin</b></sub></a><br /><a href="#ideas-Schmavery" title="Ideas, Planning, & Feedback">🤔</a> <a href="https://github.com/FormidableLabs/reason-urql/commits?author=Schmavery" title="Code">💻</a> <a href="#example-Schmavery" title="Examples">💡</a> <a href="https://github.com/FormidableLabs/reason-urql/commits?author=Schmavery" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://medium.com/@idkjs"><img src="https://avatars1.githubusercontent.com/u/2370391?v=4" width="100px;" alt=""/><br /><sub><b>Alain Armand</b></sub></a><br /><a href="https://github.com/FormidableLabs/reason-urql/commits?author=idkjs" title="Code">💻</a> <a href="#example-idkjs" title="Examples">💡</a></td>
     <td align="center"><a href="http://weser.io"><img src="https://avatars0.githubusercontent.com/u/10060928?v=4" width="100px;" alt=""/><br /><sub><b>Robin Weser</b></sub></a><br /><a href="https://github.com/FormidableLabs/reason-urql/commits?author=robinweser" title="Documentation">📖</a></td>
     <td align="center"><a href="https://ce.ms"><img src="https://avatars3.githubusercontent.com/u/959142?v=4" width="100px;" alt=""/><br /><sub><b>Cem Turan</b></sub></a><br /><a href="https://github.com/FormidableLabs/reason-urql/commits?author=cem2ran" title="Documentation">📖</a></td>
     <td align="center"><a href="https://www.huy.dev/"><img src="https://avatars1.githubusercontent.com/u/7352279?v=4" width="100px;" alt=""/><br /><sub><b>Huy Nguyen</b></sub></a><br /><a href="https://github.com/FormidableLabs/reason-urql/commits?author=huy-nguyen" title="Documentation">📖</a></td>
@@ -138,12 +136,12 @@ This project follows the [all contributors spec](https://github.com/kentcdodds/a
     <td align="center"><a href="https://www.jovidecroock.com/"><img src="https://avatars3.githubusercontent.com/u/17125876?v=4" width="100px;" alt=""/><br /><sub><b>Jovi De Croock</b></sub></a><br /><a href="https://github.com/FormidableLabs/reason-urql/commits?author=JoviDeCroock" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/tatchi"><img src="https://avatars2.githubusercontent.com/u/5595092?v=4" width="100px;" alt=""/><br /><sub><b>Corentin Leruth</b></sub></a><br /><a href="https://github.com/FormidableLabs/reason-urql/commits?author=tatchi" title="Documentation">📖</a></td>
     <td align="center"><a href="https://github.com/jeddeloh"><img src="https://avatars3.githubusercontent.com/u/1131723?v=4" width="100px;" alt=""/><br /><sub><b>Joel Jeddeloh</b></sub></a><br /><a href="https://github.com/FormidableLabs/reason-urql/commits?author=jeddeloh" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/hulufei"><img src="https://avatars0.githubusercontent.com/u/261677?v=4" width="100px;" alt=""/><br /><sub><b>hui.liu</b></sub></a><br /><a href="https://github.com/FormidableLabs/reason-urql/commits?author=hulufei" title="Documentation">📖</a></td>
   </tr>
 </table>
 
 <!-- markdownlint-enable -->
 <!-- prettier-ignore-end -->
-
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 ## Maintenance Status
