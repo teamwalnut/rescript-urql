@@ -133,6 +133,8 @@ type clientOptions('fetchOptions, 'fetchImpl) = {
   suspense: bool,
   fetch: option('fetchImpl),
   requestPolicy: string,
+  preferGetMethod: bool,
+  maskTypename: bool,
 };
 
 [@bs.new] [@bs.module "urql"]
@@ -144,19 +146,23 @@ let make =
     (
       ~url,
       ~fetchOptions=?,
-      ~requestPolicy=`CacheFirst,
+      ~fetch=?,
       ~exchanges=Exchanges.defaultExchanges,
       ~suspense=false,
-      ~fetch=?,
+      ~requestPolicy=`CacheFirst,
+      ~preferGetMethod=false,
+      ~maskTypename=false,
       (),
     ) => {
   let options = {
     url,
     fetchOptions: fetchOptions->unwrapFetchOptions,
+    fetch: fetch->unwrapFetchImpl,
     exchanges,
     suspense,
-    fetch: fetch->unwrapFetchImpl,
     requestPolicy: requestPolicy->Types.requestPolicyToJs,
+    preferGetMethod,
+    maskTypename,
   };
 
   client(options);
@@ -216,11 +222,15 @@ let executeQuery =
     (
       ~client,
       ~request,
+      ~additionalTypenames=?,
       ~fetchOptions=?,
+      ~fetch=?,
       ~requestPolicy=?,
       ~url=?,
       ~pollInterval=?,
       ~meta=?,
+      ~suspense=?,
+      ~preferGetMethod=?,
       (),
     ) => {
   let req =
@@ -228,11 +238,15 @@ let executeQuery =
   let parse = request##parse;
   let optsJs =
     Types.partialOperationContext(
+      ~additionalTypenames?,
       ~fetchOptions?,
+      ~fetch?,
       ~requestPolicy=?Belt.Option.map(requestPolicy, Types.requestPolicyToJs),
       ~url?,
       ~pollInterval?,
       ~meta?,
+      ~suspense?,
+      ~preferGetMethod?,
       (),
     );
 
@@ -255,11 +269,15 @@ let executeMutation =
     (
       ~client,
       ~request,
+      ~additionalTypenames=?,
       ~fetchOptions=?,
+      ~fetch=?,
       ~requestPolicy=?,
       ~url=?,
       ~pollInterval=?,
       ~meta=?,
+      ~suspense=?,
+      ~preferGetMethod=?,
       (),
     ) => {
   let req =
@@ -267,11 +285,15 @@ let executeMutation =
   let parse = request##parse;
   let optsJs =
     Types.partialOperationContext(
+      ~additionalTypenames?,
       ~fetchOptions?,
+      ~fetch?,
       ~requestPolicy=?Belt.Option.map(requestPolicy, Types.requestPolicyToJs),
       ~url?,
       ~pollInterval?,
       ~meta?,
+      ~suspense?,
+      ~preferGetMethod?,
       (),
     );
 
@@ -294,11 +316,15 @@ let executeSubscription =
     (
       ~client,
       ~request,
+      ~additionalTypenames=?,
       ~fetchOptions=?,
+      ~fetch=?,
       ~requestPolicy=?,
       ~url=?,
       ~pollInterval=?,
       ~meta=?,
+      ~suspense=?,
+      ~preferGetMethod=?,
       (),
     ) => {
   let req =
@@ -306,11 +332,15 @@ let executeSubscription =
   let parse = request##parse;
   let optsJs =
     Types.partialOperationContext(
+      ~additionalTypenames?,
       ~fetchOptions?,
+      ~fetch?,
       ~requestPolicy=?Belt.Option.map(requestPolicy, Types.requestPolicyToJs),
       ~url?,
       ~pollInterval?,
       ~meta?,
+      ~suspense?,
+      ~preferGetMethod?,
       (),
     );
 

@@ -5,6 +5,7 @@ include UseSubscription;
 
 type hookResponse('ret, 'extensions) =
   Types.hookResponse('ret, 'extensions) = {
+    operation: Types.operation,
     fetching: bool,
     data: option('ret),
     error: option(CombinedError.t),

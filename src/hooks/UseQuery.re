@@ -7,11 +7,15 @@ type useQueryResponseJs('extensions) = (
 
 type executeQuery =
   (
+    ~additionalTypenames: array(string)=?,
     ~fetchOptions: Fetch.requestInit=?,
+    ~fetch: (string, Fetch.requestInit) => Js.Promise.t(Fetch.response)=?,
     ~requestPolicy: Types.requestPolicy=?,
     ~url: string=?,
-    ~meta: Types.operationDebugMeta=?,
     ~pollInterval: int=?,
+    ~meta: Types.operationDebugMeta=?,
+    ~suspense: bool=?,
+    ~preferGetMethod: bool=?,
     unit
   ) =>
   unit;
@@ -37,11 +41,15 @@ let useQuery =
     (
       ~request,
       ~pause=?,
+      ~additionalTypenames=?,
       ~fetchOptions=?,
+      ~fetch=?,
       ~requestPolicy=?,
       ~url=?,
-      ~meta=?,
       ~pollInterval=?,
+      ~meta=?,
+      ~suspense=?,
+      ~preferGetMethod=?,
       (),
     ) => {
   let query = request##query;
@@ -52,19 +60,19 @@ let useQuery =
       () => Belt.Option.map(requestPolicy, Types.requestPolicyToJs),
       requestPolicy,
     );
-  let context =
-    React.useMemo4(
-      () => {
-        Types.partialOperationContext(
-          ~fetchOptions?,
-          ~url?,
-          ~meta?,
-          ~pollInterval?,
-          (),
-        )
-      },
-      (fetchOptions, url, meta, pollInterval),
+  let context = {
+    Types.partialOperationContext(
+      ~additionalTypenames?,
+      ~fetchOptions?,
+      ~fetch?,
+      ~url?,
+      ~pollInterval?,
+      ~meta?,
+      ~suspense?,
+      ~preferGetMethod?,
+      (),
     );
+  };
 
   let args = {query, variables, requestPolicy: rp, pause, context};
 
@@ -80,21 +88,29 @@ let useQuery =
     React.useMemo1(
       (
         (),
+        ~additionalTypenames=?,
         ~fetchOptions=?,
+        ~fetch=?,
         ~requestPolicy=?,
         ~url=?,
-        ~meta=?,
         ~pollInterval=?,
+        ~meta=?,
+        ~suspense=?,
+        ~preferGetMethod=?,
         (),
       ) => {
         let ctx =
           Types.partialOperationContext(
+            ~additionalTypenames?,
             ~fetchOptions?,
+            ~fetch?,
             ~requestPolicy=?
               Belt.Option.map(requestPolicy, Types.requestPolicyToJs),
             ~url?,
-            ~meta?,
             ~pollInterval?,
+            ~meta?,
+            ~suspense?,
+            ~preferGetMethod?,
             (),
           );
         executeQueryJs(ctx);

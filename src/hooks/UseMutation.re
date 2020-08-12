@@ -4,11 +4,15 @@ type executeMutationJs =
 
 type executeMutation =
   (
+    ~additionalTypenames: array(string)=?,
     ~fetchOptions: Fetch.requestInit=?,
+    ~fetch: (string, Fetch.requestInit) => Js.Promise.t(Fetch.response)=?,
     ~requestPolicy: Types.requestPolicy=?,
     ~url: string=?,
-    ~meta: Types.operationDebugMeta=?,
     ~pollInterval: int=?,
+    ~meta: Types.operationDebugMeta=?,
+    ~suspense: bool=?,
+    ~preferGetMethod: bool=?,
     unit
   ) =>
   Js.Promise.t(Types.operationResult);
@@ -52,21 +56,29 @@ let useMutation = (~request) => {
     React.useMemo2(
       (
         (),
+        ~additionalTypenames=?,
         ~fetchOptions=?,
+        ~fetch=?,
         ~requestPolicy=?,
         ~url=?,
-        ~meta=?,
         ~pollInterval=?,
+        ~meta=?,
+        ~suspense=?,
+        ~preferGetMethod=?,
         (),
       ) => {
         let ctx =
           Types.partialOperationContext(
+            ~additionalTypenames?,
             ~fetchOptions?,
+            ~fetch?,
             ~requestPolicy=?
               Belt.Option.map(requestPolicy, Types.requestPolicyToJs),
             ~url?,
-            ~meta?,
             ~pollInterval?,
+            ~meta?,
+            ~suspense?,
+            ~preferGetMethod?,
             (),
           );
         executeMutationJs(variables, ctx);
@@ -97,17 +109,32 @@ let useDynamicMutation = definition => {
     );
 
   let executeMutation =
-      (~fetchOptions=?, ~requestPolicy=?, ~url=?, ~meta=?, ~pollInterval=?) => {
+      (
+        ~additionalTypenames=?,
+        ~fetchOptions=?,
+        ~fetch=?,
+        ~requestPolicy=?,
+        ~url=?,
+        ~pollInterval=?,
+        ~meta=?,
+        ~suspense=?,
+        ~preferGetMethod=?,
+      ) => {
     let ctx =
       Types.partialOperationContext(
+        ~additionalTypenames?,
         ~fetchOptions?,
+        ~fetch?,
         ~requestPolicy=?
           Belt.Option.map(requestPolicy, Types.requestPolicyToJs),
         ~url?,
-        ~meta?,
         ~pollInterval?,
+        ~meta?,
+        ~suspense?,
+        ~preferGetMethod?,
         (),
       );
+
     composeVariables(variables => executeMutationJs(variables, ctx));
   };
 

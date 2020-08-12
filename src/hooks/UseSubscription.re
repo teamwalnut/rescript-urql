@@ -25,11 +25,15 @@ external useSubscriptionJs:
 
 type executeSubscription =
   (
+    ~additionalTypenames: array(string)=?,
     ~fetchOptions: Fetch.requestInit=?,
+    ~fetch: (string, Fetch.requestInit) => Js.Promise.t(Fetch.response)=?,
     ~requestPolicy: Types.requestPolicy=?,
     ~url: string=?,
-    ~meta: Types.operationDebugMeta=?,
     ~pollInterval: int=?,
+    ~meta: Types.operationDebugMeta=?,
+    ~suspense: bool=?,
+    ~preferGetMethod: bool=?,
     unit
   ) =>
   unit;
@@ -40,13 +44,11 @@ type useSubscriptionResponse('response, 'extensions) = (
 );
 
 let subscriptionResponseToReason =
-    (result: Types.jsHookResponse('ret, 'extensionns)) => {
-  let data = Types.(result.data);
+    (result: Types.jsHookResponse('ret, 'extensions)) => {
+  let data = result.data;
   let error =
     result.error->Belt.Option.map(CombinedError.combinedErrorToRecord);
-  let fetching = result.fetching;
-  let extensions = result.extensions;
-  let stale = result.stale;
+  let Types.{operation, fetching, extensions, stale} = result;
 
   let response =
     switch (fetching, data, error) {
@@ -57,7 +59,7 @@ let subscriptionResponseToReason =
     | (false, None, None) => Empty
     };
 
-  Types.{fetching, data, error, response, extensions, stale};
+  Types.{operation, fetching, data, error, response, extensions, stale};
 };
 
 let useSubscription =
@@ -68,31 +70,34 @@ let useSubscription =
       ~request: Types.request(response),
       ~handler: handler(acc, response, ret),
       ~pause=?,
+      ~additionalTypenames=?,
       ~fetchOptions=?,
+      ~fetch=?,
       ~requestPolicy=?,
       ~url=?,
-      ~meta=?,
       ~pollInterval=?,
+      ~meta=?,
+      ~suspense=?,
+      ~preferGetMethod=?,
       (),
     ) => {
   let query = request##query;
   let variables = request##variables;
   let parse = request##parse;
-  let context =
-    React.useMemo5(
-      () => {
-        Types.partialOperationContext(
-          ~fetchOptions?,
-          ~url?,
-          ~meta?,
-          ~pollInterval?,
-          ~requestPolicy=?
-            Belt.Option.map(requestPolicy, Types.requestPolicyToJs),
-          (),
-        )
-      },
-      (fetchOptions, url, meta, pollInterval, requestPolicy),
+  let context = {
+    Types.partialOperationContext(
+      ~additionalTypenames?,
+      ~fetchOptions?,
+      ~fetch?,
+      ~requestPolicy=?Belt.Option.map(requestPolicy, Types.requestPolicyToJs),
+      ~url?,
+      ~pollInterval?,
+      ~meta?,
+      ~suspense?,
+      ~preferGetMethod?,
+      (),
     );
+  };
 
   let args = {query, variables, pause, context};
 
@@ -110,21 +115,29 @@ let useSubscription =
     React.useMemo1(
       (
         (),
+        ~additionalTypenames=?,
         ~fetchOptions=?,
+        ~fetch=?,
         ~requestPolicy=?,
         ~url=?,
-        ~meta=?,
         ~pollInterval=?,
+        ~meta=?,
+        ~suspense=?,
+        ~preferGetMethod=?,
         (),
       ) => {
         let ctx =
           Types.partialOperationContext(
+            ~additionalTypenames?,
             ~fetchOptions?,
+            ~fetch?,
             ~requestPolicy=?
               Belt.Option.map(requestPolicy, Types.requestPolicyToJs),
             ~url?,
-            ~meta?,
             ~pollInterval?,
+            ~meta?,
+            ~suspense?,
+            ~preferGetMethod?,
             (),
           );
         executeSubscriptionJs(ctx);

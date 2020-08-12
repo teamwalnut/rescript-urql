@@ -218,4 +218,22 @@ describe("Client", () => {
       Expect.(expect(client) |> toMatchSnapshot);
     });
   });
+
+  describe("with preferGetMethod", () => {
+    it("respects the preferGetMethod flag", () => {
+      let client =
+        Client.make(~url="https://localhost:3000", ~preferGetMethod=true, ());
+
+      Expect.(expect(client) |> toMatchSnapshot);
+    })
+  });
+
+  describe("with maskTypename", () => {
+    it("respects the maskTypename flag", () => {
+      let client =
+        Client.make(~url="https://localhost:3000", ~maskTypename=true, ());
+
+      Expect.(expect(client) |> toMatchSnapshot);
+    })
+  });
 });

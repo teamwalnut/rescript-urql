@@ -108,10 +108,12 @@ let make:
   (
     ~url: string,
     ~fetchOptions: fetchOptions('a)=?,
-    ~requestPolicy: Types.requestPolicy=?,
+    ~fetch: fetchImpl('a)=?,
     ~exchanges: array(Exchanges.t)=?,
     ~suspense: bool=?,
-    ~fetch: fetchImpl('a)=?,
+    ~requestPolicy: Types.requestPolicy=?,
+    ~preferGetMethod: bool=?,
+    ~maskTypename: bool=?,
     unit
   ) =>
   t;
@@ -135,11 +137,15 @@ let executeQuery:
   (
     ~client: t,
     ~request: Types.request('response),
+    ~additionalTypenames: array(string)=?,
     ~fetchOptions: Fetch.requestInit=?,
+    ~fetch: (string, Fetch.requestInit) => Js.Promise.t(Fetch.response)=?,
     ~requestPolicy: Types.requestPolicy=?,
     ~url: string=?,
     ~pollInterval: int=?,
     ~meta: Types.operationDebugMeta=?,
+    ~suspense: bool=?,
+    ~preferGetMethod: bool=?,
     unit
   ) =>
   Wonka.Types.sourceT(clientResponse('response));
@@ -148,11 +154,15 @@ let executeMutation:
   (
     ~client: t,
     ~request: Types.request('response),
+    ~additionalTypenames: array(string)=?,
     ~fetchOptions: Fetch.requestInit=?,
+    ~fetch: (string, Fetch.requestInit) => Js.Promise.t(Fetch.response)=?,
     ~requestPolicy: Types.requestPolicy=?,
     ~url: string=?,
     ~pollInterval: int=?,
     ~meta: Types.operationDebugMeta=?,
+    ~suspense: bool=?,
+    ~preferGetMethod: bool=?,
     unit
   ) =>
   Wonka.Types.sourceT(clientResponse('response));
@@ -161,11 +171,15 @@ let executeSubscription:
   (
     ~client: t,
     ~request: Types.request('response),
+    ~additionalTypenames: array(string)=?,
     ~fetchOptions: Fetch.requestInit=?,
+    ~fetch: (string, Fetch.requestInit) => Js.Promise.t(Fetch.response)=?,
     ~requestPolicy: Types.requestPolicy=?,
     ~url: string=?,
     ~pollInterval: int=?,
     ~meta: Types.operationDebugMeta=?,
+    ~suspense: bool=?,
+    ~preferGetMethod: bool=?,
     unit
   ) =>
   Wonka.Types.sourceT(clientResponse('response));
