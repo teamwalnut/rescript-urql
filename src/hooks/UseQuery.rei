@@ -1,10 +1,14 @@
 type executeQuery =
   (
+    ~additionalTypenames: array(string)=?,
     ~fetchOptions: Fetch.requestInit=?,
+    ~fetch: (string, Fetch.requestInit) => Js.Promise.t(Fetch.response)=?,
     ~requestPolicy: Types.requestPolicy=?,
     ~url: string=?,
-    ~meta: Types.operationDebugMeta=?,
     ~pollInterval: int=?,
+    ~meta: Types.operationDebugMeta=?,
+    ~suspense: bool=?,
+    ~preferGetMethod: bool=?,
     unit
   ) =>
   unit;
@@ -18,11 +22,15 @@ let useQuery:
   (
     ~request: Types.request('response),
     ~pause: bool=?,
+    ~additionalTypenames: array(string)=?,
     ~fetchOptions: Fetch.requestInit=?,
+    ~fetch: (string, Fetch.requestInit) => Js.Promise.t(Fetch.response)=?,
     ~requestPolicy: Types.requestPolicy=?,
     ~url: string=?,
-    ~meta: Types.operationDebugMeta=?,
     ~pollInterval: int=?,
+    ~meta: Types.operationDebugMeta=?,
+    ~suspense: bool=?,
+    ~preferGetMethod: bool=?,
     unit
   ) =>
   useQueryResponse('response, 'extensions);

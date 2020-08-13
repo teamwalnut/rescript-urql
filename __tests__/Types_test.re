@@ -2,6 +2,28 @@ open Jest;
 
 let it = test;
 
+let mockOperationContext =
+  Types.{
+    additionalTypenames: None,
+    fetch: None,
+    fetchOptions: None,
+    requestPolicy: `CacheFirst,
+    url: "https://localhost:3000/graphql",
+    pollInterval: None,
+    meta: None,
+    suspense: Some(false),
+    preferGetMethod: Some(false),
+  };
+
+let mockOperation =
+  Types.{
+    key: 1,
+    query: "query {\ndogs {\nname\nlikes\n}\n}",
+    variables: None,
+    operationName: `Query,
+    context: mockOperationContext,
+  };
+
 describe("Types", () => {
   describe("urqlResponseToReason", () => {
     it(
@@ -9,6 +31,7 @@ describe("Types", () => {
       () => {
         let response =
           Types.{
+            operation: mockOperation,
             fetching: true,
             data: None,
             error: None,
@@ -27,6 +50,7 @@ describe("Types", () => {
       () => {
       let response =
         Types.{
+          operation: mockOperation,
           fetching: false,
           data: Some(Js.Json.string("Hello")),
           error: None,
@@ -73,6 +97,7 @@ describe("Types", () => {
 
         let response =
           Types.{
+            operation: mockOperation,
             fetching: false,
             data: Some(Js.Json.string("Hello")),
             error: Some(errorJs),
@@ -122,6 +147,7 @@ describe("Types", () => {
 
       let response =
         Types.{
+          operation: mockOperation,
           fetching: false,
           data: None,
           error: Some(errorJs),
@@ -137,6 +163,7 @@ describe("Types", () => {
     it("should return Empty constructor if none of the above apply", () => {
       let response =
         Types.{
+          operation: mockOperation,
           fetching: false,
           data: None,
           error: None,

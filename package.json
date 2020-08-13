@@ -22,13 +22,15 @@
   "contributors": [
     "Kara Stubbs <kara.stubbs@formidable.com>",
     "Avery Morin",
-    "Gustavo Aguiar"
+    "Gustavo Aguiar",
+    "Phil Plückthun <phil@kitten.sh>",
+    "Jovi De Croock <jovi.decroock@formidable.com>"
   ],
   "license": "MIT",
   "dependencies": {
-    "bs-fetch": "^0.5.2",
-    "graphql": "^14.1.1",
-    "urql": "1.7.0"
+    "bs-fetch": "^0.6.2",
+    "graphql": "^15.3.0",
+    "urql": "1.10.0"
   },
   "devDependencies": {
     "@babel/plugin-transform-modules-commonjs": "^7.9.6",

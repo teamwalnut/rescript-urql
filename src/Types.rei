@@ -8,6 +8,73 @@ type requestPolicy = [
   | `CacheAndNetwork
 ];
 
+/* OperationType for the active operation.
+   Use with operationTypeToJs for proper conversion to strings. */
+type operationType = [ | `Query | `Mutation | `Subscription | `Teardown];
+
+/* Cache outcomes for operations. */
+type cacheOutcome = [ | `Miss | `Partial | `Hit];
+
+/* Debug information on operations. */
+type operationDebugMeta = {
+  source: option(string),
+  cacheOutcome: option(cacheOutcome),
+  networkLatency: option(int),
+  startTime: option(int),
+};
+
+/* The operation context object for a request. */
+type operationContext = {
+  additionalTypenames: option(array(string)),
+  fetch: option((string, Fetch.requestInit) => Js.Promise.t(Fetch.response)),
+  fetchOptions: option(Fetch.requestInit),
+  requestPolicy,
+  url: string,
+  pollInterval: option(int),
+  meta: option(operationDebugMeta),
+  suspense: option(bool),
+  preferGetMethod: option(bool),
+};
+
+[@bs.deriving {abstract: light}]
+type partialOperationContext = {
+  [@bs.optional]
+  additionalTypenames: array(string),
+  [@bs.optional]
+  fetch: (string, Fetch.requestInit) => Js.Promise.t(Fetch.response),
+  [@bs.optional]
+  fetchOptions: Fetch.requestInit,
+  [@bs.optional]
+  requestPolicy: string,
+  [@bs.optional]
+  url: string,
+  [@bs.optional]
+  pollInterval: int,
+  [@bs.optional]
+  meta: operationDebugMeta,
+  [@bs.optional]
+  suspense: bool,
+  [@bs.optional]
+  preferGetMethod: bool,
+};
+
+/* The active GraphQL operation. */
+type operation = {
+  key: int,
+  query: string,
+  variables: option(Js.Json.t),
+  operationName: operationType,
+  context: operationContext,
+};
+
+/* The result of the GraphQL operation. */
+type operationResult = {
+  operation,
+  data: option(Js.Json.t),
+  error: option(CombinedError.combinedErrorJs),
+  stale: option(bool),
+};
+
 /* The GraphQL request object.
    Consists of a query, a unique key for the event, and, optionally, variables. */
 type graphqlRequest = {
@@ -33,6 +100,7 @@ type response('response) =
   | Empty;
 
 type hookResponse('response, 'extensions) = {
+  operation,
   fetching: bool,
   data: option('response),
   error: option(CombinedError.t),
@@ -42,6 +110,7 @@ type hookResponse('response, 'extensions) = {
 };
 
 type jsHookResponse('response, 'extensions) = {
+  operation,
   fetching: bool,
   data: option('response),
   error: option(CombinedError.combinedErrorJs),
@@ -71,60 +140,4 @@ type executionResult = {
   errors: option(array(GraphQLError.t)),
   data: option(Js.Json.t),
   extensions: Js.Json.t,
-};
-
-/* OperationType for the active operation.
-   Use with operationTypeToJs for proper conversion to strings. */
-type operationType = [ | `Query | `Mutation | `Subscription | `Teardown];
-
-/* Cache outcomes for operations. */
-[@bs.deriving jsConverter]
-type cacheOutcome = [ | `Miss | `Partial | `Hit];
-
-/* Debug information on operations. */
-type operationDebugMeta = {
-  source: option(string),
-  cacheOutcome: option(cacheOutcome),
-  networkLatency: option(int),
-  startTime: option(int),
-};
-
-/* The operation context object for a request. */
-type operationContext = {
-  fetchOptions: option(Fetch.requestInit),
-  requestPolicy,
-  url: string,
-  meta: option(operationDebugMeta),
-  pollInterval: option(int),
-};
-
-[@bs.deriving {abstract: light}]
-type partialOperationContext = {
-  [@bs.optional]
-  fetchOptions: Fetch.requestInit,
-  [@bs.optional]
-  requestPolicy: string,
-  [@bs.optional]
-  url: string,
-  [@bs.optional]
-  meta: operationDebugMeta,
-  [@bs.optional]
-  pollInterval: int,
-};
-
-/* The active GraphQL operation. */
-type operation = {
-  key: int,
-  query: string,
-  variables: option(Js.Json.t),
-  operationName: operationType,
-  context: operationContext,
-};
-
-/* The result of the GraphQL operation. */
-type operationResult = {
-  operation,
-  data: option(Js.Json.t),
-  error: option(CombinedError.combinedErrorJs),
-  stale: option(bool),
 };
