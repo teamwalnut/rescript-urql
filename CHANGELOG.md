@@ -5,6 +5,73 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.0] - 2020-08-03
+
+This release includes full support for BuckleScript 7 and widely reorganizes `reason-urql` to be more modular and easier to contribute to. Most of the public API has stayed the same, with some exceptions (documented below).
+
+Users who upgrade to v2 should be on BuckleScript 7, as this library relies heavily on [direct record to object compilation](https://reasonml.org/docs/reason-compiler/latest/object#records-as-objects).
+
+### Added
+
+- All hooks and `Client.execute*` methods that accepted a partial operation context argument now accept each key of the `operationContext` record type as an optional function argument. For example, you can now write code like this:
+
+```reason
+open ReasonUrql;
+
+/* Define query to execute. */
+let subscription = Client.executeQuery(~query, ~requestPolicy=`CacheFirst, ~pollInterval=200, ());
+```
+
+`reason-urql` will handle compiling each argument and passing it along to `urql` properly.
+
+- Interface files (`.rei`) were added for all `modules`.
+- The `stale` flag is now returned on all results returned by `reason-urql` hooks, which indicates that the result returned by the hook is stale and that another request is being sent in the background. This is particularly useful with the `CacheAndNetwork request policy.
+
+### Changed
+
+- The `response` variant now has 5 constructors – `Fetching`, `Data(d)`, `PartialData(d, e)`, `Error(e)`, and `Empty`. You can read more about each of these [here](./docs/advanced.md#the-response-variant).
+- The `UrqlTypes` module is now just `Types`.
+- The `Exchanges` module is now a sub-module of the `Client` module. Once `ReasonUrql` is brought into scope it can be refrenced as `Client.Exchanges`.
+- `ssrExchange` now accepts `ssrExchangeParams` as its first labeled argument, not `ssrExchangeOpts`. `ssrExchangeParams` is also a record type while `ssrExchangeOpts` was a `[@bs.deriving abstract]`. This brings it more in line with `urql`'s implementation.
+- `serializedResult` is now a record type rather than a `[@bs.deriving abstract]`.
+- The signature of exchanges has changed to properly support uncurrying syntax.
+
+```reason
+type t =
+  exchangeInput =>
+  (. Wonka.Types.sourceT(UrqlClientTypes.operation)) =>
+  Wonka.Types.sourceT(UrqlClientTypes.operationResult);
+```
+
+- Local binding of `graphQLError` is now a record type rather than a `[@bs.deriving abstract]` and has its own module `GraphQLError`.
+
+### Removed
+
+- Component bindings for `Query`, `Mutation`, `Subscription`, and `SubscriptionWithHandler` were removed. Just use the hooks APIs!
+- `Client` methods for `executeRequestOperation`, `reexecuteOperation`, `createRequestOperation`, and `dispatchOperation` were removed. These are no longer in `urql`'s public facing API.
+
+### Diff
+
+https://github.com/FormidableLabs/reason-urql/compare/v1.7.0...v2.0.0
+
+## [1.7.0] - 2020-04-16
+
+This release migrates our dependency on `urql` to v1.5.1. It also migrates our `devDependency` on `bs-platform` (the BuckleScript compiler), to v7.2.2. While we don't expect this to affect end users still on BuckleScript v6, there may be small bugfixes and optimizations coming in the near future to support this migration.
+
+### Added
+
+- Add support for `Promise`-based methods `query` and `mutation` on the Client. This allows users to interact with Client operation results as `Js.Promise.t` rather than `Wonka.sourceT`. PR by @parkerziegler [here](https://github.com/FormidableLabs/reason-urql/pull/157).
+- Add bindings for the `useClient` hook. PR by @parkerziegler [here](https://github.com/FormidableLabs/reason-urql/pull/159/files).
+
+### Changed
+
+- Migrate local `devDependency` on `bs-platform` to v7.2.2 and in-repo compilation target to `es6`. PR by @parkerziegler [here](https://github.com/FormidableLabs/reason-urql/pull/157/files).
+- Remove `peerDependency` on `bs-fetch`.
+
+### Diff
+
+https://github.com/FormidableLabs/reason-urql/compare/v1.6.0...v1.7.0
+
 ## [1.6.0] - 2020-03-30
 
 This release migrates our dependency on `urql` to v1.4.0. This adds support for setting a default `requestPolicy` on the Client, in addition to setting up polling for your GraphQL queries using the `pollInterval` argument to `useQuery` and the `Query` component.

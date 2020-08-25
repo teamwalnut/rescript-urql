@@ -1,0 +1,45 @@
+type executeMutation =
+  (
+    ~additionalTypenames: array(string)=?,
+    ~fetchOptions: Fetch.requestInit=?,
+    ~fetch: (string, Fetch.requestInit) => Js.Promise.t(Fetch.response)=?,
+    ~requestPolicy: Types.requestPolicy=?,
+    ~url: string=?,
+    ~pollInterval: int=?,
+    ~meta: Types.operationDebugMeta=?,
+    ~suspense: bool=?,
+    ~preferGetMethod: bool=?,
+    unit
+  ) =>
+  Js.Promise.t(Types.operationResult);
+
+type useMutationResponse('response, 'extensions) = (
+  Types.hookResponse('response, 'extensions),
+  executeMutation,
+);
+
+let useMutation:
+  (~request: Types.request('response)) =>
+  useMutationResponse('response, 'extensions);
+
+let useDynamicMutation:
+  Types.graphqlDefinition(
+    'parse,
+    Js.Promise.t(Types.operationResult),
+    'executeMutation,
+  ) =>
+  (
+    Types.hookResponse('parse, 'extensions),
+    (
+      ~additionalTypenames: array(string)=?,
+      ~fetchOptions: Fetch.requestInit=?,
+      ~fetch: (string, Fetch.requestInit) => Js.Promise.t(Fetch.response)=?,
+      ~requestPolicy: Types.requestPolicy=?,
+      ~url: string=?,
+      ~pollInterval: int=?,
+      ~meta: Types.operationDebugMeta=?,
+      ~suspense: bool=?,
+      ~preferGetMethod: bool=?
+    ) =>
+    'executeMutation,
+  );

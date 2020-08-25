@@ -1,12 +1,12 @@
 const { PubSub } = require("graphql-subscriptions");
-const { HarryPotter } = require("fakergem");
+const { Faker } = require("fakergem");
 
 const pubsub = new PubSub();
 
 const store = {
   messages: [],
   numbers: [],
-  floats: []
+  floats: [],
 };
 
 const typeDefs = `
@@ -30,19 +30,19 @@ const resolvers = {
   Query: {
     messages: store.messages,
     numbers: store.numbers,
-    floats: store.floats
+    floats: store.floats,
   },
   Subscription: {
     newMessage: {
-      subscribe: () => pubsub.asyncIterator("newMessage")
+      subscribe: () => pubsub.asyncIterator("newMessage"),
     },
     newNumber: {
-      subscribe: () => pubsub.asyncIterator("newNumber")
+      subscribe: () => pubsub.asyncIterator("newNumber"),
     },
     newFloat: {
-      subscribe: () => pubsub.asyncIterator("newFloat")
-    }
-  }
+      subscribe: () => pubsub.asyncIterator("newFloat"),
+    },
+  },
 };
 
 module.exports = {
@@ -51,9 +51,9 @@ module.exports = {
   context: (headers, secrets) => {
     return {
       headers,
-      secrets
+      secrets,
     };
-  }
+  },
 };
 
 let id = 0;
@@ -61,11 +61,11 @@ let id = 0;
 setInterval(() => {
   const newMessage = {
     id: ++id,
-    message: HarryPotter.quote()
+    message: Faker.HarryPotter.quote(),
   };
 
   pubsub.publish("newMessage", {
-    newMessage
+    newMessage,
   });
 }, 5000);
 
@@ -75,12 +75,12 @@ function getRandomInt(max) {
 
 setInterval(() => {
   pubsub.publish("newNumber", {
-    newNumber: getRandomInt(1000)
+    newNumber: getRandomInt(1000),
   });
 }, 2000);
 
 setInterval(() => {
   pubsub.publish("newFloat", {
-    newFloat: Math.random() * 1000
+    newFloat: Math.random() * 1000,
   });
 }, 500);

@@ -9,30 +9,30 @@
     "start": "bsb -make-world -w",
     "clean": "bsb -clean-world",
     "build": "bsb -make-world",
-    "webpack": "webpack-dev-server --hot",
+    "webpack": "webpack-dev-server",
     "server": "node src/server/index.js",
     "start:demo": "run-p server webpack"
   },
   "dependencies": {
-    "bs-css": "^8.0.2",
-    "reason-react": "0.7.0",
+    "bs-css-emotion": "^1.2.0",
+    "reason-react": "^0.7.0",
     "reason-urql": "link:../../"
   },
   "devDependencies": {
-    "@baransu/graphql_ppx_re": "^0.4.6",
-    "apollo-server-express": "^2.4.8",
-    "bs-platform": "7.2.2",
+    "@baransu/graphql_ppx_re": "^0.7.1",
+    "apollo-server-express": "^2.14.2",
+    "bs-platform": "7.3.2",
     "cors": "^2.8.5",
-    "express": "^4.16.4",
+    "express": "^4.17.1",
     "faker": "^4.1.0",
-    "fakergem": "^1.0.2",
+    "fakergem": "^2.1.0",
     "graphql": "^14.2.1",
     "graphql-subscriptions": "^1.1.0",
-    "graphql-tag": "^2.10.1",
+    "graphql-tag": "^2.10.3",
     "npm-run-all": "^4.1.5",
     "subscriptions-transport-ws": "^0.9.16",
-    "webpack": "^4.29.6",
-    "webpack-cli": "^3.2.3",
-    "webpack-dev-server": "^3.2.1"
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.11",
+    "webpack-dev-server": "^3.11.0"
   }
 }

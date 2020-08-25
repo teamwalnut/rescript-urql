@@ -6,17 +6,18 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, "build"),
     publicPath: "/public/",
-    filename: "index.js"
+    filename: "index.js",
   },
   devServer: {
-    open: true,
-    contentBase: path.resolve(__dirname, "public")
+    contentBase: path.resolve(__dirname, "public"),
+    port: 3000,
+    hot: true,
   },
   resolve: {
-   alias: {
-    react: path.resolve('./node_modules/react'),
-    urql: path.resolve('./node_modules/urql'),
-    "react-dom": path.resolve('./node_modules/react-dom'),
-   }
-  }
+    alias: {
+      react: path.resolve("./node_modules/react"),
+      "react-dom": path.resolve("./node_modules/react-dom"),
+      urql: path.resolve("./node_modules/urql"),
+    },
+  },
 };

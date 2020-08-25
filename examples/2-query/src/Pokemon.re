@@ -1,5 +1,4 @@
 open ReasonUrql;
-open Hooks;
 open PokemonStyles;
 
 module GetPokemon = [%graphql
@@ -23,10 +22,12 @@ module GetPokemon = [%graphql
 [@react.component]
 let make = (~pokemon: string) => {
   let request = GetPokemon.make(~name=pokemon, ());
-  let ({response}, _) = useQuery(~request, ());
+  let (Hooks.{response}, _) = Hooks.useQuery(~request, ());
 
   switch (response) {
-  | Data(data) =>
+  | Fetching => <div> "Loading"->React.string </div>
+  | Data(data)
+  | PartialData(data, _) =>
     switch (data##pokemon) {
     | Some(pokemon) =>
       switch (
@@ -55,7 +56,7 @@ let make = (~pokemon: string) => {
               </h2>
               {switch (height##maximum, weight##maximum) {
                | (Some(heightMax), Some(weightMax)) =>
-                 <div className=Styles.dexGrid>
+                 <div>
                    <p> {("Height: " ++ heightMax)->React.string} </p>
                    <p> {("Weight: " ++ weightMax)->React.string} </p>
                  </div>
@@ -68,8 +69,7 @@ let make = (~pokemon: string) => {
       }
     | None => React.null
     }
-  | Fetching => <div> "Loading"->React.string </div>
   | Error(e) => <div> e.message->React.string </div>
-  | NotFound => <div> "Not Found"->React.string </div>
+  | Empty => <div> "Not Found"->React.string </div>
   };
 };

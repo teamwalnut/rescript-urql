@@ -10,6 +10,16 @@ module LikeDog = [%graphql
   |}
 ];
 
+module TreatDog = [%graphql
+  {|
+    mutation treatDog($key: ID!) {
+      treatDog(key: $key) {
+        treats
+      }
+    }
+  |}
+];
+
 module PatDog = [%graphql
   {|
     mutation patDog($key: ID!) {
@@ -19,14 +29,6 @@ module PatDog = [%graphql
     }
   |}
 ];
-
-let treatDog = {|
-    mutation treatDog($key: ID!) {
-      treatDog(key: $key) {
-        treats
-      }
-    }
-  |};
 
 module BellyscratchDog = [%graphql
   {|
@@ -50,76 +52,57 @@ let make =
       ~bellyscratches: int,
       ~description: string,
     ) => {
-  let payload =
-    React.useMemo1(
-      () => {
-        let variables = Js.Dict.empty();
-        Js.Dict.set(variables, "key", Js.Json.string(id));
-        Js.Json.object_(variables);
-      },
-      [|id|],
-    );
-
-  // Example of using hooks with graphql_ppx_re (or graphql_ppx).
-  let (_, executeLikeMutation) =
+  let (likeState, executeLikeMutation) =
     Hooks.useMutation(~request=LikeDog.make(~key=id, ()));
 
   // Example of using hooks without graphql_ppx_re (or graphql_ppx).
-  let (_, executeTreatMutation) =
-    Hooks.useMutation(
-      ~request={"query": treatDog, "variables": payload, "parse": x => x},
-    );
+  let (treatState, executeTreatMutation) =
+    Hooks.useMutation(~request=TreatDog.make(~key=id, ()));
 
   /* Example of using hooks where the variables are only known when the
      mutation runs. */
-  let (_, executePatMutation) = Hooks.useDynamicMutation(PatDog.definition);
+  let (patState, executePatMutation) =
+    Hooks.useDynamicMutation(PatDog.definition);
+  let (bellyscratchState, executeBellyscratchMutation) =
+    Hooks.useDynamicMutation(BellyscratchDog.definition);
 
   <div className=DogStyles.container>
     <img src=imageUrl alt=name className=DogStyles.image />
     <h3 className=DogStyles.title> {j|$name|j}->React.string </h3>
     <div className=DogStyles.buttons>
-      <EmojiButton
-        emoji={j|👍|j}
-        count={string_of_int(likes)}
-        hex="48a9dc"
-        onClick={_ => executeLikeMutation() |> ignore}
-      />
-      <EmojiButton
-        emoji={j|✋|j}
-        count={string_of_int(pats)}
-        hex="db4d3f"
-        onClick={_ =>
-          executePatMutation(
-            ~key=id,
-            ~context=
-              Some(
-                Client.ClientTypes.partialOperationContext(
-                  ~partialOpRequestPolicy=`NetworkOnly,
-                  (),
-                ),
-              ),
-            (),
-          )
-          |> ignore
-        }
-      />
-      <EmojiButton
-        emoji={j|🍖|j}
-        count={string_of_int(treats)}
-        hex="7b16ff"
-        onClick={_ => executeTreatMutation() |> ignore}
-      />
-      // Example of using the Mutation component.
-      <Mutation request={BellyscratchDog.make(~key=id, ())}>
-        ...{({executeMutation}) =>
-          <EmojiButton
-            emoji={j|🐾|j}
-            count={string_of_int(bellyscratches)}
-            hex="1bda2a"
-            onClick={_ => executeMutation() |> ignore}
-          />
-        }
-      </Mutation>
+      {likeState.fetching
+       || treatState.fetching
+       || patState.fetching
+       || bellyscratchState.fetching
+         ? <Loading />
+         : <>
+             <EmojiButton
+               emoji={j|👍|j}
+               count={string_of_int(likes)}
+               hex="48a9dc"
+               onClick={_ => executeLikeMutation() |> ignore}
+             />
+             <EmojiButton
+               emoji={j|✋|j}
+               count={string_of_int(pats)}
+               hex="db4d3f"
+               onClick={_ => executePatMutation(~key=id, ()) |> ignore}
+             />
+             <EmojiButton
+               emoji={j|🍖|j}
+               count={string_of_int(treats)}
+               hex="7b16ff"
+               onClick={_ => executeTreatMutation() |> ignore}
+             />
+             <EmojiButton
+               emoji={j|🐾|j}
+               count={string_of_int(bellyscratches)}
+               hex="1bda2a"
+               onClick={_ =>
+                 executeBellyscratchMutation(~key=id, ()) |> ignore
+               }
+             />
+           </>}
     </div>
     <div> description->React.string </div>
   </div>;

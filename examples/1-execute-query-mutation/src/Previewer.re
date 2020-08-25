@@ -1,7 +1,7 @@
 open ReasonUrql;
-open Client;
 
-let client = make(~url="https://formidadog-ql.now.sh", ());
+let client =
+  Client.make(~url="https://formidadog-ql.netlify.app/graphql", ());
 
 module GetAllDogs = [%graphql
   {|
@@ -34,15 +34,24 @@ let mutationRequest = LikeDog.make(~key="VmeRTX7j-", ());
 type state = {
   query: string,
   mutation: string,
+  fetchingQuery: bool,
+  fetchingMutation: bool,
 };
 
 type action =
   | SetQuery(string)
   | ClearQuery
   | SetMutation(string)
-  | ClearMutation;
+  | ClearMutation
+  | SetQueryFetching(bool)
+  | SetMutationFetching(bool);
 
-let initialState = {query: "", mutation: ""};
+let initialState = {
+  query: "",
+  mutation: "",
+  fetchingQuery: false,
+  fetchingMutation: false,
+};
 
 [@react.component]
 let make = () => {
@@ -54,46 +63,51 @@ let make = () => {
         | ClearQuery => {...state, query: ""}
         | SetMutation(mutation) => {...state, mutation}
         | ClearMutation => {...state, mutation: ""}
+        | SetQueryFetching(fetching) => {...state, fetchingQuery: fetching}
+        | SetMutationFetching(fetching) => {
+            ...state,
+            fetchingMutation: fetching,
+          }
         },
       initialState,
     );
 
   let executeQuery = () => {
-    query(
+    dispatch(SetQueryFetching(true));
+
+    Client.executeQuery(
       ~client,
       ~request=queryRequest,
-      ~opts=
-        Client.ClientTypes.partialOperationContext(
-          ~partialOpRequestPolicy=`CacheAndNetwork,
-          (),
-        ),
+      ~requestPolicy=`CacheAndNetwork,
       (),
     )
-    |> Js.Promise.then_(data =>
-         switch (data.response) {
+    |> Wonka.subscribe((. data) => {
+         dispatch(SetQueryFetching(false));
+
+         switch (Client.(data.response)) {
          | Data(d) =>
            switch (Js.Json.stringifyAny(d)) {
-           | Some(s) =>
-             dispatch(SetQuery(s));
-             Js.Promise.resolve();
-           | None => Js.Promise.resolve()
+           | Some(s) => dispatch(SetQuery(s))
+           | None => ()
            }
          | Error(e) =>
            switch (Js.Json.stringifyAny(e)) {
-           | Some(s) =>
-             dispatch(SetQuery(s));
-             Js.Promise.resolve();
-           | None => Js.Promise.resolve()
+           | Some(s) => dispatch(SetQuery(s))
+           | None => ()
            }
-         | _ => Js.Promise.resolve()
-         }
-       );
+         | _ => ()
+         };
+       });
   };
 
-  let executeMutation = () =>
-    executeMutation(~client, ~request=mutationRequest, ())
-    |> Wonka.subscribe((. data) =>
-         switch (data.response) {
+  let executeMutation = () => {
+    dispatch(SetMutationFetching(true));
+
+    Client.executeMutation(~client, ~request=mutationRequest, ())
+    |> Wonka.subscribe((. data) => {
+         dispatch(SetMutationFetching(false));
+
+         switch (Client.(data.response)) {
          | Data(d) =>
            switch (Js.Json.stringifyAny(d)) {
            | Some(s) => dispatch(SetMutation(s))
@@ -105,8 +119,9 @@ let make = () => {
            | None => ()
            }
          | _ => ()
-         }
-       );
+         };
+       });
+  };
 
   <div className=PreviewerStyles.previewer>
     <div className=PreviewerStyles.side>
@@ -128,8 +143,14 @@ let make = () => {
           "Execute Query"->React.string
         </button>
       </section>
-      {switch (String.length(state.query)) {
-       | 0 => React.null
+      {switch (String.length(state.query), state.fetchingQuery) {
+       | (0, false) => React.null
+       | (_, true) =>
+         <section className=PreviewerStyles.section>
+           <span className=PreviewerStyles.title>
+             "Loading"->React.string
+           </span>
+         </section>
        | _ =>
          <section className=PreviewerStyles.section>
            <span className=PreviewerStyles.title>
@@ -165,8 +186,14 @@ let make = () => {
           "Execute Mutation"->React.string
         </button>
       </section>
-      {switch (String.length(state.mutation)) {
-       | 0 => React.null
+      {switch (String.length(state.mutation), state.fetchingMutation) {
+       | (0, false) => React.null
+       | (_, true) =>
+         <section className=PreviewerStyles.section>
+           <span className=PreviewerStyles.title>
+             "Loading"->React.string
+           </span>
+         </section>
        | _ =>
          <section className=PreviewerStyles.section>
            <span className=PreviewerStyles.title>

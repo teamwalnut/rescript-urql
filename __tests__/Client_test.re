@@ -1,9 +1,8 @@
 open Jest;
-open ReasonUrql;
 
 let it = test;
 
-describe("UrqlClient", () => {
+describe("Client", () => {
   describe("Client with only a url provided", () => {
     let client = Client.make(~url="https://localhost:3000", ());
 
@@ -21,22 +20,6 @@ describe("UrqlClient", () => {
 
     it("should expose an executeSubscription method", () =>
       ExpectJs.(expect(Client.executeSubscription) |> toBeTruthy)
-    );
-
-    it("should expose an executeRequestOperation method", () =>
-      ExpectJs.(expect(Client.executeRequestOperation) |> toBeTruthy)
-    );
-
-    it("should expose an reexecuteOperation method", () =>
-      ExpectJs.(expect(Client.reexecuteOperation) |> toBeTruthy)
-    );
-
-    it("should expose an createRequestOperation method", () =>
-      ExpectJs.(expect(Client.createRequestOperation) |> toBeTruthy)
-    );
-
-    it("should expose an dispatchOperation method", () =>
-      ExpectJs.(expect(Client.dispatchOperation) |> toBeTruthy)
     );
   });
 
@@ -102,7 +85,7 @@ describe("UrqlClient", () => {
       let client =
         Client.make(
           ~url="https://localhost:3000",
-          ~exchanges=[|Exchanges.debugExchange|],
+          ~exchanges=[|Client.Exchanges.debugExchange|],
           (),
         );
 
@@ -113,11 +96,11 @@ describe("UrqlClient", () => {
       Expect.(
         expect(() =>
           [|
-            Exchanges.debugExchange,
-            Exchanges.cacheExchange,
-            Exchanges.fetchExchange,
+            Client.Exchanges.debugExchange,
+            Client.Exchanges.cacheExchange,
+            Client.Exchanges.fetchExchange,
           |]
-          |> Exchanges.composeExchanges
+          |> Client.Exchanges.composeExchanges
         )
         |> not
         |> toThrow
@@ -128,11 +111,11 @@ describe("UrqlClient", () => {
       Expect.(
         expect([|
           [|
-            Exchanges.debugExchange,
-            Exchanges.cacheExchange,
-            Exchanges.fetchExchange,
+            Client.Exchanges.debugExchange,
+            Client.Exchanges.cacheExchange,
+            Client.Exchanges.fetchExchange,
           |]
-          |> Exchanges.composeExchanges,
+          |> Client.Exchanges.composeExchanges,
         |])
         |> toHaveLength(1)
       )
@@ -141,7 +124,7 @@ describe("UrqlClient", () => {
 
   describe("ssrExchange", () => {
     it("should exist and be callable", () =>
-      Expect.(expect(Exchanges.ssrExchange()) |> toMatchSnapshot)
+      Expect.(expect(Client.Exchanges.ssrExchange()) |> toMatchSnapshot)
     );
 
     it(
@@ -151,15 +134,20 @@ describe("UrqlClient", () => {
       Js.Dict.set(json, "key", Js.Json.number(1.));
       Js.Dict.set(json, "key2", Js.Json.number(2.));
       let data = Js.Json.object_(json);
-      let serializedResult = Exchanges.serializedResult(~data, ());
+      let serializedResult =
+        Client.Exchanges.{data: Some(data), error: None};
 
       let initialState = Js.Dict.empty();
       Js.Dict.set(initialState, "query", serializedResult);
-      let ssrExchangeOpts = Exchanges.ssrExchangeOpts(~initialState, ());
+      let ssrExchangeParams =
+        Client.Exchanges.{
+          initialState: Some(initialState),
+          isClient: Some(false),
+        };
 
       Expect.(
         expect(() =>
-          Exchanges.ssrExchange(~ssrExchangeOpts, ())
+          Client.Exchanges.ssrExchange(~ssrExchangeParams, ())
         )
         |> not
         |> toThrow
@@ -169,11 +157,11 @@ describe("UrqlClient", () => {
     it(
       "should expose an extractData method for extracting server-side rendered data",
       () => {
-      let ssrCache = Exchanges.ssrExchange();
+      let ssrCache = Client.Exchanges.ssrExchange();
 
       Expect.(
         expect(() =>
-          Exchanges.extractData(~exchange=ssrCache)
+          Client.Exchanges.extractData(~exchange=ssrCache)
         )
         |> not
         |> toThrow
@@ -187,11 +175,11 @@ describe("UrqlClient", () => {
         Js.Dict.set(json, "key", Js.Json.number(1.));
         Js.Dict.set(json, "key2", Js.Json.number(2.));
         let data = Js.Json.object_(json);
-        let ssrCache = Exchanges.ssrExchange();
+        let ssrCache = Client.Exchanges.ssrExchange();
 
         Expect.(
           expect(() =>
-            Exchanges.restoreData(~exchange=ssrCache, ~restore=data)
+            Client.Exchanges.restoreData(~exchange=ssrCache, ~restore=data)
           )
           |> not
           |> toThrow
@@ -229,5 +217,23 @@ describe("UrqlClient", () => {
         );
       Expect.(expect(client) |> toMatchSnapshot);
     });
+  });
+
+  describe("with preferGetMethod", () => {
+    it("respects the preferGetMethod flag", () => {
+      let client =
+        Client.make(~url="https://localhost:3000", ~preferGetMethod=true, ());
+
+      Expect.(expect(client) |> toMatchSnapshot);
+    })
+  });
+
+  describe("with maskTypename", () => {
+    it("respects the maskTypename flag", () => {
+      let client =
+        Client.make(~url="https://localhost:3000", ~maskTypename=true, ());
+
+      Expect.(expect(client) |> toMatchSnapshot);
+    })
   });
 });

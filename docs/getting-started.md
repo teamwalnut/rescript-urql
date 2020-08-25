@@ -4,7 +4,7 @@ This document well help you get started with `reason-urql`. It picks up right wh
 
 ## Setting Up the Client
 
-To get started with `reason-urql`, the first thing you'll want to do is create the `Client`. The `Client` is the core orchestrator of communication with your GraphQL API, handling all outgoing requests and incoming responses. To create a client, simply call the `make` function from the `Client` module.
+To get started with `reason-urql`, the first thing you'll want to do is create your client. Your client is the core orchestrator of communication with your GraphQL API, handling all outgoing requests and incoming responses. To create a client, simply call the `make` function from the `Client` module.
 
 ```reason
 open ReasonUrql;
@@ -16,14 +16,14 @@ The `client` accepts a few other configuration options, including `fetchOptions`
 
 ## Linking Client with Provider
 
-Once you have your `Client` setup, you'll need to pass it to your `Provider`, which should wrap the root level of your application. This allows the components and hooks to access the `Client` to execute operations.
+Once you have your `Client` setup, you'll need to pass it to your `Provider`, which should wrap the root level of your application. This allows `reason-urql`'s hooks to access the `Client` to execute operations lower down in your React tree.
 
 ```reason
 open ReasonUrql;
 
 let client = Client.make(~url="https://mygraphqlapi.com/graphql", ());
 
-/* Wrap your application in Provider, passing it the Client as a prop. */
+/* Wrap your application in Provider, passing it the client as a prop. */
 [@react.component]
 let make = () =>
   <Provider value=client><App /></Provider>
@@ -35,8 +35,6 @@ Nice, there's only one more step to getting our GraphQL requests executing – u
 
 ```reason
 open ReasonUrql;
-/* Be sure to open the Hooks module to bring necessary types into scope. */
-open Hooks;
 
 /* Create a module with your GraphQL query. */
 module DogsQuery = [%graphql
@@ -58,16 +56,17 @@ let make = () => {
   let request = DogsQuery.make();
 
   /* Pass the request to useQuery. */
-  let ({ response }, executeQuery) = useQuery(~request, ());
+  let (Hooks.{ response }, executeQuery) = Hooks.useQuery(~request, ());
 
   /* Pattern match on the response variant.
-  This variant has constructors for Fetching, Data(d), Error(e), and NotFound. */
+  This variant has constructors for Fetching, Data(d), PartialData(d, e) Error(e), and Empty. */
   switch (response) {
     | Fetching => <LoadingSpinner />
-    | Data(d) => {
+    | Data(d)
+    | PartialData(d, _) => {
       Array.map(dog =>
         <div key=dog##key>
-          <span> {js|$dog##name $dog##likes|js}->React.string </span>
+          <span> {j|$dog##name $dog##likes|j}->React.string </span>
           <span> dog##breed->React.string <span>
         </div>,
         d##dogs
@@ -75,10 +74,10 @@ let make = () => {
     }
     | Error(e) =>
       switch (e.networkError) {
-      | Some(_exn) => <div> "Network Error"->React.string </div>
+      | Some(_e) => <div> "Network Error"->React.string </div>
       | None => <div> "Other Error"->React.string </div>
       }
-    | NotFound => <div> "Something went wrong!"->React.string </div>
+    | Empty => <div> "Something went wrong!"->React.string </div>
   }
 }
 ```
@@ -97,8 +96,6 @@ Fortunately, writing mutations in `reason-urql` is just as easy as writing queri
 
 ```reason
 open ReasonUrql;
-/* Be sure to open the Hooks module to bring necessary types into scope. */
-open Hooks;
 
 /* Create a module with your GraphQL mutation. */
 module LikeDogMutation = [%graphql
@@ -119,9 +116,9 @@ let make = (~key: string) => {
   let request = LikeDogMutation.make(~key, ());
 
   /* Pass the request to useMutation. */
-  let (_, executeMutation) = useMutation(~request, ());
+  let (_, executeMutation) = Hooks.useMutation(~request, ());
 
-  <button onClick=(_e) => executeMutation()>
+  <button onClick={_e => executeMutation() |> ignore}>
       "Execute the Mutation (and Reward a Good Dog)"->React.string
   </button>
 }
@@ -129,19 +126,21 @@ let make = (~key: string) => {
 
 Great – we've successfully executed a mutation to like a dog! Existing queries that reference the mutated data will be notified that data has changed, meaning you don't need to think at all about refetching your data – it's all updated for you by `reason-urql`.
 
-`useMutation` returns a two-dimensional tuple, containing `(result, executeMutation)`. `result` contains the `response` variant, which allows you to pattern match on the API response from your mutation. For example, if you wanted to show different UI when your mutation was `Fetching`, or if there was an `Error(e)` you can do something like the following:
+`useMutation` returns a two-dimensional tuple, containing `(result, executeMutation)`. `result` contains the `response` variant, which allows you to pattern match on the API response from your mutation. For example, if you wanted to show different UI when your mutation was `Fetching`, or if there was an `Error` you can do something like the following:
 
 ```reason
+open ReasonUrql;
+
 [@react.component]
 let make = (~key: string) => {
   /* Build your request by calling .make on your mutation, passing variables as labeled arguments. */
   let request = LikeDogMutation.make(~key, ());
 
   /* Pass the request to useMutation. */
-  let ({ response }, executeMutation) = useMutation(~request, ());
+  let (Hooks.{ response }, executeMutation) = Hooks.useMutation(~request, ());
 
   let button = React.useMemo1(() =>
-    <button onClick=(_e) => executeMutation()>
+    <button onClick={_e => executeMutation() |> ignore}>
         "Execute the Mutation (and Reward a Good Dog)"->React.string
     </button>,
     [|executeMutation|]
@@ -156,9 +155,9 @@ let make = (~key: string) => {
     | Data(_d) => button
     /* If an error is encountered when executing the mutation, show some error UI to the user. */
     | Error(e) =>
-      <Error message=e.message>
+      <MyErrorComponent message=e.message>
         button
-      </Error>
+      </MyErrorComponent>
     | _ => React.null
   }
 }

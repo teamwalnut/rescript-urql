@@ -1,6 +1,6 @@
 {
   "name": "reason-urql",
-  "version": "1.6.0",
+  "version": "2.0.0",
   "scripts": {
     "build": "bsb -make-world",
     "clean": "bsb -clean-world",
@@ -22,30 +22,30 @@
   "contributors": [
     "Kara Stubbs <kara.stubbs@formidable.com>",
     "Avery Morin",
-    "Gustavo Aguiar"
+    "Gustavo Aguiar",
+    "Phil Plückthun <phil@kitten.sh>",
+    "Jovi De Croock <jovi.decroock@formidable.com>"
   ],
   "license": "MIT",
   "dependencies": {
-    "graphql": "^14.1.1",
-    "urql": "1.5.1",
-    "wonka": "^3.2.2"
+    "bs-fetch": "^0.6.2",
+    "graphql": "^15.3.0",
+    "urql": "1.10.0"
   },
   "devDependencies": {
-    "@babel/plugin-transform-modules-commonjs": "^7.9.0",
+    "@babel/plugin-transform-modules-commonjs": "^7.9.6",
     "@glennsl/bs-jest": "^0.5.1",
-    "all-contributors-cli": "^5.4.0",
-    "babel-jest": "^25.2.6",
-    "bs-fetch": "^0.5.2",
-    "bs-platform": "7.2.2",
-    "gentype": "^3.18.0",
-    "husky": "^2.4.1",
-    "lint-staged": "^8.2.1",
+    "all-contributors-cli": "^6.14.2",
+    "babel-jest": "^26.0.1",
+    "bs-platform": "7.3.2",
+    "gentype": "^3.22.0",
+    "husky": "^4.2.5",
+    "lint-staged": "^10.2.2",
     "npm-run-all": "^4.1.5",
-    "reason-react": "0.7.0"
+    "reason-react": "^0.7.0"
   },
   "peerDependencies": {
-    "bs-fetch": "^0.5.2",
-    "reason-react": "0.7.0"
+    "reason-react": "^0.7.0"
   },
   "jest": {
     "testEnvironment": "node",
@@ -61,8 +61,7 @@
   },
   "lint-staged": {
     "*.{re,rei}": [
-      "bsrefmt --in-place",
-      "git add"
+      "bsrefmt --in-place"
     ]
   },
   "husky": {

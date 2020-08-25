@@ -1,29 +1,32 @@
 open ReasonUrql;
-open SubscriptionsTransportWS;
 
 let client =
-  subscriptionClient(
+  SubscriptionsTransportWS.make(
     ~url="ws://localhost:4001/graphql",
-    ~subscriptionClientConfig=subscriptionClientConfig(),
+    ~subscriptionClientConfig=SubscriptionsTransportWS.makeClientOptions(),
+    (),
   );
 
 let forwardSubscription = operation => client##request(operation);
 
 let subscriptionExchangeOpts =
-  Exchanges.subscriptionExchangeOpts(~forwardSubscription);
+  Client.Exchanges.{forwardSubscription: forwardSubscription};
 
 let subscriptionExchange =
-  Exchanges.subscriptionExchange(subscriptionExchangeOpts);
+  Client.Exchanges.subscriptionExchange(subscriptionExchangeOpts);
 
 let urqlClient =
   Client.make(
     ~url="http://localhost:4000/graphql",
     ~exchanges=
-      Array.append(Exchanges.defaultExchanges, [|subscriptionExchange|]),
+      Array.append(
+        Client.Exchanges.defaultExchanges,
+        [|subscriptionExchange|],
+      ),
     (),
   );
 
 ReactDOMRe.renderToElementWithId(
-  <Provider value=urqlClient> <App /> </Provider>,
+  <Context.Provider value=urqlClient> <App /> </Context.Provider>,
   "root",
 );

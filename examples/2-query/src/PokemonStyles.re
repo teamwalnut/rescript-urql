@@ -17,14 +17,24 @@ module Styles = {
       borderRadius(pct(5.)),
       background(
         linearGradient(
-          deg(45),
-          [(0, hex("F29441")), (100, hex("A04AD9"))],
+          deg(45.),
+          [
+            (`percent(0.), hex("F29441")),
+            (`percent(100.), hex("A04AD9")),
+          ],
         ),
       ),
-      border(px(2), solid, hsl(210, 23, 95)),
+      border(px(2), solid, hsl(`deg(210.), 23., 95.)),
       overflow(hidden),
       alignItems(center),
-      boxShadow(~x=px(0), ~y=px(4), ~blur=px(6), hsl(0, 0, 80)),
+      boxShadow(
+        Shadow.box(
+          ~x=px(0),
+          ~y=px(4),
+          ~blur=px(6),
+          hsl(`deg(0.), 0., 80.),
+        ),
+      ),
     ]);
 
   let dexImageContainer =
@@ -51,7 +61,7 @@ module Styles = {
       width(pct(100.)),
       borderBottomLeftRadius(pct(5.0)),
       borderBottomRightRadius(pct(5.0)),
-      borderTop(px(2), solid, hsl(210, 23, 95)),
+      borderTop(px(2), solid, hsl(`deg(210.), 23., 95.)),
       alignItems(center),
     ]);
 
@@ -59,6 +69,4 @@ module Styles = {
     style([fontSize(rem(2.)), margin(zero), padding(rem(0.5))]);
   let dexSubTitle =
     style([fontSize(rem(1.5)), margin(zero), padding(rem(0.25))]);
-  let dexGrid =
-    style([display(grid), gridTemplateColumns([`fr(1.), `fr(1.)])]);
 };

@@ -33,29 +33,28 @@ let request = SubscribeRandomFloat.make();
 
 [@react.component]
 let make = () => {
-  <SubscriptionWithHandler request handler>
-    ...{({response}) =>
-      switch (response) {
-      | Fetching => <text> "Loading"->React.string </text>
-      | Data(d) =>
-        Array.mapi(
-          (index, datum) =>
-            <rect
-              x={
-                datum##newFloat;
-              }
-              y={index === 0 ? datum##newFloat : d[index - 1]##newFloat}
-              stroke={getRandomHex()}
-              fill="none"
-              height={getRandomInt(30) |> string_of_int}
-              width={getRandomInt(30) |> string_of_int}
-            />,
-          d,
-        )
-        |> React.array
-      | Error(_e) => <text> "Error"->React.string </text>
-      | NotFound => <text> "Not Found"->React.string </text>
-      }
-    }
-  </SubscriptionWithHandler>;
+  let (Hooks.{response}, _) =
+    Hooks.useSubscription(~request, ~handler=Handler(handler), ());
+
+  switch (response) {
+  | Fetching => <text> "Loading"->React.string </text>
+  | Data(d)
+  | PartialData(d, _) =>
+    Array.mapi(
+      (index, datum) =>
+        <rect
+          key={datum##newFloat ++ string_of_int(index)}
+          x={datum##newFloat}
+          y={index === 0 ? datum##newFloat : d[index - 1]##newFloat}
+          stroke={getRandomHex()}
+          fill="none"
+          height={getRandomInt(30) |> string_of_int}
+          width={getRandomInt(30) |> string_of_int}
+        />,
+      d,
+    )
+    |> React.array
+  | Error(_e) => <text> "Error"->React.string </text>
+  | Empty => <text> "Not Found"->React.string </text>
+  };
 };
