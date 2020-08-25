@@ -197,6 +197,19 @@ let query:
   ) =>
   Js.Promise.t(clientResponse('response));
 
+let readQuery:
+  (
+    ~client: t,
+    ~request: Types.request('response),
+    ~fetchOptions: Fetch.requestInit=?,
+    ~requestPolicy: Types.requestPolicy=?,
+    ~url: string=?,
+    ~pollInterval: int=?,
+    ~meta: Types.operationDebugMeta=?,
+    unit
+  ) =>
+  option(clientResponse('response));
+
 let mutation:
   (
     ~client: t,

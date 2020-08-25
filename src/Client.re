@@ -397,3 +397,30 @@ let mutation =
   |> Wonka.take(1)
   |> Wonka.toPromise;
 };
+
+let readQuery =
+    (
+      ~client,
+      ~request,
+      ~fetchOptions=?,
+      ~requestPolicy=?,
+      ~url=?,
+      ~pollInterval=?,
+      ~meta=?,
+      (),
+    ) => {
+  let result = ref(None);
+  executeQuery(
+    ~client,
+    ~request,
+    ~fetchOptions?,
+    ~requestPolicy?,
+    ~url?,
+    ~pollInterval?,
+    ~meta?,
+    (),
+  )
+  |> Wonka.subscribe((. data) => {result := Some(data)})
+  |> (subscription => subscription.unsubscribe());
+  result^;
+};
