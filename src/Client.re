@@ -352,21 +352,29 @@ let query =
     (
       ~client,
       ~request,
+      ~additionalTypenames=?,
       ~fetchOptions=?,
+      ~fetch=?,
       ~requestPolicy=?,
       ~url=?,
       ~pollInterval=?,
       ~meta=?,
+      ~suspense=?,
+      ~preferGetMethod=?,
       (),
     ) => {
   executeQuery(
     ~client,
     ~request,
+    ~additionalTypenames?,
     ~fetchOptions?,
+    ~fetch?,
     ~requestPolicy?,
     ~url?,
     ~pollInterval?,
     ~meta?,
+    ~suspense?,
+    ~preferGetMethod?,
     (),
   )
   |> Wonka.take(1)
@@ -377,21 +385,29 @@ let mutation =
     (
       ~client,
       ~request,
+      ~additionalTypenames=?,
       ~fetchOptions=?,
+      ~fetch=?,
       ~requestPolicy=?,
       ~url=?,
       ~pollInterval=?,
       ~meta=?,
+      ~suspense=?,
+      ~preferGetMethod=?,
       (),
     ) => {
   executeMutation(
     ~client,
     ~request,
+    ~additionalTypenames?,
     ~fetchOptions?,
+    ~fetch?,
     ~requestPolicy?,
     ~url?,
     ~pollInterval?,
     ~meta?,
+    ~suspense?,
+    ~preferGetMethod?,
     (),
   )
   |> Wonka.take(1)
