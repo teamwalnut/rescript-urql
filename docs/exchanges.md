@@ -112,6 +112,8 @@ The resulting data structure returned from creating the `ssrExchange` can be acc
 - `extractData` – this is typically used on the server-side to extract data returned from your GraphQL requests after they've been executed on the server.
 
 ```reason
+open ReasonUrql;
+
 let ssrCache = Client.Exchanges.ssrExchange(~ssrExchangeParams, ());
 
 /* Extract data from the ssrCache. (Server-side) */
@@ -121,6 +123,8 @@ let extractedData = Client.Exchanges.extractData(~exchange=ssrCache);
 - `restoreData` is typically used to rehydrate the client with data from the server. The `restore` argument is what allows you to reference the data returned from the server to the client.
 
 ```reason
+open ReasonUrql;
+
 let ssrCache = Client.Exchanges.ssrExchange(~ssrExchangeParams, ());
 
 /* Extract data from the ssrCache. */
@@ -199,17 +203,16 @@ let debugExchange = (Client.Exchanges.{forward}) =>
          Js.log2("[debugExchange]: Completed operation: ", res)
        );
 
-let client =
-  Client.(
-    make(
-      ~url="https://my-graphql-endpoint.com/graphql",
-      ~exchanges=[|
-        debugExchange,
-        Exchanges.dedupExchange,
-        Exchanges.cacheExchange,
-        Exchanges.fetchExchange
-      |],
-    (),
-    )
-  );
+let client = Client.(
+  make(
+    ~url="https://my-graphql-endpoint.com/graphql",
+    ~exchanges=[|
+      debugExchange,
+      Exchanges.dedupExchange,
+      Exchanges.cacheExchange,
+      Exchanges.fetchExchange
+    |],
+  (),
+  )
+);
 ```

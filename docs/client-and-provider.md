@@ -6,7 +6,7 @@ The client is the central orchestrator of `reason-urql`, and is responsible for 
 
 The `Provider`'s responsibility is to pass the `reason-urql` client instance down to `useQuery`, `useMutation`, `useDynamicMutation`, and `useSubcription` hooks through context. Wrap the root of your application with `Provider`.
 
-You can access the `Provider` component by referencing `Client.Provider` after `open`ing `ReasonUrql`.
+You can access the `Provider` component by referencing `Context.Provider` after `open`ing `ReasonUrql`.
 
 ### Props
 
@@ -81,16 +81,18 @@ let client = Client.make(~url="https://localhost:3000/graphql", ~fetchOptions, (
 ```reason
 open ReasonUrql;
 
-let client = Client.(make(
-  ~url="https://localhost:3000/graphql",
-  ~exchanges=[|
-    Exchanges.debugExchange,
-    Exchanges.dedupExchange,
-    Exchanges.cacheExchange,
-    Exchanges.fetchExchange
-  |],
-  ()
-));
+let client = Client.(
+  make(
+    ~url="https://localhost:3000/graphql",
+    ~exchanges=[|
+      Exchanges.debugExchange,
+      Exchanges.dedupExchange,
+      Exchanges.cacheExchange,
+      Exchanges.fetchExchange
+    |],
+    ()
+  )
+);
 ```
 
 **Create a client with a non-default requestPolicy.**
@@ -192,7 +194,7 @@ module GetAllDogs = [%graphql
 ];
 
 Client.query(~client, ~request=GetAllDogs.make(), ())
-  |> Js.Promise.then_((data) => {
+  |> Js.Promise.then_(data => {
     switch(Client.(data.response)) {
       | Data(d) => /* Access data returned from executing the request. */
       | Error(e) => /* Access any errors returned from executing the request. */
@@ -290,7 +292,7 @@ module LikeDog = [%graphql
 ];
 
 Client.mutation(~client, ~request=LikeDog.make(~key="VmeRTX7j-", ()), ())
-  |> Js.Promise.then_((data) => {
+  |> Js.Promise.then_(data => {
     switch(Client.(data.response)) {
       | Data(d) => /* Access data returned from executing the request. */
       | Error(e) => /* Access any errors returned from executing the request. */
