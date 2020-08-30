@@ -26,7 +26,7 @@ let client = Client.make(~url="https://mygraphqlapi.com/graphql", ());
 /* Wrap your application in Provider, passing it the client as a prop. */
 [@react.component]
 let make = () =>
-  <Provider value=client><App /></Provider>
+  <Context.Provider value=client><App /></Context.Provider>
 ```
 
 ## Using Your First Hook
@@ -116,7 +116,7 @@ let make = (~key: string) => {
   let request = LikeDogMutation.make(~key, ());
 
   /* Pass the request to useMutation. */
-  let (_, executeMutation) = Hooks.useMutation(~request, ());
+  let (_, executeMutation) = Hooks.useMutation(~request);
 
   <button onClick={_e => executeMutation() |> ignore}>
       "Execute the Mutation (and Reward a Good Dog)"->React.string
@@ -137,7 +137,7 @@ let make = (~key: string) => {
   let request = LikeDogMutation.make(~key, ());
 
   /* Pass the request to useMutation. */
-  let (Hooks.{ response }, executeMutation) = Hooks.useMutation(~request, ());
+  let (Hooks.{ response }, executeMutation) = Hooks.useMutation(~request);
 
   let button = React.useMemo1(() =>
     <button onClick={_e => executeMutation() |> ignore}>
