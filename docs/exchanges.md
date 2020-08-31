@@ -1,6 +1,8 @@
 # Exchanges
 
-Exchanges are the mechanism by which `reason-urql` modifies requests before they are sent to your GraphQL API and alters responses as they are received. If you want to add some additional functionality to your GraphQL operations, this is a great place to do that. The following exchanges are provided out of the box with `reason-urql`.
+Exchanges are the mechanism by which `reason-urql` modifies requests before they are sent to your GraphQL API and alters responses as they are received. If you want to add some additional functionality to your GraphQL operations, this is a great place to do that.
+
+The `Exchanges` `module` is a submodule of the `Client` module and can be referenced at `ReasonUrql.Client.Exchanges`. The following exchanges are provided out of the box with `reason-urql`.
 
 #### `cacheExchange`
 
@@ -21,15 +23,17 @@ The above three exchanges make up `urql`'s `defaultExchanges`. When you create a
 ```reason
 open ReasonUrql;
 
-let client = Client.make(
-  ~url="https://mygraphql.com/api",
-  ~exchanges=[|
-    myCustomExchange,
-    Exchanges.dedupExchange,
-    Exchanges.cacheExchange,
-    Exchanges.fetchExchange
-  |],
-  ()
+let client = Client.(
+  make(
+    ~url="https://mygraphql.com/api",
+    ~exchanges=[|
+      myCustomExchange,
+      Exchanges.dedupExchange,
+      Exchanges.cacheExchange,
+      Exchanges.fetchExchange
+    |],
+    ()
+  )
 );
 ```
 
@@ -59,17 +63,19 @@ let forwardSubscription = operation => subscriptionClient##request(operation);
 
 /* Confirgure options for reason-urql's subscriptionExchange. */
 let subscriptionExchangeOpts =
-  Exchanges.{forwardSubscription: forwardSubscription};
+  Client.Exchanges.{forwardSubscription: forwardSubscription};
 
 /* Create the subcription exchange. */
 let subscriptionExchange =
-  Exchanges.subscriptionExchange(subscriptionExchangeOpts);
+  Client.Exchanges.subscriptionExchange(subscriptionExchangeOpts);
 
 /* Include the subscriptionExchange in your client's exchanges array. */
-let client = Client.make(
-  ~url="https://localhost:3000/graphql",
-  ~exchanges=Array.append(Exchanges.defaultExchanges, [|subscriptionExchange|]),
-  ()
+let client = Client.(
+  make(
+    ~url="https://localhost:3000/graphql",
+    ~exchanges=Array.append(Exchanges.defaultExchanges, [|subscriptionExchange|]),
+    ()
+  )
 );
 ```
 
@@ -87,15 +93,17 @@ open ReasonUrql;
 
 let ssrCache = Exchanges.ssrExchange();
 
-let client = Client.make(
-  ~url="http://localhost:3000",
-  ~exchanges=[|
-    Exchanges.dedupExchange,
-    Exchanges.cacheExchange,
-    ssrCache,
-    Exchanges.fetchExchange
-  |],
-  ()
+let client = Client.(
+  make(
+    ~url="http://localhost:3000",
+    ~exchanges=[|
+      Exchanges.dedupExchange,
+      Exchanges.cacheExchange,
+      ssrCache,
+      Exchanges.fetchExchange
+    |],
+    ()
+  )
 );
 ```
 
@@ -104,19 +112,23 @@ The resulting data structure returned from creating the `ssrExchange` can be acc
 - `extractData` – this is typically used on the server-side to extract data returned from your GraphQL requests after they've been executed on the server.
 
 ```reason
-let ssrCache = Exchanges.ssrExchange(~ssrExchangeParams, ());
+open ReasonUrql;
+
+let ssrCache = Client.Exchanges.ssrExchange(~ssrExchangeParams, ());
 
 /* Extract data from the ssrCache. (Server-side) */
-let extractedData = Exchanges.extractData(~exchange=ssrCache);
+let extractedData = Client.Exchanges.extractData(~exchange=ssrCache);
 ```
 
 - `restoreData` is typically used to rehydrate the client with data from the server. The `restore` argument is what allows you to reference the data returned from the server to the client.
 
 ```reason
-let ssrCache = Exchanges.ssrExchange(~ssrExchangeParams, ());
+open ReasonUrql;
+
+let ssrCache = Client.Exchanges.ssrExchange(~ssrExchangeParams, ());
 
 /* Extract data from the ssrCache. */
-let extractedData = Exchanges.restoreData(~exchange=ssrCache, ~restore=urqlData);
+let extractedData = Client.Exchanges.restoreData(~exchange=ssrCache, ~restore=urqlData);
 ```
 
 This part of the API is still quite experimental, as server-side rendering in Reason with Next.js is still in its infancy. Use with caution. For more information, read `urql`'s server-side rendering guide [here](https://github.com/FormidableLabs/urql/blob/master/docs/basics.md#server-side-rendering). To see an example of server-side rendering with `reason-urql`, check out our [`reason-urql-ssr` example](https://github.com/parkerziegler/reason-urql-ssr).
@@ -155,7 +167,7 @@ open ReasonUrql;
 /* This is the native debugExchange that ships with `urql`, re-implemented in Reason.
      Typically, you'd just add Exchanges.debugExchange to the Client's exchange array.
    */
-let debugExchange = (Exchanges.{forward}) =>
+let debugExchange = (Client.Exchanges.{forward}) =>
   /* Notice this function is uncurried using BuckleScript's uncurrying syntax.
   We want to ensure that our exchange returns a function that accepts operations. */
   (. ops) =>
@@ -180,7 +192,7 @@ open ReasonUrql;
 /* This is the native debugExchange that ships with `urql`, re-implemented in Reason.
      Typically, you'd just add Exchanges.debugExchange to the Client's exchange array.
    */
-let debugExchange = (Exchanges.{forward}) =>
+let debugExchange = (Client.Exchanges.{forward}) =>
   (. ops) =>
     ops
     |> Wonka.tap((. op) =>
@@ -191,8 +203,8 @@ let debugExchange = (Exchanges.{forward}) =>
          Js.log2("[debugExchange]: Completed operation: ", res)
        );
 
-let client =
-  Client.make(
+let client = Client.(
+  make(
     ~url="https://my-graphql-endpoint.com/graphql",
     ~exchanges=[|
       debugExchange,
@@ -200,6 +212,7 @@ let client =
       Exchanges.cacheExchange,
       Exchanges.fetchExchange
     |],
-    (),
-  );
+  (),
+  )
+);
 ```
