@@ -20,7 +20,7 @@ type executeSubscriptionJs = Types.partialOperationContext => unit;
 [@bs.module "urql"]
 external useSubscriptionJs:
   (useSubscriptionArgs, option((option('acc), Js.Json.t) => 'acc)) =>
-  (Types.jsHookResponse('ret, 'extensions), executeSubscriptionJs) =
+  (Types.hookResponseJs('ret, 'extensions), executeSubscriptionJs) =
   "useSubscription";
 
 type executeSubscription =
@@ -44,7 +44,7 @@ type useSubscriptionResponse('response, 'extensions) = (
 );
 
 let subscriptionResponseToReason =
-    (result: Types.jsHookResponse('ret, 'extensions)) => {
+    (result: Types.hookResponseJs('ret, 'extensions)) => {
   let data = result.data;
   let error =
     result.error->Belt.Option.map(CombinedError.combinedErrorToRecord);
@@ -61,6 +61,13 @@ let subscriptionResponseToReason =
 
   Types.{operation, fetching, data, error, response, extensions, stale};
 };
+
+// reason-react does not provide a binding of sufficient arity for our memoization needs
+[@bs.module "react"]
+external useMemo10:
+  ([@bs.uncurry] (unit => 'any), ('a, 'b, 'c, 'd, 'e, 'f, 'g, 'h, 'i, 'j)) =>
+  'any =
+  "useMemo";
 
 let useSubscription =
     (
@@ -84,22 +91,50 @@ let useSubscription =
   let query = request##query;
   let variables = request##variables;
   let parse = request##parse;
-  let context = {
-    Types.partialOperationContext(
-      ~additionalTypenames?,
-      ~fetchOptions?,
-      ~fetch?,
-      ~requestPolicy=?Belt.Option.map(requestPolicy, Types.requestPolicyToJs),
-      ~url?,
-      ~pollInterval?,
-      ~meta?,
-      ~suspense?,
-      ~preferGetMethod?,
-      (),
+  let rp =
+    React.useMemo1(
+      () => requestPolicy->Belt.Option.map(Types.requestPolicyToJs),
+      [|requestPolicy|],
     );
-  };
 
-  let args = {query, variables, pause, context};
+  let client = UseClient.useClient();
+
+  let context =
+    useMemo10(
+      () => {
+        let c: Types.partialOperationContext = {
+          additionalTypenames,
+          fetchOptions,
+          fetch,
+          url: Some(url->Belt.Option.getWithDefault(client.url)),
+          requestPolicy: rp,
+          pollInterval,
+          meta,
+          suspense,
+          preferGetMethod,
+        };
+
+        c;
+      },
+      (
+        additionalTypenames,
+        fetchOptions,
+        fetch,
+        url,
+        client,
+        rp,
+        pollInterval,
+        meta,
+        suspense,
+        preferGetMethod,
+      ),
+    );
+
+  let args =
+    React.useMemo4(
+      () => {query, variables, pause, context},
+      (query, variables, pause, context),
+    );
 
   let h = (acc, subscriptionResult) =>
     switch (handler) {
@@ -110,7 +145,12 @@ let useSubscription =
   let (responseJs, executeSubscriptionJs) =
     useSubscriptionJs(args, Some(h));
 
-  let response = subscriptionResponseToReason(responseJs);
+  let response =
+    React.useMemo1(
+      () => subscriptionResponseToReason(responseJs),
+      [|responseJs|],
+    );
+
   let executeSubscription =
     React.useMemo1(
       (
@@ -126,20 +166,19 @@ let useSubscription =
         ~preferGetMethod=?,
         (),
       ) => {
-        let ctx =
-          Types.partialOperationContext(
-            ~additionalTypenames?,
-            ~fetchOptions?,
-            ~fetch?,
-            ~requestPolicy=?
-              Belt.Option.map(requestPolicy, Types.requestPolicyToJs),
-            ~url?,
-            ~pollInterval?,
-            ~meta?,
-            ~suspense?,
-            ~preferGetMethod?,
-            (),
-          );
+        let ctx: Types.partialOperationContext = {
+          additionalTypenames,
+          fetchOptions,
+          fetch,
+          url,
+          requestPolicy:
+            requestPolicy->Belt.Option.map(Types.requestPolicyToJs),
+          pollInterval,
+          meta,
+          suspense,
+          preferGetMethod,
+        };
+
         executeSubscriptionJs(ctx);
       },
       [|executeSubscriptionJs|],

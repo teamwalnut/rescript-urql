@@ -46,26 +46,16 @@ type operationContext = {
   preferGetMethod: option(bool),
 };
 
-[@bs.deriving {abstract: light}]
 type partialOperationContext = {
-  [@bs.optional]
-  additionalTypenames: array(string),
-  [@bs.optional]
-  fetch: (string, Fetch.requestInit) => Js.Promise.t(Fetch.response),
-  [@bs.optional]
-  fetchOptions: Fetch.requestInit,
-  [@bs.optional]
-  requestPolicy: string,
-  [@bs.optional]
-  url: string,
-  [@bs.optional]
-  pollInterval: int,
-  [@bs.optional]
-  meta: operationDebugMeta,
-  [@bs.optional]
-  suspense: bool,
-  [@bs.optional]
-  preferGetMethod: bool,
+  additionalTypenames: option(array(string)),
+  fetch: option((string, Fetch.requestInit) => Js.Promise.t(Fetch.response)),
+  fetchOptions: option(Fetch.requestInit),
+  requestPolicy: option(string),
+  url: option(string),
+  pollInterval: option(int),
+  meta: option(operationDebugMeta),
+  suspense: option(bool),
+  preferGetMethod: option(bool),
 };
 
 /* The active GraphQL operation. */
@@ -119,7 +109,7 @@ type hookResponse('response, 'extensions) = {
   stale: bool,
 };
 
-type jsHookResponse('response, 'extensions) = {
+type hookResponseJs('response, 'extensions) = {
   operation,
   fetching: bool,
   data: option('response),

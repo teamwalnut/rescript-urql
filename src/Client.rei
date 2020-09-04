@@ -1,4 +1,10 @@
-type t;
+type t = {
+  url: string,
+  suspense: bool,
+  preferGetMethod: bool,
+  requestPolicy: string,
+  maskTypename: bool,
+};
 
 type fetchOptions('a) =
   | FetchOpts(Fetch.requestInit): fetchOptions(Fetch.requestInit)
@@ -71,13 +77,14 @@ module Exchanges: {
 
   type subscriptionForwarder =
     subscriptionOperation => observableLike(Types.executionResult);
-  type subscriptionExchangeOpts = {
-    forwardSubscription: subscriptionForwarder,
-  };
 
-  [@bs.module "urql"]
-  external subscriptionExchange: subscriptionExchangeOpts => t =
-    "subscriptionExchange";
+  let subscriptionExchange:
+    (
+      ~forwardSubscription: subscriptionForwarder,
+      ~enableAllOperations: bool=?,
+      unit
+    ) =>
+    t;
 
   /* Specific types for the ssrExchange. */
   type serializedError = {
@@ -201,23 +208,6 @@ let query:
   ) =>
   Js.Promise.t(clientResponse('response));
 
-let readQuery:
-  (
-    ~client: t,
-    ~request: Types.request('response),
-    ~additionalTypenames: array(string)=?,
-    ~fetchOptions: Fetch.requestInit=?,
-    ~fetch: (string, Fetch.requestInit) => Js.Promise.t(Fetch.response)=?,
-    ~requestPolicy: Types.requestPolicy=?,
-    ~url: string=?,
-    ~pollInterval: int=?,
-    ~meta: Types.operationDebugMeta=?,
-    ~suspense: bool=?,
-    ~preferGetMethod: bool=?,
-    unit
-  ) =>
-  option(clientResponse('response));
-
 let mutation:
   (
     ~client: t,
@@ -234,3 +224,37 @@ let mutation:
     unit
   ) =>
   Js.Promise.t(clientResponse('response));
+
+let subscription:
+  (
+    ~client: t,
+    ~request: Types.request('response),
+    ~additionalTypenames: array(string)=?,
+    ~fetchOptions: Fetch.requestInit=?,
+    ~fetch: (string, Fetch.requestInit) => Js.Promise.t(Fetch.response)=?,
+    ~requestPolicy: Types.requestPolicy=?,
+    ~url: string=?,
+    ~pollInterval: int=?,
+    ~meta: Types.operationDebugMeta=?,
+    ~suspense: bool=?,
+    ~preferGetMethod: bool=?,
+    unit
+  ) =>
+  Wonka.Types.sourceT(clientResponse('response));
+
+let readQuery:
+  (
+    ~client: t,
+    ~request: Types.request('response),
+    ~additionalTypenames: array(string)=?,
+    ~fetchOptions: Fetch.requestInit=?,
+    ~fetch: (string, Fetch.requestInit) => Js.Promise.t(Fetch.response)=?,
+    ~requestPolicy: Types.requestPolicy=?,
+    ~url: string=?,
+    ~pollInterval: int=?,
+    ~meta: Types.operationDebugMeta=?,
+    ~suspense: bool=?,
+    ~preferGetMethod: bool=?,
+    unit
+  ) =>
+  option(clientResponse('response));

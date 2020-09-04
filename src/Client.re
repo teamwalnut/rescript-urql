@@ -1,4 +1,10 @@
-type t;
+type t = {
+  url: string,
+  suspense: bool,
+  preferGetMethod: bool,
+  requestPolicy: string,
+  maskTypename: bool,
+};
 
 /* Helpers for supporting polymorphic fetchOptions. */
 type fetchOptions('a) =
@@ -94,11 +100,17 @@ module Exchanges = {
 
   type subscriptionExchangeOpts = {
     forwardSubscription: subscriptionForwarder,
+    enableAllOperations: option(bool),
   };
 
   [@bs.module "urql"]
-  external subscriptionExchange: subscriptionExchangeOpts => t =
+  external subscriptionExchangeJS: subscriptionExchangeOpts => t =
     "subscriptionExchange";
+
+  let subscriptionExchange =
+      (~forwardSubscription, ~enableAllOperations=?, ()) => {
+    subscriptionExchangeJS({forwardSubscription, enableAllOperations});
+  };
 
   /* Specific types for the ssrExchange. */
   type serializedError = {
@@ -200,11 +212,6 @@ let urqlClientResponseToReason = (~response: Types.operationResult, ~parse) => {
   {data, error, response};
 };
 
-[@bs.val] [@bs.module "urql"]
-external createRequest:
-  (~query: string, ~variables: Js.Json.t=?, unit) => Types.graphqlRequest =
-  "createRequest";
-
 /* Execution methods on the client. These allow you to imperatively execute GraphQL
    operations outside of the provided hooks. */
 [@bs.send]
@@ -220,7 +227,7 @@ external executeQueryJs:
 
 let executeQuery =
     (
-      ~client,
+      ~client: t,
       ~request,
       ~additionalTypenames=?,
       ~fetchOptions=?,
@@ -234,21 +241,23 @@ let executeQuery =
       (),
     ) => {
   let req =
-    createRequest(~query=request##query, ~variables=request##variables, ());
-  let parse = request##parse;
-  let optsJs =
-    Types.partialOperationContext(
-      ~additionalTypenames?,
-      ~fetchOptions?,
-      ~fetch?,
-      ~requestPolicy=?Belt.Option.map(requestPolicy, Types.requestPolicyToJs),
-      ~url?,
-      ~pollInterval?,
-      ~meta?,
-      ~suspense?,
-      ~preferGetMethod?,
+    Utils.createRequest(
+      ~query=request##query,
+      ~variables=request##variables,
       (),
     );
+  let parse = request##parse;
+  let optsJs: Types.partialOperationContext = {
+    additionalTypenames,
+    fetchOptions,
+    fetch,
+    requestPolicy: requestPolicy->Belt.Option.map(Types.requestPolicyToJs),
+    url: Some(url->Belt.Option.getWithDefault(client.url)),
+    pollInterval,
+    meta,
+    suspense,
+    preferGetMethod,
+  };
 
   executeQueryJs(~client, ~query=req, ~opts=optsJs, ())
   |> Wonka.map((. response) => urqlClientResponseToReason(~response, ~parse));
@@ -267,7 +276,7 @@ external executeMutationJs:
 
 let executeMutation =
     (
-      ~client,
+      ~client: t,
       ~request,
       ~additionalTypenames=?,
       ~fetchOptions=?,
@@ -281,21 +290,23 @@ let executeMutation =
       (),
     ) => {
   let req =
-    createRequest(~query=request##query, ~variables=request##variables, ());
-  let parse = request##parse;
-  let optsJs =
-    Types.partialOperationContext(
-      ~additionalTypenames?,
-      ~fetchOptions?,
-      ~fetch?,
-      ~requestPolicy=?Belt.Option.map(requestPolicy, Types.requestPolicyToJs),
-      ~url?,
-      ~pollInterval?,
-      ~meta?,
-      ~suspense?,
-      ~preferGetMethod?,
+    Utils.createRequest(
+      ~query=request##query,
+      ~variables=request##variables,
       (),
     );
+  let parse = request##parse;
+  let optsJs: Types.partialOperationContext = {
+    additionalTypenames,
+    fetchOptions,
+    fetch,
+    requestPolicy: requestPolicy->Belt.Option.map(Types.requestPolicyToJs),
+    url: Some(url->Belt.Option.getWithDefault(client.url)),
+    pollInterval,
+    meta,
+    suspense,
+    preferGetMethod,
+  };
 
   executeMutationJs(~client, ~mutation=req, ~opts=optsJs, ())
   |> Wonka.map((. response) => urqlClientResponseToReason(~response, ~parse));
@@ -314,7 +325,7 @@ external executeSubscriptionJs:
 
 let executeSubscription =
     (
-      ~client,
+      ~client: t,
       ~request,
       ~additionalTypenames=?,
       ~fetchOptions=?,
@@ -328,21 +339,23 @@ let executeSubscription =
       (),
     ) => {
   let req =
-    createRequest(~query=request##query, ~variables=request##variables, ());
-  let parse = request##parse;
-  let optsJs =
-    Types.partialOperationContext(
-      ~additionalTypenames?,
-      ~fetchOptions?,
-      ~fetch?,
-      ~requestPolicy=?Belt.Option.map(requestPolicy, Types.requestPolicyToJs),
-      ~url?,
-      ~pollInterval?,
-      ~meta?,
-      ~suspense?,
-      ~preferGetMethod?,
+    Utils.createRequest(
+      ~query=request##query,
+      ~variables=request##variables,
       (),
     );
+  let parse = request##parse;
+  let optsJs: Types.partialOperationContext = {
+    additionalTypenames,
+    fetchOptions,
+    fetch,
+    requestPolicy: requestPolicy->Belt.Option.map(Types.requestPolicyToJs),
+    url: Some(url->Belt.Option.getWithDefault(client.url)),
+    pollInterval,
+    meta,
+    suspense,
+    preferGetMethod,
+  };
 
   executeSubscriptionJs(~client, ~subscription=req, ~opts=optsJs, ())
   |> Wonka.map((. response) => urqlClientResponseToReason(~response, ~parse));
@@ -413,6 +426,8 @@ let mutation =
   |> Wonka.take(1)
   |> Wonka.toPromise;
 };
+
+let subscription = executeSubscription;
 
 let readQuery =
     (
