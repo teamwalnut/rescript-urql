@@ -2,18 +2,17 @@ open Jest;
 
 let it = test;
 
-let mockOperationContext =
-  Types.{
-    additionalTypenames: None,
-    fetch: None,
-    fetchOptions: None,
-    requestPolicy: `CacheFirst,
-    url: "https://localhost:3000/graphql",
-    pollInterval: None,
-    meta: None,
-    suspense: Some(false),
-    preferGetMethod: Some(false),
-  };
+let mockOperationContext: Types.operationContext = {
+  additionalTypenames: None,
+  fetch: None,
+  fetchOptions: None,
+  requestPolicy: `CacheFirst,
+  url: "https://localhost:3000/graphql",
+  pollInterval: None,
+  meta: None,
+  suspense: Some(false),
+  preferGetMethod: Some(false),
+};
 
 let mockOperation =
   Types.{
