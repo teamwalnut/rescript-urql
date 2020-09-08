@@ -35,7 +35,7 @@ describe("Types", () => {
             data: Js.Nullable.undefined,
             error: None,
             extensions: None,
-            stale: None,
+            stale: false,
           };
         let parse = _json => ();
         let result = Types.urqlResponseToReason(~response, ~parse);
@@ -54,7 +54,7 @@ describe("Types", () => {
           data: Js.Nullable.return(Js.Json.string("Hello")),
           error: None,
           extensions: None,
-          stale: None,
+          stale: false,
         };
       let parse = json => Js.Json.decodeString(json);
       let result = Types.urqlResponseToReason(~response, ~parse);
@@ -101,7 +101,7 @@ describe("Types", () => {
             data: Js.Nullable.return(Js.Json.string("Hello")),
             error: Some(errorJs),
             extensions: None,
-            stale: None,
+            stale: false,
           };
 
         let parse = json => Js.Json.decodeString(json);
@@ -151,7 +151,7 @@ describe("Types", () => {
           data: Js.Nullable.undefined,
           error: Some(errorJs),
           extensions: None,
-          stale: None,
+          stale: false,
         };
       let parse = _json => ();
       let result = Types.urqlResponseToReason(~response, ~parse);
@@ -167,7 +167,7 @@ describe("Types", () => {
           data: Js.Nullable.undefined,
           error: None,
           extensions: None,
-          stale: None,
+          stale: false,
         };
       let parse = _json => ();
       let result = Types.urqlResponseToReason(~response, ~parse);

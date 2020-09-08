@@ -97,7 +97,7 @@ type hookResponse('response, 'extensions) = {
   error: option(CombinedError.t),
   response: response('response),
   extensions: option('extensions),
-  stale: option(bool),
+  stale: bool,
 };
 
 type hookResponseJs('response, 'extensions) = {
@@ -106,7 +106,7 @@ type hookResponseJs('response, 'extensions) = {
   data: Js.Nullable.t('response),
   error: option(CombinedError.combinedErrorJs),
   extensions: option('extensions),
-  stale: option(bool),
+  stale: bool,
 };
 
 let urqlResponseToReason:
