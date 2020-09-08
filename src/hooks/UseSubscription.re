@@ -45,15 +45,11 @@ type useSubscriptionResponse('response, 'extensions) = (
 
 let subscriptionResponseToReason =
     (response: Types.hookResponseJs('ret, 'extensions)) => {
-  let Types.{operation, fetching} = response;
+  let Types.{operation, fetching, extensions, stale} = response;
 
   let data = response.data->Js.Nullable.toOption;
   let error =
-    response.error
-    ->Js.Nullable.toOption
-    ->Belt.Option.map(CombinedError.combinedErrorToRecord);
-  let extensions = response.extensions->Js.Nullable.toOption;
-  let stale = response.stale->Js.Nullable.toOption;
+    response.error->Belt.Option.map(CombinedError.combinedErrorToRecord);
 
   let response =
     switch (fetching, data, error) {

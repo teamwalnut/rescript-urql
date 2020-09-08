@@ -33,9 +33,9 @@ describe("Types", () => {
             operation: mockOperation,
             fetching: true,
             data: Js.Nullable.undefined,
-            error: Js.Nullable.undefined,
-            extensions: Js.Nullable.undefined,
-            stale: Js.Nullable.return(false),
+            error: None,
+            extensions: None,
+            stale: None,
           };
         let parse = _json => ();
         let result = Types.urqlResponseToReason(~response, ~parse);
@@ -52,9 +52,9 @@ describe("Types", () => {
           operation: mockOperation,
           fetching: false,
           data: Js.Nullable.return(Js.Json.string("Hello")),
-          error: Js.Nullable.undefined,
-          extensions: Js.Nullable.undefined,
-          stale: Js.Nullable.return(false),
+          error: None,
+          extensions: None,
+          stale: None,
         };
       let parse = json => Js.Json.decodeString(json);
       let result = Types.urqlResponseToReason(~response, ~parse);
@@ -99,9 +99,9 @@ describe("Types", () => {
             operation: mockOperation,
             fetching: false,
             data: Js.Nullable.return(Js.Json.string("Hello")),
-            error: Js.Nullable.return(errorJs),
-            extensions: Js.Nullable.undefined,
-            stale: Js.Nullable.return(false),
+            error: Some(errorJs),
+            extensions: None,
+            stale: None,
           };
 
         let parse = json => Js.Json.decodeString(json);
@@ -149,9 +149,9 @@ describe("Types", () => {
           operation: mockOperation,
           fetching: false,
           data: Js.Nullable.undefined,
-          error: Js.Nullable.return(errorJs),
-          extensions: Js.Nullable.undefined,
-          stale: Js.Nullable.return(false),
+          error: Some(errorJs),
+          extensions: None,
+          stale: None,
         };
       let parse = _json => ();
       let result = Types.urqlResponseToReason(~response, ~parse);
@@ -165,9 +165,9 @@ describe("Types", () => {
           operation: mockOperation,
           fetching: false,
           data: Js.Nullable.undefined,
-          error: Js.Nullable.undefined,
-          extensions: Js.Nullable.undefined,
-          stale: Js.Nullable.return(false),
+          error: None,
+          extensions: None,
+          stale: None,
         };
       let parse = _json => ();
       let result = Types.urqlResponseToReason(~response, ~parse);

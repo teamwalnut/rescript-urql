@@ -200,13 +200,11 @@ type clientResponse('response) = {
  * methods to typed a Reason record.
  */
 let urqlClientResponseToReason = (~response: Types.operationResult, ~parse) => {
+  let {extensions, stale}: Types.operationResult = response;
+
   let data = response.data->Js.Nullable.toOption->Belt.Option.map(parse);
   let error =
-    response.error
-    ->Js.Nullable.toOption
-    ->Belt.Option.map(CombinedError.combinedErrorToRecord);
-  let extensions = response.extensions->Js.Nullable.toOption;
-  let stale = response.stale->Js.Nullable.toOption;
+    response.error->Belt.Option.map(CombinedError.combinedErrorToRecord);
 
   let response =
     switch (data, error) {

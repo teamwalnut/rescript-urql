@@ -71,9 +71,9 @@ type operation = {
 type operationResult = {
   operation,
   data: Js.Nullable.t(Js.Json.t),
-  error: Js.Nullable.t(CombinedError.combinedErrorJs),
-  extensions: Js.Nullable.t(Js.Dict.t(string)),
-  stale: Js.Nullable.t(bool),
+  error: option(CombinedError.combinedErrorJs),
+  extensions: option(Js.Dict.t(string)),
+  stale: option(bool),
 };
 
 /* The GraphQL request object.
@@ -114,9 +114,9 @@ type hookResponseJs('response, 'extensions) = {
   operation,
   fetching: bool,
   data: Js.Nullable.t('response),
-  error: Js.Nullable.t(CombinedError.combinedErrorJs),
-  extensions: Js.Nullable.t('extensions),
-  stale: Js.Nullable.t(bool),
+  error: option(CombinedError.combinedErrorJs),
+  extensions: option('extensions),
+  stale: option(bool),
 };
 
 /**
@@ -124,15 +124,11 @@ type hookResponseJs('response, 'extensions) = {
  * JavaScript representation to a typed Reason record.
  */
 let urqlResponseToReason = (~response, ~parse) => {
-  let {operation, fetching} = response;
+  let {operation, fetching, extensions, stale} = response;
 
   let data = response.data->Js.Nullable.toOption->Belt.Option.map(parse);
   let error =
-    response.error
-    ->Js.Nullable.toOption
-    ->Belt.Option.map(CombinedError.combinedErrorToRecord);
-  let extensions = response.extensions->Js.Nullable.toOption;
-  let stale = response.stale->Js.Nullable.toOption;
+    response.error->Belt.Option.map(CombinedError.combinedErrorToRecord);
 
   let response =
     switch (fetching, data, error) {
