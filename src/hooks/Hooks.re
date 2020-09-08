@@ -11,5 +11,5 @@ type hookResponse('ret, 'extensions) =
     error: option(CombinedError.t),
     response: Types.response('ret),
     extensions: option('extensions),
-    stale: bool,
+    stale: option(bool),
   };

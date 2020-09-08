@@ -60,9 +60,10 @@ type operation = {
 /* The result of the GraphQL operation. */
 type operationResult = {
   operation,
-  data: option(Js.Json.t),
-  error: option(CombinedError.combinedErrorJs),
-  stale: option(bool),
+  data: Js.Nullable.t(Js.Json.t),
+  error: Js.Nullable.t(CombinedError.combinedErrorJs),
+  extensions: Js.Nullable.t(Js.Dict.t(string)),
+  stale: Js.Nullable.t(bool),
 };
 
 /* The GraphQL request object.
@@ -96,16 +97,16 @@ type hookResponse('response, 'extensions) = {
   error: option(CombinedError.t),
   response: response('response),
   extensions: option('extensions),
-  stale: bool,
+  stale: option(bool),
 };
 
 type hookResponseJs('response, 'extensions) = {
   operation,
   fetching: bool,
-  data: option('response),
-  error: option(CombinedError.combinedErrorJs),
-  extensions: option('extensions),
-  stale: bool,
+  data: Js.Nullable.t('response),
+  error: Js.Nullable.t(CombinedError.combinedErrorJs),
+  extensions: Js.Nullable.t('extensions),
+  stale: Js.Nullable.t(bool),
 };
 
 let urqlResponseToReason:

@@ -133,7 +133,9 @@ type response('response) =
 type clientResponse('response) = {
   data: option('response),
   error: option(CombinedError.t),
+  extensions: option(Js.Dict.t(string)),
   response: response('response),
+  stale: option(bool),
 };
 
 let urqlClientResponseToReason:

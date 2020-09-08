@@ -32,10 +32,10 @@ describe("Types", () => {
           Types.{
             operation: mockOperation,
             fetching: true,
-            data: None,
-            error: None,
-            extensions: None,
-            stale: false,
+            data: Js.Nullable.undefined,
+            error: Js.Nullable.undefined,
+            extensions: Js.Nullable.undefined,
+            stale: Js.Nullable.return(false),
           };
         let parse = _json => ();
         let result = Types.urqlResponseToReason(~response, ~parse);
@@ -51,10 +51,10 @@ describe("Types", () => {
         Types.{
           operation: mockOperation,
           fetching: false,
-          data: Some(Js.Json.string("Hello")),
-          error: None,
-          extensions: None,
-          stale: false,
+          data: Js.Nullable.return(Js.Json.string("Hello")),
+          error: Js.Nullable.undefined,
+          extensions: Js.Nullable.undefined,
+          stale: Js.Nullable.return(false),
         };
       let parse = json => Js.Json.decodeString(json);
       let result = Types.urqlResponseToReason(~response, ~parse);
@@ -98,10 +98,10 @@ describe("Types", () => {
           Types.{
             operation: mockOperation,
             fetching: false,
-            data: Some(Js.Json.string("Hello")),
-            error: Some(errorJs),
-            extensions: None,
-            stale: false,
+            data: Js.Nullable.return(Js.Json.string("Hello")),
+            error: Js.Nullable.return(errorJs),
+            extensions: Js.Nullable.undefined,
+            stale: Js.Nullable.return(false),
           };
 
         let parse = json => Js.Json.decodeString(json);
@@ -148,10 +148,10 @@ describe("Types", () => {
         Types.{
           operation: mockOperation,
           fetching: false,
-          data: None,
-          error: Some(errorJs),
-          extensions: None,
-          stale: false,
+          data: Js.Nullable.undefined,
+          error: Js.Nullable.return(errorJs),
+          extensions: Js.Nullable.undefined,
+          stale: Js.Nullable.return(false),
         };
       let parse = _json => ();
       let result = Types.urqlResponseToReason(~response, ~parse);
@@ -164,10 +164,10 @@ describe("Types", () => {
         Types.{
           operation: mockOperation,
           fetching: false,
-          data: None,
-          error: None,
-          extensions: None,
-          stale: false,
+          data: Js.Nullable.undefined,
+          error: Js.Nullable.undefined,
+          extensions: Js.Nullable.undefined,
+          stale: Js.Nullable.return(false),
         };
       let parse = _json => ();
       let result = Types.urqlResponseToReason(~response, ~parse);
