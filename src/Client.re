@@ -247,17 +247,19 @@ let executeQuery =
       (),
     );
   let parse = request##parse;
-  let optsJs: Types.partialOperationContext = {
-    additionalTypenames,
-    fetchOptions,
-    fetch,
-    requestPolicy: requestPolicy->Belt.Option.map(Types.requestPolicyToJs),
-    url: Some(url->Belt.Option.getWithDefault(client.url)),
-    pollInterval,
-    meta,
-    suspense,
-    preferGetMethod,
-  };
+  let optsJs =
+    Types.partialOperationContext(
+      ~additionalTypenames?,
+      ~fetchOptions?,
+      ~fetch?,
+      ~requestPolicy=?requestPolicy->Belt.Option.map(Types.requestPolicyToJs),
+      ~url?,
+      ~pollInterval?,
+      ~meta?,
+      ~suspense?,
+      ~preferGetMethod?,
+      (),
+    );
 
   executeQueryJs(~client, ~query=req, ~opts=optsJs, ())
   |> Wonka.map((. response) => urqlClientResponseToReason(~response, ~parse));
@@ -296,17 +298,19 @@ let executeMutation =
       (),
     );
   let parse = request##parse;
-  let optsJs: Types.partialOperationContext = {
-    additionalTypenames,
-    fetchOptions,
-    fetch,
-    requestPolicy: requestPolicy->Belt.Option.map(Types.requestPolicyToJs),
-    url: Some(url->Belt.Option.getWithDefault(client.url)),
-    pollInterval,
-    meta,
-    suspense,
-    preferGetMethod,
-  };
+  let optsJs =
+    Types.partialOperationContext(
+      ~additionalTypenames?,
+      ~fetchOptions?,
+      ~fetch?,
+      ~requestPolicy=?requestPolicy->Belt.Option.map(Types.requestPolicyToJs),
+      ~url?,
+      ~pollInterval?,
+      ~meta?,
+      ~suspense?,
+      ~preferGetMethod?,
+      (),
+    );
 
   executeMutationJs(~client, ~mutation=req, ~opts=optsJs, ())
   |> Wonka.map((. response) => urqlClientResponseToReason(~response, ~parse));
@@ -345,17 +349,19 @@ let executeSubscription =
       (),
     );
   let parse = request##parse;
-  let optsJs: Types.partialOperationContext = {
-    additionalTypenames,
-    fetchOptions,
-    fetch,
-    requestPolicy: requestPolicy->Belt.Option.map(Types.requestPolicyToJs),
-    url: Some(url->Belt.Option.getWithDefault(client.url)),
-    pollInterval,
-    meta,
-    suspense,
-    preferGetMethod,
-  };
+  let optsJs =
+    Types.partialOperationContext(
+      ~additionalTypenames?,
+      ~fetchOptions?,
+      ~fetch?,
+      ~requestPolicy=?requestPolicy->Belt.Option.map(Types.requestPolicyToJs),
+      ~url?,
+      ~pollInterval?,
+      ~meta?,
+      ~suspense?,
+      ~preferGetMethod?,
+      (),
+    );
 
   executeSubscriptionJs(~client, ~subscription=req, ~opts=optsJs, ())
   |> Wonka.map((. response) => urqlClientResponseToReason(~response, ~parse));

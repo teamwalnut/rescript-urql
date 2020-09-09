@@ -44,8 +44,6 @@ let useMutation = (~request) => {
   let variables = request##variables;
   let parse = request##parse;
 
-  let client = UseClient.useClient();
-
   let (stateJs, executeMutationJs) = useMutationJs(query);
 
   let state =
@@ -55,7 +53,7 @@ let useMutation = (~request) => {
     );
 
   let executeMutation =
-    React.useMemo3(
+    React.useMemo2(
       (
         (),
         ~additionalTypenames=?,
@@ -69,22 +67,24 @@ let useMutation = (~request) => {
         ~preferGetMethod=?,
         (),
       ) => {
-        let ctx: Types.partialOperationContext = {
-          additionalTypenames,
-          fetchOptions,
-          fetch,
-          requestPolicy:
-            requestPolicy->Belt.Option.map(Types.requestPolicyToJs),
-          url: Some(url->Belt.Option.getWithDefault(client.url)),
-          pollInterval,
-          meta,
-          suspense,
-          preferGetMethod,
-        };
+        let ctx =
+          Types.partialOperationContext(
+            ~additionalTypenames?,
+            ~fetchOptions?,
+            ~fetch?,
+            ~url?,
+            ~requestPolicy=?
+              requestPolicy->Belt.Option.map(Types.requestPolicyToJs),
+            ~pollInterval?,
+            ~meta?,
+            ~suspense?,
+            ~preferGetMethod?,
+            (),
+          );
 
         executeMutationJs(variables, ctx);
       },
-      (executeMutationJs, variables, client),
+      (executeMutationJs, variables),
     );
 
   (state, executeMutation);
@@ -103,8 +103,6 @@ let useDynamicMutation = definition => {
   let (parse, query, composeVariables) = definition;
   let (stateJs, executeMutationJs) = useMutationJs(query);
 
-  let client = UseClient.useClient();
-
   let state =
     React.useMemo2(
       () => Types.urqlResponseToReason(~response=stateJs, ~parse),
@@ -123,17 +121,20 @@ let useDynamicMutation = definition => {
         ~suspense=?,
         ~preferGetMethod=?,
       ) => {
-    let ctx: Types.partialOperationContext = {
-      additionalTypenames,
-      fetchOptions,
-      fetch,
-      requestPolicy: requestPolicy->Belt.Option.map(Types.requestPolicyToJs),
-      url: Some(url->Belt.Option.getWithDefault(client.url)),
-      pollInterval,
-      meta,
-      suspense,
-      preferGetMethod,
-    };
+    let ctx =
+      Types.partialOperationContext(
+        ~additionalTypenames?,
+        ~fetchOptions?,
+        ~fetch?,
+        ~url?,
+        ~requestPolicy=?
+          requestPolicy->Belt.Option.map(Types.requestPolicyToJs),
+        ~pollInterval?,
+        ~meta?,
+        ~suspense?,
+        ~preferGetMethod?,
+        (),
+      );
 
     composeVariables(variables => executeMutationJs(variables, ctx));
   };
