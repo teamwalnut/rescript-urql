@@ -17,19 +17,18 @@ type executeMutation =
   ) =>
   Js.Promise.t(Types.operationResult);
 
-type useMutationResponseJs('extensions) = (
-  Types.hookResponseJs(Js.Json.t, 'extensions),
+type useMutationResponseJs = (
+  Types.hookResponseJs(Js.Json.t),
   executeMutationJs,
 );
 
-type useMutationResponse('response, 'extensions) = (
-  Types.hookResponse('response, 'extensions),
+type useMutationResponse('response) = (
+  Types.hookResponse('response),
   executeMutation,
 );
 
 [@bs.module "urql"]
-external useMutationJs: string => useMutationResponseJs('extensions) =
-  "useMutation";
+external useMutationJs: string => useMutationResponseJs = "useMutation";
 
 /**
  * The useMutation hook.
