@@ -32,7 +32,7 @@ describe("Types", () => {
           Types.{
             operation: mockOperation,
             fetching: true,
-            data: None,
+            data: Js.Nullable.undefined,
             error: None,
             extensions: None,
             stale: false,
@@ -51,7 +51,7 @@ describe("Types", () => {
         Types.{
           operation: mockOperation,
           fetching: false,
-          data: Some(Js.Json.string("Hello")),
+          data: Js.Nullable.return(Js.Json.string("Hello")),
           error: None,
           extensions: None,
           stale: false,
@@ -98,7 +98,7 @@ describe("Types", () => {
           Types.{
             operation: mockOperation,
             fetching: false,
-            data: Some(Js.Json.string("Hello")),
+            data: Js.Nullable.return(Js.Json.string("Hello")),
             error: Some(errorJs),
             extensions: None,
             stale: false,
@@ -148,7 +148,7 @@ describe("Types", () => {
         Types.{
           operation: mockOperation,
           fetching: false,
-          data: None,
+          data: Js.Nullable.undefined,
           error: Some(errorJs),
           extensions: None,
           stale: false,
@@ -164,7 +164,7 @@ describe("Types", () => {
         Types.{
           operation: mockOperation,
           fetching: false,
-          data: None,
+          data: Js.Nullable.undefined,
           error: None,
           extensions: None,
           stale: false,

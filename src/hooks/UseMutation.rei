@@ -13,14 +13,13 @@ type executeMutation =
   ) =>
   Js.Promise.t(Types.operationResult);
 
-type useMutationResponse('response, 'extensions) = (
-  Types.hookResponse('response, 'extensions),
+type useMutationResponse('response) = (
+  Types.hookResponse('response),
   executeMutation,
 );
 
 let useMutation:
-  (~request: Types.request('response)) =>
-  useMutationResponse('response, 'extensions);
+  (~request: Types.request('response)) => useMutationResponse('response);
 
 let useDynamicMutation:
   Types.graphqlDefinition(
@@ -29,7 +28,7 @@ let useDynamicMutation:
     'executeMutation,
   ) =>
   (
-    Types.hookResponse('parse, 'extensions),
+    Types.hookResponse('parse),
     (
       ~additionalTypenames: array(string)=?,
       ~fetchOptions: Fetch.requestInit=?,

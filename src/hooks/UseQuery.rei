@@ -13,8 +13,8 @@ type executeQuery =
   ) =>
   unit;
 
-type useQueryResponse('response, 'extensions) = (
-  Types.hookResponse('response, 'extensions),
+type useQueryResponse('response) = (
+  Types.hookResponse('response),
   executeQuery,
 );
 
@@ -33,4 +33,4 @@ let useQuery:
     ~preferGetMethod: bool=?,
     unit
   ) =>
-  useQueryResponse('response, 'extensions);
+  useQueryResponse('response);

@@ -18,8 +18,8 @@ type executeSubscription =
   ) =>
   unit;
 
-type useSubscriptionResponse('response, 'extensions) = (
-  Types.hookResponse('response, 'extensions),
+type useSubscriptionResponse('response) = (
+  Types.hookResponse('response),
   executeSubscription,
 );
 
@@ -39,4 +39,4 @@ let useSubscription:
     ~preferGetMethod: bool=?,
     unit
   ) =>
-  useSubscriptionResponse('ret, 'extensions);
+  useSubscriptionResponse('ret);

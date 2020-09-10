@@ -60,8 +60,9 @@ type operation = {
 /* The result of the GraphQL operation. */
 type operationResult = {
   operation,
-  data: option(Js.Json.t),
+  data: Js.Nullable.t(Js.Json.t),
   error: option(CombinedError.combinedErrorJs),
+  extensions: option(Js.Dict.t(string)),
   stale: option(bool),
 };
 
@@ -89,31 +90,28 @@ type response('response) =
   | Error(CombinedError.t)
   | Empty;
 
-type hookResponse('response, 'extensions) = {
+type hookResponse('response) = {
   operation,
   fetching: bool,
   data: option('response),
   error: option(CombinedError.t),
   response: response('response),
-  extensions: option('extensions),
+  extensions: option(Js.Json.t),
   stale: bool,
 };
 
-type hookResponseJs('response, 'extensions) = {
+type hookResponseJs('response) = {
   operation,
   fetching: bool,
-  data: option('response),
+  data: Js.Nullable.t('response),
   error: option(CombinedError.combinedErrorJs),
-  extensions: option('extensions),
+  extensions: option(Js.Json.t),
   stale: bool,
 };
 
 let urqlResponseToReason:
-  (
-    ~response: hookResponseJs(Js.Json.t, 'extensions),
-    ~parse: Js.Json.t => 'response
-  ) =>
-  hookResponse('response, 'extensions);
+  (~response: hookResponseJs(Js.Json.t), ~parse: Js.Json.t => 'response) =>
+  hookResponse('response);
 
 type graphqlDefinition('parseResult, 'composeReturnType, 'hookReturnType) = (
   // `parse`
@@ -129,5 +127,4 @@ type graphqlDefinition('parseResult, 'composeReturnType, 'hookReturnType) = (
 type executionResult = {
   errors: option(array(GraphQLError.t)),
   data: option(Js.Json.t),
-  extensions: Js.Json.t,
 };

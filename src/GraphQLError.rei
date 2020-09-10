@@ -12,8 +12,6 @@ type source = {
   locationOffset: sourceLocation,
 };
 
-type extension;
-
 type t = {
   message: string,
   locations: option(array(sourceLocation)),
@@ -22,5 +20,5 @@ type t = {
   source: option(source),
   positions: option(array(int)),
   originalError: option(Js.Exn.t),
-  extensions: option(Js.Dict.t(extension)),
+  extensions: option(Js.Json.t),
 };

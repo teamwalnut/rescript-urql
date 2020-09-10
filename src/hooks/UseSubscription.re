@@ -20,7 +20,7 @@ type executeSubscriptionJs = Types.partialOperationContext => unit;
 [@bs.module "urql"]
 external useSubscriptionJs:
   (useSubscriptionArgs, option((option('acc), Js.Json.t) => 'acc)) =>
-  (Types.hookResponseJs('ret, 'extensions), executeSubscriptionJs) =
+  (Types.hookResponseJs('ret), executeSubscriptionJs) =
   "useSubscription";
 
 type executeSubscription =
@@ -38,17 +38,17 @@ type executeSubscription =
   ) =>
   unit;
 
-type useSubscriptionResponse('response, 'extensions) = (
-  Types.hookResponse('response, 'extensions),
+type useSubscriptionResponse('response) = (
+  Types.hookResponse('response),
   executeSubscription,
 );
 
-let subscriptionResponseToReason =
-    (result: Types.hookResponseJs('ret, 'extensions)) => {
-  let data = result.data;
+let subscriptionResponseToReason = (response: Types.hookResponseJs('ret)) => {
+  let Types.{operation, fetching, extensions, stale} = response;
+
+  let data = response.data->Js.Nullable.toOption;
   let error =
-    result.error->Belt.Option.map(CombinedError.combinedErrorToRecord);
-  let Types.{operation, fetching, extensions, stale} = result;
+    response.error->Belt.Option.map(CombinedError.combinedErrorToRecord);
 
   let response =
     switch (fetching, data, error) {

@@ -190,7 +190,9 @@ type response('response) =
 type clientResponse('response) = {
   data: option('response),
   error: option(CombinedError.t),
+  extensions: option(Js.Dict.t(string)),
   response: response('response),
+  stale: option(bool),
 };
 
 /**
@@ -198,7 +200,9 @@ type clientResponse('response) = {
  * methods to typed a Reason record.
  */
 let urqlClientResponseToReason = (~response: Types.operationResult, ~parse) => {
-  let data = response.data->Belt.Option.map(parse);
+  let {extensions, stale}: Types.operationResult = response;
+
+  let data = response.data->Js.Nullable.toOption->Belt.Option.map(parse);
   let error =
     response.error->Belt.Option.map(CombinedError.combinedErrorToRecord);
 
@@ -209,7 +213,7 @@ let urqlClientResponseToReason = (~response: Types.operationResult, ~parse) => {
     | (None, None) => Empty
     };
 
-  {data, error, response};
+  {data, error, extensions, stale, response};
 };
 
 /* Execution methods on the client. These allow you to imperatively execute GraphQL
