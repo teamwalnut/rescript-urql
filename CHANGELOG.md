@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.0-rc.0] - 2020-09-10
+
+This release fixes some important bugs identified in the v2.0.0 release.
+
+### Fixed
+
+- Properly handle `null` on the `data` field in the GraphQL response. This was a regression from v1.7.0. PR by @parkerziegler and @gaku-sei [here](https://github.com/FormidableLabs/reason-urql/pull/213).
+- Revert to using `[@bs.deriving abstract]` to internally create `Partial<OperationContext>` objects. PR by @parkerziegler [here](https://github.com/FormidableLabs/reason-urql/pull/216).
+
+### Diff
+
+https://github.com/FormidableLabs/reason-urql/compare/v2.0.0...v2.1.0-rc0
+
 ## [2.0.0] - 2020-08-03
 
 This release includes full support for BuckleScript 7 and widely reorganizes `reason-urql` to be more modular and easier to contribute to. Most of the public API has stayed the same, with some exceptions (documented below).
