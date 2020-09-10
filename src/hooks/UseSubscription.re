@@ -64,9 +64,8 @@ let subscriptionResponseToReason = (response: Types.hookResponseJs('ret)) => {
 
 // reason-react does not provide a binding of sufficient arity for our memoization needs
 [@bs.module "react"]
-external useMemo10:
-  ([@bs.uncurry] (unit => 'any), ('a, 'b, 'c, 'd, 'e, 'f, 'g, 'h, 'i, 'j)) =>
-  'any =
+external useMemo9:
+  ([@bs.uncurry] (unit => 'any), ('a, 'b, 'c, 'd, 'e, 'f, 'g, 'h, 'i)) => 'any =
   "useMemo";
 
 let useSubscription =
@@ -97,31 +96,26 @@ let useSubscription =
       [|requestPolicy|],
     );
 
-  let client = UseClient.useClient();
-
   let context =
-    useMemo10(
-      () => {
-        let c: Types.partialOperationContext = {
-          additionalTypenames,
-          fetchOptions,
-          fetch,
-          url: Some(url->Belt.Option.getWithDefault(client.url)),
-          requestPolicy: rp,
-          pollInterval,
-          meta,
-          suspense,
-          preferGetMethod,
-        };
-
-        c;
-      },
+    useMemo9(
+      () =>
+        Types.partialOperationContext(
+          ~additionalTypenames?,
+          ~fetchOptions?,
+          ~fetch?,
+          ~url?,
+          ~requestPolicy=?rp,
+          ~pollInterval?,
+          ~meta?,
+          ~suspense?,
+          ~preferGetMethod?,
+          (),
+        ),
       (
         additionalTypenames,
         fetchOptions,
         fetch,
         url,
-        client,
         rp,
         pollInterval,
         meta,
@@ -166,18 +160,20 @@ let useSubscription =
         ~preferGetMethod=?,
         (),
       ) => {
-        let ctx: Types.partialOperationContext = {
-          additionalTypenames,
-          fetchOptions,
-          fetch,
-          url,
-          requestPolicy:
-            requestPolicy->Belt.Option.map(Types.requestPolicyToJs),
-          pollInterval,
-          meta,
-          suspense,
-          preferGetMethod,
-        };
+        let ctx =
+          Types.partialOperationContext(
+            ~additionalTypenames?,
+            ~fetchOptions?,
+            ~fetch?,
+            ~url?,
+            ~requestPolicy=?
+              requestPolicy->Belt.Option.map(Types.requestPolicyToJs),
+            ~pollInterval?,
+            ~meta?,
+            ~suspense?,
+            ~preferGetMethod?,
+            (),
+          );
 
         executeSubscriptionJs(ctx);
       },
