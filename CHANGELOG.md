@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.0] - 2020-09-17
+
+This release brings our `urql` dependency up to v1.10.0, at parity with the current state of `urql` 🙌. There are no code changes involved from the previous RC release.
+
+### Diff
+
+https://github.com/FormidableLabs/reason-urql/compare/v2.1.0-rc.0...v2.1.0
+
 ## [2.1.0-rc.0] - 2020-09-10
 
 This release fixes some important bugs identified in the v2.0.0 release.
