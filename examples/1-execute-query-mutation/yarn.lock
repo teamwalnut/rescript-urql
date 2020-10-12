@@ -46,11 +46,6 @@
     lodash "^4.17.13"
     to-fast-properties "^2.0.0"
 
-"@baransu/graphql_ppx_re@^0.7.1":
-  version "0.7.1"
-  resolved "https://registry.yarnpkg.com/@baransu/graphql_ppx_re/-/graphql_ppx_re-0.7.1.tgz#8146a36a94d56e65692d74488e2bd6cbd4eb8dc9"
-  integrity sha512-S9RYUWk8IkFxjE1Xl5eohRgbHJP5nCWOD6J1hMV3hY+D43igDrILq1doAXJatYB82BxcsrBC9V+VeU2LtCxIDw==
-
 "@emotion/cache@^10.0.27":
   version "10.0.29"
   resolved "https://registry.yarnpkg.com/@emotion/cache/-/cache-10.0.29.tgz#87e7e64f412c060102d589fe7c6dc042e6f9d1e0"
@@ -106,6 +101,11 @@
   version "0.2.5"
   resolved "https://registry.yarnpkg.com/@emotion/weak-memoize/-/weak-memoize-0.2.5.tgz#8eed982e2ee6f7f4e44c253e12962980791efd46"
   integrity sha512-6U71C2Wp7r5XtFtQzYrW5iKFT67OixrSxjI4MptCHzdSVlgabczzqLe0ZSgnub/5Kp4hSbpDB1tMytZY9pwxxA==
+
+"@reasonml-community/graphql-ppx@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@reasonml-community/graphql-ppx/-/graphql-ppx-1.0.1.tgz#aabbaa2d32b290c1576c4d4c53e26ffce4bed98c"
+  integrity sha512-lYPM6J5lth3VWyzOdAIEerStK70xm0jObC86iyhrfl7lm7RFls0W+QyxbOhajpzl8MwFtNGq5gYZAi/E9GL7bw==
 
 "@types/events@*":
   version "3.0.0"
@@ -3386,11 +3386,8 @@ reason-react@^0.7.0:
     react-dom ">=16.8.1"
 
 "reason-urql@link:../..":
-  version "2.0.0"
-  dependencies:
-    bs-fetch "^0.6.2"
-    graphql "^15.3.0"
-    urql "1.10.0"
+  version "0.0.0"
+  uid ""
 
 regenerator-runtime@^0.13.4:
   version "0.13.5"

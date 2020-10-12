@@ -52,7 +52,7 @@ module Exchanges = {
 
   type exchangeIO =
     Wonka.Types.sourceT(Types.operation) =>
-    Wonka.Types.sourceT(Types.operationResult);
+    Wonka.Types.sourceT(Types.operationResult(Js.Json.t));
 
   type exchangeInput = {
     forward: exchangeIO,
@@ -62,7 +62,7 @@ module Exchanges = {
   type t =
     exchangeInput =>
     (. Wonka.Types.sourceT(Types.operation)) =>
-    Wonka.Types.sourceT(Types.operationResult);
+    Wonka.Types.sourceT(Types.operationResult(Js.Json.t));
 
   [@bs.module "urql"] external cacheExchange: t = "cacheExchange";
   [@bs.module "urql"] external debugExchange: t = "debugExchange";
@@ -195,26 +195,27 @@ type clientResponse('response) = {
   stale: option(bool),
 };
 
-/**
- * A function to convert the JS response from a client.execute*
- * methods to typed a Reason record.
- */
-let urqlClientResponseToReason = (~response: Types.operationResult, ~parse) => {
-  let {extensions, stale}: Types.operationResult = response;
+/* A function to convert the JS response from a client.execute*
+   methods to typed a Reason record. */
+let clientResponseToReason:
+  type data.
+    (~response: Types.operationResult('a), ~parse: 'a => data) =>
+    clientResponse(data) =
+  (~response, ~parse) => {
+    let {extensions, stale}: Types.operationResult('a) = response;
+    let data = response.data->Js.Nullable.toOption->Belt.Option.map(parse);
+    let error =
+      response.error->Belt.Option.map(CombinedError.combinedErrorToRecord);
 
-  let data = response.data->Js.Nullable.toOption->Belt.Option.map(parse);
-  let error =
-    response.error->Belt.Option.map(CombinedError.combinedErrorToRecord);
+    let response =
+      switch (data, error) {
+      | (Some(data), _) => Data(data)
+      | (None, Some(error)) => Error(error)
+      | (None, None) => Empty
+      };
 
-  let response =
-    switch (data, error) {
-    | (Some(data), _) => Data(data)
-    | (None, Some(error)) => Error(error)
-    | (None, None) => Empty
-    };
-
-  {data, error, extensions, stale, response};
-};
+    {data, error, extensions, stale, response};
+  };
 
 /* Execution methods on the client. These allow you to imperatively execute GraphQL
    operations outside of the provided hooks. */
@@ -226,48 +227,73 @@ external executeQueryJs:
     ~opts: Types.partialOperationContext=?,
     unit
   ) =>
-  Wonka.Types.sourceT(Types.operationResult) =
+  Wonka.Types.sourceT(Types.operationResult('data)) =
   "executeQuery";
 
-let executeQuery =
+let executeQuery:
+  type variables variablesJs data.
     (
       ~client: t,
-      ~request,
-      ~additionalTypenames=?,
-      ~fetchOptions=?,
-      ~fetch=?,
-      ~requestPolicy=?,
-      ~url=?,
-      ~pollInterval=?,
-      ~meta=?,
-      ~suspense=?,
-      ~preferGetMethod=?,
-      (),
-    ) => {
-  let req =
-    Utils.createRequest(
-      ~query=request##query,
-      ~variables=request##variables,
-      (),
-    );
-  let parse = request##parse;
-  let optsJs =
-    Types.partialOperationContext(
-      ~additionalTypenames?,
-      ~fetchOptions?,
-      ~fetch?,
-      ~requestPolicy=?requestPolicy->Belt.Option.map(Types.requestPolicyToJs),
-      ~url?,
-      ~pollInterval?,
-      ~meta?,
-      ~suspense?,
-      ~preferGetMethod?,
-      (),
-    );
+      ~request: (module Types.Operation with
+                   type t_variables = variables and
+                   type Raw.t_variables = variablesJs and
+                   type t = data),
+      ~variables: variables,
+      ~additionalTypenames: array(string)=?,
+      ~fetchOptions: Fetch.requestInit=?,
+      ~fetch: (string, Fetch.requestInit) => Js.Promise.t(Fetch.response)=?,
+      ~requestPolicy: Types.requestPolicy=?,
+      ~url: string=?,
+      ~pollInterval: int=?,
+      ~meta: Types.operationDebugMeta=?,
+      ~suspense: bool=?,
+      ~preferGetMethod: bool=?,
+      unit
+    ) =>
+    Wonka.Types.sourceT(clientResponse(data)) =
+  (
+    ~client,
+    ~request as (module Request),
+    ~variables: variables,
+    ~additionalTypenames=?,
+    ~fetchOptions=?,
+    ~fetch=?,
+    ~requestPolicy=?,
+    ~url=?,
+    ~pollInterval=?,
+    ~meta=?,
+    ~suspense=?,
+    ~preferGetMethod=?,
+    (),
+  ) => {
+    let req =
+      Utils.createRequest(
+        ~query=Request.query,
+        ~variables=
+          variables->Request.serializeVariables->Request.variablesToJson,
+        (),
+      );
 
-  executeQueryJs(~client, ~query=req, ~opts=optsJs, ())
-  |> Wonka.map((. response) => urqlClientResponseToReason(~response, ~parse));
-};
+    let optsJs =
+      Types.partialOperationContext(
+        ~additionalTypenames?,
+        ~fetchOptions?,
+        ~fetch?,
+        ~requestPolicy=?
+          requestPolicy->Belt.Option.map(Types.requestPolicyToJs),
+        ~url?,
+        ~pollInterval?,
+        ~meta?,
+        ~suspense?,
+        ~preferGetMethod?,
+        (),
+      );
+
+    executeQueryJs(~client, ~query=req, ~opts=optsJs, ())
+    |> Wonka.map((. response) =>
+         clientResponseToReason(~response, ~parse=Request.parse)
+       );
+  };
 
 [@bs.send]
 external executeMutationJs:
@@ -277,48 +303,71 @@ external executeMutationJs:
     ~opts: Types.partialOperationContext=?,
     unit
   ) =>
-  Wonka.Types.sourceT(Types.operationResult) =
+  Wonka.Types.sourceT(Types.operationResult('data)) =
   "executeMutation";
 
-let executeMutation =
+let executeMutation:
+  type variables variablesJs data.
     (
       ~client: t,
-      ~request,
-      ~additionalTypenames=?,
-      ~fetchOptions=?,
-      ~fetch=?,
-      ~requestPolicy=?,
-      ~url=?,
-      ~pollInterval=?,
-      ~meta=?,
-      ~suspense=?,
-      ~preferGetMethod=?,
-      (),
-    ) => {
-  let req =
-    Utils.createRequest(
-      ~query=request##query,
-      ~variables=request##variables,
-      (),
-    );
-  let parse = request##parse;
-  let optsJs =
-    Types.partialOperationContext(
-      ~additionalTypenames?,
-      ~fetchOptions?,
-      ~fetch?,
-      ~requestPolicy=?requestPolicy->Belt.Option.map(Types.requestPolicyToJs),
-      ~url?,
-      ~pollInterval?,
-      ~meta?,
-      ~suspense?,
-      ~preferGetMethod?,
-      (),
-    );
+      ~request: (module Types.Operation with
+                   type t_variables = variables and
+                   type Raw.t_variables = variablesJs and
+                   type t = data),
+      ~variables: variables,
+      ~additionalTypenames: array(string)=?,
+      ~fetchOptions: Fetch.requestInit=?,
+      ~fetch: (string, Fetch.requestInit) => Js.Promise.t(Fetch.response)=?,
+      ~requestPolicy: Types.requestPolicy=?,
+      ~url: string=?,
+      ~pollInterval: int=?,
+      ~meta: Types.operationDebugMeta=?,
+      ~suspense: bool=?,
+      ~preferGetMethod: bool=?,
+      unit
+    ) =>
+    Wonka.Types.sourceT(clientResponse(data)) =
+  (
+    ~client: t,
+    ~request as (module Request),
+    ~variables,
+    ~additionalTypenames=?,
+    ~fetchOptions=?,
+    ~fetch=?,
+    ~requestPolicy=?,
+    ~url=?,
+    ~pollInterval=?,
+    ~meta=?,
+    ~suspense=?,
+    ~preferGetMethod=?,
+    (),
+  ) => {
+    let req =
+      Utils.createRequest(
+        ~query=Request.query,
+        ~variables=
+          variables->Request.serializeVariables->Request.variablesToJson,
+        (),
+      );
+    let parse = Request.parse;
+    let optsJs =
+      Types.partialOperationContext(
+        ~additionalTypenames?,
+        ~fetchOptions?,
+        ~fetch?,
+        ~requestPolicy=?
+          requestPolicy->Belt.Option.map(Types.requestPolicyToJs),
+        ~url?,
+        ~pollInterval?,
+        ~meta?,
+        ~suspense?,
+        ~preferGetMethod?,
+        (),
+      );
 
-  executeMutationJs(~client, ~mutation=req, ~opts=optsJs, ())
-  |> Wonka.map((. response) => urqlClientResponseToReason(~response, ~parse));
-};
+    executeMutationJs(~client, ~mutation=req, ~opts=optsJs, ())
+    |> Wonka.map((. response) => clientResponseToReason(~response, ~parse));
+  };
 
 [@bs.send]
 external executeSubscriptionJs:
@@ -328,53 +377,77 @@ external executeSubscriptionJs:
     ~opts: Types.partialOperationContext=?,
     unit
   ) =>
-  Wonka.Types.sourceT(Types.operationResult) =
+  Wonka.Types.sourceT(Types.operationResult('data)) =
   "executeSubscription";
 
-let executeSubscription =
+let executeSubscription:
+  type variables variablesJs data.
     (
       ~client: t,
-      ~request,
-      ~additionalTypenames=?,
-      ~fetchOptions=?,
-      ~fetch=?,
-      ~requestPolicy=?,
-      ~url=?,
-      ~pollInterval=?,
-      ~meta=?,
-      ~suspense=?,
-      ~preferGetMethod=?,
-      (),
-    ) => {
-  let req =
-    Utils.createRequest(
-      ~query=request##query,
-      ~variables=request##variables,
-      (),
-    );
-  let parse = request##parse;
-  let optsJs =
-    Types.partialOperationContext(
-      ~additionalTypenames?,
-      ~fetchOptions?,
-      ~fetch?,
-      ~requestPolicy=?requestPolicy->Belt.Option.map(Types.requestPolicyToJs),
-      ~url?,
-      ~pollInterval?,
-      ~meta?,
-      ~suspense?,
-      ~preferGetMethod?,
-      (),
-    );
+      ~request: (module Types.Operation with
+                   type t_variables = variables and
+                   type Raw.t_variables = variablesJs and
+                   type t = data),
+      ~variables: variables,
+      ~additionalTypenames: array(string)=?,
+      ~fetchOptions: Fetch.requestInit=?,
+      ~fetch: (string, Fetch.requestInit) => Js.Promise.t(Fetch.response)=?,
+      ~requestPolicy: Types.requestPolicy=?,
+      ~url: string=?,
+      ~pollInterval: int=?,
+      ~meta: Types.operationDebugMeta=?,
+      ~suspense: bool=?,
+      ~preferGetMethod: bool=?,
+      unit
+    ) =>
+    Wonka.Types.sourceT(clientResponse(data)) =
+  (
+    ~client: t,
+    ~request as (module Request),
+    ~variables,
+    ~additionalTypenames=?,
+    ~fetchOptions=?,
+    ~fetch=?,
+    ~requestPolicy=?,
+    ~url=?,
+    ~pollInterval=?,
+    ~meta=?,
+    ~suspense=?,
+    ~preferGetMethod=?,
+    (),
+  ) => {
+    let req =
+      Utils.createRequest(
+        ~query=Request.query,
+        ~variables=
+          variables->Request.serializeVariables->Request.variablesToJson,
+        (),
+      );
+    let parse = Request.parse;
+    let optsJs =
+      Types.partialOperationContext(
+        ~additionalTypenames?,
+        ~fetchOptions?,
+        ~fetch?,
+        ~requestPolicy=?
+          requestPolicy->Belt.Option.map(Types.requestPolicyToJs),
+        ~url?,
+        ~pollInterval?,
+        ~meta?,
+        ~suspense?,
+        ~preferGetMethod?,
+        (),
+      );
 
-  executeSubscriptionJs(~client, ~subscription=req, ~opts=optsJs, ())
-  |> Wonka.map((. response) => urqlClientResponseToReason(~response, ~parse));
-};
+    executeSubscriptionJs(~client, ~subscription=req, ~opts=optsJs, ())
+    |> Wonka.map((. response) => clientResponseToReason(~response, ~parse));
+  };
 
 let query =
     (
       ~client,
       ~request,
+      ~variables,
       ~additionalTypenames=?,
       ~fetchOptions=?,
       ~fetch=?,
@@ -389,6 +462,7 @@ let query =
   executeQuery(
     ~client,
     ~request,
+    ~variables,
     ~additionalTypenames?,
     ~fetchOptions?,
     ~fetch?,
@@ -408,6 +482,7 @@ let mutation =
     (
       ~client,
       ~request,
+      ~variables,
       ~additionalTypenames=?,
       ~fetchOptions=?,
       ~fetch=?,
@@ -422,6 +497,7 @@ let mutation =
   executeMutation(
     ~client,
     ~request,
+    ~variables,
     ~additionalTypenames?,
     ~fetchOptions?,
     ~fetch?,
@@ -443,6 +519,7 @@ let readQuery =
     (
       ~client,
       ~request,
+      ~variables,
       ~additionalTypenames=?,
       ~fetchOptions=?,
       ~fetch=?,
@@ -458,6 +535,7 @@ let readQuery =
   executeQuery(
     ~client,
     ~request,
+    ~variables,
     ~additionalTypenames?,
     ~fetchOptions?,
     ~fetch?,
