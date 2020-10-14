@@ -45,6 +45,7 @@
     "reason-react": "^0.7.0"
   },
   "peerDependencies": {
+    "@reasonml-community/graphql-ppx": "^1.0.1",
     "reason-react": "^0.7.0"
   },
   "jest": {

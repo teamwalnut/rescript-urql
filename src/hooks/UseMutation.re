@@ -1,6 +1,6 @@
 type executeMutationJs =
   (Js.Json.t, Types.partialOperationContext) =>
-  Js.Promise.t(Types.operationResult);
+  Js.Promise.t(Types.operationResult(Js.Json.t));
 
 type executeMutation =
   (
@@ -15,7 +15,7 @@ type executeMutation =
     ~preferGetMethod: bool=?,
     unit
   ) =>
-  Js.Promise.t(Types.operationResult);
+  Js.Promise.t(Types.operationResult(Js.Json.t));
 
 type useMutationResponseJs = (
   Types.hookResponseJs(Js.Json.t),
