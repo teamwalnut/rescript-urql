@@ -15,8 +15,6 @@ module GetAllDogs = [%graphql
 |}
 ];
 
-let queryRequest = GetAllDogs.make();
-
 module LikeDog = [%graphql
   {|
   mutation likeDog($key: ID!) {
@@ -29,26 +27,24 @@ module LikeDog = [%graphql
 |}
 ];
 
-let mutationRequest = LikeDog.make(~key="VmeRTX7j-", ());
-
 type state = {
-  query: string,
-  mutation: string,
+  query: option(Js.Json.t),
+  mutation: option(Js.Json.t),
   fetchingQuery: bool,
   fetchingMutation: bool,
 };
 
 type action =
-  | SetQuery(string)
+  | SetQuery(Js.Json.t)
   | ClearQuery
-  | SetMutation(string)
+  | SetMutation(Js.Json.t)
   | ClearMutation
   | SetQueryFetching(bool)
   | SetMutationFetching(bool);
 
 let initialState = {
-  query: "",
-  mutation: "",
+  query: None,
+  mutation: None,
   fetchingQuery: false,
   fetchingMutation: false,
 };
@@ -59,10 +55,10 @@ let make = () => {
     React.useReducer(
       (state, action) =>
         switch (action) {
-        | SetQuery(query) => {...state, query}
-        | ClearQuery => {...state, query: ""}
-        | SetMutation(mutation) => {...state, mutation}
-        | ClearMutation => {...state, mutation: ""}
+        | SetQuery(query) => {...state, query: Some(query)}
+        | ClearQuery => {...state, query: None}
+        | SetMutation(mutation) => {...state, mutation: Some(mutation)}
+        | ClearMutation => {...state, mutation: None}
         | SetQueryFetching(fetching) => {...state, fetchingQuery: fetching}
         | SetMutationFetching(fetching) => {
             ...state,
@@ -77,7 +73,8 @@ let make = () => {
 
     Client.executeQuery(
       ~client,
-      ~request=queryRequest,
+      ~request=(module GetAllDogs),
+      ~variables=GetAllDogs.makeVariables(),
       ~requestPolicy=`CacheAndNetwork,
       (),
     )
@@ -86,15 +83,9 @@ let make = () => {
 
          switch (Client.(data.response)) {
          | Data(d) =>
-           switch (Js.Json.stringifyAny(d)) {
-           | Some(s) => dispatch(SetQuery(s))
-           | None => ()
-           }
-         | Error(e) =>
-           switch (Js.Json.stringifyAny(e)) {
-           | Some(s) => dispatch(SetQuery(s))
-           | None => ()
-           }
+           dispatch(SetQuery(d->GetAllDogs.serialize->GetAllDogs.toJson))
+         | Error(_e) =>
+           dispatch(SetQuery(Js.Json.string("An error occured")))
          | _ => ()
          };
        });
@@ -103,114 +94,105 @@ let make = () => {
   let executeMutation = () => {
     dispatch(SetMutationFetching(true));
 
-    Client.executeMutation(~client, ~request=mutationRequest, ())
+    Client.executeMutation(
+      ~client,
+      ~request=(module LikeDog),
+      ~variables=LikeDog.makeVariables(~key="VmeRTX7j-", ()),
+      (),
+    )
     |> Wonka.subscribe((. data) => {
          dispatch(SetMutationFetching(false));
 
          switch (Client.(data.response)) {
          | Data(d) =>
-           switch (Js.Json.stringifyAny(d)) {
-           | Some(s) => dispatch(SetMutation(s))
-           | None => ()
-           }
-         | Error(e) =>
-           switch (Js.Json.stringifyAny(e)) {
-           | Some(s) => dispatch(SetMutation(s))
-           | None => ()
-           }
+           dispatch(SetMutation(d->LikeDog.serialize->LikeDog.toJson))
+         | Error(_e) =>
+           dispatch(SetMutation(Js.Json.string("An error occurred")))
          | _ => ()
          };
        });
   };
 
-  <div className=PreviewerStyles.previewer>
-    <div className=PreviewerStyles.side>
-      <section className=PreviewerStyles.section>
-        <span className=PreviewerStyles.title> "Query"->React.string </span>
-        <div className={PreviewerStyles.colors.query->PreviewerStyles.code}>
-          {|query dogs {
+  <div className="previewer">
+    <div className="quadrant">
+      <span className="quadrant__title"> "Query"->React.string </span>
+      <div className="quadrant__code quadrant__code--teal">
+        {|query dogs {
   dogs {
     name
     breed
     likes
   }
 }|}
-          ->React.string
-        </div>
-        <button
-          className={PreviewerStyles.colors.query->PreviewerStyles.button}
-          onClick={_event => executeQuery() |> ignore}>
-          "Execute Query"->React.string
-        </button>
-      </section>
-      {switch (String.length(state.query), state.fetchingQuery) {
-       | (0, false) => React.null
+        ->React.string
+      </div>
+      <button
+        className="quadrant__button quadrant__button--teal"
+        onClick={_event => executeQuery() |> ignore}>
+        "Execute Query"->React.string
+      </button>
+    </div>
+    <div className="quadrant">
+      {switch (state.query, state.fetchingQuery) {
+       | (None, false) => React.null
        | (_, true) =>
-         <section className=PreviewerStyles.section>
-           <span className=PreviewerStyles.title>
-             "Loading"->React.string
-           </span>
-         </section>
+         <span className="quadrant__title"> "Loading"->React.string </span>
        | _ =>
-         <section className=PreviewerStyles.section>
-           <span className=PreviewerStyles.title>
-             "Result"->React.string
-           </span>
-           <div className={PreviewerStyles.colors.query->PreviewerStyles.code}>
-             state.query->React.string
+         <>
+           <span className="quadrant__title"> "Result"->React.string </span>
+           <div className="quadrant__code quadrant__code--teal">
+             {state.query
+              ->Belt.Option.getWithDefault(Js.Json.string(""))
+              ->Js.Json.stringifyWithSpace(2)
+              ->React.string}
            </div>
            <button
-             className={PreviewerStyles.colors.query->PreviewerStyles.button}
+             className="quadrant__button quadrant__button--teal"
              onClick={_event => dispatch(ClearQuery)}>
              "Clear Query"->React.string
            </button>
-         </section>
+         </>
        }}
     </div>
-    <div className=PreviewerStyles.side>
-      <section className=PreviewerStyles.section>
-        <span className=PreviewerStyles.title> "Mutation"->React.string </span>
-        <div className={PreviewerStyles.colors.mutation->PreviewerStyles.code}>
-          {|mutation likeDog($key: ID!) {
+    <div className="quadrant">
+      <span className="quadrant__title"> "Mutation"->React.string </span>
+      <div className="quadrant__code quadrant__code--orange">
+        {|mutation likeDog($key: ID!) {
   likeDog(key: $key) {
     name
     breed
     likes
   }
 }|}
-          ->React.string
-        </div>
-        <button
-          className={PreviewerStyles.colors.mutation->PreviewerStyles.button}
-          onClick={_event => executeMutation() |> ignore}>
-          "Execute Mutation"->React.string
-        </button>
-      </section>
-      {switch (String.length(state.mutation), state.fetchingMutation) {
-       | (0, false) => React.null
+        ->React.string
+      </div>
+      <button
+        className="quadrant__button quadrant__button--orange"
+        onClick={_event => executeMutation() |> ignore}>
+        "Execute Mutation"->React.string
+      </button>
+    </div>
+    <div className="quadrant">
+      {switch (state.mutation, state.fetchingMutation) {
+       | (None, false) => React.null
        | (_, true) =>
-         <section className=PreviewerStyles.section>
-           <span className=PreviewerStyles.title>
-             "Loading"->React.string
-           </span>
-         </section>
+         <span className="quadrant__title"> "Loading"->React.string </span>
+
        | _ =>
-         <section className=PreviewerStyles.section>
-           <span className=PreviewerStyles.title>
-             "Result"->React.string
-           </span>
-           <div
-             className={PreviewerStyles.colors.mutation->PreviewerStyles.code}>
-             state.mutation->React.string
+         <>
+           <span className="quadrant__title"> "Result"->React.string </span>
+           <div className="quadrant__code quadrant__code--orange">
+             {state.mutation
+              ->Belt.Option.getWithDefault(Js.Json.string(""))
+              ->Js.Json.stringifyWithSpace(2)
+              ->React.string}
            </div>
            <button
-             className={
-               PreviewerStyles.colors.mutation->PreviewerStyles.button
-             }
+             className="quadrant__button quadrant__button--orange"
              onClick={_event => dispatch(ClearMutation)}>
              "Clear Mutation"->React.string
            </button>
-         </section>
+         </>
        }}
     </div>
   </div>;

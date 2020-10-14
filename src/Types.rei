@@ -68,9 +68,9 @@ type operation = {
 };
 
 /* The result of the GraphQL operation. */
-type operationResult = {
+type operationResult('data) = {
   operation,
-  data: Js.Nullable.t(Js.Json.t),
+  data: Js.Nullable.t('data),
   error: option(CombinedError.combinedErrorJs),
   extensions: option(Js.Dict.t(string)),
   stale: option(bool),
@@ -90,6 +90,21 @@ type request('response) = {
   "parse": Js.Json.t => 'response,
   "query": string,
   "variables": Js.Json.t,
+};
+
+/* The signature of a graphql-ppx module. */
+module type Operation = {
+  module Raw: {
+    type t;
+    type t_variables;
+  };
+  type t;
+  type t_variables;
+
+  let query: string;
+  let parse: Raw.t => t;
+  let serializeVariables: t_variables => Raw.t_variables;
+  let variablesToJson: Raw.t_variables => Js.Json.t;
 };
 
 /* The response variant wraps the parsed result of executing a GraphQL operation. */

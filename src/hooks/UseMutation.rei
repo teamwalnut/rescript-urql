@@ -11,7 +11,7 @@ type executeMutation =
     ~preferGetMethod: bool=?,
     unit
   ) =>
-  Js.Promise.t(Types.operationResult);
+  Js.Promise.t(Types.operationResult(Js.Json.t));
 
 type useMutationResponse('response) = (
   Types.hookResponse('response),
@@ -24,7 +24,7 @@ let useMutation:
 let useDynamicMutation:
   Types.graphqlDefinition(
     'parse,
-    Js.Promise.t(Types.operationResult),
+    Js.Promise.t(Types.operationResult(Js.Json.t)),
     'executeMutation,
   ) =>
   (

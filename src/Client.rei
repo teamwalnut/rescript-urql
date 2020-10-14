@@ -32,7 +32,7 @@ module Exchanges: {
 
   type exchangeIO =
     Wonka.Types.sourceT(Types.operation) =>
-    Wonka.Types.sourceT(Types.operationResult);
+    Wonka.Types.sourceT(Types.operationResult(Js.Json.t));
 
   type exchangeInput = {
     forward: exchangeIO,
@@ -42,7 +42,7 @@ module Exchanges: {
   type t =
     exchangeInput =>
     (. Wonka.Types.sourceT(Types.operation)) =>
-    Wonka.Types.sourceT(Types.operationResult);
+    Wonka.Types.sourceT(Types.operationResult(Js.Json.t));
 
   [@bs.module "urql"] external cacheExchange: t = "cacheExchange";
   [@bs.module "urql"] external debugExchange: t = "debugExchange";
@@ -138,14 +138,18 @@ type clientResponse('response) = {
   stale: option(bool),
 };
 
-let urqlClientResponseToReason:
-  (~response: Types.operationResult, ~parse: Js.Json.t => 'response) =>
+let clientResponseToReason:
+  (~response: Types.operationResult('data), ~parse: 'data => 'response) =>
   clientResponse('response);
 
 let executeQuery:
   (
     ~client: t,
-    ~request: Types.request('response),
+    ~request: (module Types.Operation with
+                 type t = 'data and
+                 type t_variables = 'variables and
+                 type Raw.t_variables = 'variablesJs),
+    ~variables: 'variables,
     ~additionalTypenames: array(string)=?,
     ~fetchOptions: Fetch.requestInit=?,
     ~fetch: (string, Fetch.requestInit) => Js.Promise.t(Fetch.response)=?,
@@ -157,12 +161,16 @@ let executeQuery:
     ~preferGetMethod: bool=?,
     unit
   ) =>
-  Wonka.Types.sourceT(clientResponse('response));
+  Wonka.Types.sourceT(clientResponse('data));
 
 let executeMutation:
   (
     ~client: t,
-    ~request: Types.request('response),
+    ~request: (module Types.Operation with
+                 type t = 'data and
+                 type t_variables = 'variables and
+                 type Raw.t_variables = 'variablesJs),
+    ~variables: 'variables,
     ~additionalTypenames: array(string)=?,
     ~fetchOptions: Fetch.requestInit=?,
     ~fetch: (string, Fetch.requestInit) => Js.Promise.t(Fetch.response)=?,
@@ -174,12 +182,16 @@ let executeMutation:
     ~preferGetMethod: bool=?,
     unit
   ) =>
-  Wonka.Types.sourceT(clientResponse('response));
+  Wonka.Types.sourceT(clientResponse('data));
 
 let executeSubscription:
   (
     ~client: t,
-    ~request: Types.request('response),
+    ~request: (module Types.Operation with
+                 type t = 'data and
+                 type t_variables = 'variables and
+                 type Raw.t_variables = 'variablesJs),
+    ~variables: 'variables,
     ~additionalTypenames: array(string)=?,
     ~fetchOptions: Fetch.requestInit=?,
     ~fetch: (string, Fetch.requestInit) => Js.Promise.t(Fetch.response)=?,
@@ -191,12 +203,16 @@ let executeSubscription:
     ~preferGetMethod: bool=?,
     unit
   ) =>
-  Wonka.Types.sourceT(clientResponse('response));
+  Wonka.Types.sourceT(clientResponse('data));
 
 let query:
   (
     ~client: t,
-    ~request: Types.request('response),
+    ~request: (module Types.Operation with
+                 type t = 'data and
+                 type t_variables = 'variables and
+                 type Raw.t_variables = 'variablesJs),
+    ~variables: 'variables,
     ~additionalTypenames: array(string)=?,
     ~fetchOptions: Fetch.requestInit=?,
     ~fetch: (string, Fetch.requestInit) => Js.Promise.t(Fetch.response)=?,
@@ -208,12 +224,16 @@ let query:
     ~preferGetMethod: bool=?,
     unit
   ) =>
-  Js.Promise.t(clientResponse('response));
+  Js.Promise.t(clientResponse('data));
 
 let mutation:
   (
     ~client: t,
-    ~request: Types.request('response),
+    ~request: (module Types.Operation with
+                 type t = 'data and
+                 type t_variables = 'variables and
+                 type Raw.t_variables = 'variablesJs),
+    ~variables: 'variables,
     ~additionalTypenames: array(string)=?,
     ~fetchOptions: Fetch.requestInit=?,
     ~fetch: (string, Fetch.requestInit) => Js.Promise.t(Fetch.response)=?,
@@ -225,12 +245,16 @@ let mutation:
     ~preferGetMethod: bool=?,
     unit
   ) =>
-  Js.Promise.t(clientResponse('response));
+  Js.Promise.t(clientResponse('data));
 
 let subscription:
   (
     ~client: t,
-    ~request: Types.request('response),
+    ~request: (module Types.Operation with
+                 type t = 'data and
+                 type t_variables = 'variables and
+                 type Raw.t_variables = 'variablesJs),
+    ~variables: 'variables,
     ~additionalTypenames: array(string)=?,
     ~fetchOptions: Fetch.requestInit=?,
     ~fetch: (string, Fetch.requestInit) => Js.Promise.t(Fetch.response)=?,
@@ -242,12 +266,16 @@ let subscription:
     ~preferGetMethod: bool=?,
     unit
   ) =>
-  Wonka.Types.sourceT(clientResponse('response));
+  Wonka.Types.sourceT(clientResponse('data));
 
 let readQuery:
   (
     ~client: t,
-    ~request: Types.request('response),
+    ~request: (module Types.Operation with
+                 type t = 'data and
+                 type t_variables = 'variables and
+                 type Raw.t_variables = 'variablesJs),
+    ~variables: 'variables,
     ~additionalTypenames: array(string)=?,
     ~fetchOptions: Fetch.requestInit=?,
     ~fetch: (string, Fetch.requestInit) => Js.Promise.t(Fetch.response)=?,
@@ -259,4 +287,4 @@ let readQuery:
     ~preferGetMethod: bool=?,
     unit
   ) =>
-  option(clientResponse('response));
+  option(clientResponse('data));
