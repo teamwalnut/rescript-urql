@@ -9,7 +9,10 @@ type useQueryArgsJs = {
 
 type executeQueryJs = Types.partialOperationContext => unit;
 
-type useQueryResponseJs = (Types.hookResponseJs(Js.Json.t), executeQueryJs);
+type useQueryResponseJs('jsData) = (
+  Types.hookResponseJs('jsData),
+  executeQueryJs,
+);
 
 type executeQuery =
   (
@@ -26,13 +29,11 @@ type executeQuery =
   ) =>
   unit;
 
-type useQueryResponse('response) = (
-  Types.hookResponse('response),
-  executeQuery,
-);
+type useQueryResponse('data) = (Types.hookResponse('data), executeQuery);
 
 [@bs.module "urql"]
-external useQueryJs: useQueryArgsJs => useQueryResponseJs = "useQuery";
+external useQueryJs: useQueryArgsJs => useQueryResponseJs('jsData) =
+  "useQuery";
 
 // reason-react does not provide a binding of sufficient arity for our memoization needs
 [@bs.module "react"]
@@ -40,107 +41,132 @@ external useMemo9:
   ([@bs.uncurry] (unit => 'any), ('a, 'b, 'c, 'd, 'e, 'f, 'g, 'h, 'i)) => 'any =
   "useMemo";
 
-let useQuery =
+let useQuery:
+  type variables variablesJs data.
     (
-      ~request,
-      ~pause=?,
-      ~additionalTypenames=?,
-      ~fetchOptions=?,
-      ~fetch=?,
-      ~requestPolicy=?,
-      ~url=?,
-      ~pollInterval=?,
-      ~meta=?,
-      ~suspense=?,
-      ~preferGetMethod=?,
-      (),
-    ) => {
-  let query = request##query;
-  let variables = request##variables;
-  let parse = request##parse;
-  let rp =
-    React.useMemo1(
-      () => requestPolicy->Belt.Option.map(Types.requestPolicyToJs),
-      [|requestPolicy|],
-    );
+      ~query: (module Types.Operation with
+                 type t_variables = variables and
+                 type Raw.t_variables = variablesJs and
+                 type t = data),
+      ~pause: bool=?,
+      ~additionalTypenames: array(string)=?,
+      ~fetchOptions: Fetch.requestInit=?,
+      ~fetch: (string, Fetch.requestInit) => Js.Promise.t(Fetch.response)=?,
+      ~requestPolicy: Types.requestPolicy=?,
+      ~url: string=?,
+      ~pollInterval: int=?,
+      ~meta: Types.operationDebugMeta=?,
+      ~suspense: bool=?,
+      ~preferGetMethod: bool=?,
+      variables
+    ) =>
+    useQueryResponse(data) =
+  (
+    ~query as (module Query),
+    ~pause=?,
+    ~additionalTypenames=?,
+    ~fetchOptions=?,
+    ~fetch=?,
+    ~requestPolicy=?,
+    ~url=?,
+    ~pollInterval=?,
+    ~meta=?,
+    ~suspense=?,
+    ~preferGetMethod=?,
+    variables,
+  ) => {
+    let query = Query.query;
+    let parse = Query.parse;
+    let rp =
+      React.useMemo1(
+        () => requestPolicy->Belt.Option.map(Types.requestPolicyToJs),
+        [|requestPolicy|],
+      );
 
-  let context =
-    useMemo9(
-      () =>
-        Types.partialOperationContext(
-          ~additionalTypenames?,
-          ~fetchOptions?,
-          ~fetch?,
-          ~url?,
-          ~requestPolicy=?rp,
-          ~pollInterval?,
-          ~meta?,
-          ~suspense?,
-          ~preferGetMethod?,
-          (),
-        ),
-      (
-        additionalTypenames,
-        fetchOptions,
-        fetch,
-        url,
-        rp,
-        pollInterval,
-        meta,
-        suspense,
-        preferGetMethod,
-      ),
-    );
-
-  let args =
-    React.useMemo6(
-      () =>
-        {query, variables, requestPolicy: rp, pollInterval, pause, context},
-      (query, variables, rp, pollInterval, pause, context),
-    );
-
-  let (stateJs, executeQueryJs) = useQueryJs(args);
-
-  let state =
-    React.useMemo2(
-      () => Types.urqlResponseToReason(~response=stateJs, ~parse),
-      (stateJs, parse),
-    );
-
-  let executeQuery =
-    React.useMemo1(
-      (
-        (),
-        ~additionalTypenames=?,
-        ~fetchOptions=?,
-        ~fetch=?,
-        ~requestPolicy=?,
-        ~url=?,
-        ~pollInterval=?,
-        ~meta=?,
-        ~suspense=?,
-        ~preferGetMethod=?,
-        (),
-      ) => {
-        let ctx =
+    let context =
+      useMemo9(
+        () =>
           Types.partialOperationContext(
             ~additionalTypenames?,
             ~fetchOptions?,
             ~fetch?,
             ~url?,
-            ~requestPolicy=?
-              requestPolicy->Belt.Option.map(Types.requestPolicyToJs),
+            ~requestPolicy=?rp,
             ~pollInterval?,
             ~meta?,
             ~suspense?,
             ~preferGetMethod?,
             (),
-          );
+          ),
+        (
+          additionalTypenames,
+          fetchOptions,
+          fetch,
+          url,
+          rp,
+          pollInterval,
+          meta,
+          suspense,
+          preferGetMethod,
+        ),
+      );
 
-        executeQueryJs(ctx);
-      },
-      [|executeQueryJs|],
-    );
+    let args =
+      React.useMemo6(
+        () =>
+          {
+            query,
+            variables: Query.(variables->serializeVariables->variablesToJson),
+            requestPolicy: rp,
+            pollInterval,
+            pause,
+            context,
+          },
+        (query, variables, rp, pollInterval, pause, context),
+      );
 
-  (state, executeQuery);
-};
+    let (stateJs, executeQueryJs) = useQueryJs(args);
+
+    let state =
+      React.useMemo2(
+        () => Types.urqlResponseToReason(~response=stateJs, ~parse),
+        (stateJs, parse),
+      );
+
+    let executeQuery =
+      React.useMemo1(
+        (
+          (),
+          ~additionalTypenames=?,
+          ~fetchOptions=?,
+          ~fetch=?,
+          ~requestPolicy=?,
+          ~url=?,
+          ~pollInterval=?,
+          ~meta=?,
+          ~suspense=?,
+          ~preferGetMethod=?,
+          (),
+        ) => {
+          let ctx =
+            Types.partialOperationContext(
+              ~additionalTypenames?,
+              ~fetchOptions?,
+              ~fetch?,
+              ~url?,
+              ~requestPolicy=?
+                requestPolicy->Belt.Option.map(Types.requestPolicyToJs),
+              ~pollInterval?,
+              ~meta?,
+              ~suspense?,
+              ~preferGetMethod?,
+              (),
+            );
+
+          executeQueryJs(ctx);
+        },
+        [|executeQueryJs|],
+      );
+
+    (state, executeQuery);
+  };

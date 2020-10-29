@@ -108,35 +108,35 @@ module type Operation = {
 };
 
 /* The response variant wraps the parsed result of executing a GraphQL operation. */
-type response('response) =
+type response('data) =
   | Fetching
-  | Data('response)
-  | PartialData('response, array(GraphQLError.t))
+  | Data('data)
+  | PartialData('data, array(GraphQLError.t))
   | Error(CombinedError.t)
   | Empty;
 
-type hookResponse('response) = {
+type hookResponse('data) = {
   operation,
   fetching: bool,
-  data: option('response),
+  data: option('data),
   error: option(CombinedError.t),
-  response: response('response),
+  response: response('data),
   extensions: option(Js.Json.t),
   stale: bool,
 };
 
-type hookResponseJs('response) = {
+type hookResponseJs('jsData) = {
   operation,
   fetching: bool,
-  data: Js.Nullable.t('response),
+  data: Js.Nullable.t('jsData),
   error: option(CombinedError.combinedErrorJs),
   extensions: option(Js.Json.t),
   stale: bool,
 };
 
 let urqlResponseToReason:
-  (~response: hookResponseJs(Js.Json.t), ~parse: Js.Json.t => 'response) =>
-  hookResponse('response);
+  (~response: hookResponseJs('jsData), ~parse: 'jsData => 'data) =>
+  hookResponse('data);
 
 type graphqlDefinition('parseResult, 'composeReturnType, 'hookReturnType) = (
   // `parse`
