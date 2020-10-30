@@ -2,7 +2,7 @@
   "name": "5-subscription",
   "version": "0.1.0",
   "description": "An example of how to use the Subscription component in reason-urql.",
-  "main": "index.bs.js",
+  "main": "src/app/index.bs.js",
   "author": "Parker Ziegler <parker.ziegler@formidable.com>",
   "license": "MIT",
   "scripts": {
@@ -14,9 +14,11 @@
     "start:demo": "run-p server webpack"
   },
   "dependencies": {
-    "bs-css-emotion": "^1.2.0",
+    "@reasonml-community/graphql-ppx": "^1.0.1",
+    "graphql": "^15.3.0",
     "reason-react": "^0.7.0",
-    "reason-urql": "link:../../"
+    "reason-urql": "link:../../",
+    "urql": "~1.10.3"
   },
   "devDependencies": {
     "@baransu/graphql_ppx_re": "^0.7.1",

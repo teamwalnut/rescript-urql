@@ -20,8 +20,6 @@
     "reason-urql",
     "wonka",
     "reason-react",
-    "bs-css-emotion",
-    "bs-css",
     "@reasonml-community/graphql-ppx"
   ],
   "refmt": 3,

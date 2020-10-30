@@ -13,8 +13,6 @@ module GetAllDogs = [%graphql
 |}
 ];
 
-let queryRequest = GetAllDogs.make();
-
 module LikeDog = [%graphql
   {|
   mutation likeDog($key: ID!) {
@@ -33,20 +31,25 @@ let make = (~client) => {
       let mutSub = ref(Wonka_types.{unsubscribe: () => ()});
 
       let subscription =
-        Client.executeQuery(~client, ~request=queryRequest, ())
+        Client.executeQuery(
+          ~client,
+          ~request=(module GetAllDogs),
+          ~variables=GetAllDogs.makeVariables(),
+          (),
+        )
         |> Wonka.subscribe((. data) =>
              switch (Client.(data.response)) {
              | Data(d) =>
                Js_global.setInterval(
                  () => {
-                   d##dogs->Belt.Array.shuffleInPlace;
-                   let mutationRequest =
-                     LikeDog.make(~key=d##dogs[0]##key, ());
+                   GetAllDogs.(d.dogs)->Belt.Array.shuffleInPlace;
 
                    let mutationSubscription =
                      Client.executeMutation(
                        ~client,
-                       ~request=mutationRequest,
+                       ~request=(module LikeDog),
+                       ~variables=
+                         LikeDog.makeVariables(~key=d.dogs[0].key, ()),
                        (),
                      )
                      |> Wonka.subscribe((. response) => Js.log(response));
@@ -71,10 +74,10 @@ let make = (~client) => {
     [|client|],
   );
 
-  <div className=ConsoleStyles.console>
-    <h1 className=ConsoleStyles.title>
+  <div className="console">
+    <h1 className="console__title">
       "Open your console to see the "->React.string
-      <code className=ConsoleStyles.code> "debugExchange"->React.string </code>
+      <code className="console__code"> "debugExchange"->React.string </code>
       " printing operations."->React.string
     </h1>
   </div>;

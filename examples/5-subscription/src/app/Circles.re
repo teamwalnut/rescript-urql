@@ -15,20 +15,6 @@ let handler = (prevSubscriptions, subscription) => {
   };
 };
 
-[@bs.scope "Math"] [@bs.val] external random: unit => float = "random";
-[@bs.scope "Math"] [@bs.val] external floor: float => int = "floor";
-[@bs.send] external toString: (int, int) => string = "toString";
-
-let getRandomInt = (max: int) => {
-  floor(random() *. float_of_int(max));
-};
-
-let getRandomHex = () => {
-  let encode = random() *. float_of_int(16777215) |> floor;
-  let hex = encode->toString(16);
-  {j|#$hex|j};
-};
-
 [@react.component]
 let make = () => {
   let (Hooks.{response}, _) =
@@ -51,9 +37,9 @@ let make = () => {
            key={string_of_int(index)}
            cx
            cy
-           stroke={getRandomHex()}
+           stroke={Util.getRandomHex()}
            fill="none"
-           r={getRandomInt(30) |> string_of_int}
+           r={Util.getRandomInt(30) |> string_of_int}
          />;
        })
     |> Array.of_list
