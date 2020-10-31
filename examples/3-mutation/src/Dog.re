@@ -66,10 +66,10 @@ let make =
   let (bellyscratchState, executeBellyscratchMutation) =
     Hooks.useDynamicMutation(BellyscratchDog.definition);
 
-  <div className=DogStyles.container>
-    <img src=imageUrl alt=name className=DogStyles.image />
-    <h3 className=DogStyles.title> {j|$name|j}->React.string </h3>
-    <div className=DogStyles.buttons>
+  <div className="dog">
+    <img src=imageUrl alt=name className="dog__image" />
+    <h3 className="dog__title"> {j|$name|j}->React.string </h3>
+    <div className="dog__buttons">
       {likeState.fetching
        || treatState.fetching
        || patState.fetching
@@ -79,31 +79,31 @@ let make =
              <EmojiButton
                emoji={j|👍|j}
                count={string_of_int(likes)}
-               hex="48a9dc"
+               className="emoji-button--like"
                onClick={_ => executeLikeMutation() |> ignore}
              />
              <EmojiButton
                emoji={j|✋|j}
                count={string_of_int(pats)}
-               hex="db4d3f"
+               className="emoji-button--pat"
                onClick={_ => executePatMutation(~key=id, ()) |> ignore}
              />
              <EmojiButton
                emoji={j|🍖|j}
                count={string_of_int(treats)}
-               hex="7b16ff"
+               className="emoji-button--treat"
                onClick={_ => executeTreatMutation() |> ignore}
              />
              <EmojiButton
                emoji={j|🐾|j}
                count={string_of_int(bellyscratches)}
-               hex="1bda2a"
+               className="emoji-button--bellyscratch"
                onClick={_ =>
                  executeBellyscratchMutation(~key=id, ()) |> ignore
                }
              />
            </>}
     </div>
-    <div> description->React.string </div>
+    <p className="dog__description"> description->React.string </p>
   </div>;
 };

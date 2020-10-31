@@ -1,9 +1,9 @@
 {
   "name": "2-query",
   "version": "0.1.0",
-  "description": "An example of how to use queries in reason-urql.",
-  "main": "index.bs.js",
-  "author": "Kara Stubbs <kara.stubbs@formidable.com>",
+  "description": "An example of how to use the useQuery hook in reason-urql.",
+  "main": "src/index.bs.js",
+  "author": "Kara Stubbs <kara.stubbs@formidable.com>, Parker Ziegler <parker.ziegler@formidable.com>",
   "license": "MIT",
   "scripts": {
     "build": "bsb -make-world",
@@ -12,9 +12,12 @@
     "start:demo": "webpack-dev-server"
   },
   "dependencies": {
-    "bs-css-emotion": "^1.2.0",
+    "@reasonml-community/graphql-ppx": "^1.0.1",
+    "graphql": "^15.4.0",
+    "react": "^16.8.0",
     "reason-react": "^0.7.0",
-    "reason-urql": "link:../../"
+    "reason-urql": "link:../../",
+    "urql": "~1.10.0"
   },
   "devDependencies": {
     "@baransu/graphql_ppx_re": "^0.7.1",
