@@ -31,13 +31,13 @@ let make = () => {
   | Fetching => <div> "Loading"->React.string </div>
   | Data(data) =>
     switch (data##pokemons) {
-    | Some(pokemons) => <PokemonList pokemons={pokemons->flattenPokemon} />
+    | Some(pokemon) => <PokemonList pokemon={pokemon->flattenPokemon} />
     | None => <div> "No Data"->React.string </div>
     }
   | PartialData(data, e) =>
     <div>
       {switch (data##pokemons) {
-       | Some(pokemons) => <PokemonList pokemons={pokemons->flattenPokemon} />
+       | Some(pokemon) => <PokemonList pokemon={pokemon->flattenPokemon} />
        | None => <div> "No Data"->React.string </div>
        }}
       <p>

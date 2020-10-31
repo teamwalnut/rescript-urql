@@ -3,10 +3,10 @@ let make =
     (
       ~emoji: string,
       ~count: string,
-      ~hex: string,
+      ~className: string,
       ~onClick: ReactEvent.Mouse.t => unit,
     ) =>
-  <button className={hex |> EmojiButtonStyles.emojiButton} onClick>
-    <span className=EmojiButtonStyles.text> count->React.string </span>
-    <span className=EmojiButtonStyles.text> emoji->React.string </span>
+  <button className={j|emoji-button $className|j} onClick>
+    <span className="emoji-button__text"> count->React.string </span>
+    <span className="emoji-button__text"> emoji->React.string </span>
   </button>;
