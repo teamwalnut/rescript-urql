@@ -33,35 +33,37 @@ let make = (~pokemon) => {
       {search: "", selectedPokemon: Some("Bulbasaur")},
     );
 
-  <div className="sidebar-container">
-    <section className="sidebar">
-      <input
-        className="sidebar__search"
-        value={state.search}
-        onChange={event =>
-          dispatch(ChangeInput(event->ReactEvent.Form.target##value))
-        }
-        placeholder="Search for a Pokemon..."
-      />
-      <ul className="sidebar__list">
-        {pokemon
-         |> filterPokemon(state.search)
-         |> List.map(pokemon =>
-              <li key=pokemon className="sidebar__list-item">
-                <button
-                  className="sidebar__button"
-                  onClick={_event => dispatch(SelectPokemon(pokemon))}>
-                  pokemon->React.string
-                </button>
-              </li>
-            )
-         |> Array.of_list
-         |> React.array}
-      </ul>
-    </section>
+  <>
+    <div className="sidebar-container">
+      <section className="sidebar">
+        <input
+          className="sidebar__search"
+          value={state.search}
+          onChange={event =>
+            dispatch(ChangeInput(event->ReactEvent.Form.target##value))
+          }
+          placeholder="Search for a Pokemon..."
+        />
+        <ul className="sidebar__list">
+          {pokemon
+           |> filterPokemon(state.search)
+           |> List.map(pokemon =>
+                <li key=pokemon className="sidebar__list-item">
+                  <button
+                    className="sidebar__button"
+                    onClick={_event => dispatch(SelectPokemon(pokemon))}>
+                    pokemon->React.string
+                  </button>
+                </li>
+              )
+           |> Array.of_list
+           |> React.array}
+        </ul>
+      </section>
+    </div>
     {switch (state.selectedPokemon) {
      | Some(pokemon) => <Pokemon pokemon />
      | None => React.null
      }}
-  </div>;
+  </>;
 };
