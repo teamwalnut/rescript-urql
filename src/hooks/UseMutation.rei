@@ -11,7 +11,7 @@ type executeMutation('variables, 'data) =
     ~preferGetMethod: bool=?,
     'variables
   ) =>
-  Js.Promise.t(Client.clientResponse('data));
+  Js.Promise.t(Types.operationResult('data));
 
 type useMutationResponse('variables, 'data) = (
   Types.hookResponse('data),

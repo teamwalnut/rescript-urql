@@ -76,6 +76,23 @@ type operationResultJs('jsData) = {
   stale: option(bool),
 };
 
+/* The result of the GraphQL operation. */
+type operationResult('data) = {
+  data: option('data),
+  error: option(CombinedError.t),
+  extensions: option(Js.Dict.t(string)),
+  response: operationResponse('data),
+  stale: option(bool),
+}
+and operationResponse('data) =
+  | Data('data)
+  | Error(CombinedError.t)
+  | Empty;
+
+let operationResultToReason:
+  (~response: operationResultJs('jsData), ~parse: 'jsData => 'data) =>
+  operationResult('data);
+
 /* The GraphQL request object.
    Consists of a query, a unique key for the event, and, optionally, variables. */
 type graphqlRequest = {

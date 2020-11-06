@@ -125,23 +125,6 @@ let make:
   ) =>
   t;
 
-type response('response) =
-  | Data('response)
-  | Error(CombinedError.t)
-  | Empty;
-
-type clientResponse('response) = {
-  data: option('response),
-  error: option(CombinedError.t),
-  extensions: option(Js.Dict.t(string)),
-  response: response('response),
-  stale: option(bool),
-};
-
-let clientResponseToReason:
-  (~response: Types.operationResultJs('data), ~parse: 'data => 'response) =>
-  clientResponse('response);
-
 let executeQuery:
   (
     ~client: t,
@@ -161,7 +144,7 @@ let executeQuery:
     ~preferGetMethod: bool=?,
     unit
   ) =>
-  Wonka.Types.sourceT(clientResponse('data));
+  Wonka.Types.sourceT(Types.operationResult('data));
 
 let executeMutation:
   (
@@ -182,7 +165,7 @@ let executeMutation:
     ~preferGetMethod: bool=?,
     unit
   ) =>
-  Wonka.Types.sourceT(clientResponse('data));
+  Wonka.Types.sourceT(Types.operationResult('data));
 
 let executeSubscription:
   (
@@ -203,7 +186,7 @@ let executeSubscription:
     ~preferGetMethod: bool=?,
     unit
   ) =>
-  Wonka.Types.sourceT(clientResponse('data));
+  Wonka.Types.sourceT(Types.operationResult('data));
 
 let query:
   (
@@ -224,7 +207,7 @@ let query:
     ~preferGetMethod: bool=?,
     unit
   ) =>
-  Js.Promise.t(clientResponse('data));
+  Js.Promise.t(Types.operationResult('data));
 
 let mutation:
   (
@@ -245,7 +228,7 @@ let mutation:
     ~preferGetMethod: bool=?,
     unit
   ) =>
-  Js.Promise.t(clientResponse('data));
+  Js.Promise.t(Types.operationResult('data));
 
 let subscription:
   (
@@ -266,7 +249,7 @@ let subscription:
     ~preferGetMethod: bool=?,
     unit
   ) =>
-  Wonka.Types.sourceT(clientResponse('data));
+  Wonka.Types.sourceT(Types.operationResult('data));
 
 let readQuery:
   (
@@ -287,4 +270,4 @@ let readQuery:
     ~preferGetMethod: bool=?,
     unit
   ) =>
-  option(clientResponse('data));
+  option(Types.operationResult('data));

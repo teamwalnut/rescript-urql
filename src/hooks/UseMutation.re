@@ -15,7 +15,7 @@ type executeMutation('variables, 'data) =
     ~preferGetMethod: bool=?,
     'variables
   ) =>
-  Js.Promise.t(Client.clientResponse('data));
+  Js.Promise.t(Types.operationResult('data));
 
 type useMutationResponseJs('jsData) = (
   Types.hookResponseJs('jsData),
@@ -90,7 +90,7 @@ let useMutation:
           ->Js.Promise.(
               then_(
                 response =>
-                  Client.clientResponseToReason(~response, ~parse)->resolve,
+                  Types.operationResultToReason(~response, ~parse)->resolve,
                 _,
               )
             );
