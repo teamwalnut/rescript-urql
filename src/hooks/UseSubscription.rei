@@ -18,15 +18,16 @@ type executeSubscription =
   ) =>
   unit;
 
-type useSubscriptionResponse('response) = (
-  Types.hookResponse('response),
+type useSubscriptionResponse('data) = (
+  Types.hookResponse('data),
   executeSubscription,
 );
 
 let useSubscription:
   (
-    ~request: Types.request('response),
-    ~handler: handler('acc, 'response, 'ret),
+    ~query: (module Types.Operation with
+               type t = 'data and type t_variables = 'variables),
+    ~handler: handler('acc, 'data, 'ret),
     ~pause: bool=?,
     ~additionalTypenames: array(string)=?,
     ~fetchOptions: Fetch.requestInit=?,
@@ -37,6 +38,6 @@ let useSubscription:
     ~meta: Types.operationDebugMeta=?,
     ~suspense: bool=?,
     ~preferGetMethod: bool=?,
-    unit
+    'variables
   ) =>
   useSubscriptionResponse('ret);

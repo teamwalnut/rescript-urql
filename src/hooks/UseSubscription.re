@@ -1,8 +1,8 @@
 /**
- * The handler type used to type the optional accumulator function
- * returned by useSubscription. handler is a GADT used to support
- * proper type inference for useSubscription.
- */;
+* The handler type used to type the optional accumulator function
+* returned by useSubscription. handler is a GADT used to support
+* proper type inference for useSubscription.
+*/;
 type handler('acc, 'response, 'ret) =
   | Handler((option('acc), 'response) => 'acc)
     : handler('acc, 'response, 'acc)
@@ -19,7 +19,7 @@ type executeSubscriptionJs = Types.partialOperationContext => unit;
 
 [@bs.module "urql"]
 external useSubscriptionJs:
-  (useSubscriptionArgs, option((option('acc), Js.Json.t) => 'acc)) =>
+  (useSubscriptionArgs, option((option('acc), 'jsData) => 'acc)) =>
   (Types.hookResponseJs('ret), executeSubscriptionJs) =
   "useSubscription";
 
@@ -71,10 +71,13 @@ external useMemo9:
 let useSubscription =
     (
       type acc,
-      type response,
       type ret,
-      ~request: Types.request(response),
-      ~handler: handler(acc, response, ret),
+      type variables,
+      type data,
+      ~query as
+        module Query:
+          Types.Operation with type t = data and type t_variables = variables,
+      ~handler: handler(acc, data, ret),
       ~pause=?,
       ~additionalTypenames=?,
       ~fetchOptions=?,
@@ -85,11 +88,10 @@ let useSubscription =
       ~meta=?,
       ~suspense=?,
       ~preferGetMethod=?,
-      (),
+      variables,
     ) => {
-  let query = request##query;
-  let variables = request##variables;
-  let parse = request##parse;
+  let query = Query.query;
+  let parse = Query.parse;
   let rp =
     React.useMemo1(
       () => requestPolicy->Belt.Option.map(Types.requestPolicyToJs),
@@ -126,7 +128,13 @@ let useSubscription =
 
   let args =
     React.useMemo4(
-      () => {query, variables, pause, context},
+      () =>
+        {
+          query,
+          variables: Query.(variables->serializeVariables->variablesToJson),
+          pause,
+          context,
+        },
       (query, variables, pause, context),
     );
 
