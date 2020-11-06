@@ -32,7 +32,7 @@ module Exchanges: {
 
   type exchangeIO =
     Wonka.Types.sourceT(Types.operation) =>
-    Wonka.Types.sourceT(Types.operationResult(Js.Json.t));
+    Wonka.Types.sourceT(Types.operationResultJs(Js.Json.t));
 
   type exchangeInput = {
     forward: exchangeIO,
@@ -42,7 +42,7 @@ module Exchanges: {
   type t =
     exchangeInput =>
     (. Wonka.Types.sourceT(Types.operation)) =>
-    Wonka.Types.sourceT(Types.operationResult(Js.Json.t));
+    Wonka.Types.sourceT(Types.operationResultJs(Js.Json.t));
 
   [@bs.module "urql"] external cacheExchange: t = "cacheExchange";
   [@bs.module "urql"] external debugExchange: t = "debugExchange";
@@ -139,7 +139,7 @@ type clientResponse('response) = {
 };
 
 let clientResponseToReason:
-  (~response: Types.operationResult('data), ~parse: 'data => 'response) =>
+  (~response: Types.operationResultJs('data), ~parse: 'data => 'response) =>
   clientResponse('response);
 
 let executeQuery:

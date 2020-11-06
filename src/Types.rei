@@ -68,9 +68,9 @@ type operation = {
 };
 
 /* The result of the GraphQL operation. */
-type operationResult('data) = {
+type operationResultJs('jsData) = {
   operation,
-  data: Js.Nullable.t('data),
+  data: Js.Nullable.t('jsData),
   error: option(CombinedError.combinedErrorJs),
   extensions: option(Js.Dict.t(string)),
   stale: option(bool),

@@ -52,7 +52,7 @@ module Exchanges = {
 
   type exchangeIO =
     Wonka.Types.sourceT(Types.operation) =>
-    Wonka.Types.sourceT(Types.operationResult(Js.Json.t));
+    Wonka.Types.sourceT(Types.operationResultJs(Js.Json.t));
 
   type exchangeInput = {
     forward: exchangeIO,
@@ -62,7 +62,7 @@ module Exchanges = {
   type t =
     exchangeInput =>
     (. Wonka.Types.sourceT(Types.operation)) =>
-    Wonka.Types.sourceT(Types.operationResult(Js.Json.t));
+    Wonka.Types.sourceT(Types.operationResultJs(Js.Json.t));
 
   [@bs.module "urql"] external cacheExchange: t = "cacheExchange";
   [@bs.module "urql"] external debugExchange: t = "debugExchange";
@@ -199,10 +199,10 @@ type clientResponse('response) = {
    methods to typed a Reason record. */
 let clientResponseToReason:
   type data.
-    (~response: Types.operationResult('a), ~parse: 'a => data) =>
+    (~response: Types.operationResultJs('a), ~parse: 'a => data) =>
     clientResponse(data) =
   (~response, ~parse) => {
-    let {extensions, stale}: Types.operationResult('a) = response;
+    let {extensions, stale}: Types.operationResultJs('a) = response;
     let data = response.data->Js.Nullable.toOption->Belt.Option.map(parse);
     let error =
       response.error->Belt.Option.map(CombinedError.combinedErrorToRecord);
@@ -227,7 +227,7 @@ external executeQueryJs:
     ~opts: Types.partialOperationContext=?,
     unit
   ) =>
-  Wonka.Types.sourceT(Types.operationResult('data)) =
+  Wonka.Types.sourceT(Types.operationResultJs('data)) =
   "executeQuery";
 
 let executeQuery:
@@ -303,7 +303,7 @@ external executeMutationJs:
     ~opts: Types.partialOperationContext=?,
     unit
   ) =>
-  Wonka.Types.sourceT(Types.operationResult('data)) =
+  Wonka.Types.sourceT(Types.operationResultJs('data)) =
   "executeMutation";
 
 let executeMutation:
@@ -377,7 +377,7 @@ external executeSubscriptionJs:
     ~opts: Types.partialOperationContext=?,
     unit
   ) =>
-  Wonka.Types.sourceT(Types.operationResult('data)) =
+  Wonka.Types.sourceT(Types.operationResultJs('data)) =
   "executeSubscription";
 
 let executeSubscription:

@@ -1,6 +1,6 @@
 type executeMutationJs('jsData) =
   (Js.Json.t, Types.partialOperationContext) =>
-  Js.Promise.t(Types.operationResult('jsData));
+  Js.Promise.t(Types.operationResultJs('jsData));
 
 type executeMutation('variables, 'data) =
   (
