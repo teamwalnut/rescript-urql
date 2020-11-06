@@ -3,7 +3,7 @@ open ReasonUrql;
 module SubscribeRandomFloat = [%graphql
   {|
   subscription subscribeFloat {
-    newFloat @bsDecoder(fn: "Js.Float.toString")
+    newFloat
   }
 |}
 ];
@@ -15,23 +15,28 @@ let handler = (prevSubscriptions, subscription) => {
   };
 };
 
-let request = SubscribeRandomFloat.make();
-
 [@react.component]
 let make = () => {
-  let (Hooks.{response}, _) =
-    Hooks.useSubscription(~request, ~handler=Handler(handler), ());
+  let ({Hooks.response}, _) =
+    Hooks.useSubscription(
+      ~query=(module SubscribeRandomFloat),
+      ~handler=Handler(handler),
+      (),
+    );
 
   switch (response) {
   | Fetching => <text> "Loading"->React.string </text>
   | Data(d)
   | PartialData(d, _) =>
     Array.mapi(
-      (index, datum) =>
+      (index, datum: SubscribeRandomFloat.t) =>
         <rect
-          key={datum##newFloat ++ string_of_int(index)}
-          x={datum##newFloat}
-          y={index === 0 ? datum##newFloat : d[index - 1]##newFloat}
+          key={datum.newFloat->Js.Float.toString ++ string_of_int(index)}
+          x={datum.newFloat->Js.Float.toString}
+          y={
+            (index === 0 ? datum.newFloat : d[index - 1].newFloat)
+            ->Js.Float.toString
+          }
           stroke="none"
           fill={Util.getRandomHex()}
           fillOpacity="0.5"
