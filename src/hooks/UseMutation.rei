@@ -1,4 +1,4 @@
-type executeMutation =
+type executeMutation('variables, 'data) =
   (
     ~additionalTypenames: array(string)=?,
     ~fetchOptions: Fetch.requestInit=?,
@@ -9,36 +9,18 @@ type executeMutation =
     ~meta: Types.operationDebugMeta=?,
     ~suspense: bool=?,
     ~preferGetMethod: bool=?,
-    unit
+    'variables
   ) =>
-  Js.Promise.t(Types.operationResult(Js.Json.t));
+  Js.Promise.t(Client.clientResponse('data));
 
-type useMutationResponse('response) = (
-  Types.hookResponse('response),
-  executeMutation,
+type useMutationResponse('variables, 'data) = (
+  Types.hookResponse('data),
+  executeMutation('variables, 'data),
 );
 
 let useMutation:
-  (~request: Types.request('response)) => useMutationResponse('response);
-
-let useDynamicMutation:
-  Types.graphqlDefinition(
-    'parse,
-    Js.Promise.t(Types.operationResult(Js.Json.t)),
-    'executeMutation,
-  ) =>
   (
-    Types.hookResponse('parse),
-    (
-      ~additionalTypenames: array(string)=?,
-      ~fetchOptions: Fetch.requestInit=?,
-      ~fetch: (string, Fetch.requestInit) => Js.Promise.t(Fetch.response)=?,
-      ~requestPolicy: Types.requestPolicy=?,
-      ~url: string=?,
-      ~pollInterval: int=?,
-      ~meta: Types.operationDebugMeta=?,
-      ~suspense: bool=?,
-      ~preferGetMethod: bool=?
-    ) =>
-    'executeMutation,
-  );
+    ~query: (module Types.Operation with
+               type t = 'data and type t_variables = 'variables)
+  ) =>
+  useMutationResponse('variables, 'data);
