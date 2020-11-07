@@ -9,8 +9,8 @@ type useQueryArgsJs = {
 
 type executeQueryJs = Types.partialOperationContext => unit;
 
-type useQueryResponseJs('jsData) = (
-  Types.hookResponseJs('jsData),
+type useQueryResponseJs('dataJs) = (
+  Types.hookResponseJs('dataJs),
   executeQueryJs,
 );
 
@@ -32,7 +32,7 @@ type executeQuery =
 type useQueryResponse('data) = (Types.hookResponse('data), executeQuery);
 
 [@bs.module "urql"]
-external useQueryJs: useQueryArgsJs => useQueryResponseJs('jsData) =
+external useQueryJs: useQueryArgsJs => useQueryResponseJs('dataJs) =
   "useQuery";
 
 // reason-react does not provide a binding of sufficient arity for our memoization needs

@@ -1,6 +1,6 @@
-type executeMutationJs('jsData) =
+type executeMutationJs('dataJs) =
   (Js.Json.t, Types.partialOperationContext) =>
-  Js.Promise.t(Types.operationResultJs('jsData));
+  Js.Promise.t(Types.operationResultJs('dataJs));
 
 type executeMutation('variables, 'data) =
   (
@@ -17,9 +17,9 @@ type executeMutation('variables, 'data) =
   ) =>
   Js.Promise.t(Types.operationResult('data));
 
-type useMutationResponseJs('jsData) = (
-  Types.hookResponseJs('jsData),
-  executeMutationJs('jsData),
+type useMutationResponseJs('dataJs) = (
+  Types.hookResponseJs('dataJs),
+  executeMutationJs('dataJs),
 );
 
 type useMutationResponse('variables, 'data) = (
@@ -28,7 +28,7 @@ type useMutationResponse('variables, 'data) = (
 );
 
 [@bs.module "urql"]
-external useMutationJs: string => useMutationResponseJs('jsData) =
+external useMutationJs: string => useMutationResponseJs('dataJs) =
   "useMutation";
 
 /**

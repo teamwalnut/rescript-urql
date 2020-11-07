@@ -68,9 +68,9 @@ type operation = {
 };
 
 /* The result of the GraphQL operation. */
-type operationResultJs('jsData) = {
+type operationResultJs('dataJs) = {
   operation,
-  data: Js.Nullable.t('jsData),
+  data: Js.Nullable.t('dataJs),
   error: option(CombinedError.combinedErrorJs),
   extensions: option(Js.Dict.t(string)),
   stale: option(bool),
@@ -90,7 +90,7 @@ and operationResponse('data) =
   | Empty;
 
 let operationResultToReason:
-  (~response: operationResultJs('jsData), ~parse: 'jsData => 'data) =>
+  (~response: operationResultJs('dataJs), ~parse: 'dataJs => 'data) =>
   operationResult('data);
 
 /* The GraphQL request object.
@@ -142,17 +142,17 @@ type hookResponse('data) = {
   stale: bool,
 };
 
-type hookResponseJs('jsData) = {
+type hookResponseJs('dataJs) = {
   operation,
   fetching: bool,
-  data: Js.Nullable.t('jsData),
+  data: Js.Nullable.t('dataJs),
   error: option(CombinedError.combinedErrorJs),
   extensions: option(Js.Json.t),
   stale: bool,
 };
 
 let urqlResponseToReason:
-  (~response: hookResponseJs('jsData), ~parse: 'jsData => 'data) =>
+  (~response: hookResponseJs('dataJs), ~parse: 'dataJs => 'data) =>
   hookResponse('data);
 
 type graphqlDefinition('parseResult, 'composeReturnType, 'hookReturnType) = (

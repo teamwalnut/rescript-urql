@@ -19,7 +19,7 @@ type executeSubscriptionJs = Types.partialOperationContext => unit;
 
 [@bs.module "urql"]
 external useSubscriptionJs:
-  (useSubscriptionArgs, option((option('acc), 'jsData) => 'acc)) =>
+  (useSubscriptionArgs, option((option('acc), 'dataJs) => 'acc)) =>
   (Types.hookResponseJs('ret), executeSubscriptionJs) =
   "useSubscription";
 

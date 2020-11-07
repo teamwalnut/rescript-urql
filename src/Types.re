@@ -78,9 +78,9 @@ type operation = {
 };
 
 /* The result of the GraphQL operation. */
-type operationResultJs('jsData) = {
+type operationResultJs('dataJs) = {
   operation,
-  data: Js.Nullable.t('jsData),
+  data: Js.Nullable.t('dataJs),
   error: option(CombinedError.combinedErrorJs),
   extensions: option(Js.Dict.t(string)),
   stale: option(bool),
@@ -100,8 +100,8 @@ and operationResponse('data) =
   | Empty;
 
 let operationResultToReason =
-    (~response: operationResultJs('jsData), ~parse: 'jsData => 'data) => {
-  let {extensions, stale}: operationResultJs('jsData) = response;
+    (~response: operationResultJs('dataJs), ~parse: 'dataJs => 'data) => {
+  let {extensions, stale}: operationResultJs('dataJs) = response;
   let data = response.data->Js.Nullable.toOption->Belt.Option.map(parse);
   let error =
     response.error->Belt.Option.map(CombinedError.combinedErrorToRecord);
@@ -165,10 +165,10 @@ type hookResponse('data) = {
   stale: bool,
 };
 
-type hookResponseJs('jsData) = {
+type hookResponseJs('dataJs) = {
   operation,
   fetching: bool,
-  data: Js.Nullable.t('jsData),
+  data: Js.Nullable.t('dataJs),
   error: option(CombinedError.combinedErrorJs),
   extensions: option(Js.Json.t),
   stale: bool,
@@ -179,8 +179,8 @@ type hookResponseJs('jsData) = {
  * JavaScript representation to a typed Reason record.
  */
 let urqlResponseToReason:
-  type jsData data.
-    (~response: hookResponseJs(jsData), ~parse: jsData => data) =>
+  type dataJs data.
+    (~response: hookResponseJs(dataJs), ~parse: dataJs => data) =>
     hookResponse(data) =
   (~response, ~parse) => {
     let {operation, fetching, extensions, stale} = response;
