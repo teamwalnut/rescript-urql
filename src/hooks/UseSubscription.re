@@ -74,8 +74,8 @@ let useSubscription =
       type ret,
       type variables,
       type data,
-      ~query as
-        module Query:
+      ~subscription as
+        module Subscription:
           Types.Operation with type t = data and type t_variables = variables,
       ~handler: handler(acc, data, ret),
       ~pause=?,
@@ -90,8 +90,8 @@ let useSubscription =
       ~preferGetMethod=?,
       variables,
     ) => {
-  let query = Query.query;
-  let parse = Query.parse;
+  let query = Subscription.query;
+  let parse = Subscription.parse;
   let rp =
     React.useMemo1(
       () => requestPolicy->Belt.Option.map(Types.requestPolicyToJs),
@@ -131,7 +131,8 @@ let useSubscription =
       () =>
         {
           query,
-          variables: Query.(variables->serializeVariables->variablesToJson),
+          variables:
+            Subscription.(variables->serializeVariables->variablesToJson),
           pause,
           context,
         },

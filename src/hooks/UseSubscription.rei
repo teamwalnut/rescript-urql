@@ -25,8 +25,8 @@ type useSubscriptionResponse('data) = (
 
 let useSubscription:
   (
-    ~query: (module Types.Operation with
-               type t = 'data and type t_variables = 'variables),
+    ~subscription: (module Types.Operation with
+                      type t = 'data and type t_variables = 'variables),
     ~handler: handler('acc, 'data, 'ret),
     ~pause: bool=?,
     ~additionalTypenames: array(string)=?,
