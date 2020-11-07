@@ -86,6 +86,11 @@ type operationResultJs('dataJs) = {
   stale: option(bool),
 };
 
+type operationResponse('data) =
+  | Data('data)
+  | Error(CombinedError.t)
+  | Empty;
+
 /* The result of the GraphQL operation. */
 type operationResult('data) = {
   data: option('data),
@@ -93,11 +98,7 @@ type operationResult('data) = {
   extensions: option(Js.Dict.t(string)),
   response: operationResponse('data),
   stale: option(bool),
-}
-and operationResponse('data) =
-  | Data('data)
-  | Error(CombinedError.t)
-  | Empty;
+};
 
 let operationResultToReason =
     (~response: operationResultJs('dataJs), ~parse: 'dataJs => 'data) => {
