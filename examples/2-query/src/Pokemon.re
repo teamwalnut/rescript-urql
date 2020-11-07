@@ -21,10 +21,7 @@ module GetPokemon = [%graphql
 [@react.component]
 let make = (~pokemon: string) => {
   let (Hooks.{response}, _) =
-    Hooks.useQuery(
-      ~query=(module GetPokemon),
-      GetPokemon.makeVariables(~name=pokemon, ()),
-    );
+    Hooks.useQuery(~query=(module GetPokemon), {name: pokemon});
 
   switch (response) {
   | Fetching => <div> "Loading"->React.string </div>

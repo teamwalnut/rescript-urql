@@ -27,7 +27,7 @@ let make = () => {
     Hooks.useQuery(
       ~query=(module GetAllPokemons),
       ~requestPolicy=`CacheFirst,
-      GetAllPokemons.makeVariables(~first=151, ()),
+      {first: 151},
     );
 
   switch (response) {

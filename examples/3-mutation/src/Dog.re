@@ -78,39 +78,25 @@ let make =
                emoji={j|👍|j}
                count={string_of_int(likes)}
                className="emoji-button--like"
-               onClick={_ =>
-                 executeLikeMutation(LikeDog.makeVariables(~key=id, ()))
-                 |> ignore
-               }
+               onClick={_ => executeLikeMutation({key: id}) |> ignore}
              />
              <EmojiButton
                emoji={j|✋|j}
                count={string_of_int(pats)}
                className="emoji-button--pat"
-               onClick={_ =>
-                 executePatMutation(PatDog.makeVariables(~key=id, ()))
-                 |> ignore
-               }
+               onClick={_ => executePatMutation({key: id}) |> ignore}
              />
              <EmojiButton
                emoji={j|🍖|j}
                count={string_of_int(treats)}
                className="emoji-button--treat"
-               onClick={_ =>
-                 executeTreatMutation(TreatDog.makeVariables(~key=id, ()))
-                 |> ignore
-               }
+               onClick={_ => executeTreatMutation({key: id}) |> ignore}
              />
              <EmojiButton
                emoji={j|🐾|j}
                count={string_of_int(bellyscratches)}
                className="emoji-button--bellyscratch"
-               onClick={_ =>
-                 executeBellyscratchMutation(
-                   BellyscratchDog.makeVariables(~key=id, ()),
-                 )
-                 |> ignore
-               }
+               onClick={_ => executeBellyscratchMutation({key: id}) |> ignore}
              />
            </>}
     </div>
