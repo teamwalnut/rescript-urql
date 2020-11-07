@@ -20,7 +20,7 @@ type executeSubscriptionJs = Types.partialOperationContext => unit;
 [@bs.module "urql"]
 external useSubscriptionJs:
   (useSubscriptionArgs, option((option('acc), 'dataJs) => 'acc)) =>
-  (Types.hookResponseJs('ret), executeSubscriptionJs) =
+  (Types.Hooks.hookResponseJs('ret), executeSubscriptionJs) =
   "useSubscription";
 
 type executeSubscription =
@@ -39,12 +39,13 @@ type executeSubscription =
   unit;
 
 type useSubscriptionResponse('response) = (
-  Types.hookResponse('response),
+  Types.Hooks.hookResponse('response),
   executeSubscription,
 );
 
-let subscriptionResponseToReason = (response: Types.hookResponseJs('ret)) => {
-  let Types.{operation, fetching, extensions, stale} = response;
+let subscriptionResponseToReason =
+    (response: Types.Hooks.hookResponseJs('ret)) => {
+  let Types.Hooks.{operation, fetching, extensions, stale} = response;
 
   let data = response.data->Js.Nullable.toOption;
   let error =
@@ -52,14 +53,14 @@ let subscriptionResponseToReason = (response: Types.hookResponseJs('ret)) => {
 
   let response =
     switch (fetching, data, error) {
-    | (true, None, None) => Types.Fetching
+    | (true, None, None) => Types.Hooks.Fetching
     | (_, Some(d), None) => Data(d)
     | (_, Some(d), Some(e)) => PartialData(d, e.graphQLErrors)
     | (_, None, Some(e)) => Error(e)
     | (false, None, None) => Empty
     };
 
-  Types.{operation, fetching, data, error, response, extensions, stale};
+  Types.Hooks.{operation, fetching, data, error, response, extensions, stale};
 };
 
 // reason-react does not provide a binding of sufficient arity for our memoization needs

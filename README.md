@@ -4,7 +4,6 @@
 [![All Contributors](https://img.shields.io/badge/all_contributors-19-orange.svg)](#contributors)
 [![Build Status](https://travis-ci.com/FormidableLabs/reason-urql.svg?branch=master)](https://travis-ci.com/FormidableLabs/reason-urql)
 [![Maintenance Status][maintenance-image]](#maintenance-status)
-[![Spectrum](https://withspectrum.github.io/badge/badge.svg)](https://spectrum.chat/urql)
 
 Reason bindings for Formidable's Universal React Query Library, [`urql`](https://github.com/FormidableLabs/urql).
 
@@ -21,40 +20,50 @@ Reason bindings for Formidable's Universal React Query Library, [`urql`](https:/
 ## 📋 Documentation
 
 - [Getting Started](/docs/getting-started.md)
-- [API](/docs)
+- [Client and Provider](/docs/client-and-provider.md)
+- [Hooks](/docs/hooks.md)
+- [Exchanges](/docs/exchanges.md)
+- [Errors](/docs/error.md)
+- [Advanced](/docs/advanced.md)
 
 ## 💾 Installation
 
-#### 1. Install `reason-urql`.
+#### 1. Install `reason-urql` and its `peerDependencies`.
 
 ```sh
-yarn add reason-urql
+yarn add reason-urql urql graphql
 ```
 
-#### 2. Add `graphql_ppx_re`.
+We try to keep our bindings as close to latest `urql` as possible. However, `urql` tends to make releases a bit ahead of `reason-urql`. To get a compatible version, we recommend always staying strictly within this project's `peerDependency` range for `urql`.
 
-To get the most out of compile time type checks for your GraphQL queries, mutations, and subscriptions, we recommend using [`graphql_ppx_re`](https://github.com/reasonml-community/graphql_ppx). `useDynamicMutation` in particular takes advantage of some of its internals for an excellent experience writing type safe code to access your GraphQL responses.
+#### 2. Add `@reasonml-community/graphql-ppx`.
+
+To get the most out of compile time type checks for your GraphQL queries, mutations, and subscriptions, we use [`@reasonml-community/graphql-ppx`](https://github.com/reasonml-community/graphql-ppx). Add this to your project's `devDependencies`.
 
 ```sh
-yarn add @baransu/graphql_ppx_re --dev
+yarn add @reasonml-community/graphql-ppx --dev
 ```
 
 #### 3. Update `bsconfig.json`.
 
-Add `reason-urql` to your `bs-dependencies` and `graphql_ppx_re` to your `ppx_flags` in `bsconfig.json`.
+Add `reason-urql`, `wonka`, and `@reasonml-community/graphql-ppx` to your `bs-dependencies` and `@reasonml-community/graphql-ppx/ppx` to your `ppx_flags` in `bsconfig.json`.
 
 ```json
 {
-  "bs-dependencies": ["reason-urql"],
-  "ppx-flags": ["@baransu/graphql_ppx_re/ppx"]
+  "bs-dependencies": [
+    "reason-urql",
+    "wonka",
+    "@reasonml-community/graphql-ppx"
+  ],
+  "ppx-flags": ["@reasonml-community/graphql-ppx/ppx"]
 }
 ```
 
 #### 4. Send an introspection query to your API.
 
-Finally, you'll need to send an introspection query to your GraphQl API, using a tool like [`graphql-cli`](https://github.com/Urigo/graphql-cli/). You should generate a file called `graphql_schema.json` at the root of your project that `graphql_ppx_re` can use to type check your queries. **You should check this file into version control** and keep it updated as your API changes.
+Finally, you'll need to send an introspection query to your GraphQl API, using a tool like [`graphql-cli`](https://github.com/Urigo/graphql-cli/). You should generate a file called `graphql_schema.json` at the root of your project that `graphql-ppx` can use to type check your queries. **You should check this file into version control** and keep it updated as your API changes.
 
-For additional instructions, head [here](https://github.com/reasonml-community/graphql_ppx#usage).
+For additional help, head [here](https://github.com/reasonml-community/graphql-ppx#schema).
 
 ```sh
 npx get-graphql-schema ENDPOINT_URL -j > graphql_schema.json
@@ -146,6 +155,7 @@ This project follows the [all contributors spec](https://github.com/kentcdodds/a
 
 <!-- markdownlint-enable -->
 <!-- prettier-ignore-end -->
+
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 ## Maintenance Status

@@ -14,7 +14,7 @@ type executeMutation('variables, 'data) =
   Js.Promise.t(Types.operationResult('data));
 
 type useMutationResponse('variables, 'data) = (
-  Types.hookResponse('data),
+  Types.Hooks.hookResponse('data),
   executeMutation('variables, 'data),
 );
 

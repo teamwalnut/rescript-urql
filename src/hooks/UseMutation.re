@@ -18,12 +18,12 @@ type executeMutation('variables, 'data) =
   Js.Promise.t(Types.operationResult('data));
 
 type useMutationResponseJs('dataJs) = (
-  Types.hookResponseJs('dataJs),
+  Types.Hooks.hookResponseJs('dataJs),
   executeMutationJs('dataJs),
 );
 
 type useMutationResponse('variables, 'data) = (
-  Types.hookResponse('data),
+  Types.Hooks.hookResponse('data),
   executeMutation('variables, 'data),
 );
 
@@ -49,7 +49,7 @@ let useMutation:
 
     let state =
       React.useMemo2(
-        () => Types.urqlResponseToReason(~response=stateJs, ~parse),
+        () => Types.Hooks.hookResponseToReason(~response=stateJs, ~parse),
         (stateJs, parse),
       );
 

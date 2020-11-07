@@ -13,7 +13,10 @@ type executeQuery =
   ) =>
   unit;
 
-type useQueryResponse('data) = (Types.hookResponse('data), executeQuery);
+type useQueryResponse('data) = (
+  Types.Hooks.hookResponse('data),
+  executeQuery,
+);
 
 let useQuery:
   (

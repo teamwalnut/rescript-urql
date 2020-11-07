@@ -19,17 +19,17 @@ let mockOperation =
     key: 1,
     query: "query {\ndogs {\nname\nlikes\n}\n}",
     variables: None,
-    operationName: `Query,
+    kind: `Query,
     context: mockOperationContext,
   };
 
 describe("Types", () => {
-  describe("urqlResponseToReason", () => {
+  describe("hookResponseToReason", () => {
     it(
       "should correctly return Fetching constructor if fetching is true and no data has been received",
       () => {
         let response =
-          Types.{
+          Types.Hooks.{
             operation: mockOperation,
             fetching: true,
             data: Js.Nullable.undefined,
@@ -38,9 +38,9 @@ describe("Types", () => {
             stale: false,
           };
         let parse = _json => ();
-        let result = Types.urqlResponseToReason(~response, ~parse);
+        let result = Types.Hooks.hookResponseToReason(~response, ~parse);
 
-        Expect.(expect(result.response) |> toEqual(Types.Fetching));
+        Expect.(expect(result.response) |> toEqual(Types.Hooks.Fetching));
       },
     );
 
@@ -48,7 +48,7 @@ describe("Types", () => {
       "should return Data constructor if the GraphQL API responded with data",
       () => {
       let response =
-        Types.{
+        Types.Hooks.{
           operation: mockOperation,
           fetching: false,
           data: Js.Nullable.return(Js.Json.string("Hello")),
@@ -57,10 +57,10 @@ describe("Types", () => {
           stale: false,
         };
       let parse = json => Js.Json.decodeString(json);
-      let result = Types.urqlResponseToReason(~response, ~parse);
+      let result = Types.Hooks.hookResponseToReason(~response, ~parse);
 
       Expect.(
-        expect(result.response) |> toEqual(Types.Data(Some("Hello")))
+        expect(result.response) |> toEqual(Types.Hooks.Data(Some("Hello")))
       );
     });
 
@@ -95,7 +95,7 @@ describe("Types", () => {
           };
 
         let response =
-          Types.{
+          Types.Hooks.{
             operation: mockOperation,
             fetching: false,
             data: Js.Nullable.return(Js.Json.string("Hello")),
@@ -105,11 +105,13 @@ describe("Types", () => {
           };
 
         let parse = json => Js.Json.decodeString(json);
-        let result = Types.urqlResponseToReason(~response, ~parse);
+        let result = Types.Hooks.hookResponseToReason(~response, ~parse);
 
         Expect.(
           expect(result.response)
-          |> toEqual(Types.PartialData(Some("Hello"), error.graphQLErrors))
+          |> toEqual(
+               Types.Hooks.PartialData(Some("Hello"), error.graphQLErrors),
+             )
         );
       },
     );
@@ -145,7 +147,7 @@ describe("Types", () => {
         };
 
       let response =
-        Types.{
+        Types.Hooks.{
           operation: mockOperation,
           fetching: false,
           data: Js.Nullable.undefined,
@@ -154,14 +156,14 @@ describe("Types", () => {
           stale: false,
         };
       let parse = _json => ();
-      let result = Types.urqlResponseToReason(~response, ~parse);
+      let result = Types.Hooks.hookResponseToReason(~response, ~parse);
 
-      Expect.(expect(result.response) |> toEqual(Types.Error(error)));
+      Expect.(expect(result.response) |> toEqual(Types.Hooks.Error(error)));
     });
 
     it("should return Empty constructor if none of the above apply", () => {
       let response =
-        Types.{
+        Types.Hooks.{
           operation: mockOperation,
           fetching: false,
           data: Js.Nullable.undefined,
@@ -170,9 +172,9 @@ describe("Types", () => {
           stale: false,
         };
       let parse = _json => ();
-      let result = Types.urqlResponseToReason(~response, ~parse);
+      let result = Types.Hooks.hookResponseToReason(~response, ~parse);
 
-      Expect.(expect(result.response) |> toEqual(Types.Empty));
+      Expect.(expect(result.response) |> toEqual(Types.Hooks.Empty));
     });
   })
 });

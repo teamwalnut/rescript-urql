@@ -73,7 +73,7 @@ type operation = {
   key: int,
   query: string,
   variables: option(Js.Json.t),
-  operationName: operationType,
+  kind: operationType,
   context: operationContext,
 };
 
@@ -125,14 +125,6 @@ type graphqlRequest = {
   variables: option(Js.Json.t),
 };
 
-/* The signature of the Js.t created by calling `.make()` on a `graphql_ppx` module. */
-type request('response) = {
-  .
-  "parse": Js.Json.t => 'response,
-  "query": string,
-  "variables": Js.Json.t,
-};
-
 /* The signature of a graphql-ppx module. */
 module type Operation = {
   module Raw: {
@@ -148,59 +140,61 @@ module type Operation = {
   let variablesToJson: Raw.t_variables => Js.Json.t;
 };
 
-/* The response variant wraps the parsed result of executing a GraphQL operation. */
-type response('data) =
-  | Fetching
-  | Data('data)
-  | PartialData('data, array(GraphQLError.t))
-  | Error(CombinedError.t)
-  | Empty;
+module Hooks = {
+  /* The response variant wraps the parsed result of executing a GraphQL operation. */
+  type response('data) =
+    | Fetching
+    | Data('data)
+    | PartialData('data, array(GraphQLError.t))
+    | Error(CombinedError.t)
+    | Empty;
 
-type hookResponse('data) = {
-  operation,
-  fetching: bool,
-  data: option('data),
-  error: option(CombinedError.t),
-  response: response('data),
-  extensions: option(Js.Json.t),
-  stale: bool,
-};
-
-type hookResponseJs('dataJs) = {
-  operation,
-  fetching: bool,
-  data: Js.Nullable.t('dataJs),
-  error: option(CombinedError.combinedErrorJs),
-  extensions: option(Js.Json.t),
-  stale: bool,
-};
-
-/**
- * A function for converting the response to an urql hook from its
- * JavaScript representation to a typed Reason record.
- */
-let urqlResponseToReason:
-  type dataJs data.
-    (~response: hookResponseJs(dataJs), ~parse: dataJs => data) =>
-    hookResponse(data) =
-  (~response, ~parse) => {
-    let {operation, fetching, extensions, stale} = response;
-
-    let data = response.data->Js.Nullable.toOption->Belt.Option.map(parse);
-    let error =
-      response.error->Belt.Option.map(CombinedError.combinedErrorToRecord);
-
-    let response =
-      switch (fetching, data, error) {
-      | (true, None, _) => Fetching
-      | (_, Some(d), None) => Data(d)
-      | (_, Some(d), Some(e)) => PartialData(d, e.graphQLErrors)
-      | (false, _, Some(e)) => Error(e)
-      | (false, None, None) => Empty
-      };
-
-    {operation, fetching, data, error, response, extensions, stale};
+  type hookResponse('data) = {
+    operation,
+    fetching: bool,
+    data: option('data),
+    error: option(CombinedError.t),
+    response: response('data),
+    extensions: option(Js.Json.t),
+    stale: bool,
   };
+
+  type hookResponseJs('dataJs) = {
+    operation,
+    fetching: bool,
+    data: Js.Nullable.t('dataJs),
+    error: option(CombinedError.combinedErrorJs),
+    extensions: option(Js.Json.t),
+    stale: bool,
+  };
+
+  /**
+   * A function for converting the response to an urql hook from its
+   * JavaScript representation to a typed Reason record.
+   */
+  let hookResponseToReason:
+    type dataJs data.
+      (~response: hookResponseJs(dataJs), ~parse: dataJs => data) =>
+      hookResponse(data) =
+    (~response, ~parse) => {
+      let {operation, fetching, extensions, stale} = response;
+
+      let data = response.data->Js.Nullable.toOption->Belt.Option.map(parse);
+      let error =
+        response.error->Belt.Option.map(CombinedError.combinedErrorToRecord);
+
+      let response =
+        switch (fetching, data, error) {
+        | (true, None, _) => Fetching
+        | (_, Some(d), None) => Data(d)
+        | (_, Some(d), Some(e)) => PartialData(d, e.graphQLErrors)
+        | (false, _, Some(e)) => Error(e)
+        | (false, None, None) => Empty
+        };
+
+      {operation, fetching, data, error, response, extensions, stale};
+    };
+};
 
 type graphqlDefinition('parseResult, 'composeReturnType, 'hookReturnType) = (
   // `parse`

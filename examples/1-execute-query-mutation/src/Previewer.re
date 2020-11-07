@@ -73,15 +73,14 @@ let make = () => {
 
     Client.executeQuery(
       ~client,
-      ~request=(module GetAllDogs),
-      ~variables=GetAllDogs.makeVariables(),
+      ~query=(module GetAllDogs),
       ~requestPolicy=`CacheAndNetwork,
       (),
     )
     |> Wonka.subscribe((. data) => {
          dispatch(SetQueryFetching(false));
 
-         switch (Client.(data.response)) {
+         switch (Types.(data.response)) {
          | Data(d) =>
            dispatch(SetQuery(d->GetAllDogs.serialize->GetAllDogs.toJson))
          | Error(_e) =>
@@ -96,14 +95,13 @@ let make = () => {
 
     Client.executeMutation(
       ~client,
-      ~request=(module LikeDog),
-      ~variables=LikeDog.makeVariables(~key="VmeRTX7j-", ()),
-      (),
+      ~mutation=(module LikeDog),
+      LikeDog.{key: "VmeRTX7j-"},
     )
     |> Wonka.subscribe((. data) => {
          dispatch(SetMutationFetching(false));
 
-         switch (Client.(data.response)) {
+         switch (Types.(data.response)) {
          | Data(d) =>
            dispatch(SetMutation(d->LikeDog.serialize->LikeDog.toJson))
          | Error(_e) =>
