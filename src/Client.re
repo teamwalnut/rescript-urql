@@ -52,7 +52,7 @@ module Exchanges = {
 
   type exchangeIO =
     Wonka.Types.sourceT(Types.operation) =>
-    Wonka.Types.sourceT(Types.operationResult(Js.Json.t));
+    Wonka.Types.sourceT(Types.operationResultJs(Js.Json.t));
 
   type exchangeInput = {
     forward: exchangeIO,
@@ -62,7 +62,7 @@ module Exchanges = {
   type t =
     exchangeInput =>
     (. Wonka.Types.sourceT(Types.operation)) =>
-    Wonka.Types.sourceT(Types.operationResult(Js.Json.t));
+    Wonka.Types.sourceT(Types.operationResultJs(Js.Json.t));
 
   [@bs.module "urql"] external cacheExchange: t = "cacheExchange";
   [@bs.module "urql"] external debugExchange: t = "debugExchange";
@@ -180,43 +180,6 @@ let make =
   client(options);
 };
 
-/* The record representing the response returned by the client after
-   it has been converted by urqlClientResponseToReason. */
-type response('response) =
-  | Data('response)
-  | Error(CombinedError.t)
-  | Empty;
-
-type clientResponse('response) = {
-  data: option('response),
-  error: option(CombinedError.t),
-  extensions: option(Js.Dict.t(string)),
-  response: response('response),
-  stale: option(bool),
-};
-
-/* A function to convert the JS response from a client.execute*
-   methods to typed a Reason record. */
-let clientResponseToReason:
-  type data.
-    (~response: Types.operationResult('a), ~parse: 'a => data) =>
-    clientResponse(data) =
-  (~response, ~parse) => {
-    let {extensions, stale}: Types.operationResult('a) = response;
-    let data = response.data->Js.Nullable.toOption->Belt.Option.map(parse);
-    let error =
-      response.error->Belt.Option.map(CombinedError.combinedErrorToRecord);
-
-    let response =
-      switch (data, error) {
-      | (Some(data), _) => Data(data)
-      | (None, Some(error)) => Error(error)
-      | (None, None) => Empty
-      };
-
-    {data, error, extensions, stale, response};
-  };
-
 /* Execution methods on the client. These allow you to imperatively execute GraphQL
    operations outside of the provided hooks. */
 [@bs.send]
@@ -227,7 +190,7 @@ external executeQueryJs:
     ~opts: Types.partialOperationContext=?,
     unit
   ) =>
-  Wonka.Types.sourceT(Types.operationResult('data)) =
+  Wonka.Types.sourceT(Types.operationResultJs('data)) =
   "executeQuery";
 
 let executeQuery:
@@ -250,7 +213,7 @@ let executeQuery:
       ~preferGetMethod: bool=?,
       unit
     ) =>
-    Wonka.Types.sourceT(clientResponse(data)) =
+    Wonka.Types.sourceT(Types.operationResult(data)) =
   (
     ~client,
     ~request as (module Request),
@@ -291,7 +254,7 @@ let executeQuery:
 
     executeQueryJs(~client, ~query=req, ~opts=optsJs, ())
     |> Wonka.map((. response) =>
-         clientResponseToReason(~response, ~parse=Request.parse)
+         Types.operationResultToReason(~response, ~parse=Request.parse)
        );
   };
 
@@ -303,7 +266,7 @@ external executeMutationJs:
     ~opts: Types.partialOperationContext=?,
     unit
   ) =>
-  Wonka.Types.sourceT(Types.operationResult('data)) =
+  Wonka.Types.sourceT(Types.operationResultJs('data)) =
   "executeMutation";
 
 let executeMutation:
@@ -326,7 +289,7 @@ let executeMutation:
       ~preferGetMethod: bool=?,
       unit
     ) =>
-    Wonka.Types.sourceT(clientResponse(data)) =
+    Wonka.Types.sourceT(Types.operationResult(data)) =
   (
     ~client: t,
     ~request as (module Request),
@@ -366,7 +329,9 @@ let executeMutation:
       );
 
     executeMutationJs(~client, ~mutation=req, ~opts=optsJs, ())
-    |> Wonka.map((. response) => clientResponseToReason(~response, ~parse));
+    |> Wonka.map((. response) =>
+         Types.operationResultToReason(~response, ~parse)
+       );
   };
 
 [@bs.send]
@@ -377,7 +342,7 @@ external executeSubscriptionJs:
     ~opts: Types.partialOperationContext=?,
     unit
   ) =>
-  Wonka.Types.sourceT(Types.operationResult('data)) =
+  Wonka.Types.sourceT(Types.operationResultJs('data)) =
   "executeSubscription";
 
 let executeSubscription:
@@ -400,7 +365,7 @@ let executeSubscription:
       ~preferGetMethod: bool=?,
       unit
     ) =>
-    Wonka.Types.sourceT(clientResponse(data)) =
+    Wonka.Types.sourceT(Types.operationResult(data)) =
   (
     ~client: t,
     ~request as (module Request),
@@ -440,7 +405,9 @@ let executeSubscription:
       );
 
     executeSubscriptionJs(~client, ~subscription=req, ~opts=optsJs, ())
-    |> Wonka.map((. response) => clientResponseToReason(~response, ~parse));
+    |> Wonka.map((. response) =>
+         Types.operationResultToReason(~response, ~parse)
+       );
   };
 
 let query =

@@ -1,8 +1,8 @@
-type executeMutationJs =
+type executeMutationJs('dataJs) =
   (Js.Json.t, Types.partialOperationContext) =>
-  Js.Promise.t(Types.operationResult(Js.Json.t));
+  Js.Promise.t(Types.operationResultJs('dataJs));
 
-type executeMutation =
+type executeMutation('variables, 'data) =
   (
     ~additionalTypenames: array(string)=?,
     ~fetchOptions: Fetch.requestInit=?,
@@ -13,130 +13,90 @@ type executeMutation =
     ~meta: Types.operationDebugMeta=?,
     ~suspense: bool=?,
     ~preferGetMethod: bool=?,
-    unit
+    'variables
   ) =>
-  Js.Promise.t(Types.operationResult(Js.Json.t));
+  Js.Promise.t(Types.operationResult('data));
 
-type useMutationResponseJs = (
-  Types.hookResponseJs(Js.Json.t),
-  executeMutationJs,
+type useMutationResponseJs('dataJs) = (
+  Types.hookResponseJs('dataJs),
+  executeMutationJs('dataJs),
 );
 
-type useMutationResponse('response) = (
-  Types.hookResponse('response),
-  executeMutation,
+type useMutationResponse('variables, 'data) = (
+  Types.hookResponse('data),
+  executeMutation('variables, 'data),
 );
 
 [@bs.module "urql"]
-external useMutationJs: string => useMutationResponseJs = "useMutation";
+external useMutationJs: string => useMutationResponseJs('dataJs) =
+  "useMutation";
 
 /**
  * The useMutation hook.
- *
- * Accepts the following arguments:
- *
- * request – a Js.t containing the query and variables corresponding
- * to the GraphQL mutation, and a parse function for decoding the JSON response.
  */
-let useMutation = (~request) => {
-  let query = request##query;
-  let variables = request##variables;
-  let parse = request##parse;
+let useMutation:
+  type data variables.
+    (
+      ~mutation: (module Types.Operation with
+                    type t = data and type t_variables = variables)
+    ) =>
+    useMutationResponse(variables, data) =
+  (~mutation as (module Mutation)) => {
+    let query = Mutation.query;
+    let parse = Mutation.parse;
 
-  let (stateJs, executeMutationJs) = useMutationJs(query);
+    let (stateJs, executeMutationJs) = useMutationJs(query);
 
-  let state =
-    React.useMemo2(
-      () => Types.urqlResponseToReason(~response=stateJs, ~parse),
-      (stateJs, parse),
-    );
-
-  let executeMutation =
-    React.useMemo2(
-      (
-        (),
-        ~additionalTypenames=?,
-        ~fetchOptions=?,
-        ~fetch=?,
-        ~requestPolicy=?,
-        ~url=?,
-        ~pollInterval=?,
-        ~meta=?,
-        ~suspense=?,
-        ~preferGetMethod=?,
-        (),
-      ) => {
-        let ctx =
-          Types.partialOperationContext(
-            ~additionalTypenames?,
-            ~fetchOptions?,
-            ~fetch?,
-            ~url?,
-            ~requestPolicy=?
-              requestPolicy->Belt.Option.map(Types.requestPolicyToJs),
-            ~pollInterval?,
-            ~meta?,
-            ~suspense?,
-            ~preferGetMethod?,
-            (),
-          );
-
-        executeMutationJs(variables, ctx);
-      },
-      (executeMutationJs, variables),
-    );
-
-  (state, executeMutation);
-};
-
-/**
- * The useDynamicMutation hook.
- *
- * Accepts the following arguments:
- *
- * definition – a tuple on the graphql_ppx_re module representing your mutation.
- * Allows for proper type inference of results on mutations executed with variables
- * passed at runtime.
- */
-let useDynamicMutation = definition => {
-  let (parse, query, composeVariables) = definition;
-  let (stateJs, executeMutationJs) = useMutationJs(query);
-
-  let state =
-    React.useMemo2(
-      () => Types.urqlResponseToReason(~response=stateJs, ~parse),
-      (stateJs, parse),
-    );
-
-  let executeMutation =
-      (
-        ~additionalTypenames=?,
-        ~fetchOptions=?,
-        ~fetch=?,
-        ~requestPolicy=?,
-        ~url=?,
-        ~pollInterval=?,
-        ~meta=?,
-        ~suspense=?,
-        ~preferGetMethod=?,
-      ) => {
-    let ctx =
-      Types.partialOperationContext(
-        ~additionalTypenames?,
-        ~fetchOptions?,
-        ~fetch?,
-        ~url?,
-        ~requestPolicy=?
-          requestPolicy->Belt.Option.map(Types.requestPolicyToJs),
-        ~pollInterval?,
-        ~meta?,
-        ~suspense?,
-        ~preferGetMethod?,
-        (),
+    let state =
+      React.useMemo2(
+        () => Types.urqlResponseToReason(~response=stateJs, ~parse),
+        (stateJs, parse),
       );
 
-    composeVariables(variables => executeMutationJs(variables, ctx));
-  };
+    let executeMutation =
+      React.useMemo1(
+        (
+          (),
+          ~additionalTypenames=?,
+          ~fetchOptions=?,
+          ~fetch=?,
+          ~requestPolicy=?,
+          ~url=?,
+          ~pollInterval=?,
+          ~meta=?,
+          ~suspense=?,
+          ~preferGetMethod=?,
+          variables,
+        ) => {
+          let ctx =
+            Types.partialOperationContext(
+              ~additionalTypenames?,
+              ~fetchOptions?,
+              ~fetch?,
+              ~url?,
+              ~requestPolicy=?
+                requestPolicy->Belt.Option.map(Types.requestPolicyToJs),
+              ~pollInterval?,
+              ~meta?,
+              ~suspense?,
+              ~preferGetMethod?,
+              (),
+            );
 
-  (state, executeMutation);
-};
+          executeMutationJs(
+            Mutation.(variables->serializeVariables->variablesToJson),
+            ctx,
+          )
+          ->Js.Promise.(
+              then_(
+                response =>
+                  Types.operationResultToReason(~response, ~parse)->resolve,
+                _,
+              )
+            );
+        },
+        [|executeMutationJs|],
+      );
+
+    (state, executeMutation);
+  };
