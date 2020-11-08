@@ -1,7 +1,7 @@
 # reason-urql
 
 [![npm](https://img.shields.io/npm/v/reason-urql.svg)](https://www.npmjs.com/package/reason-urql)
-[![All Contributors](https://img.shields.io/badge/all_contributors-18-orange.svg)](#contributors)
+[![All Contributors](https://img.shields.io/badge/all_contributors-19-orange.svg)](#contributors)
 [![Build Status](https://travis-ci.com/FormidableLabs/reason-urql.svg?branch=master)](https://travis-ci.com/FormidableLabs/reason-urql)
 [![Maintenance Status][maintenance-image]](#maintenance-status)
 [![Spectrum](https://withspectrum.github.io/badge/badge.svg)](https://spectrum.chat/urql)
@@ -138,6 +138,9 @@ This project follows the [all contributors spec](https://github.com/kentcdodds/a
     <td align="center"><a href="https://github.com/jeddeloh"><img src="https://avatars3.githubusercontent.com/u/1131723?v=4" width="100px;" alt=""/><br /><sub><b>Joel Jeddeloh</b></sub></a><br /><a href="https://github.com/FormidableLabs/reason-urql/commits?author=jeddeloh" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/hulufei"><img src="https://avatars0.githubusercontent.com/u/261677?v=4" width="100px;" alt=""/><br /><sub><b>hui.liu</b></sub></a><br /><a href="https://github.com/FormidableLabs/reason-urql/commits?author=hulufei" title="Documentation">📖</a></td>
     <td align="center"><a href="https://github.com/gaku-sei"><img src="https://avatars0.githubusercontent.com/u/3982371?v=4" width="100px;" alt=""/><br /><sub><b>Kévin Combriat</b></sub></a><br /><a href="https://github.com/FormidableLabs/reason-urql/commits?author=gaku-sei" title="Code">💻</a> <a href="https://github.com/FormidableLabs/reason-urql/issues?q=author%3Agaku-sei" title="Bug reports">🐛</a> <a href="#ideas-gaku-sei" title="Ideas, Planning, & Feedback">🤔</a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="http://amiralies.github.io"><img src="https://avatars3.githubusercontent.com/u/13261088?v=4" width="100px;" alt=""/><br /><sub><b>Amirali Esmaeili</b></sub></a><br /><a href="https://github.com/FormidableLabs/reason-urql/commits?author=amiralies" title="Code">💻</a> <a href="#example-amiralies" title="Examples">💡</a></td>
   </tr>
 </table>
 
