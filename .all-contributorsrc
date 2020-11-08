@@ -188,6 +188,16 @@
         "bug",
         "ideas"
       ]
+    },
+    {
+      "login": "amiralies",
+      "name": "Amirali Esmaeili",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/13261088?v=4",
+      "profile": "http://amiralies.github.io",
+      "contributions": [
+        "code",
+        "example"
+      ]
     }
   ],
   "contributorsPerLine": 6,
