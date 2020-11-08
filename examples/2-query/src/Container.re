@@ -11,32 +11,35 @@ module GetAllPokemons = [%graphql
 |}
 ];
 
-let request = GetAllPokemons.make(~first=151, ());
-
-let flattenPokemon = pokemons =>
-  pokemons
-  |> Array.map(pokemon =>
-       switch (pokemon) {
-       | Some(pokemon) => Belt.Option.getWithDefault(pokemon##name, "")
-       | None => ""
-       }
-     );
+let flattenPokemon = pokemons => {
+  GetAllPokemons.(
+    pokemons->Belt.Array.map(pokemon =>
+      pokemon
+      ->Belt.Option.flatMap(p => p.name)
+      ->Belt.Option.getWithDefault("")
+    )
+  );
+};
 
 [@react.component]
 let make = () => {
   let (Hooks.{response}, _) =
-    Hooks.useQuery(~request, ~requestPolicy=`CacheFirst, ());
+    Hooks.useQuery(
+      ~query=(module GetAllPokemons),
+      ~requestPolicy=`CacheFirst,
+      {first: 151},
+    );
 
   switch (response) {
   | Fetching => <div> "Loading"->React.string </div>
   | Data(data) =>
-    switch (data##pokemons) {
+    switch (data.pokemons) {
     | Some(pokemon) => <PokemonList pokemon={pokemon->flattenPokemon} />
     | None => <div> "No Data"->React.string </div>
     }
   | PartialData(data, e) =>
     <div>
-      {switch (data##pokemons) {
+      {switch (data.pokemons) {
        | Some(pokemon) => <PokemonList pokemon={pokemon->flattenPokemon} />
        | None => <div> "No Data"->React.string </div>
        }}

@@ -53,18 +53,16 @@ let make =
       ~description: string,
     ) => {
   let (likeState, executeLikeMutation) =
-    Hooks.useMutation(~request=LikeDog.make(~key=id, ()));
+    Hooks.useMutation(~mutation=(module LikeDog));
 
-  // Example of using hooks without graphql_ppx_re (or graphql_ppx).
   let (treatState, executeTreatMutation) =
-    Hooks.useMutation(~request=TreatDog.make(~key=id, ()));
+    Hooks.useMutation(~mutation=(module TreatDog));
 
-  /* Example of using hooks where the variables are only known when the
-     mutation runs. */
   let (patState, executePatMutation) =
-    Hooks.useDynamicMutation(PatDog.definition);
+    Hooks.useMutation(~mutation=(module PatDog));
+
   let (bellyscratchState, executeBellyscratchMutation) =
-    Hooks.useDynamicMutation(BellyscratchDog.definition);
+    Hooks.useMutation(~mutation=(module BellyscratchDog));
 
   <div className="dog">
     <img src=imageUrl alt=name className="dog__image" />
@@ -80,27 +78,25 @@ let make =
                emoji={j|👍|j}
                count={string_of_int(likes)}
                className="emoji-button--like"
-               onClick={_ => executeLikeMutation() |> ignore}
+               onClick={_ => executeLikeMutation({key: id}) |> ignore}
              />
              <EmojiButton
                emoji={j|✋|j}
                count={string_of_int(pats)}
                className="emoji-button--pat"
-               onClick={_ => executePatMutation(~key=id, ()) |> ignore}
+               onClick={_ => executePatMutation({key: id}) |> ignore}
              />
              <EmojiButton
                emoji={j|🍖|j}
                count={string_of_int(treats)}
                className="emoji-button--treat"
-               onClick={_ => executeTreatMutation() |> ignore}
+               onClick={_ => executeTreatMutation({key: id}) |> ignore}
              />
              <EmojiButton
                emoji={j|🐾|j}
                count={string_of_int(bellyscratches)}
                className="emoji-button--bellyscratch"
-               onClick={_ =>
-                 executeBellyscratchMutation(~key=id, ()) |> ignore
-               }
+               onClick={_ => executeBellyscratchMutation({key: id}) |> ignore}
              />
            </>}
     </div>

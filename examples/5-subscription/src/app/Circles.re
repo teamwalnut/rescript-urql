@@ -3,7 +3,7 @@ open ReasonUrql;
 module SubscribeRandomInt = [%graphql
   {|
   subscription subscribeNumbers {
-    newNumber @bsDecoder(fn: "string_of_int")
+    newNumber
   }
 |}
 ];
@@ -19,7 +19,7 @@ let handler = (prevSubscriptions, subscription) => {
 let make = () => {
   let (Hooks.{response}, _) =
     Hooks.useSubscription(
-      ~request=SubscribeRandomInt.make(),
+      ~query=(module SubscribeRandomInt),
       ~handler=Handler(handler),
       (),
     );
@@ -30,9 +30,11 @@ let make = () => {
   | PartialData(d, _) =>
     d
     |> Array.to_list
-    |> List.mapi((index, datum) => {
-         let cx = datum##newNumber;
-         let cy = index === 0 ? datum##newNumber : d[index - 1]##newNumber;
+    |> List.mapi((index, datum: SubscribeRandomInt.t) => {
+         let cx = datum.newNumber->string_of_int;
+         let cy =
+           (index === 0 ? datum.newNumber : d[index - 1].newNumber)
+           ->string_of_int;
          <circle
            key={string_of_int(index)}
            cx
