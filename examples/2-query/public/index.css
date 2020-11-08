@@ -1,7 +1,4 @@
 .dex-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
   margin: auto;
 }
 
@@ -59,15 +56,14 @@
 }
 
 .sidebar-container {
-  position: absolute;
+  display: flex;
   inset: 0;
-  display: grid;
-  grid-template-columns: minmax(20rem, 20%) 1fr;
 }
 
 .sidebar {
   display: flex;
   flex-direction: column;
+  height: 100vh;
   background: #f25050;
   padding: 1rem;
   overflow: auto;

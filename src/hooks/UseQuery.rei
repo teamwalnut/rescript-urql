@@ -13,14 +13,14 @@ type executeQuery =
   ) =>
   unit;
 
-type useQueryResponse('response) = (
-  Types.hookResponse('response),
-  executeQuery,
-);
+type useQueryResponse('data) = (Types.hookResponse('data), executeQuery);
 
 let useQuery:
   (
-    ~request: Types.request('response),
+    ~query: (module Types.Operation with
+               type t_variables = 'variables and
+               type Raw.t_variables = 'variablesJs and
+               type t = 'data),
     ~pause: bool=?,
     ~additionalTypenames: array(string)=?,
     ~fetchOptions: Fetch.requestInit=?,
@@ -31,6 +31,6 @@ let useQuery:
     ~meta: Types.operationDebugMeta=?,
     ~suspense: bool=?,
     ~preferGetMethod: bool=?,
-    unit
+    'variables
   ) =>
-  useQueryResponse('response);
+  useQueryResponse('data);
