@@ -3,7 +3,9 @@
   "reason": {
     "react-jsx": 3
   },
-  "bsc-flags": ["-bs-super-errors"],
+  "bsc-flags": [
+    "-bs-super-errors"
+  ],
   "sources": [
     {
       "dir": "src/app",
@@ -22,12 +24,13 @@
     "reason-urql",
     "wonka",
     "reason-react",
-    "bs-css-emotion",
-    "bs-css"
+    "@reasonml-community/graphql-ppx"
   ],
   "refmt": 3,
   "warnings": {
     "error": "+5"
   },
-  "ppx-flags": ["@baransu/graphql_ppx_re/ppx"]
+  "ppx-flags": [
+    "@reasonml-community/graphql-ppx/ppx"
+  ]
 }

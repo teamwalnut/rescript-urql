@@ -1,0 +1,142 @@
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.loading {
+  height: 4.5rem;
+}
+
+.loading::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 2rem;
+  height: 2rem;
+  margin: -1rem 0 0 -1rem;
+  border-radius: 50%;
+  border: 1px solid #f6f;
+  border-top-color: #0e0;
+  border-right-color: #0dd;
+  border-bottom-color: #f90;
+  animation: 600ms linear infinite spin;
+}
+
+/* Grid */
+.grid {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  padding: 1rem;
+  gap: 1rem;
+  grid-gap: 1rem;
+}
+
+@media (min-width: 480px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* Dog */
+.dog {
+  display: flex;
+  flex-direction: column;
+}
+
+.dog__image {
+  align-self: center;
+  height: 20rem;
+  width: 20rem;
+  object-fit: cover;
+  border-radius: 50%;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.dog__title {
+  font-size: 1.6rem;
+  margin: 0;
+}
+
+.dog__buttons {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.dog__description {
+  font-size: 1.2rem;
+}
+
+/* Emoji Button */
+.emoji-button {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  margin: 0.5rem;
+  padding: 0.5rem;
+  border-radius: 50%;
+  border-width: 2px;
+  border-style: solid;
+}
+
+.emoji-button:hover {
+  cursor: pointer;
+}
+
+.emoji-button:first-child {
+  margin-left: 0;
+}
+
+.emoji-button--like {
+  border-color: #48a9dc;
+}
+
+.emoji-button--like:hover {
+  background: #48a9dc;
+}
+
+.emoji-button--pat {
+  border-color: #db4d3f;
+}
+
+.emoji-button--pat:hover {
+  background: #db4d3f;
+}
+
+.emoji-button--treat {
+  border-color: #7b16ff;
+}
+
+.emoji-button--treat:hover {
+  background: #7b16ff;
+}
+
+.emoji-button--bellyscratch {
+  border-color: #1bda2a;
+}
+
+.emoji-button--bellyscratch:hover {
+  background: #1bda2a;
+}
+
+.emoji-button__text {
+  font-size: 1.6rem;
+  padding: 0 0.2rem;
+}

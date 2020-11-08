@@ -1,8 +1,8 @@
 {
   "name": "3-mutation",
   "version": "0.1.0",
-  "description": "An example of how to use the Mutation component in reason-urql.",
-  "main": "index.bs.js",
+  "description": "An example of how to use the useMutation hook in reason-urql.",
+  "main": "src/index.bs.js",
   "author": "Parker Ziegler <parker.ziegler@formidable.com>",
   "license": "MIT",
   "scripts": {
@@ -12,12 +12,15 @@
     "start:demo": "webpack-dev-server"
   },
   "dependencies": {
-    "bs-css-emotion": "^1.2.0",
+    "@reasonml-community/graphql-ppx": "^1.0.1",
+    "graphql": "^15.4.0",
+    "react": "^16.8.0",
+    "react-dom": "^16.8.0",
     "reason-react": "^0.7.0",
-    "reason-urql": "link:../../"
+    "reason-urql": "link:../../",
+    "urql": "~1.10.0"
   },
   "devDependencies": {
-    "@baransu/graphql_ppx_re": "^0.7.1",
     "bs-platform": "7.3.2",
     "webpack": "^4.43.0",
     "webpack-cli": "^3.3.11",

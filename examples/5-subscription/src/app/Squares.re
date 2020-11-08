@@ -3,7 +3,7 @@ open ReasonUrql;
 module SubscribeRandomFloat = [%graphql
   {|
   subscription subscribeFloat {
-    newFloat @bsDecoder(fn: "Js.Float.toString")
+    newFloat
   }
 |}
 ];
@@ -15,41 +15,33 @@ let handler = (prevSubscriptions, subscription) => {
   };
 };
 
-[@bs.scope "Math"] [@bs.val] external random: unit => float = "random";
-[@bs.scope "Math"] [@bs.val] external floor: float => int = "floor";
-[@bs.send] external toString: (int, int) => string = "toString";
-
-let getRandomInt = (max: int) => {
-  floor(random() *. float_of_int(max));
-};
-
-let getRandomHex = () => {
-  let encode = random() *. float_of_int(16777215) |> floor;
-  let hex = encode->toString(16);
-  {j|#$hex|j};
-};
-
-let request = SubscribeRandomFloat.make();
-
 [@react.component]
 let make = () => {
-  let (Hooks.{response}, _) =
-    Hooks.useSubscription(~request, ~handler=Handler(handler), ());
+  let ({Hooks.response}, _) =
+    Hooks.useSubscription(
+      ~query=(module SubscribeRandomFloat),
+      ~handler=Handler(handler),
+      (),
+    );
 
   switch (response) {
   | Fetching => <text> "Loading"->React.string </text>
   | Data(d)
   | PartialData(d, _) =>
     Array.mapi(
-      (index, datum) =>
+      (index, datum: SubscribeRandomFloat.t) =>
         <rect
-          key={datum##newFloat ++ string_of_int(index)}
-          x={datum##newFloat}
-          y={index === 0 ? datum##newFloat : d[index - 1]##newFloat}
-          stroke={getRandomHex()}
-          fill="none"
-          height={getRandomInt(30) |> string_of_int}
-          width={getRandomInt(30) |> string_of_int}
+          key={datum.newFloat->Js.Float.toString ++ string_of_int(index)}
+          x={datum.newFloat->Js.Float.toString}
+          y={
+            (index === 0 ? datum.newFloat : d[index - 1].newFloat)
+            ->Js.Float.toString
+          }
+          stroke="none"
+          fill={Util.getRandomHex()}
+          fillOpacity="0.5"
+          height={Util.getRandomInt(30) |> string_of_int}
+          width={Util.getRandomInt(30) |> string_of_int}
         />,
       d,
     )

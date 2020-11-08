@@ -68,13 +68,31 @@ type operation = {
 };
 
 /* The result of the GraphQL operation. */
-type operationResult = {
+type operationResultJs('dataJs) = {
   operation,
-  data: Js.Nullable.t(Js.Json.t),
+  data: Js.Nullable.t('dataJs),
   error: option(CombinedError.combinedErrorJs),
   extensions: option(Js.Dict.t(string)),
   stale: option(bool),
 };
+
+type operationResponse('data) =
+  | Data('data)
+  | Error(CombinedError.t)
+  | Empty;
+
+/* The result of the GraphQL operation. */
+type operationResult('data) = {
+  data: option('data),
+  error: option(CombinedError.t),
+  extensions: option(Js.Dict.t(string)),
+  response: operationResponse('data),
+  stale: option(bool),
+};
+
+let operationResultToReason:
+  (~response: operationResultJs('dataJs), ~parse: 'dataJs => 'data) =>
+  operationResult('data);
 
 /* The GraphQL request object.
    Consists of a query, a unique key for the event, and, optionally, variables. */
@@ -92,36 +110,51 @@ type request('response) = {
   "variables": Js.Json.t,
 };
 
+/* The signature of a graphql-ppx module. */
+module type Operation = {
+  module Raw: {
+    type t;
+    type t_variables;
+  };
+  type t;
+  type t_variables;
+
+  let query: string;
+  let parse: Raw.t => t;
+  let serializeVariables: t_variables => Raw.t_variables;
+  let variablesToJson: Raw.t_variables => Js.Json.t;
+};
+
 /* The response variant wraps the parsed result of executing a GraphQL operation. */
-type response('response) =
+type response('data) =
   | Fetching
-  | Data('response)
-  | PartialData('response, array(GraphQLError.t))
+  | Data('data)
+  | PartialData('data, array(GraphQLError.t))
   | Error(CombinedError.t)
   | Empty;
 
-type hookResponse('response) = {
+type hookResponse('data) = {
   operation,
   fetching: bool,
-  data: option('response),
+  data: option('data),
   error: option(CombinedError.t),
-  response: response('response),
+  response: response('data),
   extensions: option(Js.Json.t),
   stale: bool,
 };
 
-type hookResponseJs('response) = {
+type hookResponseJs('dataJs) = {
   operation,
   fetching: bool,
-  data: Js.Nullable.t('response),
+  data: Js.Nullable.t('dataJs),
   error: option(CombinedError.combinedErrorJs),
   extensions: option(Js.Json.t),
   stale: bool,
 };
 
 let urqlResponseToReason:
-  (~response: hookResponseJs(Js.Json.t), ~parse: Js.Json.t => 'response) =>
-  hookResponse('response);
+  (~response: hookResponseJs('dataJs), ~parse: 'dataJs => 'data) =>
+  hookResponse('data);
 
 type graphqlDefinition('parseResult, 'composeReturnType, 'hookReturnType) = (
   // `parse`

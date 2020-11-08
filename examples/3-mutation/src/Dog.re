@@ -53,23 +53,21 @@ let make =
       ~description: string,
     ) => {
   let (likeState, executeLikeMutation) =
-    Hooks.useMutation(~request=LikeDog.make(~key=id, ()));
+    Hooks.useMutation(~mutation=(module LikeDog));
 
-  // Example of using hooks without graphql_ppx_re (or graphql_ppx).
   let (treatState, executeTreatMutation) =
-    Hooks.useMutation(~request=TreatDog.make(~key=id, ()));
+    Hooks.useMutation(~mutation=(module TreatDog));
 
-  /* Example of using hooks where the variables are only known when the
-     mutation runs. */
   let (patState, executePatMutation) =
-    Hooks.useDynamicMutation(PatDog.definition);
-  let (bellyscratchState, executeBellyscratchMutation) =
-    Hooks.useDynamicMutation(BellyscratchDog.definition);
+    Hooks.useMutation(~mutation=(module PatDog));
 
-  <div className=DogStyles.container>
-    <img src=imageUrl alt=name className=DogStyles.image />
-    <h3 className=DogStyles.title> {j|$name|j}->React.string </h3>
-    <div className=DogStyles.buttons>
+  let (bellyscratchState, executeBellyscratchMutation) =
+    Hooks.useMutation(~mutation=(module BellyscratchDog));
+
+  <div className="dog">
+    <img src=imageUrl alt=name className="dog__image" />
+    <h3 className="dog__title"> {j|$name|j}->React.string </h3>
+    <div className="dog__buttons">
       {likeState.fetching
        || treatState.fetching
        || patState.fetching
@@ -79,31 +77,29 @@ let make =
              <EmojiButton
                emoji={j|👍|j}
                count={string_of_int(likes)}
-               hex="48a9dc"
-               onClick={_ => executeLikeMutation() |> ignore}
+               className="emoji-button--like"
+               onClick={_ => executeLikeMutation({key: id}) |> ignore}
              />
              <EmojiButton
                emoji={j|✋|j}
                count={string_of_int(pats)}
-               hex="db4d3f"
-               onClick={_ => executePatMutation(~key=id, ()) |> ignore}
+               className="emoji-button--pat"
+               onClick={_ => executePatMutation({key: id}) |> ignore}
              />
              <EmojiButton
                emoji={j|🍖|j}
                count={string_of_int(treats)}
-               hex="7b16ff"
-               onClick={_ => executeTreatMutation() |> ignore}
+               className="emoji-button--treat"
+               onClick={_ => executeTreatMutation({key: id}) |> ignore}
              />
              <EmojiButton
                emoji={j|🐾|j}
                count={string_of_int(bellyscratches)}
-               hex="1bda2a"
-               onClick={_ =>
-                 executeBellyscratchMutation(~key=id, ()) |> ignore
-               }
+               className="emoji-button--bellyscratch"
+               onClick={_ => executeBellyscratchMutation({key: id}) |> ignore}
              />
            </>}
     </div>
-    <div> description->React.string </div>
+    <p className="dog__description"> description->React.string </p>
   </div>;
 };
