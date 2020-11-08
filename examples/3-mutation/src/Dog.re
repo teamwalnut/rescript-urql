@@ -53,16 +53,16 @@ let make =
       ~description: string,
     ) => {
   let (likeState, executeLikeMutation) =
-    Hooks.useMutation(~query=(module LikeDog));
+    Hooks.useMutation(~mutation=(module LikeDog));
 
   let (treatState, executeTreatMutation) =
-    Hooks.useMutation(~query=(module TreatDog));
+    Hooks.useMutation(~mutation=(module TreatDog));
 
   let (patState, executePatMutation) =
-    Hooks.useMutation(~query=(module PatDog));
+    Hooks.useMutation(~mutation=(module PatDog));
 
   let (bellyscratchState, executeBellyscratchMutation) =
-    Hooks.useMutation(~query=(module BellyscratchDog));
+    Hooks.useMutation(~mutation=(module BellyscratchDog));
 
   <div className="dog">
     <img src=imageUrl alt=name className="dog__image" />
