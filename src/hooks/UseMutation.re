@@ -37,13 +37,13 @@ external useMutationJs: string => useMutationResponseJs('dataJs) =
 let useMutation:
   type data variables.
     (
-      ~query: (module Types.Operation with
-                 type t = data and type t_variables = variables)
+      ~mutation: (module Types.Operation with
+                    type t = data and type t_variables = variables)
     ) =>
     useMutationResponse(variables, data) =
-  (~query as (module Query)) => {
-    let query = Query.query;
-    let parse = Query.parse;
+  (~mutation as (module Mutation)) => {
+    let query = Mutation.query;
+    let parse = Mutation.parse;
 
     let (stateJs, executeMutationJs) = useMutationJs(query);
 
@@ -84,7 +84,7 @@ let useMutation:
             );
 
           executeMutationJs(
-            Query.(variables->serializeVariables->variablesToJson),
+            Mutation.(variables->serializeVariables->variablesToJson),
             ctx,
           )
           ->Js.Promise.(

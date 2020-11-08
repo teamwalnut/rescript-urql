@@ -20,7 +20,7 @@ type useMutationResponse('variables, 'data) = (
 
 let useMutation:
   (
-    ~query: (module Types.Operation with
-               type t = 'data and type t_variables = 'variables)
+    ~mutation: (module Types.Operation with
+                  type t = 'data and type t_variables = 'variables)
   ) =>
   useMutationResponse('variables, 'data);
