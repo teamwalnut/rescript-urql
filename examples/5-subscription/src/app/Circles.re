@@ -19,7 +19,7 @@ let handler = (prevSubscriptions, subscription) => {
 let make = () => {
   let (Hooks.{response}, _) =
     Hooks.useSubscription(
-      ~query=(module SubscribeRandomInt),
+      ~subscription=(module SubscribeRandomInt),
       ~handler=Handler(handler),
       (),
     );

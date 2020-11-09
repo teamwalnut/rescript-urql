@@ -128,11 +128,10 @@ let make:
 let executeQuery:
   (
     ~client: t,
-    ~request: (module Types.Operation with
-                 type t = 'data and
-                 type t_variables = 'variables and
-                 type Raw.t_variables = 'variablesJs),
-    ~variables: 'variables,
+    ~query: (module Types.Operation with
+               type t = 'data and
+               type t_variables = 'variables and
+               type Raw.t_variables = 'variablesJs),
     ~additionalTypenames: array(string)=?,
     ~fetchOptions: Fetch.requestInit=?,
     ~fetch: (string, Fetch.requestInit) => Js.Promise.t(Fetch.response)=?,
@@ -142,18 +141,17 @@ let executeQuery:
     ~meta: Types.operationDebugMeta=?,
     ~suspense: bool=?,
     ~preferGetMethod: bool=?,
-    unit
+    'variables
   ) =>
   Wonka.Types.sourceT(Types.operationResult('data));
 
 let executeMutation:
   (
     ~client: t,
-    ~request: (module Types.Operation with
-                 type t = 'data and
-                 type t_variables = 'variables and
-                 type Raw.t_variables = 'variablesJs),
-    ~variables: 'variables,
+    ~mutation: (module Types.Operation with
+                  type t = 'data and
+                  type t_variables = 'variables and
+                  type Raw.t_variables = 'variablesJs),
     ~additionalTypenames: array(string)=?,
     ~fetchOptions: Fetch.requestInit=?,
     ~fetch: (string, Fetch.requestInit) => Js.Promise.t(Fetch.response)=?,
@@ -163,18 +161,17 @@ let executeMutation:
     ~meta: Types.operationDebugMeta=?,
     ~suspense: bool=?,
     ~preferGetMethod: bool=?,
-    unit
+    'variables
   ) =>
   Wonka.Types.sourceT(Types.operationResult('data));
 
 let executeSubscription:
   (
     ~client: t,
-    ~request: (module Types.Operation with
-                 type t = 'data and
-                 type t_variables = 'variables and
-                 type Raw.t_variables = 'variablesJs),
-    ~variables: 'variables,
+    ~subscription: (module Types.Operation with
+                      type t = 'data and
+                      type t_variables = 'variables and
+                      type Raw.t_variables = 'variablesJs),
     ~additionalTypenames: array(string)=?,
     ~fetchOptions: Fetch.requestInit=?,
     ~fetch: (string, Fetch.requestInit) => Js.Promise.t(Fetch.response)=?,
@@ -184,18 +181,17 @@ let executeSubscription:
     ~meta: Types.operationDebugMeta=?,
     ~suspense: bool=?,
     ~preferGetMethod: bool=?,
-    unit
+    'variables
   ) =>
   Wonka.Types.sourceT(Types.operationResult('data));
 
 let query:
   (
     ~client: t,
-    ~request: (module Types.Operation with
-                 type t = 'data and
-                 type t_variables = 'variables and
-                 type Raw.t_variables = 'variablesJs),
-    ~variables: 'variables,
+    ~query: (module Types.Operation with
+               type t = 'data and
+               type t_variables = 'variables and
+               type Raw.t_variables = 'variablesJs),
     ~additionalTypenames: array(string)=?,
     ~fetchOptions: Fetch.requestInit=?,
     ~fetch: (string, Fetch.requestInit) => Js.Promise.t(Fetch.response)=?,
@@ -205,18 +201,17 @@ let query:
     ~meta: Types.operationDebugMeta=?,
     ~suspense: bool=?,
     ~preferGetMethod: bool=?,
-    unit
+    'variables
   ) =>
   Js.Promise.t(Types.operationResult('data));
 
 let mutation:
   (
     ~client: t,
-    ~request: (module Types.Operation with
-                 type t = 'data and
-                 type t_variables = 'variables and
-                 type Raw.t_variables = 'variablesJs),
-    ~variables: 'variables,
+    ~mutation: (module Types.Operation with
+                  type t = 'data and
+                  type t_variables = 'variables and
+                  type Raw.t_variables = 'variablesJs),
     ~additionalTypenames: array(string)=?,
     ~fetchOptions: Fetch.requestInit=?,
     ~fetch: (string, Fetch.requestInit) => Js.Promise.t(Fetch.response)=?,
@@ -226,18 +221,17 @@ let mutation:
     ~meta: Types.operationDebugMeta=?,
     ~suspense: bool=?,
     ~preferGetMethod: bool=?,
-    unit
+    'variables
   ) =>
   Js.Promise.t(Types.operationResult('data));
 
 let subscription:
   (
     ~client: t,
-    ~request: (module Types.Operation with
-                 type t = 'data and
-                 type t_variables = 'variables and
-                 type Raw.t_variables = 'variablesJs),
-    ~variables: 'variables,
+    ~subscription: (module Types.Operation with
+                      type t = 'data and
+                      type t_variables = 'variables and
+                      type Raw.t_variables = 'variablesJs),
     ~additionalTypenames: array(string)=?,
     ~fetchOptions: Fetch.requestInit=?,
     ~fetch: (string, Fetch.requestInit) => Js.Promise.t(Fetch.response)=?,
@@ -247,18 +241,17 @@ let subscription:
     ~meta: Types.operationDebugMeta=?,
     ~suspense: bool=?,
     ~preferGetMethod: bool=?,
-    unit
+    'variables
   ) =>
   Wonka.Types.sourceT(Types.operationResult('data));
 
 let readQuery:
   (
     ~client: t,
-    ~request: (module Types.Operation with
-                 type t = 'data and
-                 type t_variables = 'variables and
-                 type Raw.t_variables = 'variablesJs),
-    ~variables: 'variables,
+    ~query: (module Types.Operation with
+               type t = 'data and
+               type t_variables = 'variables and
+               type Raw.t_variables = 'variablesJs),
     ~additionalTypenames: array(string)=?,
     ~fetchOptions: Fetch.requestInit=?,
     ~fetch: (string, Fetch.requestInit) => Js.Promise.t(Fetch.response)=?,
@@ -268,6 +261,6 @@ let readQuery:
     ~meta: Types.operationDebugMeta=?,
     ~suspense: bool=?,
     ~preferGetMethod: bool=?,
-    unit
+    'variables
   ) =>
   option(Types.operationResult('data));

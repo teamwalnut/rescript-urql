@@ -31,14 +31,9 @@ let make = (~client) => {
       let mutSub = ref(Wonka_types.{unsubscribe: () => ()});
 
       let subscription =
-        Client.executeQuery(
-          ~client,
-          ~request=(module GetAllDogs),
-          ~variables=GetAllDogs.makeVariables(),
-          (),
-        )
+        Client.executeQuery(~client, ~query=(module GetAllDogs), ())
         |> Wonka.subscribe((. data) =>
-             switch (Client.(data.response)) {
+             switch (Types.(data.response)) {
              | Data(d) =>
                Js_global.setInterval(
                  () => {
@@ -47,10 +42,8 @@ let make = (~client) => {
                    let mutationSubscription =
                      Client.executeMutation(
                        ~client,
-                       ~request=(module LikeDog),
-                       ~variables=
-                         LikeDog.makeVariables(~key=d.dogs[0].key, ()),
-                       (),
+                       ~mutation=(module LikeDog),
+                       LikeDog.{key: d.dogs[0].key},
                      )
                      |> Wonka.subscribe((. response) => Js.log(response));
 

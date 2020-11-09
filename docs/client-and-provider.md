@@ -40,14 +40,16 @@ let client = Client.make(~url="https://localhost:3000/graphql", ());
 
 `Client.make` accepts the following arguments:
 
-| Argument        | Type                          | Description                                                                                                                                                                                                                                                                   |
-| --------------- | ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `url`           | `string`                      | The url of your GraphQL API.                                                                                                                                                                                                                                                  |
-| `fetchOptions`  | `Client.fetchOptions('a)=?`   | Optional. A variant type representing fetch options to be used by your client. You can pass your `fetchOptions` as a plain `Fetch.requestInit` by wrapping it in the `Client.FetchOpts` tag, or instantiate it dynamically in a function wrapped by the `Client.FetchFn` tag. |
-| `exchanges`     | `array(Exchanges.exchange)=?` | Optional. The array of exchanges to be used by your client.                                                                                                                                                                                                                   |
-| `suspense`      | `bool=?`                      | Optional. A flag activating the experimental React suspense mode, which can be used during server-side rendering to prefetch data. Defaults to `false`.                                                                                                                       |
-| `fetch`         | `fetchImpl('a)=?`             | Optional. A custom `fetch` implementation to use in lieu of `window.fetch`. For now, see [`__tests__/UrqlClient_test.re`](../__tests__/UrqlClient_test.re) for examples of how to use this option.                                                                            |
-| `requestPolicy` | `Types.requestPolicy=?`       | Optional. A polymorphic variant defining the default `requestPolicy` to use for all outgoing requests. Defaults to CacheFirst. Additional options include CacheOnly, NetworkOnly, and CacheAndNetwork. See [`Types.rei`](../src/Types.rei) for the full definition.           |
+| Argument          | Type                          | Description                                                                                                                                                                                                                                                                   |
+| ----------------- | ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `url`             | `string`                      | The url of your GraphQL API.                                                                                                                                                                                                                                                  |
+| `fetchOptions`    | `Client.fetchOptions('a)=?`   | Optional. A variant type representing fetch options to be used by your client. You can pass your `fetchOptions` as a plain `Fetch.requestInit` by wrapping it in the `Client.FetchOpts` tag, or instantiate it dynamically in a function wrapped by the `Client.FetchFn` tag. |
+| `fetch`           | `fetchImpl('a)=?`             | Optional. A custom `fetch` implementation to use in lieu of `window.fetch`. For now, see [`__tests__/UrqlClient_test.re`](../__tests__/UrqlClient_test.re) for examples of how to use this option.                                                                            |
+| `exchanges`       | `array(Exchanges.exchange)=?` | Optional. The array of exchanges to be used by your client.                                                                                                                                                                                                                   |
+| `suspense`        | `bool=?`                      | Optional. A flag activating the experimental React suspense mode, which can be used during server-side rendering to prefetch data. Defaults to `false`.                                                                                                                       |
+| `requestPolicy`   | `Types.requestPolicy=?`       | Optional. A polymorphic variant defining the default `requestPolicy` to use for all outgoing requests. Defaults to CacheFirst. Additional options include CacheOnly, NetworkOnly, and CacheAndNetwork. See [`Types.rei`](../src/Types.rei) for the full definition.           |
+| `preferGetMethod` | `bool=?`                      | Optional. If `true`, will use the HTTP GET method rather than POST for operations of type `query`. Defaults to `false`.                                                                                                                                                       |
+| `maskTypename`    | `bool=?`                      | Optional. If `true`, will apply the `maskTypename` utility to `data` returned on all operations. This makes the `__typename` properties non-enumerable.                                                                                                                       |
 
 `Client.make` will return an instance of an `urql` client, represented by the abstract type `Client.t`.
 
@@ -68,7 +70,6 @@ open ReasonUrql;
 
 let fetchOptions =
   Client.FetchOpts(Fetch.RequestInit.make(
-    ~method_=Post,
     ~headers=Fetch.HeadersInit.make({"Content-Type": "application/json"}),
     (),
   ));
@@ -109,21 +110,25 @@ let client = Client.make(
 
 Imperatively execute a GraphQL query operation.
 
-| Argument        | Type                         | Description                                                                                                                                                                                                                                                             |
-| --------------- | ---------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `client`        | `Client.t`                   | The `urql` client instance.                                                                                                                                                                                                                                             |
-| `request`       | `Types.request`              | The `graphql_ppx` request representing your query. Generated by calling `.make()` on the `graphql_ppx` module. If you're not using `graphql_ppx`, pass a `Js.t` of the following shape: `{. "query": string, "variables": Js.Json.t, "parse": Js.Json.t => 'response }` |
-| `fetchOptions`  | `Fetch.requestInit=?`        | Optional. The fetch options to apply on the outgoing request.                                                                                                                                                                                                           |
-| `requestPolicy` | `Types.requestPolicy=?`      | Optional. The request policy to use to execute the query. Defaults to `"cache-first"`.                                                                                                                                                                                  |
-| `url`           | `string=?`                   | Optional. The GraphQL endpoint to use for the executing operation (if different from the one specified by `Client.make`).                                                                                                                                               |
-| `pollInterval`  | `int=?`                      | Optional. Instructs the client to reexecute the query every `pollInterval` milliseconds.                                                                                                                                                                                |
-| `meta`          | `Types.operationDebugMeta=?` | Optional. Add metadata that is only available in development with devtools.                                                                                                                                                                                             |
+| Argument              | Type                          | Description                                                                                                                                             |
+| --------------------- | ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `client`              | `Client.t`                    | The `urql` client instance.                                                                                                                             |
+| `query`               | `(module Types.Operation)`    | The `graphql_ppx` module representing your GraphQL operation.                                                                                           |
+| `additionalTypenames` | `array(string)=?`             | Optional. Flag that this operation depends on certain `__typename`s. Used by default in the document cache.                                             |
+| `fetchOptions`        | `Fetch.requestInit=?`         | Optional. The fetch options to apply on the outgoing request.                                                                                           |
+| `requestPolicy`       | `Types.requestPolicy=?`       | Optional. The request policy to use to execute the query. Defaults to `"cache-first"`.                                                                  |
+| `url`                 | `string=?`                    | Optional. The GraphQL endpoint to use for the executing operation (if different from the one specified by `Client.make`).                               |
+| `pollInterval`        | `int=?`                       | Optional. Instructs the client to reexecute the query every `pollInterval` milliseconds.                                                                |
+| `meta`                | `Types.operationDebugMeta=?`  | Optional. Add metadata that is only available in development with devtools.                                                                             |
+| `suspense`            | `bool=?`                      | Optional. A flag activating the experimental React suspense mode, which can be used during server-side rendering to prefetch data. Defaults to `false`. |
+| `preferGetMethod`     | `bool=?`                      | Optional. If `true`, will use the HTTP GET method rather than POST for operations of type `query`. Defaults to `false`.                                 |
+| `variables`           | `Types.Operation.t_variables` | Optional. Variables to pass as part of your GraphQL query. This should be passed as the last positional argument, if needed.                            |
 
-`client.executeQuery` returns a [`wonka` `source`](https://wonka.kitten.sh/api/sources) containing the results of executing the query. The result record has a variant type called `response` with constructors for `Data(d)`, `Error(e)`, and `Empty`, in addition to `data` and `error` fields for accessing the raw response values if desired.
+`client.executeQuery` returns a [`wonka` `source`](https://wonka.kitten.sh/api/sources) containing the results of executing the query. The result record has a variant type called `response` with constructors for `Data(d)`, `PartialData(d, e)`, `Error(e)`, and `Empty`, in addition to `data` and `error` fields for accessing the raw response values if desired.
 
-| Return                                                  | Description                                                                                                                             |
-| ------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| `Wonka.Types.sourceT(Client.clientResponse('response))` | A `wonka` `source` containing a record of the results of query execution. Use the `response` field on this record for pattern matching. |
+| Return                                              | Description                                                                                                                             |
+| --------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `Wonka.Types.sourceT(Client.clientResponse('data))` | A `wonka` `source` containing a record of the results of query execution. Use the `response` field on this record for pattern matching. |
 
 #### Example
 
@@ -144,7 +149,7 @@ module GetAllDogs = [%graphql
 |}
 ];
 
-Client.executeQuery(~client, ~request=GetAllDogs.make(), ())
+Client.executeQuery(~client, ~query=(module GetAllDogs), ())
   |> Wonka.subscribe((. data) => {
     switch(Client.(data.response)) {
       | Data(d) => /* Access data returned from executing the request. */
@@ -156,23 +161,11 @@ Client.executeQuery(~client, ~request=GetAllDogs.make(), ())
 
 ### `Client.query`
 
-The same as `Client.executeQuery`, but returns a `Js.Promise.t` rather than a `wonka` `source`.
+The same as `Client.executeQuery`, but returns a `Js.Promise.t` rather than a `wonka` `source`. This method accepts all of the same arguments as `Client.executeQuery`.
 
-| Argument        | Type                         | Description                                                                                                                                                                                                                                                             |
-| --------------- | ---------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `client`        | `Client.t`                   | The `urql` client instance.                                                                                                                                                                                                                                             |
-| `request`       | `Types.request`              | The `graphql_ppx` request representing your query. Generated by calling `.make()` on the `graphql_ppx` module. If you're not using `graphql_ppx`, pass a `Js.t` of the following shape: `{. "query": string, "variables": Js.Json.t, "parse": Js.Json.t => 'response }` |
-| `fetchOptions`  | `Fetch.requestInit=?`        | Optional. The fetch options to apply on the outgoing request.                                                                                                                                                                                                           |
-| `requestPolicy` | `Types.requestPolicy=?`      | Optional. The request policy to use to execute the query. Defaults to `"cache-first"`.                                                                                                                                                                                  |
-| `url`           | `string=?`                   | Optional. The GraphQL endpoint to use for the executing operation (if different from the one specified by `Client.make`).                                                                                                                                               |
-| `pollInterval`  | `int=?`                      | Optional. Instructs the client to reexecute the query every `pollInterval` milliseconds.                                                                                                                                                                                |
-| `meta`          | `Types.operationDebugMeta=?` | Optional. Add metadata that is only available in development with devtools.                                                                                                                                                                                             |
-
-`Client.query` returns a `Js.Promise.t` containing the results of executing the query. The result record has a variant type called `response` with constructors for `Data(d)`, `Error(e)`, and `Empty`, in addition to `data` and `error` fields for accessing the raw response values if desired.
-
-| Return                                           | Description                                                                                                                           |
-| ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------- |
-| `Js.Promise.t(Client.clientResponse('response))` | A `Js.Promise.t` containing a record of the results of query execution. Use the `response` field on this record for pattern matching. |
+| Return                                       | Description                                                                                                                           |
+| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| `Js.Promise.t(Client.clientResponse('data))` | A `Js.Promise.t` containing a record of the results of query execution. Use the `response` field on this record for pattern matching. |
 
 #### Example
 
@@ -193,7 +186,7 @@ module GetAllDogs = [%graphql
 |}
 ];
 
-Client.query(~client, ~request=GetAllDogs.make(), ())
+Client.query(~client, ~query=(module GetAllDogs), ())
   |> Js.Promise.then_(data => {
     switch(Client.(data.response)) {
       | Data(d) => /* Access data returned from executing the request. */
@@ -207,21 +200,25 @@ Client.query(~client, ~request=GetAllDogs.make(), ())
 
 Execute a GraphQL mutation operation.
 
-| Argument        | Type                         | Description                                                                                                                                                                                                                                                                |
-| --------------- | ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `client`        | `Client.t`                   | The `urql` client instance.                                                                                                                                                                                                                                                |
-| `request`       | `Types.request`              | The `graphql_ppx` request representing your mutation. Generated by calling `.make()` on the `graphql_ppx` module. If you're not using `graphql_ppx`, pass a `Js.t` of the following shape: `{. "query": string, "variables": Js.Json.t, "parse": Js.Json.t => 'response }` |
-| `fetchOptions`  | `Fetch.requestInit=?`        | Optional. The fetch options to apply on the outgoing request.                                                                                                                                                                                                              |
-| `requestPolicy` | `Types.requestPolicy=?`      | Optional. The request policy to use to execute the query. Defaults to `"cache-first"`.                                                                                                                                                                                     |
-| `url`           | `string=?`                   | Optional. The GraphQL endpoint to use for the executing operation (if different from the one specified by `Client.make`).                                                                                                                                                  |
-| `pollInterval`  | `int=?`                      | Optional. Instructs the client to reexecute the mutation every `pollInterval` milliseconds.                                                                                                                                                                                |
-| `meta`          | `Types.operationDebugMeta=?` | Optional. Add metadata that is only available in development with devtools.                                                                                                                                                                                                |
+| Argument              | Type                          | Description                                                                                                                                             |
+| --------------------- | ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `client`              | `Client.t`                    | The `urql` client instance.                                                                                                                             |
+| `mutation`            | `(module Types.Operation)`    | The `graphql_ppx` module representing your GraphQL operation.                                                                                           |
+| `additionalTypenames` | `array(string)=?`             | Optional. Flag that this operation depends on certain `__typename`s. Used by default in the document cache.                                             |
+| `fetchOptions`        | `Fetch.requestInit=?`         | Optional. The fetch options to apply on the outgoing request.                                                                                           |
+| `requestPolicy`       | `Types.requestPolicy=?`       | Optional. The request policy to use to execute the query. Defaults to `"cache-first"`.                                                                  |
+| `url`                 | `string=?`                    | Optional. The GraphQL endpoint to use for the executing operation (if different from the one specified by `Client.make`).                               |
+| `pollInterval`        | `int=?`                       | Optional. Instructs the client to reexecute the query every `pollInterval` milliseconds.                                                                |
+| `meta`                | `Types.operationDebugMeta=?`  | Optional. Add metadata that is only available in development with devtools.                                                                             |
+| `suspense`            | `bool=?`                      | Optional. A flag activating the experimental React suspense mode, which can be used during server-side rendering to prefetch data. Defaults to `false`. |
+| `preferGetMethod`     | `bool=?`                      | Optional. If `true`, will use the HTTP GET method rather than POST for operations of type `query`. Defaults to `false`.                                 |
+| `variables`           | `Types.Operation.t_variables` | Optional. Variables to pass as part of your GraphQL query. This should be passed as the last positional argument, if needed.                            |
 
-`Client.executeMutation` returns a [`wonka` `source`](https://wonka.kitten.sh/api/sources) containing the results of executing the mutation. The result record has a variant type called `response` with constructors for `Data(d)`, `Error(e)`, and `Empty`, in addition to `data` and `error` fields for accessing the raw response values if desired.
+`Client.executeMutation` returns a [`wonka` `source`](https://wonka.kitten.sh/api/sources) containing the results of executing the mutation. The result record has a variant type called `response` with constructors for `Data(d)`, `PartialData(d, e)`, `Error(e)`, and `Empty`, in addition to `data` and `error` fields for accessing the raw response values if desired.
 
-| Return                                                  | Description                                                                                                                                |
-| ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| `Wonka.Types.sourceT(Client.clientResponse('response))` | A `wonka` `source` containing a record of the results of mutation execution. Use the `response` field on this record for pattern matching. |
+| Return                                              | Description                                                                                                                                |
+| --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| `Wonka.Types.sourceT(Client.clientResponse('data))` | A `wonka` `source` containing a record of the results of mutation execution. Use the `response` field on this record for pattern matching. |
 
 #### Example
 
@@ -242,7 +239,7 @@ module LikeDog = [%graphql
 |}
 ];
 
-Client.executeMutation(~client, ~request=LikeDog.make(~key="VmeRTX7j-", ()), ())
+Client.executeMutation(~client, ~mutation=(module LikeDog), LikeDog.{ key: "VmeRTX7j-" })
   |> Wonka.subscribe((. data) => {
     switch(Client.(data.response)) {
       | Data(d) => /* Access data returned from executing the request. */
@@ -254,23 +251,11 @@ Client.executeMutation(~client, ~request=LikeDog.make(~key="VmeRTX7j-", ()), ())
 
 ### `Client.mutation`
 
-The same as `Client.executeMutation`, but returns a `Js.Promise.t` rather than a `wonka` `source`.
+The same as `Client.executeMutation`, but returns a `Js.Promise.t` rather than a `wonka` `source`. This method accepts all of the same arguments as `Client.executeMutation`.
 
-| Argument        | Type                         | Description                                                                                                                                                                                                                                                             |
-| --------------- | ---------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `client`        | `Client.t`                   | The `urql` client instance.                                                                                                                                                                                                                                             |
-| `request`       | `Types.request`              | The `graphql_ppx` request representing your query. Generated by calling `.make()` on the `graphql_ppx` module. If you're not using `graphql_ppx`, pass a `Js.t` of the following shape: `{. "query": string, "variables": Js.Json.t, "parse": Js.Json.t => 'response }` |
-| `fetchOptions`  | `Fetch.requestInit=?`        | Optional. The fetch options to apply on the outgoing request.                                                                                                                                                                                                           |
-| `requestPolicy` | `Types.requestPolicy=?`      | Optional. The request policy to use to execute the query. Defaults to `"cache-first"`.                                                                                                                                                                                  |
-| `url`           | `string=?`                   | Optional. The GraphQL endpoint to use for the executing operation (if different from the one specified by `Client.make`).                                                                                                                                               |
-| `pollInterval`  | `int=?`                      | Optional. Instructs the client to reexecute the mutation every `pollInterval` milliseconds.                                                                                                                                                                             |
-| `meta`          | `Types.operationDebugMeta=?` | Optional. Add metadata that is only available in development with devtools.                                                                                                                                                                                             |
-
-`Client.mutation` returns a `Js.Promise.t` containing the results of executing the mutation. The result record has a variant type called `response` with constructors for `Data(d)`, `Error(e)`, and `Empty`, in addition to `data` and `error` fields for accessing the raw response values if desired.
-
-| Return                                           | Description                                                                                                                              |
-| ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| `Js.Promise.t(Client.clientResponse('response))` | A `Js.Promise.t` containing a record of the results of mutation execution. Use the `response` field on this record for pattern matching. |
+| Return                                       | Description                                                                                                                              |
+| -------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `Js.Promise.t(Client.clientResponse('data))` | A `Js.Promise.t` containing a record of the results of mutation execution. Use the `response` field on this record for pattern matching. |
 
 #### Example
 
@@ -291,9 +276,9 @@ module LikeDog = [%graphql
 |}
 ];
 
-Client.mutation(~client, ~request=LikeDog.make(~key="VmeRTX7j-", ()), ())
+Client.mutation(~client, ~mutation=(module LikeDog), LikeDog.{ key: "VmeRTX7j-" })
   |> Js.Promise.then_(data => {
-    switch(Client.(data.response)) {
+    switch (Client.(data.response)) {
       | Data(d) => /* Access data returned from executing the request. */
       | Error(e) => /* Access any errors returned from executing the request. */
       | Empty => /* Fallback if neither Data nor Error return information. */
@@ -305,15 +290,23 @@ Client.mutation(~client, ~request=LikeDog.make(~key="VmeRTX7j-", ()), ())
 
 Execute a GraphQL subscription operation. If using the `executeSubscription` method, be sure your client is configured with the `subscriptionExchange`.
 
-| Argument        | Type                         | Description                                                                                                                                                                                                                                                                    |
-| --------------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `client`        | `Client.t`                   | The `urql` client instance.                                                                                                                                                                                                                                                    |
-| `request`       | `Types.graphqlRequest`       | The `graphql_ppx` request representing your subscription. Generated by calling `.make()` on the `graphql_ppx` module. If you're not using `graphql_ppx`, pass a `Js.t` of the following shape: `{. "query": string, "variables": Js.Json.t, "parse": Js.Json.t => 'response }` |
-| `fetchOptions`  | `Fetch.requestInit=?`        | Optional. The fetch options to apply on the outgoing request.                                                                                                                                                                                                                  |
-| `requestPolicy` | `Types.requestPolicy=?`      | Optional. The request policy to use to execute the query. Defaults to `"cache-first"`.                                                                                                                                                                                         |
-| `url`           | `string=?`                   | Optional. The GraphQL endpoint to use for the executing operation (if different from the one specified by `Client.make`).                                                                                                                                                      |
-| `pollInterval`  | `int=?`                      | Optional. Instructs the client to reexecute the mutation every `pollInterval` milliseconds.                                                                                                                                                                                    |
-| `meta`          | `Types.operationDebugMeta=?` | Optional. Add metadata that is only available in development with devtools.                                                                                                                                                                                                    |
+| Argument              | Type                          | Description                                                                                                                                             |
+| --------------------- | ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `client`              | `Client.t`                    | The `urql` client instance.                                                                                                                             |
+| `subscription`        | `(module Types.Operation)`    | The `graphql_ppx` module representing your GraphQL operation.                                                                                           |
+| `additionalTypenames` | `array(string)=?`             | Optional. Flag that this operation depends on certain `__typename`s. Used by default in the document cache.                                             |
+| `fetchOptions`        | `Fetch.requestInit=?`         | Optional. The fetch options to apply on the outgoing request.                                                                                           |
+| `requestPolicy`       | `Types.requestPolicy=?`       | Optional. The request policy to use to execute the query. Defaults to `"cache-first"`.                                                                  |
+| `url`                 | `string=?`                    | Optional. The GraphQL endpoint to use for the executing operation (if different from the one specified by `Client.make`).                               |
+| `pollInterval`        | `int=?`                       | Optional. Instructs the client to reexecute the query every `pollInterval` milliseconds.                                                                |
+| `meta`                | `Types.operationDebugMeta=?`  | Optional. Add metadata that is only available in development with devtools.                                                                             |
+| `suspense`            | `bool=?`                      | Optional. A flag activating the experimental React suspense mode, which can be used during server-side rendering to prefetch data. Defaults to `false`. |
+| `preferGetMethod`     | `bool=?`                      | Optional. If `true`, will use the HTTP GET method rather than POST for operations of type `query`. Defaults to `false`.                                 |
+| `variables`           | `Types.Operation.t_variables` | Optional. Variables to pass as part of your GraphQL query. This should be passed as the last positional argument, if needed.                            |
+
+| Return                                              | Description                                                                                                                                    |
+| --------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Wonka.Types.sourceT(Client.clientResponse('data))` | A `wonka` `source` containing a record of the results of subscription execution. Use the `response` field on this record for pattern matching. |
 
 #### Example
 
@@ -331,7 +324,7 @@ module SubscribeMessages = [%graphql
 |}
 ];
 
-Client.executeSubscription(~client, ~request=SubscribeMessages.make(), ())
+Client.executeSubscription(~client, ~subscription=(module SubscribeMessages), ())
   |> Wonka.subscribe((. data) => {
     switch(Client.(data.response)) {
       | Data(d) => /* Access data returned from executing the request. */
@@ -340,3 +333,15 @@ Client.executeSubscription(~client, ~request=SubscribeMessages.make(), ())
     }
   });
 ```
+
+### `Client.subscription`
+
+An alias for `Client.executeSubscription`.
+
+### `Client.readQuery`
+
+Execute a GraphQL query, but immediately unsubscribe from the result. This method is particularly useful for reading directly from the cache without issuing a request to your GraphQL API. This method accepts all of the same arguments as `Client.executeQuery` and `Client.query`.
+
+| Return                                 | Description                                                            |
+| -------------------------------------- | ---------------------------------------------------------------------- |
+| `option(Client.clientResponse('data))` | `Some(response)` if a result was found in the cache, otherwise `None`. |
