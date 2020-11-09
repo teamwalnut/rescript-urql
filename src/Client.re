@@ -197,11 +197,10 @@ let executeQuery:
   type variables variablesJs data.
     (
       ~client: t,
-      ~request: (module Types.Operation with
-                   type t_variables = variables and
-                   type Raw.t_variables = variablesJs and
-                   type t = data),
-      ~variables: variables,
+      ~query: (module Types.Operation with
+                 type t_variables = variables and
+                 type Raw.t_variables = variablesJs and
+                 type t = data),
       ~additionalTypenames: array(string)=?,
       ~fetchOptions: Fetch.requestInit=?,
       ~fetch: (string, Fetch.requestInit) => Js.Promise.t(Fetch.response)=?,
@@ -211,13 +210,12 @@ let executeQuery:
       ~meta: Types.operationDebugMeta=?,
       ~suspense: bool=?,
       ~preferGetMethod: bool=?,
-      unit
+      variables
     ) =>
     Wonka.Types.sourceT(Types.operationResult(data)) =
   (
     ~client,
-    ~request as (module Request),
-    ~variables: variables,
+    ~query as (module Query),
     ~additionalTypenames=?,
     ~fetchOptions=?,
     ~fetch=?,
@@ -227,13 +225,12 @@ let executeQuery:
     ~meta=?,
     ~suspense=?,
     ~preferGetMethod=?,
-    (),
+    variables,
   ) => {
     let req =
       Utils.createRequest(
-        ~query=Request.query,
-        ~variables=
-          variables->Request.serializeVariables->Request.variablesToJson,
+        ~query=Query.query,
+        ~variables=variables->Query.serializeVariables->Query.variablesToJson,
         (),
       );
 
@@ -254,7 +251,7 @@ let executeQuery:
 
     executeQueryJs(~client, ~query=req, ~opts=optsJs, ())
     |> Wonka.map((. response) =>
-         Types.operationResultToReason(~response, ~parse=Request.parse)
+         Types.operationResultToReason(~response, ~parse=Query.parse)
        );
   };
 
@@ -273,11 +270,10 @@ let executeMutation:
   type variables variablesJs data.
     (
       ~client: t,
-      ~request: (module Types.Operation with
-                   type t_variables = variables and
-                   type Raw.t_variables = variablesJs and
-                   type t = data),
-      ~variables: variables,
+      ~mutation: (module Types.Operation with
+                    type t_variables = variables and
+                    type Raw.t_variables = variablesJs and
+                    type t = data),
       ~additionalTypenames: array(string)=?,
       ~fetchOptions: Fetch.requestInit=?,
       ~fetch: (string, Fetch.requestInit) => Js.Promise.t(Fetch.response)=?,
@@ -287,13 +283,12 @@ let executeMutation:
       ~meta: Types.operationDebugMeta=?,
       ~suspense: bool=?,
       ~preferGetMethod: bool=?,
-      unit
+      variables
     ) =>
     Wonka.Types.sourceT(Types.operationResult(data)) =
   (
     ~client: t,
-    ~request as (module Request),
-    ~variables,
+    ~mutation as (module Mutation),
     ~additionalTypenames=?,
     ~fetchOptions=?,
     ~fetch=?,
@@ -303,16 +298,15 @@ let executeMutation:
     ~meta=?,
     ~suspense=?,
     ~preferGetMethod=?,
-    (),
+    variables,
   ) => {
     let req =
       Utils.createRequest(
-        ~query=Request.query,
+        ~query=Mutation.query,
         ~variables=
-          variables->Request.serializeVariables->Request.variablesToJson,
+          variables->Mutation.serializeVariables->Mutation.variablesToJson,
         (),
       );
-    let parse = Request.parse;
     let optsJs =
       Types.partialOperationContext(
         ~additionalTypenames?,
@@ -330,7 +324,7 @@ let executeMutation:
 
     executeMutationJs(~client, ~mutation=req, ~opts=optsJs, ())
     |> Wonka.map((. response) =>
-         Types.operationResultToReason(~response, ~parse)
+         Types.operationResultToReason(~response, ~parse=Mutation.parse)
        );
   };
 
@@ -349,11 +343,10 @@ let executeSubscription:
   type variables variablesJs data.
     (
       ~client: t,
-      ~request: (module Types.Operation with
-                   type t_variables = variables and
-                   type Raw.t_variables = variablesJs and
-                   type t = data),
-      ~variables: variables,
+      ~subscription: (module Types.Operation with
+                        type t_variables = variables and
+                        type Raw.t_variables = variablesJs and
+                        type t = data),
       ~additionalTypenames: array(string)=?,
       ~fetchOptions: Fetch.requestInit=?,
       ~fetch: (string, Fetch.requestInit) => Js.Promise.t(Fetch.response)=?,
@@ -363,13 +356,12 @@ let executeSubscription:
       ~meta: Types.operationDebugMeta=?,
       ~suspense: bool=?,
       ~preferGetMethod: bool=?,
-      unit
+      variables
     ) =>
     Wonka.Types.sourceT(Types.operationResult(data)) =
   (
     ~client: t,
-    ~request as (module Request),
-    ~variables,
+    ~subscription as (module Subscription),
     ~additionalTypenames=?,
     ~fetchOptions=?,
     ~fetch=?,
@@ -379,16 +371,17 @@ let executeSubscription:
     ~meta=?,
     ~suspense=?,
     ~preferGetMethod=?,
-    (),
+    variables,
   ) => {
     let req =
       Utils.createRequest(
-        ~query=Request.query,
+        ~query=Subscription.query,
         ~variables=
-          variables->Request.serializeVariables->Request.variablesToJson,
+          variables
+          ->Subscription.serializeVariables
+          ->Subscription.variablesToJson,
         (),
       );
-    let parse = Request.parse;
     let optsJs =
       Types.partialOperationContext(
         ~additionalTypenames?,
@@ -406,15 +399,14 @@ let executeSubscription:
 
     executeSubscriptionJs(~client, ~subscription=req, ~opts=optsJs, ())
     |> Wonka.map((. response) =>
-         Types.operationResultToReason(~response, ~parse)
+         Types.operationResultToReason(~response, ~parse=Subscription.parse)
        );
   };
 
 let query =
     (
       ~client,
-      ~request,
-      ~variables,
+      ~query,
       ~additionalTypenames=?,
       ~fetchOptions=?,
       ~fetch=?,
@@ -424,12 +416,11 @@ let query =
       ~meta=?,
       ~suspense=?,
       ~preferGetMethod=?,
-      (),
+      variables,
     ) => {
   executeQuery(
     ~client,
-    ~request,
-    ~variables,
+    ~query,
     ~additionalTypenames?,
     ~fetchOptions?,
     ~fetch?,
@@ -439,7 +430,7 @@ let query =
     ~meta?,
     ~suspense?,
     ~preferGetMethod?,
-    (),
+    variables,
   )
   |> Wonka.take(1)
   |> Wonka.toPromise;
@@ -448,8 +439,7 @@ let query =
 let mutation =
     (
       ~client,
-      ~request,
-      ~variables,
+      ~mutation,
       ~additionalTypenames=?,
       ~fetchOptions=?,
       ~fetch=?,
@@ -459,12 +449,11 @@ let mutation =
       ~meta=?,
       ~suspense=?,
       ~preferGetMethod=?,
-      (),
+      variables,
     ) => {
   executeMutation(
     ~client,
-    ~request,
-    ~variables,
+    ~mutation,
     ~additionalTypenames?,
     ~fetchOptions?,
     ~fetch?,
@@ -474,7 +463,7 @@ let mutation =
     ~meta?,
     ~suspense?,
     ~preferGetMethod?,
-    (),
+    variables,
   )
   |> Wonka.take(1)
   |> Wonka.toPromise;
@@ -485,8 +474,7 @@ let subscription = executeSubscription;
 let readQuery =
     (
       ~client,
-      ~request,
-      ~variables,
+      ~query,
       ~additionalTypenames=?,
       ~fetchOptions=?,
       ~fetch=?,
@@ -496,13 +484,12 @@ let readQuery =
       ~meta=?,
       ~suspense=?,
       ~preferGetMethod=?,
-      (),
+      variables,
     ) => {
   let result = ref(None);
   executeQuery(
     ~client,
-    ~request,
-    ~variables,
+    ~query,
     ~additionalTypenames?,
     ~fetchOptions?,
     ~fetch?,
@@ -512,7 +499,7 @@ let readQuery =
     ~meta?,
     ~suspense?,
     ~preferGetMethod?,
-    (),
+    variables,
   )
   |> Wonka.subscribe((. data) => {result := Some(data)})
   |> (subscription => subscription.unsubscribe());

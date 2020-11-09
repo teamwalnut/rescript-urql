@@ -19,7 +19,7 @@ type executeSubscription =
   unit;
 
 type useSubscriptionResponse('data) = (
-  Types.hookResponse('data),
+  Types.Hooks.hookResponse('data),
   executeSubscription,
 );
 

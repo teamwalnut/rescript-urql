@@ -10,7 +10,7 @@ type useQueryArgsJs = {
 type executeQueryJs = Types.partialOperationContext => unit;
 
 type useQueryResponseJs('dataJs) = (
-  Types.hookResponseJs('dataJs),
+  Types.Hooks.hookResponseJs('dataJs),
   executeQueryJs,
 );
 
@@ -29,7 +29,10 @@ type executeQuery =
   ) =>
   unit;
 
-type useQueryResponse('data) = (Types.hookResponse('data), executeQuery);
+type useQueryResponse('data) = (
+  Types.Hooks.hookResponse('data),
+  executeQuery,
+);
 
 [@bs.module "urql"]
 external useQueryJs: useQueryArgsJs => useQueryResponseJs('dataJs) =
@@ -129,7 +132,7 @@ let useQuery:
 
     let state =
       React.useMemo2(
-        () => Types.urqlResponseToReason(~response=stateJs, ~parse),
+        () => Types.Hooks.hookResponseToReason(~response=stateJs, ~parse),
         (stateJs, parse),
       );
 
