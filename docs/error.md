@@ -27,7 +27,7 @@ switch (response) {
 Depending on the types of errors you get from your GraphQL API, you may want to do different things. Here's an example showing how to handle `networkError`s and `graphQLErrors` indepedently.
 
 ```reason
-let ({ response }, _) = useQuery(~request, ());
+let ({ response }, _) = useQuery(~query=(module MyQuery), ());
 
 switch (response) {
   | Error(e) =>

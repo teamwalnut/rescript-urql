@@ -149,7 +149,7 @@ let useSubscription =
   let (responseJs, executeSubscriptionJs) =
     useSubscriptionJs(args, Some(h));
 
-  let response =
+  let state =
     React.useMemo1(
       () => subscriptionResponseToReason(responseJs),
       [|responseJs|],
@@ -190,5 +190,5 @@ let useSubscription =
       [|executeSubscriptionJs|],
     );
 
-  (response, executeSubscription);
+  (state, executeSubscription);
 };

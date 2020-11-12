@@ -28,7 +28,7 @@ Reason bindings for Formidable's Universal React Query Library, [`urql`](https:/
 
 ## 💾 Installation
 
-#### 1. Install `reason-urql` and its `peerDependencies`.
+### 1. Install `reason-urql` and its `peerDependencies`.
 
 ```sh
 yarn add reason-urql urql graphql
@@ -36,7 +36,21 @@ yarn add reason-urql urql graphql
 
 We try to keep our bindings as close to latest `urql` as possible. However, `urql` tends to make releases a bit ahead of `reason-urql`. To get a compatible version, we recommend always staying strictly within this project's `peerDependency` range for `urql`.
 
-#### 2. Add `@reasonml-community/graphql-ppx`.
+#### 1a. **Important note for users of `bs-platform>=8.0.0`**.
+
+If using `bs-platform>=8.0.0` you'll need to use [`yarn resolutions`](https://classic.yarnpkg.com/en/docs/selective-version-resolutions/) to specify a specific version of `wonka` to resolve. `urql` has an explicit dependency on latest `wonka` `v4`, which is incompatible with `bs-platform>=8.0.0`. See [this issue](https://github.com/kitten/wonka/issues/85) for more details.
+
+In your `package.json`, add the following:
+
+```json
+"resolutions": {
+  "wonka": "5.0.0-rc.1"
+}
+```
+
+If you're using `npm`, you may need to stay on `bs-platform@7.3.2` until `urql` takes a dependency on `wonka>=5.0.0`.
+
+### 2. Add `@reasonml-community/graphql-ppx`.
 
 To get the most out of compile time type checks for your GraphQL queries, mutations, and subscriptions, we use [`@reasonml-community/graphql-ppx`](https://github.com/reasonml-community/graphql-ppx). Add this to your project's `devDependencies`.
 
@@ -44,7 +58,7 @@ To get the most out of compile time type checks for your GraphQL queries, mutati
 yarn add @reasonml-community/graphql-ppx --dev
 ```
 
-#### 3. Update `bsconfig.json`.
+### 3. Update `bsconfig.json`.
 
 Add `reason-urql`, `wonka`, and `@reasonml-community/graphql-ppx` to your `bs-dependencies` and `@reasonml-community/graphql-ppx/ppx` to your `ppx_flags` in `bsconfig.json`.
 
@@ -59,7 +73,7 @@ Add `reason-urql`, `wonka`, and `@reasonml-community/graphql-ppx` to your `bs-de
 }
 ```
 
-#### 4. Send an introspection query to your API.
+### 4. Send an introspection query to your API.
 
 Finally, you'll need to send an introspection query to your GraphQl API, using a tool like [`graphql-cli`](https://github.com/Urigo/graphql-cli/). You should generate a file called `graphql_schema.json` at the root of your project that `graphql-ppx` can use to type check your queries. **You should check this file into version control** and keep it updated as your API changes.
 

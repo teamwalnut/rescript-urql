@@ -151,7 +151,7 @@ module GetAllDogs = [%graphql
 
 Client.executeQuery(~client, ~query=(module GetAllDogs), ())
   |> Wonka.subscribe((. data) => {
-    switch(Client.(data.response)) {
+    switch(Types.(data.response)) {
       | Data(d) => /* Access data returned from executing the request. */
       | Error(e) => /* Access any errors returned from executing the request. */
       | Empty => /* Fallback if neither Data nor Error return information. */
@@ -188,7 +188,7 @@ module GetAllDogs = [%graphql
 
 Client.query(~client, ~query=(module GetAllDogs), ())
   |> Js.Promise.then_(data => {
-    switch(Client.(data.response)) {
+    switch(Types.(data.response)) {
       | Data(d) => /* Access data returned from executing the request. */
       | Error(e) => /* Access any errors returned from executing the request. */
       | Empty => /* Fallback if neither Data nor Error return information. */
@@ -241,7 +241,7 @@ module LikeDog = [%graphql
 
 Client.executeMutation(~client, ~mutation=(module LikeDog), LikeDog.{ key: "VmeRTX7j-" })
   |> Wonka.subscribe((. data) => {
-    switch(Client.(data.response)) {
+    switch(Types.(data.response)) {
       | Data(d) => /* Access data returned from executing the request. */
       | Error(e) => /* Access any errors returned from executing the request. */
       | Empty => /* Fallback if neither Data nor Error return information. */
@@ -278,7 +278,7 @@ module LikeDog = [%graphql
 
 Client.mutation(~client, ~mutation=(module LikeDog), LikeDog.{ key: "VmeRTX7j-" })
   |> Js.Promise.then_(data => {
-    switch (Client.(data.response)) {
+    switch (Types.(data.response)) {
       | Data(d) => /* Access data returned from executing the request. */
       | Error(e) => /* Access any errors returned from executing the request. */
       | Empty => /* Fallback if neither Data nor Error return information. */
@@ -326,7 +326,7 @@ module SubscribeMessages = [%graphql
 
 Client.executeSubscription(~client, ~subscription=(module SubscribeMessages), ())
   |> Wonka.subscribe((. data) => {
-    switch(Client.(data.response)) {
+    switch(Types.(data.response)) {
       | Data(d) => /* Access data returned from executing the request. */
       | Error(e) => /* Access any errors returned from executing the request. */
       | Empty => /* Fallback if neither Data nor Error return information. */
