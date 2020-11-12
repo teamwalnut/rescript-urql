@@ -4,7 +4,7 @@ This document well help you get started with `reason-urql`. It picks up right wh
 
 ## Setting Up the Client
 
-To get started with `reason-urql`, the first thing you'll want to do is create your client. Your client is the core orchestrator of communication with your GraphQL API, handling all outgoing requests and incoming responses. To create a client, simply call the `make` function from the `Client` module.
+To get started with `reason-urql`, the first thing you'll want to do is create your client. Your client is the core orchestrator of communication with your GraphQL API, handling all outgoing requests and incoming responses. To create a client, call the `make` function from the `Client` module.
 
 ```reason
 open ReasonUrql;
@@ -12,11 +12,11 @@ open ReasonUrql;
 let client = Client.make(~url="https://mygraphqlapi.com/graphql", ());
 ```
 
-The `client` accepts a few other configuration options, including `fetchOptions` and `exchanges`, but only `url` is required. By default, `reason-urql` will apply `urql`'s `defaultExchanges` if no exchanges are provided; this will include the `fetchExchange` for executing requests, the `cacheExchange` for caching responses from your API, and the `dedupExchange` for deduplicating in-flight requests. It will also apply standard fetch options if no `fetchOptions` argument is provided, using `POST` as the request method and `application/json` as the `Content-Type` header. We'll see later how to work with these options.
+The `client` accepts a few other configuration options, including `fetchOptions` and `exchanges`, but only `url` is required. By default, `reason-urql` will apply `urql`'s `defaultExchanges` if no exchanges are provided; this will include the `fetchExchange` for executing requests, the `cacheExchange` for caching responses from your API, and the `dedupExchange` for deduplicating in-flight requests. It will also apply standard fetch options if no `fetchOptions` argument is provided, using `POST` as the HTTP method and `application/json` as the `Content-Type` header. We'll see later how to work with these options.
 
 ## Linking Client with Provider
 
-Once you have your `Client` setup, you'll need to pass it to your `Provider`, which should wrap the root level of your application. This allows `reason-urql`'s hooks to access the `Client` to execute operations lower down in your React tree.
+Once you have your `Client` setup, you'll need to pass it to your `Provider`, which should wrap the root level of your application. This allows `reason-urql`'s hooks to access the `Client` in order to execute operations lower down in your React tree.
 
 ```reason
 open ReasonUrql;
@@ -52,11 +52,9 @@ module DogsQuery = [%graphql
 
 [@react.component]
 let make = () => {
-  /* Build your request by calling .make on your query. */
-  let request = DogsQuery.make();
-
-  /* Pass the request to useQuery. */
-  let (Hooks.{ response }, executeQuery) = Hooks.useQuery(~request, ());
+  /* Pass the graphql-ppx module as a first-class module to useQuery. */
+  let (Hooks.{response}, executeQuery)
+    = Hooks.useQuery(~query=(module DogsQuery), ());
 
   /* Pattern match on the response variant.
   This variant has constructors for Fetching, Data(d), PartialData(d, e) Error(e), and Empty. */
@@ -65,11 +63,11 @@ let make = () => {
     | Data(d)
     | PartialData(d, _) => {
       Array.map(dog =>
-        <div key=dog##key>
-          <span> {j|$dog##name $dog##likes|j}->React.string </span>
-          <span> dog##breed->React.string <span>
+        <div key=dog.key>
+          <span> {j|$dog.name $dog.likes|j}->React.string </span>
+          <span> dog.breed->React.string <span>
         </div>,
-        d##dogs
+        d.dogs
       )
     }
     | Error(e) =>
@@ -82,11 +80,11 @@ let make = () => {
 }
 ```
 
-Sweet 😎! We've executed a query with our `useQuery` hook. Notice that we didn't have to write _any_ types to get 💯% type inference and type safety on the response. We use type information included in the query module you pass to `useQuery` to ensure that you're using the data returned by your query in a fully safe way.
+Sweet 😎! We've executed a query with our `useQuery` hook. Notice that we didn't have to write _any_ types to get 💯% type inference and type safety on the response. We use type information included in the query module you pass to `useQuery` to ensure that you're using the data returned by your query in a fully type-safe way.
 
 ## Can I See an Example?
 
-Check out the example in `examples/2-query` to see a more involved example of using `useQuery`, in addition to `reason-urql`'s `Query` component.
+Check out the example in `examples/2-query` to see a more involved example of using `useQuery`.
 
 ## Writing Your First Mutation
 
@@ -112,13 +110,11 @@ module LikeDogMutation = [%graphql
 
 [@react.component]
 let make = (~key: string) => {
-  /* Build your request by calling .make on your mutation, passing variables as labeled arguments. */
-  let request = LikeDogMutation.make(~key, ());
-
   /* Pass the request to useMutation. */
-  let (_, executeMutation) = Hooks.useMutation(~request);
+  let (_, executeMutation) =
+    Hooks.useMutation(~mutation=(module LikeDogMutation));
 
-  <button onClick={_e => executeMutation() |> ignore}>
+  <button onClick={_e => executeMutation({key}) |> ignore}>
       "Execute the Mutation (and Reward a Good Dog)"->React.string
   </button>
 }
@@ -133,14 +129,12 @@ open ReasonUrql;
 
 [@react.component]
 let make = (~key: string) => {
-  /* Build your request by calling .make on your mutation, passing variables as labeled arguments. */
-  let request = LikeDogMutation.make(~key, ());
-
   /* Pass the request to useMutation. */
-  let (Hooks.{ response }, executeMutation) = Hooks.useMutation(~request);
+  let (Hooks.{response}, executeMutation)
+    = Hooks.useMutation(~mutation=(module LikeDogMutation));
 
   let button = React.useMemo1(() =>
-    <button onClick={_e => executeMutation() |> ignore}>
+    <button onClick={_e => executeMutation({key}) |> ignore}>
         "Execute the Mutation (and Reward a Good Dog)"->React.string
     </button>,
     [|executeMutation|]
@@ -165,4 +159,4 @@ let make = (~key: string) => {
 
 ## Can I See an Example?
 
-Check out the example in `examples/3-mutation` to see a more involved example of using `useMutation`, in addition to `reason-urql`'s `Mutation` component.
+Check out the example in `examples/3-mutation` to see a more involved example of using `useMutation`.
