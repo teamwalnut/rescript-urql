@@ -5,6 +5,117 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.0.0] - 2020-11-14
+
+This release migrates us to using `@reasonml-community/graphql-ppx` as our GraphQL PPX preprocessor of choice in lieu of `@baransu/graphql_ppx_re`. It also converts `urql` to a `peerDependency` of the library rather than bundling `urql` as a direct dependency. Finally, this release includes support for BuckleScript / ReScript > 8.0.0.
+
+### Changed
+
+- `urql`, along with its own `peerDependencies`, should be installed alongside `reason-urql`, which no longer bundles `urql` as a direct dependency. See updated installation instructions in the README. PR by @parkerziegler [here](https://github.com/FormidableLabs/reason-urql/pull/224).
+- Users should install `@reasonml-community/graphql-ppx` as a `peerDependency` of `reason-urql`.
+- Users depending on `bs-platform>=8.0.0` will need to specify a resolution for `wonka` v5 using [yarn resolutions](https://classic.yarnpkg.com/en/docs/selective-version-resolutions/). See updated installation instructions in the README.
+- `Client.execute*` methods underwent four major API changes:
+
+  1. There is no longer a `~request` labelled argument. Instead, the GraphQL operation is passed using `~query` for `Client.executeQuery`, `~mutation` for `Client.executeMutation`, and `~subscription` for `Client.executeSubscription`. This applies to `Client.query`, `Client.mutation`, `Client.subscription`, and `Client.readQuery` as well.
+  2. GraphQL operations are passed as [first-class modules](https://dev.realworldocaml.org/first-class-modules.html) to `Client.execute*` methods. This means you pass your entire GraphQL query `module` as a function argument, like so:
+
+  ```reason
+  open ReasonUrql;
+
+  module GetAllDogs = [%graphql {|
+    query getAllDogs {
+      dogs {
+        name
+        breed
+        likes
+      }
+    }
+  |}];
+
+  /* Pass GetAllDogs as a first-class module to Client.executeQuery. */
+  Client.executeQuery(~query=(module GetAllDogs), ())
+  ```
+
+  3. Variables are passed as the last positional argument to `Client.execute*` methods, if they are required. PR by @parkerziegler [here](https://github.com/FormidableLabs/reason-urql/pull/226). We interface with `@reasonml-community/graphql-ppx` to typecheck your `variables` based on the signature of your GraphQL operation. If your query, mutation, or subscription requires variables, pass them as a record in the last position, like so:
+
+  ```reason
+  open ReasonUrql;
+
+  module GetDog = [%graphql {|
+    query getDog($key: ID!) {
+      dog(key: $key) {
+        name
+        breed
+        likes
+      }
+    }
+  |}];
+
+  /* Pass GetDog as a first-class module to Client.executeQuery,
+      with required variables as a record in the final position. */
+  Client.executeQuery(~query=(module GetDog), {key: "12345"})
+  ```
+
+  4. The `response` variant for `Client.execute*` methods was renamed to `operationResponse` and should be referenced from the `Types` module rather than the `Client` module.
+
+- The hooks APIs underwent three major API changes:
+
+  1. There is no longer a `~request` labelled argument. Instead, the GraphQL operation is passed using `~query` for `useQuery`, `~mutation` for `useMutation`, and `~subscription` for `useSubscription`.
+  2. GraphQL operations are passed as [first-class modules](https://dev.realworldocaml.org/first-class-modules.html) to each hook. This means you pass your entire GraphQL query `module` as a function argument, like so:
+
+  ```reason
+  open ReasonUrql;
+
+  module GetAllDogs = [%graphql {|
+    query getAllDogs {
+      dogs {
+        name
+        breed
+        likes
+      }
+    }
+  |}];
+
+  [@react.component]
+  let make = () => {
+    /* Pass GetAllDogs as a first-class module to useQuery. */
+    let (Hooks.{response}, _) = Hooks.useQuery(~query=(module GetAllDogs), ());
+
+    /* Return the JSX for your component. */
+  }
+  ```
+
+  3. Variables are passed as the last positional argument to a hook, if they are required. PR by @amiralies [here](https://github.com/FormidableLabs/reason-urql/pull/225). We interface with `@reasonml-community/graphql-ppx` to typecheck your `variables` based on the signature of your GraphQL operation. If your query, mutation, or subscription requires variables, pass them as a record in the last position, like so:
+
+  ```reason
+  module GetDog = [%graphql {|
+    query getDog($key: ID!) {
+      dog(key: $key) {
+        name
+        breed
+        likes
+      }
+    }
+  |}];
+
+  [@react.component]
+  let make = () => {
+    /* Pass GetDog as a first-class module to useQuery,
+      with required variables as a record in the final position. */
+    let (Hooks.{response}, _) = Hooks.useQuery(~query=(module GetDog), {key: "12345"});
+
+    /* Return the JSX for your component. */
+  }
+  ```
+
+### Removed
+
+- The `useDynamicMutation` hook was removed. `useMutation` now consolidates the former use case for this hook and brings our APIs more inline with how `urql` works.
+
+### Diff
+
+https://github.com/FormidableLabs/reason-urql/compare/v2.1.0...v3.0.0
+
 ## [3.0.0-rc.0] - 2020-11-12
 
 This release is the first release candidate for v3.0.0, which will use `@reasonml-community/graphql-ppx` as our PPX preprocessor for GraphQL operations. Breaking changes will be listed in the release notes for the first stable release of v3.0.0.

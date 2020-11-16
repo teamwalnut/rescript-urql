@@ -28,13 +28,16 @@ Reason bindings for Formidable's Universal React Query Library, [`urql`](https:/
 
 ## 💾 Installation
 
-### 1. Install `reason-urql` and its `peerDependencies`.
+### 1. Install `reason-urql` alongside its `peerDependencies` and `devDependencies`.
 
 ```sh
 yarn add reason-urql urql graphql
+yarn add gentype --dev
 ```
 
 We try to keep our bindings as close to latest `urql` as possible. However, `urql` tends to make releases a bit ahead of `reason-urql`. To get a compatible version, we recommend always staying strictly within this project's `peerDependency` range for `urql`.
+
+The `gentype` `devDependency` is a requirement introduced by `urql`'s use of `wonka`. `wonka`'s source uses `@genType` declarations, so when the BuckleScript / ReScript compiler attempts to compile `wonka` in your project, it'll need a local copy of `gentype` to use.
 
 #### 1a. **Important note for users of `bs-platform>=8.0.0`**.
 
