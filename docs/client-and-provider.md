@@ -1,10 +1,10 @@
 # Client and Provider
 
-The client is the central orchestrator of `reason-urql`, and is responsible for executing queries, mutations, and subscriptions passed to `useQuery`, `useMutation`, `useDynamicMutation` and `useSubscription`. The `Provider` wraps the root of your application and passes your `reason-urql` client instance, via React context, to hooks in your React tree.
+The client is the central orchestrator of `reason-urql`, and is responsible for executing queries, mutations, and subscriptions passed to `useQuery`, `useMutation`, and `useSubscription`. The `Provider` wraps the root of your application and passes your `reason-urql` client instance, via React context, to hooks in your React tree.
 
 ## `Provider`
 
-The `Provider`'s responsibility is to pass the `reason-urql` client instance down to `useQuery`, `useMutation`, `useDynamicMutation`, and `useSubcription` hooks through context. Wrap the root of your application with `Provider`.
+The `Provider`'s responsibility is to pass the `reason-urql` client instance down to `useQuery`, `useMutation`, and `useSubcription` hooks through context. Wrap the root of your application with `Provider`.
 
 You can access the `Provider` component by referencing `Context.Provider` after `open`ing `ReasonUrql`.
 

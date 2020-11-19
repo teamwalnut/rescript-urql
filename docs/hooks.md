@@ -2,7 +2,7 @@
 
 In this section, we cover the main mechanism for requesting data in `reason-urql` – hooks!
 
-`reason-urql` comes with a set of custom hooks to use in your ReasonReact components, including `useQuery`, `useMutation`, `useDynamicMutation`, and `useSubscription`. These are fully type safe and will automatically infer the type of your GraphQL response if using `graphql_ppx_re` or `graphql_ppx`.
+`reason-urql` comes with a set of custom hooks to use in your ReasonReact components, including `useQuery`, `useMutation`, and `useSubscription`. These are fully type safe and will automatically infer the type of your GraphQL response if using `graphql_ppx_re` or `graphql_ppx`.
 
 ## `useQuery`
 
