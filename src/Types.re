@@ -81,7 +81,7 @@ type operation = {
 type operationResultJs('dataJs) = {
   operation,
   data: Js.Nullable.t('dataJs),
-  error: option(CombinedError.combinedErrorJs),
+  error: option(CombinedError.t),
   extensions: option(Js.Dict.t(string)),
   stale: option(bool),
 };
@@ -102,10 +102,8 @@ type operationResult('data) = {
 
 let operationResultToReason =
     (~response: operationResultJs('dataJs), ~parse: 'dataJs => 'data) => {
-  let {extensions, stale}: operationResultJs('dataJs) = response;
+  let {error, extensions, stale}: operationResultJs('dataJs) = response;
   let data = response.data->Js.Nullable.toOption->Belt.Option.map(parse);
-  let error =
-    response.error->Belt.Option.map(CombinedError.combinedErrorToRecord);
 
   let response =
     switch (data, error) {
@@ -163,7 +161,7 @@ module Hooks = {
     operation,
     fetching: bool,
     data: Js.Nullable.t('dataJs),
-    error: option(CombinedError.combinedErrorJs),
+    error: option(CombinedError.t),
     extensions: option(Js.Json.t),
     stale: bool,
   };
@@ -177,11 +175,9 @@ module Hooks = {
       (~response: hookResponseJs(dataJs), ~parse: dataJs => data) =>
       hookResponse(data) =
     (~response, ~parse) => {
-      let {operation, fetching, extensions, stale} = response;
+      let {operation, fetching, error, extensions, stale} = response;
 
       let data = response.data->Js.Nullable.toOption->Belt.Option.map(parse);
-      let error =
-        response.error->Belt.Option.map(CombinedError.combinedErrorToRecord);
 
       let response =
         switch (fetching, data, error) {
