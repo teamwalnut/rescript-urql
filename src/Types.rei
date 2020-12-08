@@ -71,7 +71,7 @@ type operation = {
 type operationResultJs('dataJs) = {
   operation,
   data: Js.Nullable.t('dataJs),
-  error: option(CombinedError.combinedErrorJs),
+  error: option(CombinedError.t),
   extensions: option(Js.Dict.t(string)),
   stale: option(bool),
 };
@@ -140,7 +140,7 @@ module Hooks: {
     operation,
     fetching: bool,
     data: Js.Nullable.t('dataJs),
-    error: option(CombinedError.combinedErrorJs),
+    error: option(CombinedError.t),
     extensions: option(Js.Json.t),
     stale: bool,
   };

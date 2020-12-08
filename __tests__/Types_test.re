@@ -79,19 +79,14 @@ describe("Types", () => {
             extensions: None,
           };
 
-        let errorJs = {
-          "message": "Error returned by GraphQL API",
-          "graphQLErrors": [|graphQLError|],
-          "networkError": Js.Nullable.null,
-          "response": Js.Nullable.null,
-        };
-
         let error =
           CombinedError.{
+            name: "CombinedError",
             message: "Error returned by GraphQL API",
             graphQLErrors: [|graphQLError|],
             networkError: None,
             response: None,
+            toString: () => "Error returned by GraphQL API",
           };
 
         let response =
@@ -99,7 +94,7 @@ describe("Types", () => {
             operation: mockOperation,
             fetching: false,
             data: Js.Nullable.return(Js.Json.string("Hello")),
-            error: Some(errorJs),
+            error: Some(error),
             extensions: None,
             stale: false,
           };
@@ -131,19 +126,14 @@ describe("Types", () => {
           extensions: None,
         };
 
-      let errorJs = {
-        "message": "Error returned by GraphQL API",
-        "graphQLErrors": [|graphQLError|],
-        "networkError": Js.Nullable.null,
-        "response": Js.Nullable.null,
-      };
-
       let error =
         CombinedError.{
+          name: "CombinedError",
           message: "Error returned by GraphQL API",
           graphQLErrors: [|graphQLError|],
           networkError: None,
           response: None,
+          toString: () => "Error returned by GraphQL API",
         };
 
       let response =
@@ -151,7 +141,7 @@ describe("Types", () => {
           operation: mockOperation,
           fetching: false,
           data: Js.Nullable.undefined,
-          error: Some(errorJs),
+          error: Some(error),
           extensions: None,
           stale: false,
         };
