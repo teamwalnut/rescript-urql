@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.1.0] - 2020-12-09
+
+This release migrates our internal syntax from Reason to ReScript. It also revises our binding of `CombinedError` to be compatible with ReScript, which doesn't support binding JS classes to OCaml classes as BuckleScript once did. The experience for end users should be no different.
+
+### Changed
+
+- The codebase is now written in [ReScript](https://rescript-lang.org/). PR by @parkerziegler [here](https://github.com/FormidableLabs/reason-urql/pull/231).
+- The binding to `CombinedError` is now a record rather than an OCaml class being bound to a JS class. This change was made to both increase simplicity and to prepare for the BuckleScript to ReScript migration. PR by @parkerziegler [here](https://github.com/FormidableLabs/reason-urql/pull/230).
+
+### Diff
+
+https://github.com/FormidableLabs/reason-urql/compare/v3.0.0...v3.1.0
+
 ## [3.0.0] - 2020-11-14
 
 This release migrates us to using `@reasonml-community/graphql-ppx` as our GraphQL PPX preprocessor of choice in lieu of `@baransu/graphql_ppx_re`. It also converts `urql` to a `peerDependency` of the library rather than bundling `urql` as a direct dependency. Finally, this release includes support for BuckleScript / ReScript > 8.0.0.
