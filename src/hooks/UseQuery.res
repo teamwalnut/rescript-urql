@@ -26,12 +26,12 @@ type executeQuery = (
 
 type useQueryResponse<'data> = (Types.Hooks.hookResponse<'data>, executeQuery)
 
-@bs.module("urql")
+@module("urql")
 external useQueryJs: useQueryArgsJs => useQueryResponseJs<'dataJs> = "useQuery"
 
 // reason-react does not provide a binding of sufficient arity for our memoization needs
-@bs.module("react")
-external useMemo9: (@bs.uncurry (unit => 'any), ('a, 'b, 'c, 'd, 'e, 'f, 'g, 'h, 'i)) => 'any =
+@module("react")
+external useMemo9: (@uncurry (unit => 'any), ('a, 'b, 'c, 'd, 'e, 'f, 'g, 'h, 'i)) => 'any =
   "useMemo"
 
 let useQuery:

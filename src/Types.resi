@@ -1,6 +1,6 @@
 /* RequestPolicy to be used for queries.
  Use with requestPolicyToJs for proper conversion to string. */
-@bs.deriving(jsConverter)
+@deriving(jsConverter)
 type requestPolicy = [#CacheFirst | #CacheOnly | #NetworkOnly | #CacheAndNetwork]
 
 /* OperationType for the active operation.
@@ -31,25 +31,25 @@ type operationContext = {
   preferGetMethod: option<bool>,
 }
 
-@bs.deriving({abstract: light})
+@deriving({abstract: light})
 type partialOperationContext = {
-  @bs.optional
+  @optional
   additionalTypenames: array<string>,
-  @bs.optional
+  @optional
   fetch: (string, Fetch.requestInit) => Js.Promise.t<Fetch.response>,
-  @bs.optional
+  @optional
   fetchOptions: Fetch.requestInit,
-  @bs.optional
+  @optional
   requestPolicy: string,
-  @bs.optional
+  @optional
   url: string,
-  @bs.optional
+  @optional
   pollInterval: int,
-  @bs.optional
+  @optional
   meta: operationDebugMeta,
-  @bs.optional
+  @optional
   suspense: bool,
-  @bs.optional
+  @optional
   preferGetMethod: bool,
 }
 

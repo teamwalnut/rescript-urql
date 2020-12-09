@@ -2,7 +2,7 @@ open ReasonUrql
 
 type subscriptionClientOptions = {
   timeout: option<int>,
-  @bs.as("lazy")
+  @as("lazy")
   lazy_: option<bool>,
   reconnect: option<bool>,
   reconnectionAttempts: option<int>,
@@ -35,13 +35,13 @@ let makeClientOptions = (
 }
 
 type t = {
-  @bs.meth
+  @meth
   "request": Client.Exchanges.subscriptionOperation => Client.Exchanges.observableLike<
     Types.executionResult,
   >,
 }
 
-@bs.new @bs.module("subscriptions-transport-ws")
+@new @module("subscriptions-transport-ws")
 external subscriptionClient: (
   ~url: string,
   ~subscriptionClientConfig: subscriptionClientConfig=?,

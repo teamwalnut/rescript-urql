@@ -1,33 +1,33 @@
 /* RequestPolicy to be used for queries. */
-@bs.deriving(jsConverter)
+@deriving(jsConverter)
 type requestPolicy = [
-  | @bs.as("cache-first")
+  | @as("cache-first")
   #CacheFirst
-  | @bs.as("cache-only")
+  | @as("cache-only")
   #CacheOnly
-  | @bs.as("network-only")
+  | @as("network-only")
   #NetworkOnly
-  | @bs.as("cache-and-network")
+  | @as("cache-and-network")
   #CacheAndNetwork
 ]
 
 /* OperationType for the active operation.
  Use with operationTypeToJs for proper conversion to strings. */
-@bs.deriving(jsConverter)
+@deriving(jsConverter)
 type operationType = [
-  | @bs.as("query")
+  | @as("query")
   #Query
-  | @bs.as("mutation")
+  | @as("mutation")
   #Mutation
-  | @bs.as("subscription")
+  | @as("subscription")
   #Subscription
-  | @bs.as("teardown")
+  | @as("teardown")
   #Teardown
 ]
 
 /* Cache outcomes for operations. */
-@bs.deriving(jsConverter)
-type cacheOutcome = [@bs.as("miss") #Miss | @bs.as("partial") #Partial | @bs.as("hit") #Hit]
+@deriving(jsConverter)
+type cacheOutcome = [@as("miss") #Miss | @as("partial") #Partial | @as("hit") #Hit]
 
 /* Debug information on operations. */
 type operationDebugMeta = {
@@ -50,25 +50,25 @@ type operationContext = {
   preferGetMethod: option<bool>,
 }
 
-@bs.deriving({abstract: light})
+@deriving({abstract: light})
 type partialOperationContext = {
-  @bs.optional
+  @optional
   additionalTypenames: array<string>,
-  @bs.optional
+  @optional
   fetch: (string, Fetch.requestInit) => Js.Promise.t<Fetch.response>,
-  @bs.optional
+  @optional
   fetchOptions: Fetch.requestInit,
-  @bs.optional
+  @optional
   requestPolicy: string,
-  @bs.optional
+  @optional
   url: string,
-  @bs.optional
+  @optional
   pollInterval: int,
-  @bs.optional
+  @optional
   meta: operationDebugMeta,
-  @bs.optional
+  @optional
   suspense: bool,
-  @bs.optional
+  @optional
   preferGetMethod: bool,
 }
 

@@ -41,15 +41,15 @@ module Exchanges: {
     . Wonka.Types.sourceT<Types.operation>,
   ) => Wonka.Types.sourceT<Types.operationResultJs<Js.Json.t>>
 
-  @bs.module("urql") external cacheExchange: t = "cacheExchange"
-  @bs.module("urql") external debugExchange: t = "debugExchange"
-  @bs.module("urql") external dedupExchange: t = "dedupExchange"
-  @bs.module("urql")
+  @module("urql") external cacheExchange: t = "cacheExchange"
+  @module("urql") external debugExchange: t = "debugExchange"
+  @module("urql") external dedupExchange: t = "dedupExchange"
+  @module("urql")
   external fallbackExchangeIO: exchangeIO = "fallbackExchangeIO"
-  @bs.module("urql") external fetchExchange: t = "fetchExchange"
-  @bs.module("urql")
+  @module("urql") external fetchExchange: t = "fetchExchange"
+  @module("urql")
   external composeExchanges: array<t> => t = "composeExchanges"
-  @bs.module("urql")
+  @module("urql")
   external defaultExchanges: array<t> = "defaultExchanges"
 
   /* Specific types for the subscriptionExchange. */
@@ -94,10 +94,10 @@ module Exchanges: {
     initialState: option<Js.Dict.t<serializedResult>>,
   }
 
-  @bs.send
+  @send
   external restoreData: (~exchange: t, ~restore: Js.Json.t) => Js.Json.t = "restoreData"
-  @bs.send external extractData: (~exchange: t) => Js.Json.t = "extractData"
-  @bs.module("urql")
+  @send external extractData: (~exchange: t) => Js.Json.t = "extractData"
+  @module("urql")
   external ssrExchange: (~ssrExchangeParams: ssrExchangeParams=?, unit) => t = "ssrExchange"
 }
 

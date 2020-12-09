@@ -26,7 +26,7 @@ type useMutationResponse<'variables, 'data> = (
   executeMutation<'variables, 'data>,
 )
 
-@bs.module("urql")
+@module("urql")
 external useMutationJs: string => useMutationResponseJs<'dataJs> = "useMutation"
 
 @ocaml.doc("

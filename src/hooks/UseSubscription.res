@@ -18,7 +18,7 @@ type useSubscriptionArgs = {
 
 type executeSubscriptionJs = Types.partialOperationContext => unit
 
-@bs.module("urql")
+@module("urql")
 external useSubscriptionJs: (
   useSubscriptionArgs,
   option<(option<'acc>, 'dataJs) => 'acc>,
@@ -65,8 +65,8 @@ let subscriptionResponseToReason = (response: Types.Hooks.hookResponseJs<'ret>) 
 }
 
 // reason-react does not provide a binding of sufficient arity for our memoization needs
-@bs.module("react")
-external useMemo9: (@bs.uncurry (unit => 'any), ('a, 'b, 'c, 'd, 'e, 'f, 'g, 'h, 'i)) => 'any =
+@module("react")
+external useMemo9: (@uncurry (unit => 'any), ('a, 'b, 'c, 'd, 'e, 'f, 'g, 'h, 'i)) => 'any =
   "useMemo"
 
 let useSubscription = (

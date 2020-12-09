@@ -1,1 +1,1 @@
-@bs.module("urql") external useClient: unit => Client.t = "useClient"
+@module("urql") external useClient: unit => Client.t = "useClient"
