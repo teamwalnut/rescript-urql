@@ -39,8 +39,6 @@
     "bs-platform": "^8.3.2",
     "gentype": "^3.38.0",
     "graphql": "^15.4.0",
-    "husky": "^4.3.0",
-    "lint-staged": "^10.5.1",
     "npm-run-all": "^4.1.5",
     "react": "^16.8.0",
     "reason-react": "^0.9.1",
@@ -67,15 +65,5 @@
     "transformIgnorePatterns": [
       "node_modules/(?!(@glennsl/bs-jest|bs-fetch|wonka|bs-platform)/)"
     ]
-  },
-  "lint-staged": {
-    "*.{re,rei}": [
-      "bsrefmt --in-place"
-    ]
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
   }
 }
