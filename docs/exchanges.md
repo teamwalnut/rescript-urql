@@ -4,19 +4,23 @@ Exchanges are the mechanism by which `reason-urql` modifies requests before they
 
 The `Exchanges` `module` is a submodule of the `Client` module and can be referenced at `ReasonUrql.Client.Exchanges`. The following exchanges are provided out of the box with `reason-urql`.
 
-#### `cacheExchange`
+## Core Exchanges
+
+`urql` ships with a set of core exchanges that are baked right into `@urql/core` and can be referenced safely in `reason-urql` without installing any additional packages. These are detailed below.
+
+### `cacheExchange`
 
 The `cacheExchange` provides basic caching support for your GraphQL operations. It is of type `Exchanges.t`.
 
-#### `dedupExchange`
+### `dedupExchange`
 
 The `dedupExchange` will deduplicate pending operations waiting for a response. For example, if a user attempts to execute the same query by clicking a button in rapid succession, the `dedupExchange` will filter these events to a single request. It is of type `Exchanges.t`.
 
-#### `fetchExchange`
+### `fetchExchange`
 
 The `fetchExchange` is responsible for actually sending your request to your GraphQL API and handling the response. It is of type `Exchanges.t`.
 
-#### `defaultExchanges`
+### `defaultExchanges`
 
 The above three exchanges make up `urql`'s `defaultExchanges`. When you create a client in `reason-urql` these exchanges are already applied by default. If you specify an `exchanges` array, be sure to include the specific exchanges you need. You almost always want the `defaultExchanges`, so make sure to include them using `Array.concat` or `Array.append`.
 
@@ -37,11 +41,11 @@ let client = Client.(
 );
 ```
 
-#### `debugExchange`
+### `debugExchange`
 
 The `debugExchange` is useful for tracking how operations are passing through the exchanges pipeline. It simply logs all incoming and outgoing operations to the console. Be sure to remove this in production! It is of type `Exchanges.t`.
 
-#### `subscriptionExchange`
+### `subscriptionExchange`
 
 The `subscriptionExchange` should be used in the event that you intend to support GraphQL subscriptions in your application through use of `useSubscription` or the client's `executeSubscription` method.
 
@@ -79,7 +83,7 @@ let client = Client.(
 );
 ```
 
-#### `ssrExchange`
+### `ssrExchange`
 
 The `ssrExchange` accepts a single optional argument, `~ssrExchangeParams`, a record with two fields:
 
@@ -133,11 +137,41 @@ let extractedData = Client.Exchanges.restoreData(~exchange=ssrCache, ~restore=ur
 
 This part of the API is still quite experimental, as server-side rendering in Reason with Next.js is still in its infancy. Use with caution. For more information, read `urql`'s server-side rendering guide [here](https://github.com/FormidableLabs/urql/blob/master/docs/basics.md#server-side-rendering). To see an example of server-side rendering with `reason-urql`, check out our [`reason-urql-ssr` example](https://github.com/parkerziegler/reason-urql-ssr).
 
-#### `composeExchanges`
+### `composeExchanges`
 
 `composeExchanges` is a helper function that will compose a single exchange function from an array of exchanges. Operations will be run through the provided exchanges in the order that they were provided to `composeExchanges`.
 
-### Custom Exchanges
+## Ecosystem Exchanges
+
+In addition to the core exchanges exposed by `@urql/core`, `urql` also supports more abstracted exchanges that meet particular needs that may or may not be critical to your use case. In contrast to the core exchanges, these ecosystem exchanges should be used when you have a specific use case that warrants them. Many of these exchanges require additional packages to be installed. `reason-urql` is in the process of adding bindings for these exchanges; if the ecosystem exchange you're interested in isn't outlined below, the bindings may not have yet been implemented. Community contributions are very welcome in this space!
+
+### `multipartFetchExchange`
+
+The `multipartFetchExchange` builds on the `fetchExchange` but adds additional functionality for multipart file uploads. It should replace the use of the `fetchExchange` if you need to support traditional fetches and multipart file uploads.
+
+To use the `multipartFetchExchange`, add the package to your dependencies:
+
+```sh
+yarn add @urql/exchange-multipart-fetch
+```
+
+Then, substitute the `fetchExchange` with the `multipartFetchExchange`:
+
+```res
+open ReasonUrql
+
+let client = Client.make(
+  ~url="http://localhost:3000",
+  ~exchanges=[|
+    Exchanges.dedupExchange,
+    Exchanges.cacheExchange,
+    Exchanges.multipartFetchExchange
+  |],
+  ()
+)
+```
+
+## Custom Exchanges
 
 `reason-urql` also allows you to write your own exchanges to modify outgoing GraphQL requests and incoming responses. To read up on the basics of exchanges, check out the excellent [`urql` documentation](https://formidable.com/open-source/urql/docs/concepts/exchanges/).
 

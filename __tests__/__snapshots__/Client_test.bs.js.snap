@@ -151,6 +151,30 @@ Client {
 }
 `;
 
+exports[`Client Ecosystem exchanges should support passing the multipartFetchExchange 1`] = `
+Client {
+  "activeOperations": Object {},
+  "createOperationContext": [Function],
+  "createRequestOperation": [Function],
+  "dispatchOperation": [Function],
+  "executeMutation": [Function],
+  "executeQuery": [Function],
+  "executeSubscription": [Function],
+  "fetch": undefined,
+  "fetchOptions": undefined,
+  "maskTypename": false,
+  "operations$": [Function],
+  "preferGetMethod": false,
+  "queue": Array [],
+  "reexecuteOperation": [Function],
+  "requestPolicy": "cache-first",
+  "results$": [Function],
+  "subscribeToDebugTarget": [Function],
+  "suspense": false,
+  "url": "https://localhost:3000",
+}
+`;
+
 exports[`Client ssrExchange should exist and be callable 1`] = `[Function]`;
 
 exports[`Client with custom fetch implementation should accept a custom fetch implementation 1`] = `

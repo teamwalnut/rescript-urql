@@ -208,4 +208,21 @@ describe("Client", () => {
       open Expect
       expect(client) |> toMatchSnapshot
     }))
+
+  describe("Ecosystem exchanges", () => {
+    it("should support passing the multipartFetchExchange", () => {
+      let client = Client.make(
+        ~url="https://localhost:3000",
+        ~exchanges=[
+          Client.Exchanges.dedupExchange,
+          Client.Exchanges.cacheExchange,
+          Client.Exchanges.multipartFetchExchange,
+        ],
+        (),
+      )
+
+      open Expect
+      expect(client) |> toMatchSnapshot
+    })
+  })
 })
