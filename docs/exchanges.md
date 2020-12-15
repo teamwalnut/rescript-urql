@@ -163,13 +163,15 @@ open ReasonUrql
 let client = Client.make(
   ~url="http://localhost:3000",
   ~exchanges=[|
-    Exchanges.dedupExchange,
-    Exchanges.cacheExchange,
-    Exchanges.multipartFetchExchange
+    Client.Exchanges.dedupExchange,
+    Client.Exchanges.cacheExchange,
+    Client.Exchanges.multipartFetchExchange
   |],
   ()
 )
 ```
+
+Read more on the `multipartFetchExchange` [here](https://github.com/FormidableLabs/urql/tree/main/exchanges/multipart-fetch).
 
 ## Custom Exchanges
 
