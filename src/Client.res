@@ -70,6 +70,10 @@ module Exchanges = {
   @module("urql")
   external defaultExchanges: array<t> = "defaultExchanges"
 
+  /* Ecosystem exchanges. */
+  @module("@urql/exchange-multipart-fetch")
+  external multipartFetchExchange: t = "multipartFetchExchange"
+
   /* Specific types for the subscriptionExchange. */
   type observerLike<'value> = {
     next: 'value => unit,
