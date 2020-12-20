@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.2.0] - 2020-12-20
+
+This release adds a thin binding for `@urql/exchange-multipart-fetch`.
+
+### Added
+
+- A thin binding for `@urql/exchange-multipart-fetch` was added. Consumers of `reason-urql` will need to install `@urql/exchange-multipart-fetch` to call `Client.Exchanges.multipartFetchExchange`. PR by @parkerziegler [here](https://github.com/FormidableLabs/reason-urql/pull/242). Fixes [#169](https://github.com/FormidableLabs/reason-urql/issues/169).
+
+### Diff
+
+https://github.com/FormidableLabs/reason-urql/compare/v3.1.0...v3.2.0
+
 ## [3.1.0] - 2020-12-09
 
 This release migrates our internal syntax from Reason to ReScript. It also revises our binding of `CombinedError` to be compatible with ReScript, which doesn't support binding JS classes to OCaml classes as BuckleScript once did. The experience for end users should be no different.
