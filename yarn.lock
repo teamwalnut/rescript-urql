@@ -918,7 +918,7 @@
   dependencies:
     "@types/yargs-parser" "*"
 
-"@urql/core@>=1.14.1":
+"@urql/core@>=1.14.1", "@urql/core@>=1.15.0":
   version "1.16.1"
   resolved "https://registry.yarnpkg.com/@urql/core/-/core-1.16.1.tgz#a41487dd4436cbdc92fce714c6c1fc04315761d3"
   integrity sha512-lcEMCS/rB+ug7jKSRDVZIsqNhZxRooTNa1kHfvSjJT2k4SXDyPmjNSfXBUJF2pDJmvv9EIKl9Tk0AF1CvG3Q/g==
@@ -941,6 +941,14 @@
   dependencies:
     "@urql/core" ">=1.14.1"
     extract-files "^8.1.0"
+    wonka "^4.0.14"
+
+"@urql/exchange-retry@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@urql/exchange-retry/-/exchange-retry-0.2.0.tgz#e90a99bf8280ad2b8926bea7f2157a6f59dc8aec"
+  integrity sha512-eawDIkTSVudv+zMaOlm898UX9lkJnUry2PYqD7INeFWghkHmlIPm6wg5J/GBGAyFjqaOj1OWgAWYcu7sV4eljg==
+  dependencies:
+    "@urql/core" ">=1.15.0"
     wonka "^4.0.14"
 
 abab@^2.0.3:
