@@ -235,6 +235,8 @@ let client = Client.make(
 )
 ```
 
+Read more on the `retryExchange` [here](https://formidable.com/open-source/urql/docs/advanced/retry-operations/).
+
 ## Custom Exchanges
 
 `reason-urql` also allows you to write your own exchanges to modify outgoing GraphQL requests and incoming responses. To read up on the basics of exchanges, check out the excellent [`urql` documentation](https://formidable.com/open-source/urql/docs/concepts/exchanges/).
