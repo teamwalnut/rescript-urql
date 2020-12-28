@@ -25,7 +25,6 @@ jobs:
       - name: Test
         run: yarn test
       - name: Test Examples
-        run: |
-          sh ./scripts/build-examples.sh
+        run: sh ./scripts/build-examples.sh
       env:
         CI: true
