@@ -210,19 +210,36 @@ describe("Client", () => {
     }))
 
   describe("Ecosystem exchanges", () => {
-    it("should support passing the multipartFetchExchange", () => {
-      let client = Client.make(
-        ~url="https://localhost:3000",
-        ~exchanges=[
-          Client.Exchanges.dedupExchange,
-          Client.Exchanges.cacheExchange,
-          Client.Exchanges.multipartFetchExchange,
-        ],
-        (),
-      )
+    describe("retryExchange", () => {
+      it("should apply the default retryExchange options from urql if none are applied", () => {
+        let retryExchangeOptions = Client.Exchanges.makeRetryExchangeOptions()
 
-      open Expect
-      expect(client) |> toMatchSnapshot
+        open Expect
+        expect(retryExchangeOptions) |> toEqual({
+          Client.Exchanges.initialDelayMs: None,
+          maxDelayMs: None,
+          maxNumberAttempts: None,
+          randomDelay: None,
+          retryIf: None,
+        })
+      })
+
+      it("should apply any specified options to the retryExchange", () => {
+        let retryExchangeOptions = Client.Exchanges.makeRetryExchangeOptions(
+          ~initialDelayMs=200,
+          ~randomDelay=false,
+          (),
+        )
+
+        open Expect
+        expect(retryExchangeOptions) |> toEqual({
+          Client.Exchanges.initialDelayMs: Some(200),
+          maxDelayMs: None,
+          maxNumberAttempts: None,
+          randomDelay: Some(false),
+          retryIf: None,
+        })
+      })
     })
   })
 })

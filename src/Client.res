@@ -74,6 +74,32 @@ module Exchanges = {
   @module("@urql/exchange-multipart-fetch")
   external multipartFetchExchange: t = "multipartFetchExchange"
 
+  type retryExchangeOptions = {
+    initialDelayMs: option<int>,
+    maxDelayMs: option<int>,
+    randomDelay: option<bool>,
+    maxNumberAttempts: option<int>,
+    retryIf: option<(CombinedError.t, Types.operation) => bool>,
+  }
+
+  let makeRetryExchangeOptions = (
+    ~initialDelayMs=?,
+    ~maxDelayMs=?,
+    ~randomDelay=?,
+    ~maxNumberAttempts=?,
+    ~retryIf=?,
+    (),
+  ) => {
+    initialDelayMs: initialDelayMs,
+    maxDelayMs: maxDelayMs,
+    randomDelay: randomDelay,
+    maxNumberAttempts: maxNumberAttempts,
+    retryIf: retryIf,
+  }
+
+  @module("@urql/exchange-retry")
+  external retryExchange: retryExchangeOptions => t = "retryExchange"
+
   /* Specific types for the subscriptionExchange. */
   type observerLike<'value> = {
     next: 'value => unit,

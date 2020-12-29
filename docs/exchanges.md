@@ -157,21 +157,85 @@ yarn add @urql/exchange-multipart-fetch
 
 Then, substitute the `fetchExchange` with the `multipartFetchExchange`:
 
-```res
+```rescript
 open ReasonUrql
 
 let client = Client.make(
   ~url="http://localhost:3000",
-  ~exchanges=[|
+  ~exchanges=[
     Client.Exchanges.dedupExchange,
     Client.Exchanges.cacheExchange,
     Client.Exchanges.multipartFetchExchange
-  |],
+  ],
   ()
 )
 ```
 
 Read more on the `multipartFetchExchange` [here](https://github.com/FormidableLabs/urql/tree/main/exchanges/multipart-fetch).
+
+### `retryExchange`
+
+The `retryExchange` is useful for retrying particular operations. By default, adding this exchange with the base options will retry any operations that failed due to network errors. However, we can customize the exchange to catch more specific error cases as well.
+
+To use the `retryExchange`, add the package to your dependencies:
+
+```sh
+yarn add @urql/exchange-retry
+```
+
+Then, add the exchange to your array of `exchanges`, specifying the options you want to configure:
+
+```rescript
+open ReasonUrql
+
+let retryExchangeOptions =
+  Client.Exchanges.makeRetryExchangeOptions(~initialDelayMs=2000, ~randomDelay=false, ())
+
+let client = Client.make(
+  ~url="http://localhost:3000",
+  ~exchanges=[
+    Client.Exchanges.dedupExchange,
+    Client.Exchanges.cacheExchange,
+    Client.Exchanges.retryExchange(retryExchangeOptions),
+    Client.Exchanges.fetchExchange
+  ],
+  ()
+)
+```
+
+By default, `urql` will apply the following configuration for you:
+
+```typescript
+{
+  initialDelayMs: 1000,
+  maxDelayMs: 15000,
+  randomDelay: true,
+  maxNumberAttempts: 2,
+  retryIf: err => err && err.networkError,
+}
+```
+
+If you want to use the defaults from `urql`, call `makeRetryExchangeOptions` with just a `unit` parameter.
+
+```rescript
+open ReasonUrql
+
+let retryExchangeOptions =
+  Client.Exchanges.makeRetryExchangeOptions()
+
+let client = Client.make(
+  ~url="http://localhost:3000",
+  ~exchanges=[
+    Client.Exchanges.dedupExchange,
+    Client.Exchanges.cacheExchange,
+    Client.Exchanges.retryExchange(retryExchangeOptions),
+    Client.Exchanges.fetchExchange
+  ],
+  ()
+)
+```
+
+Read more on the `retryExchange` [here](https://formidable.com/open-source/urql/docs/advanced/retry-operations/).
 
 ## Custom Exchanges
 
