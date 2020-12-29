@@ -210,27 +210,18 @@ describe("Client", () => {
     }))
 
   describe("Ecosystem exchanges", () => {
-    it("should support passing the multipartFetchExchange", () => {
-      let client = Client.make(
-        ~url="https://localhost:3000",
-        ~exchanges=[
-          Client.Exchanges.dedupExchange,
-          Client.Exchanges.cacheExchange,
-          Client.Exchanges.multipartFetchExchange,
-        ],
-        (),
-      )
-
-      open Expect
-      expect(client) |> toMatchSnapshot
-    })
-
     describe("retryExchange", () => {
       it("should apply the default retryExchange options from urql if none are applied", () => {
         let retryExchangeOptions = Client.Exchanges.makeRetryExchangeOptions()
 
         open Expect
-        expect(retryExchangeOptions) |> toMatchSnapshot
+        expect(retryExchangeOptions) |> toEqual({
+          Client.Exchanges.initialDelayMs: None,
+          maxDelayMs: None,
+          maxNumberAttempts: None,
+          randomDelay: None,
+          retryIf: None,
+        })
       })
 
       it("should apply any specified options to the retryExchange", () => {
@@ -241,25 +232,13 @@ describe("Client", () => {
         )
 
         open Expect
-        expect(retryExchangeOptions) |> toMatchSnapshot
-      })
-
-      it("should allow passing the retryExchange", () => {
-        let retryExchangeOptions = Client.Exchanges.makeRetryExchangeOptions()
-
-        let client = Client.make(
-          ~url="https://localhost:3000",
-          ~exchanges=[
-            Client.Exchanges.dedupExchange,
-            Client.Exchanges.cacheExchange,
-            Client.Exchanges.retryExchange(retryExchangeOptions),
-            Client.Exchanges.fetchExchange,
-          ],
-          (),
-        )
-
-        open Expect
-        expect(client) |> toMatchSnapshot
+        expect(retryExchangeOptions) |> toEqual({
+          Client.Exchanges.initialDelayMs: Some(200),
+          maxDelayMs: None,
+          maxNumberAttempts: None,
+          randomDelay: Some(false),
+          retryIf: None,
+        })
       })
     })
   })
