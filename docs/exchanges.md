@@ -237,6 +237,47 @@ let client = Client.make(
 
 Read more on the `retryExchange` [here](https://formidable.com/open-source/urql/docs/advanced/retry-operations/).
 
+### `requestPolicyExchange`
+
+The `requestPolicyExchange` allows `reason-urql` to automatically upgrade an operation's `requestPolicy` on a time-to-live basis. When the specified TTL has elapsed, `reason-urql` will either:
+
+- Upgrade the `requestPolicy` of the operation to `cache-and-network` if no `shouldUpgrade` callback is specified, or:
+- Run the `shouldUpgrade` function to determine whether or not to upgrade the specific operation.
+
+To use the `requestPolicyExchange`, add the package to your dependencies:
+
+```sh
+yarn add @urql/exchange-request-policy
+```
+
+Then, add the exchange to your array of `exchanges`, specifying the options you want to configure:
+
+```rescript
+open ReasonUrql
+
+let shouldUpgrade = (operation: Types.operation) =>
+  operation.context.requestPolicy !== #CacheOnly
+
+let requestPolicyExchangeOptions = Client.Exchanges.makeRequestPolicyExchangeOptions(
+  ~shouldUpgrade,
+  ~ttl=2000,
+  (),
+)
+
+let client = Client.make(
+  ~url="http://localhost:3000",
+  ~exchanges=[
+    Client.Exchanges.dedupExchange,
+    Client.Exchanges.cacheExchange,
+    Client.Exchanges.requestPolicyExchange(requestPolicyExchangeOptions),
+    Client.Exchanges.fetchExchange
+  ],
+  ()
+)
+```
+
+Read more about the `requestPolicyExchange` [here](https://github.com/FormidableLabs/urql/tree/main/exchanges/request-policy).
+
 ## Custom Exchanges
 
 `reason-urql` also allows you to write your own exchanges to modify outgoing GraphQL requests and incoming responses. To read up on the basics of exchanges, check out the excellent [`urql` documentation](https://formidable.com/open-source/urql/docs/concepts/exchanges/).

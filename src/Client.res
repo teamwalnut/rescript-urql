@@ -100,6 +100,19 @@ module Exchanges = {
   @module("@urql/exchange-retry")
   external retryExchange: retryExchangeOptions => t = "retryExchange"
 
+  type requestPolicyExchangeOptions = {
+    shouldUpgrade: option<Types.operation => bool>,
+    ttl: option<int>,
+  }
+
+  let makeRequestPolicyExchangeOptions = (~shouldUpgrade=?, ~ttl=?, ()) => {
+    shouldUpgrade: shouldUpgrade,
+    ttl: ttl,
+  }
+
+  @module("@urql/exchange-request-policy")
+  external requestPolicyExchange: requestPolicyExchangeOptions => t = "requestPolicyExchange"
+
   /* Specific types for the subscriptionExchange. */
   type observerLike<'value> = {
     next: 'value => unit,

@@ -241,5 +241,34 @@ describe("Client", () => {
         })
       })
     })
+
+    describe("requestPolicyExchange", () => {
+      it("should return None for all requestPolicyExchange options if unspecified", () => {
+        let requestPolicyExchangeOptions = Client.Exchanges.makeRequestPolicyExchangeOptions()
+
+        open Expect
+        expect(requestPolicyExchangeOptions) |> toEqual({
+          Client.Exchanges.shouldUpgrade: None,
+          ttl: None,
+        })
+      })
+
+      it("should apply any specified options to the requestPolicyExchange", () => {
+        let shouldUpgrade = (operation: Types.operation) =>
+          operation.context.requestPolicy !== #CacheOnly
+
+        let requestPolicyExchangeOptions = Client.Exchanges.makeRequestPolicyExchangeOptions(
+          ~shouldUpgrade,
+          ~ttl=2000,
+          (),
+        )
+
+        open Expect
+        expect(requestPolicyExchangeOptions) |> toEqual({
+          Client.Exchanges.shouldUpgrade: Some(shouldUpgrade),
+          ttl: Some(2000),
+        })
+      })
+    })
   })
 })
