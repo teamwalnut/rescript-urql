@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.3.0] - 2020-01-05
+
+This release adds bindings for two additional ecosystem exchanges:
+
+- [`@urql/exchange-retry`](https://github.com/FormidableLabs/urql/tree/main/exchanges/retry)
+- [`@urql/exchange-request-policy`](https://github.com/FormidableLabs/urql/tree/main/exchanges/request-policy)
+
+### Added
+
+- Bindings for `@urql/exchange-retry` and `@urql/exchange-request-policy` were added. Consumers of `reason-urql` will need to install `@urql/exchange-retry` to call `Client.Exchanges.retryExchange` and `@urql/exchange-request-policy` to call `Client.Exchanges.requestPolicyExchange`. PRs by @parkerziegler [here](https://github.com/FormidableLabs/reason-urql/pull/244) and [here](https://github.com/FormidableLabs/reason-urql/pull/247).
+
+### Diff
+
+https://github.com/FormidableLabs/reason-urql/compare/v3.2.0...v3.3.0
+
 ## [3.2.0] - 2020-12-20
 
 This release adds a thin binding for `@urql/exchange-multipart-fetch`.
