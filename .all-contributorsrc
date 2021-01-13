@@ -198,6 +198,15 @@
         "code",
         "example"
       ]
+    },
+    {
+      "login": "Kingdutch",
+      "name": "Alexander Varwijk",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/327697?v=4",
+      "profile": "https://www.alexandervarwijk.com",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 6,
