@@ -165,7 +165,7 @@ let client = Client.make(
   ~exchanges=[
     Client.Exchanges.dedupExchange,
     Client.Exchanges.cacheExchange,
-    Client.Exchanges.multipartFetchExchange
+    Client.Exchanges.multipartFetchExchange,
   ],
   ()
 )
@@ -173,69 +173,68 @@ let client = Client.make(
 
 Read more on the `multipartFetchExchange` [here](https://github.com/FormidableLabs/urql/tree/main/exchanges/multipart-fetch).
 
-### `retryExchange`
+### `persistedFetchExchange`
 
-The `retryExchange` is useful for retrying particular operations. By default, adding this exchange with the base options will retry any operations that failed due to network errors. However, we can customize the exchange to catch more specific error cases as well.
+The `persistedFetchExchange` adds support for [persisted queries](https://www.onegraph.com/docs/persisted_queries.html), building off of the standard `fetchExchange`.
 
-To use the `retryExchange`, add the package to your dependencies:
+To use the `persistedFetchExchange`, add the package to your dependencies:
 
 ```sh
-yarn add @urql/exchange-retry
+yarn add @urql/exchange-persisted-fetch
 ```
 
-Then, add the exchange to your array of `exchanges`, specifying the options you want to configure:
+Then, add the exchange to your array of `exchanges`, sepcifying the options you want to configure:
 
 ```rescript
 open ReasonUrql
 
-let retryExchangeOptions =
-  Client.Exchanges.makeRetryExchangeOptions(~initialDelayMs=2000, ~randomDelay=false, ())
+let persistedFetchExchangeOptions = Client.Exchanges.makePersistedFetchExchangeOptions(
+  ~preferGetForPersistedQueries=true,
+  (),
+)
 
 let client = Client.make(
   ~url="http://localhost:3000",
   ~exchanges=[
     Client.Exchanges.dedupExchange,
     Client.Exchanges.cacheExchange,
-    Client.Exchanges.retryExchange(retryExchangeOptions),
-    Client.Exchanges.fetchExchange
+    Client.Exchanges.persistedFetchExchange(persistedFetchExchangeOptions),
+    // Keep the fetchExchange to handle mutations.
+    // The persistedFetchExchange only handles queries.
+    Client.Exchanges.fetchExchange,
   ],
   ()
 )
 ```
 
-By default, `urql` will apply the following configuration for you:
+Read more about the `persistedFetchExchange` [here](https://github.com/FormidableLabs/urql/tree/main/exchanges/persisted-fetch).
 
-```typescript
-{
-  initialDelayMs: 1000,
-  maxDelayMs: 15000,
-  randomDelay: true,
-  maxNumberAttempts: 2,
-  retryIf: err => err && err.networkError,
-}
+### `refocusExchange`
+
+The `refocusExchange` allows `reason-urql` to redispatch active operations when the window regains focus.
+
+To use the `refocusExchange`, add the package to your dependencies:
+
+```sh
+yarn add @urql/exchange-refocus
 ```
 
-If you want to use the defaults from `urql`, call `makeRetryExchangeOptions` with just a `unit` parameter.
+Then, add the exchange to your array of `exchanges`. The `refocusExchange` should be added _after_ the `dedupeExchange`, to prevent doing additional work on requests that are later deduplicated, and _before_ the `fetchExchange`:
 
 ```rescript
 open ReasonUrql
-
-let retryExchangeOptions =
-  Client.Exchanges.makeRetryExchangeOptions()
 
 let client = Client.make(
   ~url="http://localhost:3000",
   ~exchanges=[
     Client.Exchanges.dedupExchange,
+    Client.Exchanges.refocusExchange(),
     Client.Exchanges.cacheExchange,
-    Client.Exchanges.retryExchange(retryExchangeOptions),
-    Client.Exchanges.fetchExchange
+    Client.Exchanges.fetchExchange,
   ],
   ()
 )
 ```
-
-Read more on the `retryExchange` [here](https://formidable.com/open-source/urql/docs/advanced/retry-operations/).
 
 ### `requestPolicyExchange`
 
@@ -270,13 +269,77 @@ let client = Client.make(
     Client.Exchanges.dedupExchange,
     Client.Exchanges.cacheExchange,
     Client.Exchanges.requestPolicyExchange(requestPolicyExchangeOptions),
-    Client.Exchanges.fetchExchange
+    Client.Exchanges.fetchExchange,
   ],
   ()
 )
 ```
 
 Read more about the `requestPolicyExchange` [here](https://github.com/FormidableLabs/urql/tree/main/exchanges/request-policy).
+
+### `retryExchange`
+
+The `retryExchange` is useful for retrying particular operations. By default, adding this exchange with the base options will retry any operations that failed due to network errors. However, we can customize the exchange to catch more specific error cases as well.
+
+To use the `retryExchange`, add the package to your dependencies:
+
+```sh
+yarn add @urql/exchange-retry
+```
+
+Then, add the exchange to your array of `exchanges`, specifying the options you want to configure:
+
+```rescript
+open ReasonUrql
+
+let retryExchangeOptions =
+  Client.Exchanges.makeRetryExchangeOptions(~initialDelayMs=2000, ~randomDelay=false, ())
+
+let client = Client.make(
+  ~url="http://localhost:3000",
+  ~exchanges=[
+    Client.Exchanges.dedupExchange,
+    Client.Exchanges.cacheExchange,
+    Client.Exchanges.retryExchange(retryExchangeOptions),
+    Client.Exchanges.fetchExchange,
+  ],
+  ()
+)
+```
+
+By default, `urql` will apply the following configuration for you:
+
+```typescript
+{
+  initialDelayMs: 1000,
+  maxDelayMs: 15000,
+  randomDelay: true,
+  maxNumberAttempts: 2,
+  retryIf: err => err && err.networkError,
+}
+```
+
+If you want to use the defaults from `urql`, call `makeRetryExchangeOptions` with just a `unit` parameter.
+
+```rescript
+open ReasonUrql
+
+let retryExchangeOptions =
+  Client.Exchanges.makeRetryExchangeOptions()
+
+let client = Client.make(
+  ~url="http://localhost:3000",
+  ~exchanges=[
+    Client.Exchanges.dedupExchange,
+    Client.Exchanges.cacheExchange,
+    Client.Exchanges.retryExchange(retryExchangeOptions),
+    Client.Exchanges.fetchExchange,
+  ],
+  ()
+)
+```
+
+Read more on the `retryExchange` [here](https://formidable.com/open-source/urql/docs/advanced/retry-operations/).
 
 ## Custom Exchanges
 
