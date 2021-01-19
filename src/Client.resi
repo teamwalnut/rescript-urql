@@ -52,44 +52,6 @@ module Exchanges: {
   @module("urql")
   external defaultExchanges: array<t> = "defaultExchanges"
 
-  /* Ecosystem exchanges. */
-  @module("@urql/exchange-multipart-fetch")
-  external multipartFetchExchange: t = "multipartFetchExchange"
-
-  type retryExchangeOptions = {
-    initialDelayMs: option<int>,
-    maxDelayMs: option<int>,
-    randomDelay: option<bool>,
-    maxNumberAttempts: option<int>,
-    retryIf: option<(CombinedError.t, Types.operation) => bool>,
-  }
-
-  let makeRetryExchangeOptions: (
-    ~initialDelayMs: int=?,
-    ~maxDelayMs: int=?,
-    ~randomDelay: bool=?,
-    ~maxNumberAttempts: int=?,
-    ~retryIf: (CombinedError.t, Types.operation) => bool=?,
-    unit,
-  ) => retryExchangeOptions
-
-  @module("@urql/exchange-retry")
-  external retryExchange: retryExchangeOptions => t = "retryExchange"
-
-  type requestPolicyExchangeOptions = {
-    shouldUpgrade: option<Types.operation => bool>,
-    ttl: option<int>,
-  }
-
-  let makeRequestPolicyExchangeOptions: (
-    ~shouldUpgrade: Types.operation => bool=?,
-    ~ttl: int=?,
-    unit,
-  ) => requestPolicyExchangeOptions
-
-  @module("@urql/exchange-request-policy")
-  external requestPolicyExchange: requestPolicyExchangeOptions => t = "requestPolicyExchange"
-
   /* Specific types for the subscriptionExchange. */
   type observerLike<'value> = {
     next: 'value => unit,
@@ -137,6 +99,61 @@ module Exchanges: {
   @send external extractData: (~exchange: t) => Js.Json.t = "extractData"
   @module("urql")
   external ssrExchange: (~ssrExchangeParams: ssrExchangeParams=?, unit) => t = "ssrExchange"
+
+  /* Ecosystem exchanges. */
+  @module("@urql/exchange-multipart-fetch")
+  external multipartFetchExchange: t = "multipartFetchExchange"
+
+  type persistedFetchExchangeOptions<'a> = {
+    preferGetForPersistedQueries: option<bool>,
+    generateHash: option<(string, 'a) => Js.Promise.t<string>>,
+  }
+
+  let makePersistedFetchExchangeOptions: (
+    ~preferGetForPersistedQueries: bool=?,
+    ~generateHash: (string, 'a) => Js.Promise.t<string>=?,
+    unit,
+  ) => persistedFetchExchangeOptions<'a>
+
+  @module("@urql/exchange-persisted-fetch")
+  external persistedFetchExchange: persistedFetchExchangeOptions<'a> => t = "persistedFetchExchange"
+
+  @module("@urql/exchange-refocus")
+  external refocusExchange: unit => t = "refocusExchange"
+
+  type requestPolicyExchangeOptions = {
+    shouldUpgrade: option<Types.operation => bool>,
+    ttl: option<int>,
+  }
+
+  let makeRequestPolicyExchangeOptions: (
+    ~shouldUpgrade: Types.operation => bool=?,
+    ~ttl: int=?,
+    unit,
+  ) => requestPolicyExchangeOptions
+
+  @module("@urql/exchange-request-policy")
+  external requestPolicyExchange: requestPolicyExchangeOptions => t = "requestPolicyExchange"
+
+  type retryExchangeOptions = {
+    initialDelayMs: option<int>,
+    maxDelayMs: option<int>,
+    randomDelay: option<bool>,
+    maxNumberAttempts: option<int>,
+    retryIf: option<(CombinedError.t, Types.operation) => bool>,
+  }
+
+  let makeRetryExchangeOptions: (
+    ~initialDelayMs: int=?,
+    ~maxDelayMs: int=?,
+    ~randomDelay: bool=?,
+    ~maxNumberAttempts: int=?,
+    ~retryIf: (CombinedError.t, Types.operation) => bool=?,
+    unit,
+  ) => retryExchangeOptions
+
+  @module("@urql/exchange-retry")
+  external retryExchange: retryExchangeOptions => t = "retryExchange"
 }
 
 let make: (

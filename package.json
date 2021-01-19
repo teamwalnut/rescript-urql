@@ -35,8 +35,6 @@
     "@babel/plugin-transform-modules-commonjs": "^7.12.1",
     "@glennsl/bs-jest": "^0.6.0",
     "@reasonml-community/graphql-ppx": "^1.0.1",
-    "@urql/exchange-multipart-fetch": "^0.1.11",
-    "@urql/exchange-retry": "^0.2.0",
     "all-contributors-cli": "^6.19.0",
     "babel-jest": "^26.6.3",
     "bs-platform": "^8.3.2",

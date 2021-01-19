@@ -210,34 +210,30 @@ describe("Client", () => {
     }))
 
   describe("Ecosystem exchanges", () => {
-    describe("retryExchange", () => {
-      it("should apply the default retryExchange options from urql if none are applied", () => {
-        let retryExchangeOptions = Client.Exchanges.makeRetryExchangeOptions()
+    describe("persistedFetchExchange", () => {
+      it("should return None for all persistedFetchExchange options if unspecified", () => {
+        let persistedFetchExchangeOptions = Client.Exchanges.makePersistedFetchExchangeOptions()
 
         open Expect
-        expect(retryExchangeOptions) |> toEqual({
-          Client.Exchanges.initialDelayMs: None,
-          maxDelayMs: None,
-          maxNumberAttempts: None,
-          randomDelay: None,
-          retryIf: None,
+        expect(persistedFetchExchangeOptions) |> toEqual({
+          Client.Exchanges.preferGetForPersistedQueries: None,
+          generateHash: None,
         })
       })
 
-      it("should apply any specified options to the retryExchange", () => {
-        let retryExchangeOptions = Client.Exchanges.makeRetryExchangeOptions(
-          ~initialDelayMs=200,
-          ~randomDelay=false,
+      it("should apply any specified options to the persistedFetchExchange", () => {
+        let hashFn = (query, _) => Js.Promise.resolve(Js.String.normalize(query))
+
+        let persistedFetchExchangeOptions = Client.Exchanges.makePersistedFetchExchangeOptions(
+          ~preferGetForPersistedQueries=true,
+          ~generateHash=hashFn,
           (),
         )
 
         open Expect
-        expect(retryExchangeOptions) |> toEqual({
-          Client.Exchanges.initialDelayMs: Some(200),
-          maxDelayMs: None,
-          maxNumberAttempts: None,
-          randomDelay: Some(false),
-          retryIf: None,
+        expect(persistedFetchExchangeOptions) |> toEqual({
+          Client.Exchanges.preferGetForPersistedQueries: Some(true),
+          generateHash: Some(hashFn),
         })
       })
     })
@@ -267,6 +263,38 @@ describe("Client", () => {
         expect(requestPolicyExchangeOptions) |> toEqual({
           Client.Exchanges.shouldUpgrade: Some(shouldUpgrade),
           ttl: Some(2000),
+        })
+      })
+    })
+
+    describe("retryExchange", () => {
+      it("should apply the default retryExchange options from urql if none are applied", () => {
+        let retryExchangeOptions = Client.Exchanges.makeRetryExchangeOptions()
+
+        open Expect
+        expect(retryExchangeOptions) |> toEqual({
+          Client.Exchanges.initialDelayMs: None,
+          maxDelayMs: None,
+          maxNumberAttempts: None,
+          randomDelay: None,
+          retryIf: None,
+        })
+      })
+
+      it("should apply any specified options to the retryExchange", () => {
+        let retryExchangeOptions = Client.Exchanges.makeRetryExchangeOptions(
+          ~initialDelayMs=200,
+          ~randomDelay=false,
+          (),
+        )
+
+        open Expect
+        expect(retryExchangeOptions) |> toEqual({
+          Client.Exchanges.initialDelayMs: Some(200),
+          maxDelayMs: None,
+          maxNumberAttempts: None,
+          randomDelay: Some(false),
+          retryIf: None,
         })
       })
     })
