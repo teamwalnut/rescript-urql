@@ -8,7 +8,6 @@ let mockOperationContext: Types.operationContext = {
   fetchOptions: None,
   requestPolicy: #CacheFirst,
   url: "https://localhost:3000/graphql",
-  pollInterval: None,
   meta: None,
   suspense: Some(false),
   preferGetMethod: Some(false),
@@ -25,7 +24,8 @@ let mockOperation = {
   }
 }
 
-describe("Types", () => describe("hookResponseToReason", () => {
+describe("Types", () =>
+  describe("hookResponseToReason", () => {
     it(
       "should correctly return Fetching constructor if fetching is true and no data has been received",
       () => {
@@ -181,4 +181,5 @@ describe("Types", () => describe("hookResponseToReason", () => {
       open Expect
       expect(result.response) |> toEqual(Types.Hooks.Empty)
     })
-  }))
+  })
+)

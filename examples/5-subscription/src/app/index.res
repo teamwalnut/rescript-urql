@@ -17,7 +17,7 @@ let client = Client.make(
   (),
 )
 
-ReactDOMRe.renderToElementWithId(
-  <Context.Provider value=client> <App /> </Context.Provider>,
-  "root",
-)
+switch ReactDOM.querySelector("#root") {
+| Some(el) => ReactDOM.render(<Context.Provider value=client> <App /> </Context.Provider>, el)
+| None => ()
+}

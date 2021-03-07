@@ -1,7 +1,7 @@
 @react.component
 let make = () =>
   <div
-    style={ReactDOMRe.Style.make(
+    style={ReactDOMStyle.make(
       ~position="absolute",
       ~top="0px",
       ~bottom="0px",

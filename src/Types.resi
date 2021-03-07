@@ -25,7 +25,6 @@ type operationContext = {
   fetchOptions: option<Fetch.requestInit>,
   requestPolicy: requestPolicy,
   url: string,
-  pollInterval: option<int>,
   meta: option<operationDebugMeta>,
   suspense: option<bool>,
   preferGetMethod: option<bool>,
@@ -43,8 +42,6 @@ type partialOperationContext = {
   requestPolicy: string,
   @optional
   url: string,
-  @optional
-  pollInterval: int,
   @optional
   meta: operationDebugMeta,
   @optional

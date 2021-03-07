@@ -118,7 +118,6 @@ Imperatively execute a GraphQL query operation.
 | `fetchOptions`        | `Fetch.requestInit=?`         | Optional. The fetch options to apply on the outgoing request.                                                                                           |
 | `requestPolicy`       | `Types.requestPolicy=?`       | Optional. The request policy to use to execute the query. Defaults to `"cache-first"`.                                                                  |
 | `url`                 | `string=?`                    | Optional. The GraphQL endpoint to use for the executing operation (if different from the one specified by `Client.make`).                               |
-| `pollInterval`        | `int=?`                       | Optional. Instructs the client to reexecute the query every `pollInterval` milliseconds.                                                                |
 | `meta`                | `Types.operationDebugMeta=?`  | Optional. Add metadata that is only available in development with devtools.                                                                             |
 | `suspense`            | `bool=?`                      | Optional. A flag activating the experimental React suspense mode, which can be used during server-side rendering to prefetch data. Defaults to `false`. |
 | `preferGetMethod`     | `bool=?`                      | Optional. If `true`, will use the HTTP GET method rather than POST for operations of type `query`. Defaults to `false`.                                 |
@@ -208,7 +207,6 @@ Execute a GraphQL mutation operation.
 | `fetchOptions`        | `Fetch.requestInit=?`         | Optional. The fetch options to apply on the outgoing request.                                                                                           |
 | `requestPolicy`       | `Types.requestPolicy=?`       | Optional. The request policy to use to execute the query. Defaults to `"cache-first"`.                                                                  |
 | `url`                 | `string=?`                    | Optional. The GraphQL endpoint to use for the executing operation (if different from the one specified by `Client.make`).                               |
-| `pollInterval`        | `int=?`                       | Optional. Instructs the client to reexecute the query every `pollInterval` milliseconds.                                                                |
 | `meta`                | `Types.operationDebugMeta=?`  | Optional. Add metadata that is only available in development with devtools.                                                                             |
 | `suspense`            | `bool=?`                      | Optional. A flag activating the experimental React suspense mode, which can be used during server-side rendering to prefetch data. Defaults to `false`. |
 | `preferGetMethod`     | `bool=?`                      | Optional. If `true`, will use the HTTP GET method rather than POST for operations of type `query`. Defaults to `false`.                                 |
@@ -298,7 +296,6 @@ Execute a GraphQL subscription operation. If using the `executeSubscription` met
 | `fetchOptions`        | `Fetch.requestInit=?`         | Optional. The fetch options to apply on the outgoing request.                                                                                           |
 | `requestPolicy`       | `Types.requestPolicy=?`       | Optional. The request policy to use to execute the query. Defaults to `"cache-first"`.                                                                  |
 | `url`                 | `string=?`                    | Optional. The GraphQL endpoint to use for the executing operation (if different from the one specified by `Client.make`).                               |
-| `pollInterval`        | `int=?`                       | Optional. Instructs the client to reexecute the query every `pollInterval` milliseconds.                                                                |
 | `meta`                | `Types.operationDebugMeta=?`  | Optional. Add metadata that is only available in development with devtools.                                                                             |
 | `suspense`            | `bool=?`                      | Optional. A flag activating the experimental React suspense mode, which can be used during server-side rendering to prefetch data. Defaults to `false`. |
 | `preferGetMethod`     | `bool=?`                      | Optional. If `true`, will use the HTTP GET method rather than POST for operations of type `query`. Defaults to `false`.                                 |
