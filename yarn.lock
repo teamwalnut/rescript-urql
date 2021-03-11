@@ -4223,7 +4223,7 @@ urix@^0.1.0:
   resolved "https://registry.yarnpkg.com/urix/-/urix-0.1.0.tgz#da937f7a62e21fec1fd18d49b35c2935067a6c72"
   integrity sha1-2pN/emLiH+wf0Y1Js1wpNQZ6bHI=
 
-urql@~2.0.1:
+urql@^2.0.0:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/urql/-/urql-2.0.1.tgz#16c024ab0340328001b0c400ebe1368887af3823"
   integrity sha512-UTYLaMMw/N2iM2nHbcZ1XvN+opZxtWKwJaczV+MAco8buFpR3JR9CFrgKvx9p4uz+EayqQ69LZTWreJx+c196w==

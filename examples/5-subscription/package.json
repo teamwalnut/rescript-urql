@@ -20,7 +20,7 @@
     "react": "^16.8.0",
     "react-dom": "^16.8.0",
     "reason-urql": "link:../../",
-    "urql": "~2.0.1"
+    "urql": "^2.0.0"
   },
   "devDependencies": {
     "apollo-server-express": "^2.14.2",
