@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 yarn build
-for dir in ./examples/*; do
+for dir in GITHUB_WORKSPACE/examples/*; do
   cd "$dir"
   yarn
   yarn clean
