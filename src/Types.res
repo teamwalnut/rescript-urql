@@ -1,28 +1,20 @@
 /* RequestPolicy to be used for queries. */
 @deriving(jsConverter)
 type requestPolicy = [
-  | @as("cache-first")
-  #CacheFirst
-  | @as("cache-only")
-  #CacheOnly
-  | @as("network-only")
-  #NetworkOnly
-  | @as("cache-and-network")
-  #CacheAndNetwork
+  | @as("cache-first") #CacheFirst
+  | @as("cache-only") #CacheOnly
+  | @as("network-only") #NetworkOnly
+  | @as("cache-and-network") #CacheAndNetwork
 ]
 
 /* OperationType for the active operation.
  Use with operationTypeToJs for proper conversion to strings. */
 @deriving(jsConverter)
 type operationType = [
-  | @as("query")
-  #Query
-  | @as("mutation")
-  #Mutation
-  | @as("subscription")
-  #Subscription
-  | @as("teardown")
-  #Teardown
+  | @as("query") #Query
+  | @as("mutation") #Mutation
+  | @as("subscription") #Subscription
+  | @as("teardown") #Teardown
 ]
 
 /* Cache outcomes for operations. */
@@ -44,7 +36,6 @@ type operationContext = {
   fetchOptions: option<Fetch.requestInit>,
   requestPolicy: requestPolicy,
   url: string,
-  pollInterval: option<int>,
   meta: option<operationDebugMeta>,
   suspense: option<bool>,
   preferGetMethod: option<bool>,
@@ -62,8 +53,6 @@ type partialOperationContext = {
   requestPolicy: string,
   @optional
   url: string,
-  @optional
-  pollInterval: int,
   @optional
   meta: operationDebugMeta,
   @optional
@@ -168,12 +157,10 @@ module Hooks = {
     stale: bool,
   }
 
-  @ocaml.doc(
-    "
+  @ocaml.doc("
    * A function for converting the response to an urql hook from its
    * JavaScript representation to a typed Reason record.
-   "
-  )
+   ")
   let hookResponseToReason:
     type dataJs data. (
       ~response: hookResponseJs<dataJs>,

@@ -15,4 +15,7 @@ let client = Client.make(
   (),
 )
 
-ReactDOMRe.renderToElementWithId(<Console client />, "root")
+switch ReactDOM.querySelector("#root") {
+| Some(el) => ReactDOM.render(<Console client />, el)
+| None => ()
+}

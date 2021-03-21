@@ -1,9 +1,8 @@
 open ReasonUrql
 
-/* Instatiate the client. */
 let client = Client.make(~url="https://graphql-pokemon2.vercel.app", ())
 
-ReactDOMRe.renderToElementWithId(
-  <Context.Provider value=client> <Container /> </Context.Provider>,
-  "root",
-)
+switch ReactDOM.querySelector("#root") {
+| Some(el) => ReactDOM.render(<Context.Provider value=client> <Container /> </Context.Provider>, el)
+| None => ()
+}

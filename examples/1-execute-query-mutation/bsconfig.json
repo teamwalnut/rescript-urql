@@ -18,8 +18,8 @@
   "suffix": ".bs.js",
   "bs-dependencies": [
     "reason-urql",
+    "@rescript/react",
     "wonka",
-    "reason-react",
     "@reasonml-community/graphql-ppx"
   ],
   "refmt": 3,

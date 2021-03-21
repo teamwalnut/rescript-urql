@@ -1,10 +1,8 @@
-@@ocaml.doc(
-  "
+@@ocaml.doc("
 * The handler type used to type the optional accumulator function
 * returned by useSubscription. handler is a GADT used to support
 * proper type inference for useSubscription.
-"
-)
+")
 type rec handler<'acc, 'response, 'ret> =
   | Handler((option<'acc>, 'response) => 'acc): handler<'acc, 'response, 'acc>
   | NoHandler: handler<'response, 'response, 'response>
@@ -30,7 +28,6 @@ type executeSubscription = (
   ~fetch: (string, Fetch.requestInit) => Js.Promise.t<Fetch.response>=?,
   ~requestPolicy: Types.requestPolicy=?,
   ~url: string=?,
-  ~pollInterval: int=?,
   ~meta: Types.operationDebugMeta=?,
   ~suspense: bool=?,
   ~preferGetMethod: bool=?,
@@ -64,10 +61,9 @@ let subscriptionResponseToReason = (response: Types.Hooks.hookResponseJs<'ret>) 
   }
 }
 
-// reason-react does not provide a binding of sufficient arity for our memoization needs
+// @rescript/react does not provide a binding of sufficient arity for our memoization needs.
 @module("react")
-external useMemo9: (@uncurry (unit => 'any), ('a, 'b, 'c, 'd, 'e, 'f, 'g, 'h, 'i)) => 'any =
-  "useMemo"
+external useMemo8: (@uncurry (unit => 'any), ('a, 'b, 'c, 'd, 'e, 'f, 'g, 'h)) => 'any = "useMemo"
 
 let useSubscription = (
   type acc ret variables data,
@@ -82,7 +78,6 @@ let useSubscription = (
   ~fetch=?,
   ~requestPolicy=?,
   ~url=?,
-  ~pollInterval=?,
   ~meta=?,
   ~suspense=?,
   ~preferGetMethod=?,
@@ -95,7 +90,7 @@ let useSubscription = (
     [requestPolicy],
   )
 
-  let context = useMemo9(
+  let context = useMemo8(
     () =>
       Types.partialOperationContext(
         ~additionalTypenames?,
@@ -103,23 +98,12 @@ let useSubscription = (
         ~fetch?,
         ~url?,
         ~requestPolicy=?rp,
-        ~pollInterval?,
         ~meta?,
         ~suspense?,
         ~preferGetMethod?,
         (),
       ),
-    (
-      additionalTypenames,
-      fetchOptions,
-      fetch,
-      url,
-      rp,
-      pollInterval,
-      meta,
-      suspense,
-      preferGetMethod,
-    ),
+    (additionalTypenames, fetchOptions, fetch, url, rp, meta, suspense, preferGetMethod),
   )
 
   let args = React.useMemo4(() => {
@@ -150,7 +134,6 @@ let useSubscription = (
       ~fetch=?,
       ~requestPolicy=?,
       ~url=?,
-      ~pollInterval=?,
       ~meta=?,
       ~suspense=?,
       ~preferGetMethod=?,
@@ -162,7 +145,6 @@ let useSubscription = (
         ~fetch?,
         ~url?,
         ~requestPolicy=?requestPolicy->Belt.Option.map(Types.requestPolicyToJs),
-        ~pollInterval?,
         ~meta?,
         ~suspense?,
         ~preferGetMethod?,

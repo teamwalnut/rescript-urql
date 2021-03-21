@@ -2,7 +2,7 @@ open ReasonUrql
 
 let client = Client.make(~url="https://formidadog-ql.netlify.app/graphql", ())
 
-ReactDOMRe.renderToElementWithId(
-  <Context.Provider value=client> <Grid /> </Context.Provider>,
-  "root",
-)
+switch ReactDOM.querySelector("#root") {
+| Some(el) => ReactDOM.render(<Context.Provider value=client> <Grid /> </Context.Provider>, el)
+| None => ()
+}
