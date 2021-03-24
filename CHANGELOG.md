@@ -5,7 +5,31 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [3.4.0] - 2020-01-18
+## [4.0.0] - 2021-03-21
+
+This release adds support for several major version upgrades of dependencies, including:
+
+- Support for `urql@2.0.0`.
+- Support for `@rescript/react`. `reason-react` is no longer supported moving forward.
+- Support for `bs-platform@9.0.0`.
+
+This release also includes a name change. This package will now be published under the `@urql` scope as `@urql/rescript`. To install it, run:
+
+```sh
+yarn add @urql/rescript
+```
+
+### Changed
+
+- `reason-urql` is now available as `@urql/rescript`. PR by @parkerziegler [here]().
+- `@urql/rescript` is now compatible with `urql@2.0.0`, `bs-platform@9.0.0`, and `@rescript/react`. You must upgrade to `@rescript/react` from `reason-react` to use v4.0.0. PR by @parkerziegler [here](https://github.com/FormidableLabs/reason-urql/pull/254).
+- The `pollInterval` API was removed from all hooks and Client methods, in accordance with the upstream deprecation of this API in `urql@2.0.0`. PR by @parkerziegler [here](https://github.com/FormidableLabs/reason-urql/pull/254). More information on this deprecation can be found in [the `urql` CHANGELOG](https://github.com/FormidableLabs/urql/releases/tag/urql%402.0.0).
+
+### Diff
+
+https://github.com/FormidableLabs/reason-urql/compare/v3.4.0...v4.0.0
+
+## [3.4.0] - 2021-01-18
 
 This release adds bindings for two additional ecosystem exchanges:
 
@@ -20,7 +44,7 @@ This release adds bindings for two additional ecosystem exchanges:
 
 https://github.com/FormidableLabs/reason-urql/compare/v3.3.0...v3.4.0
 
-## [3.3.0] - 2020-01-05
+## [3.3.0] - 2021-01-05
 
 This release adds bindings for two additional ecosystem exchanges:
 
