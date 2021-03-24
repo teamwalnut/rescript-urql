@@ -39,7 +39,7 @@ switch (response) {
         ->Belt.Option.getWithDefault("Network error")
         ->React.string}
       </div>
-    | {graphQLErrors: Some(gqle)} =>
+    | {graphQLErrors: gqle} when gqle->Belt.Array.length > 0 =>
       <div>
         {gqle
           |> Array.to_list
