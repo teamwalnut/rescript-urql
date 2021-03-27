@@ -1,7 +1,6 @@
-open ReasonUrql
+open ReScriptUrql
 
-module GetAllDogs = %graphql(
-  `
+module GetAllDogs = %graphql(`
   {
     dogs {
       key
@@ -15,8 +14,7 @@ module GetAllDogs = %graphql(
       imageUrl
     }
   }
-`
-)
+`)
 
 @react.component
 let make = () => {

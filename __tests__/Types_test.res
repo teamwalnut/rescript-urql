@@ -25,7 +25,7 @@ let mockOperation = {
 }
 
 describe("Types", () =>
-  describe("hookResponseToReason", () => {
+  describe("hookResponseToReScript", () => {
     it(
       "should correctly return Fetching constructor if fetching is true and no data has been received",
       () => {
@@ -41,7 +41,7 @@ describe("Types", () =>
           }
         }
         let parse = _json => ()
-        let result = Types.Hooks.hookResponseToReason(~response, ~parse)
+        let result = Types.Hooks.hookResponseToReScript(~response, ~parse)
 
         open Expect
         expect(result.response) |> toEqual(Types.Hooks.Fetching)
@@ -61,7 +61,7 @@ describe("Types", () =>
         }
       }
       let parse = json => Js.Json.decodeString(json)
-      let result = Types.Hooks.hookResponseToReason(~response, ~parse)
+      let result = Types.Hooks.hookResponseToReScript(~response, ~parse)
 
       open Expect
       expect(result.response) |> toEqual(Types.Hooks.Data(Some("Hello")))
@@ -109,7 +109,7 @@ describe("Types", () =>
         }
 
         let parse = json => Js.Json.decodeString(json)
-        let result = Types.Hooks.hookResponseToReason(~response, ~parse)
+        let result = Types.Hooks.hookResponseToReScript(~response, ~parse)
 
         open Expect
         expect(result.response) |> toEqual(
@@ -157,7 +157,7 @@ describe("Types", () =>
         }
       }
       let parse = _json => ()
-      let result = Types.Hooks.hookResponseToReason(~response, ~parse)
+      let result = Types.Hooks.hookResponseToReScript(~response, ~parse)
 
       open Expect
       expect(result.response) |> toEqual(Types.Hooks.Error(error))
@@ -176,7 +176,7 @@ describe("Types", () =>
         }
       }
       let parse = _json => ()
-      let result = Types.Hooks.hookResponseToReason(~response, ~parse)
+      let result = Types.Hooks.hookResponseToReScript(~response, ~parse)
 
       open Expect
       expect(result.response) |> toEqual(Types.Hooks.Empty)

@@ -1,4 +1,4 @@
-name: reason-urql CI
+name: rescript-urql CI
 on:
   push:
     branches:

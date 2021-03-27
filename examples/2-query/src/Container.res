@@ -1,15 +1,13 @@
-open ReasonUrql
+open ReScriptUrql
 
 /* Fetch all 151 original pokemon. */
-module GetAllPokemons = %graphql(
-  `
+module GetAllPokemons = %graphql(`
   query pokemons($first: Int!) {
     pokemons(first: $first) {
       name
     }
   }
-`
-)
+`)
 
 let flattenPokemon = pokemons => {
   open GetAllPokemons

@@ -42,7 +42,7 @@ let useMutation:
     let (stateJs, executeMutationJs) = useMutationJs(query)
 
     let state = React.useMemo2(
-      () => Types.Hooks.hookResponseToReason(~response=stateJs, ~parse),
+      () => Types.Hooks.hookResponseToReScript(~response=stateJs, ~parse),
       (stateJs, parse),
     )
 
@@ -79,7 +79,7 @@ let useMutation:
           ctx,
         )->{
           open Js.Promise
-          then_(response => Types.operationResultToReason(~response, ~parse)->resolve, _)
+          then_(response => Types.operationResultToReScript(~response, ~parse)->resolve, _)
         }
       },
       [executeMutationJs],

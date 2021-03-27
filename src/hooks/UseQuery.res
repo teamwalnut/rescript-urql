@@ -99,7 +99,7 @@ let useQuery:
     let (stateJs, executeQueryJs) = useQueryJs(args)
 
     let state = React.useMemo2(
-      () => Types.Hooks.hookResponseToReason(~response=stateJs, ~parse),
+      () => Types.Hooks.hookResponseToReScript(~response=stateJs, ~parse),
       (stateJs, parse),
     )
 

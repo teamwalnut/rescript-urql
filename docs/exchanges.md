@@ -1,12 +1,12 @@
 # Exchanges
 
-Exchanges are the mechanism by which `reason-urql` modifies requests before they are sent to your GraphQL API and alters responses as they are received. If you want to add some additional functionality to your GraphQL operations, this is a great place to do that.
+Exchanges are the mechanism by which `rescript-urql` modifies requests before they are sent to your GraphQL API and alters responses as they are received. If you want to add some additional functionality to your GraphQL operations, this is a great place to do that.
 
-The `Exchanges` `module` is a submodule of the `Client` module and can be referenced at `ReasonUrql.Client.Exchanges`. The following exchanges are provided out of the box with `reason-urql`.
+The `Exchanges` `module` is a submodule of the `Client` module and can be referenced at `ReScriptUrql.Client.Exchanges`. The following exchanges are provided out of the box with `rescript-urql`.
 
 ## Core Exchanges
 
-`urql` ships with a set of core exchanges that are baked right into `@urql/core` and can be referenced safely in `reason-urql` without installing any additional packages. These are detailed below.
+`urql` ships with a set of core exchanges that are baked right into `@urql/core` and can be referenced safely in `rescript-urql` without installing any additional packages. These are detailed below.
 
 ### `cacheExchange`
 
@@ -22,10 +22,10 @@ The `fetchExchange` is responsible for actually sending your request to your Gra
 
 ### `defaultExchanges`
 
-The above three exchanges make up `urql`'s `defaultExchanges`. When you create a client in `reason-urql` these exchanges are already applied by default. If you specify an `exchanges` array, be sure to include the specific exchanges you need. You almost always want the `defaultExchanges`, so make sure to include them using `Array.concat` or `Array.append`.
+The above three exchanges make up `urql`'s `defaultExchanges`. When you create a client in `rescript-urql` these exchanges are already applied by default. If you specify an `exchanges` array, be sure to include the specific exchanges you need. You almost always want the `defaultExchanges`, so make sure to include them using `Array.concat` or `Array.append`.
 
 ```reason
-open ReasonUrql;
+open ReScriptUrql;
 
 let client = Client.(
   make(
@@ -61,11 +61,11 @@ let subscriptionClient =
     (),
   );
 
-/* Implement the forwardSubscription function. This tells reason-urql how to handle
+/* Implement the forwardSubscription function. This tells rescript-urql how to handle
 incoming operations of operationType 'subscription'. */
 let forwardSubscription = operation => subscriptionClient##request(operation);
 
-/* Confirgure options for reason-urql's subscriptionExchange. */
+/* Confirgure options for rescript-urql's subscriptionExchange. */
 let subscriptionExchangeOpts =
   Client.Exchanges.{forwardSubscription: forwardSubscription};
 
@@ -88,12 +88,12 @@ let client = Client.(
 The `ssrExchange` accepts a single optional argument, `~ssrExchangeParams`, a record with two fields:
 
 - `~initialState` - which populates the server-side rendered data with a rehydrated cache.
-- `~isClient` – tell the exchange whether or not it is executing on the client or the server. By default, `reason-urql` will look at the `suspense` parameter passed to the client to determine this if `isClient` is not provided.
+- `~isClient` – tell the exchange whether or not it is executing on the client or the server. By default, `rescript-urql` will look at the `suspense` parameter passed to the client to determine this if `isClient` is not provided.
 
 If using the `ssrExchange`, it should be placed after any caching exchanges, like `cacheExchange`, but before any asynchronous exchanges, like `fetchExchange`.
 
 ```reason
-open ReasonUrql;
+open ReScriptUrql;
 
 let ssrCache = Exchanges.ssrExchange();
 
@@ -116,7 +116,7 @@ The resulting data structure returned from creating the `ssrExchange` can be acc
 - `extractData` – this is typically used on the server-side to extract data returned from your GraphQL requests after they've been executed on the server.
 
 ```reason
-open ReasonUrql;
+open ReScriptUrql;
 
 let ssrCache = Client.Exchanges.ssrExchange(~ssrExchangeParams, ());
 
@@ -127,7 +127,7 @@ let extractedData = Client.Exchanges.extractData(~exchange=ssrCache);
 - `restoreData` is typically used to rehydrate the client with data from the server. The `restore` argument is what allows you to reference the data returned from the server to the client.
 
 ```reason
-open ReasonUrql;
+open ReScriptUrql;
 
 let ssrCache = Client.Exchanges.ssrExchange(~ssrExchangeParams, ());
 
@@ -135,7 +135,7 @@ let ssrCache = Client.Exchanges.ssrExchange(~ssrExchangeParams, ());
 let extractedData = Client.Exchanges.restoreData(~exchange=ssrCache, ~restore=urqlData);
 ```
 
-This part of the API is still quite experimental, as server-side rendering in Reason with Next.js is still in its infancy. Use with caution. For more information, read `urql`'s server-side rendering guide [here](https://github.com/FormidableLabs/urql/blob/master/docs/basics.md#server-side-rendering). To see an example of server-side rendering with `reason-urql`, check out our [`reason-urql-ssr` example](https://github.com/parkerziegler/reason-urql-ssr).
+This part of the API is still quite experimental, as server-side rendering in ReScript with Next.js is still in its infancy. Use with caution. For more information, read `urql`'s server-side rendering guide [here](https://github.com/FormidableLabs/urql/blob/master/docs/basics.md#server-side-rendering). To see an example of server-side rendering with `rescript-urql`, check out our [SSR example](https://github.com/parkerziegler/rescript-urql-ssr).
 
 ### `composeExchanges`
 
@@ -143,7 +143,7 @@ This part of the API is still quite experimental, as server-side rendering in Re
 
 ## Ecosystem Exchanges
 
-In addition to the core exchanges exposed by `@urql/core`, `urql` also supports more abstracted exchanges that meet particular needs that may or may not be critical to your use case. In contrast to the core exchanges, these ecosystem exchanges should be used when you have a specific use case that warrants them. Many of these exchanges require additional packages to be installed. `reason-urql` is in the process of adding bindings for these exchanges; if the ecosystem exchange you're interested in isn't outlined below, the bindings may not have yet been implemented. Community contributions are very welcome in this space!
+In addition to the core exchanges exposed by `@urql/core`, `urql` also supports more abstracted exchanges that meet particular needs that may or may not be critical to your use case. In contrast to the core exchanges, these ecosystem exchanges should be used when you have a specific use case that warrants them. Many of these exchanges require additional packages to be installed. `rescript-urql` is in the process of adding bindings for these exchanges; if the ecosystem exchange you're interested in isn't outlined below, the bindings may not have yet been implemented. Community contributions are very welcome in this space!
 
 ### `multipartFetchExchange`
 
@@ -158,7 +158,7 @@ yarn add @urql/exchange-multipart-fetch
 Then, substitute the `fetchExchange` with the `multipartFetchExchange`:
 
 ```rescript
-open ReasonUrql
+open ReScriptUrql
 
 let client = Client.make(
   ~url="http://localhost:3000",
@@ -186,7 +186,7 @@ yarn add @urql/exchange-persisted-fetch
 Then, add the exchange to your array of `exchanges`, sepcifying the options you want to configure:
 
 ```rescript
-open ReasonUrql
+open ReScriptUrql
 
 let persistedFetchExchangeOptions = Client.Exchanges.makePersistedFetchExchangeOptions(
   ~preferGetForPersistedQueries=true,
@@ -211,7 +211,7 @@ Read more about the `persistedFetchExchange` [here](https://github.com/Formidabl
 
 ### `refocusExchange`
 
-The `refocusExchange` allows `reason-urql` to redispatch active operations when the window regains focus.
+The `refocusExchange` allows `rescript-urql` to redispatch active operations when the window regains focus.
 
 To use the `refocusExchange`, add the package to your dependencies:
 
@@ -222,7 +222,7 @@ yarn add @urql/exchange-refocus
 Then, add the exchange to your array of `exchanges`. The `refocusExchange` should be added _after_ the `dedupeExchange`, to prevent doing additional work on requests that are later deduplicated, and _before_ the `fetchExchange`:
 
 ```rescript
-open ReasonUrql
+open ReScriptUrql
 
 let client = Client.make(
   ~url="http://localhost:3000",
@@ -238,7 +238,7 @@ let client = Client.make(
 
 ### `requestPolicyExchange`
 
-The `requestPolicyExchange` allows `reason-urql` to automatically upgrade an operation's `requestPolicy` on a time-to-live basis. When the specified TTL has elapsed, `reason-urql` will either:
+The `requestPolicyExchange` allows `rescript-urql` to automatically upgrade an operation's `requestPolicy` on a time-to-live basis. When the specified TTL has elapsed, `rescript-urql` will either:
 
 - Upgrade the `requestPolicy` of the operation to `cache-and-network` if no `shouldUpgrade` callback is specified, or:
 - Run the `shouldUpgrade` function to determine whether or not to upgrade the specific operation.
@@ -252,7 +252,7 @@ yarn add @urql/exchange-request-policy
 Then, add the exchange to your array of `exchanges`, specifying the options you want to configure:
 
 ```rescript
-open ReasonUrql
+open ReScriptUrql
 
 let shouldUpgrade = (operation: Types.operation) =>
   operation.context.requestPolicy !== #CacheOnly
@@ -290,7 +290,7 @@ yarn add @urql/exchange-retry
 Then, add the exchange to your array of `exchanges`, specifying the options you want to configure:
 
 ```rescript
-open ReasonUrql
+open ReScriptUrql
 
 let retryExchangeOptions =
   Client.Exchanges.makeRetryExchangeOptions(~initialDelayMs=2000, ~randomDelay=false, ())
@@ -322,7 +322,7 @@ By default, `urql` will apply the following configuration for you:
 If you want to use the defaults from `urql`, call `makeRetryExchangeOptions` with just a `unit` parameter.
 
 ```rescript
-open ReasonUrql
+open ReScriptUrql
 
 let retryExchangeOptions =
   Client.Exchanges.makeRetryExchangeOptions()
@@ -343,9 +343,9 @@ Read more on the `retryExchange` [here](https://formidable.com/open-source/urql/
 
 ## Custom Exchanges
 
-`reason-urql` also allows you to write your own exchanges to modify outgoing GraphQL requests and incoming responses. To read up on the basics of exchanges, check out the excellent [`urql` documentation](https://formidable.com/open-source/urql/docs/concepts/exchanges/).
+`rescript-urql` also allows you to write your own exchanges to modify outgoing GraphQL requests and incoming responses. To read up on the basics of exchanges, check out the excellent [`urql` documentation](https://formidable.com/open-source/urql/docs/concepts/exchanges/).
 
-The signature of an exchange in `reason-urql` is:
+The signature of an exchange in `rescript-urql` is:
 
 ```reason
 type t =
@@ -357,18 +357,18 @@ type t =
 `exchangeInput` here is a record containing two fields:
 
 - `forward` – a function for forwarding the current operation onto the next exchange.
-- `client` – your `reason-urql` client instance.
+- `client` – your `rescript-urql` client instance.
 
 Let's look at an example to see how to implement our own exchanges.
 
-#### Rewriting the `debugExchange` in Reason
+#### Rewriting the `debugExchange` in ReScript
 
-To see how we can write our own custom exchange, we'll reimplement the `urql`'s native `debugExchange` in Reason:
+To see how we can write our own custom exchange, we'll reimplement the `urql`'s native `debugExchange` in ReScript:
 
 ```reason
-open ReasonUrql;
+open ReScriptUrql;
 
-/* This is the native debugExchange that ships with `urql`, re-implemented in Reason.
+/* This is the native debugExchange that ships with `urql`, re-implemented in ReScript.
      Typically, you'd just add Exchanges.debugExchange to the Client's exchange array.
    */
 let debugExchange = (Client.Exchanges.{forward}) =>
@@ -388,12 +388,12 @@ let debugExchange = (Client.Exchanges.{forward}) =>
        );
 ```
 
-That's it! We've successfully re-implemented `urql`'s `debugExchange` in Reason. Because the `Wonka` library used for much of `urql`'s exchange architecture is written in Reason itself, writing our own exchanges is often more ergonomic than the JS experience. When you've written your exchange, just supply it to your client like so:
+That's it! We've successfully re-implemented `urql`'s `debugExchange` in ReScript. Because the `Wonka` library used for much of `urql`'s exchange architecture is written in ReScript itself, writing our own exchanges is often more ergonomic than the JS experience. When you've written your exchange, just supply it to your client like so:
 
 ```reason
-open ReasonUrql;
+open ReScriptUrql;
 
-/* This is the native debugExchange that ships with `urql`, re-implemented in Reason.
+/* This is the native debugExchange that ships with `urql`, re-implemented in ReScript.
      Typically, you'd just add Exchanges.debugExchange to the Client's exchange array.
    */
 let debugExchange = (Client.Exchanges.{forward}) =>

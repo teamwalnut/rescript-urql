@@ -1,9 +1,8 @@
-open ReasonUrql
+open ReScriptUrql
 
 let client = Client.make(~url="https://formidadog-ql.netlify.app/graphql", ())
 
-module GetAllDogs = %graphql(
-  `
+module GetAllDogs = %graphql(`
   query dogs {
     dogs {
       name
@@ -11,11 +10,9 @@ module GetAllDogs = %graphql(
       likes
     }
   }
-`
-)
+`)
 
-module LikeDog = %graphql(
-  `
+module LikeDog = %graphql(`
   mutation likeDog($key: ID!) {
     likeDog(key: $key) {
       name
@@ -23,8 +20,7 @@ module LikeDog = %graphql(
       likes
     }
   }
-`
-)
+`)
 
 type state = {
   query: option<Js.Json.t>,

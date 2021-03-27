@@ -1,12 +1,12 @@
 # Client and Provider
 
-The client is the central orchestrator of `reason-urql`, and is responsible for executing queries, mutations, and subscriptions passed to `useQuery`, `useMutation`, and `useSubscription`. The `Provider` wraps the root of your application and passes your `reason-urql` client instance, via React context, to hooks in your React tree.
+The client is the central orchestrator of `rescript-urql`, and is responsible for executing queries, mutations, and subscriptions passed to `useQuery`, `useMutation`, and `useSubscription`. The `Provider` wraps the root of your application and passes your `rescript-urql` client instance, via React context, to hooks in your React tree.
 
 ## `Provider`
 
-The `Provider`'s responsibility is to pass the `reason-urql` client instance down to `useQuery`, `useMutation`, and `useSubcription` hooks through context. Wrap the root of your application with `Provider`.
+The `Provider`'s responsibility is to pass the `rescript-urql` client instance down to `useQuery`, `useMutation`, and `useSubcription` hooks through context. Wrap the root of your application with `Provider`.
 
-You can access the `Provider` component by referencing `Context.Provider` after `open`ing `ReasonUrql`.
+You can access the `Provider` component by referencing `Context.Provider` after `open`ing `ReScriptUrql`.
 
 ### Props
 
@@ -17,7 +17,7 @@ You can access the `Provider` component by referencing `Context.Provider` after 
 ### Example
 
 ```reason
-open ReasonUrql;
+open ReScriptUrql;
 
 let client = Client.make(~url="https://localhost:3000/graphql", ());
 
@@ -26,14 +26,14 @@ ReactDOMRe.renderToElementWithId(<Context.Provider value=client><App /></Context
 
 ## Client
 
-The client executes all requests in `reason-urql` and delegates all incoming responses to subscribed hooks. Its full API is below; you can also look at its associated [interface file](../src/client/Client.rei).
+The client executes all requests in `rescript-urql` and delegates all incoming responses to subscribed hooks. Its full API is below; you can also look at its associated [interface file](../src/client/Client.rei).
 
 ### Client.make
 
 Create an instance of an `urql` client.
 
 ```reason
-open ReasonUrql;
+open ReScriptUrql;
 
 let client = Client.make(~url="https://localhost:3000/graphql", ());
 ```
@@ -58,7 +58,7 @@ let client = Client.make(~url="https://localhost:3000/graphql", ());
 **Create a client with just a `url`.**
 
 ```reason
-open ReasonUrql;
+open ReScriptUrql;
 
 let client = Client.make(~url="https://localhost:3000/graphql", ());
 ```
@@ -66,7 +66,7 @@ let client = Client.make(~url="https://localhost:3000/graphql", ());
 **Create a client with `fetchOptions`.**
 
 ```reason
-open ReasonUrql;
+open ReScriptUrql;
 
 let fetchOptions =
   Client.FetchOpts(Fetch.RequestInit.make(
@@ -80,7 +80,7 @@ let client = Client.make(~url="https://localhost:3000/graphql", ~fetchOptions, (
 **Create a client with `exchanges`.**
 
 ```reason
-open ReasonUrql;
+open ReScriptUrql;
 
 let client = Client.(
   make(
@@ -132,7 +132,7 @@ Imperatively execute a GraphQL query operation.
 #### Example
 
 ```reason
-open ReasonUrql;
+open ReScriptUrql;
 
 let client = Client.make(~url="https://localhost:3000/graphql", ());
 
@@ -169,7 +169,7 @@ The same as `Client.executeQuery`, but returns a `Js.Promise.t` rather than a `w
 #### Example
 
 ```reason
-open ReasonUrql;
+open ReScriptUrql;
 
 let client = Client.make(~url="https://localhost:3000/graphql", ());
 
@@ -221,7 +221,7 @@ Execute a GraphQL mutation operation.
 #### Example
 
 ```reason
-open ReasonUrql;
+open ReScriptUrql;
 
 let client = Client.make(~url="https://localhost:3000/graphql", ());
 
@@ -258,7 +258,7 @@ The same as `Client.executeMutation`, but returns a `Js.Promise.t` rather than a
 #### Example
 
 ```reason
-open ReasonUrql;
+open ReScriptUrql;
 
 let client = Client.make(~url="https://localhost:3000/graphql", ());
 
@@ -308,7 +308,7 @@ Execute a GraphQL subscription operation. If using the `executeSubscription` met
 #### Example
 
 ```reason
-open ReasonUrql;
+open ReScriptUrql;
 
 module SubscribeMessages = [%graphql
   {|

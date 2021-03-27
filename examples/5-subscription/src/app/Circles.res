@@ -1,4 +1,4 @@
-open ReasonUrql
+open ReScriptUrql
 
 module SubscribeRandomInt = %graphql(`
   subscription subscribeNumbers {
@@ -24,7 +24,9 @@ let make = () => {
   | Fetching => <text> {"Loading"->React.string} </text>
   | Data(d)
   | PartialData(d, _) =>
-    d |> Array.to_list |> List.mapi((index, datum: SubscribeRandomInt.t) => {
+    d
+    |> Array.to_list
+    |> List.mapi((index, datum: SubscribeRandomInt.t) => {
       let cx = datum.newNumber->string_of_int
       let cy = (index === 0 ? datum.newNumber : d[index - 1].newNumber)->string_of_int
       <circle
@@ -35,7 +37,9 @@ let make = () => {
         fill="none"
         r={Util.getRandomInt(30) |> string_of_int}
       />
-    }) |> Array.of_list |> React.array
+    })
+    |> Array.of_list
+    |> React.array
   | Error(_e) => <text> {"Error"->React.string} </text>
   | Empty => <text> {"Not Found"->React.string} </text>
   }

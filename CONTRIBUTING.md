@@ -1,8 +1,8 @@
-## Contributing to `reason-urql`
+## Contributing to `rescript-urql`
 
-Thank you so much for contributing to `reason-urql`! We're excited you want to help make this project better with us.
+Thank you so much for contributing to `rescript-urql`! We're excited you want to help make this project better with us.
 
-`reason-urql` follows the [all contributors spec](https://allcontributors.org/). We believe firmly that the whole community is vital to our success, not just those who contribute code. The best way to get involved is to start by familiarizing yourself with the [`urql`](https://github.com/FormidableLabs/urql/) API and getting familiar with the basics of [Reason](https://reasonml.github.io/) and [BuckleScript](https://bucklescript.github.io/).
+`rescript-urql` follows the [all contributors spec](https://allcontributors.org/). We believe firmly that the whole community is vital to our success, not just those who contribute code. The best way to get involved is to start by familiarizing yourself with the [`urql`](https://github.com/FormidableLabs/urql/) API and getting familiar with the basics of [ReScript](https://rescript-lang.org/).
 
 ### How do I contribute?
 
@@ -12,20 +12,20 @@ If you do open a pull request for a new feature or bug, please consider adding t
 
 ### How do I set up the project?
 
-This is pretty standard. Simply clone the repo locally:
+This is pretty standard. Clone the repo locally:
 
 ```sh
-git clone https://github.com/FormidableLabs/reason-urql.git
+git clone https://github.com/FormidableLabs/rescript-urql.git
 ```
 
 and install the dependencies:
 
 ```sh
-cd reason-urql
+cd rescript-urql
 yarn
 ```
 
-We _really_ recommend having an editor plugin to run `refmt`, provide inline type annotations, and provide syntax highlighting. [`reason-language-server`](https://github.com/jaredly/reason-language-server) by Jared Forsyth is really excellent for providing all of these features out of the box!
+We _really_ recommend having an editor plugin to run the ReScript language server. For VSCode users, [`rescript-vscode`](https://github.com/rescript-lang/rescript-vscode) is the best option.
 
 #### Compiling the Source
 
@@ -83,26 +83,30 @@ To get coverage statistics:
 yarn coverage
 ```
 
-#### `refmt`
+#### Formatting
 
-You can install `refmt` globally by following the installation instructions for [`reason-cli`](https://github.com/reasonml/reason-cli). This will put a lot of nice helpers in your path. You can run `refmt` over the source using the CLI:
-
-```sh
-refmt --in-place src/*.re
-```
-
-We recommend letting the editor take care of this for you by installing `reason-language-server`. We don't currently enforce a specific `refmt` version, but please always attempt to use the latest version for your OS.
+Formatting will be handled automatically for you by [`rescript-vscode`](https://github.com/rescript-lang/rescript-vscode). If you're using a different editor than VSCode, check out [the official ReScript plugins](https://rescript-lang.org/docs/manual/latest/editor-plugins) for your editor of choice.
 
 ### Publishing
 
-When it comes time to publish a new version of `reason-urql`, we follow a pretty standard workflow using [semantic versioning](https://semver.org/). **Make sure you have, and are on, latest `master` before publishing.**
+Prior to publishing to `npm`, please consider drafting a release. We like follow the format outlined by [Keep a Changleog](https://keepachangelog.com/en/1.0.0/). To draft a release, add a new entry to CHANGELOG.md. Commit this change in a separate commit following the format:
 
 ```sh
+git commit -m "Prepare vX.X.X release."
+git push origin main
+```
+
+#### Publishing to NPM
+
+Once you've added the CHANGELOG update and pushed the commit, you're ready to publish. We follow a pretty standard workflow using [semantic versioning](https://semver.org/). **Make sure you are on latest `main` before publishing.**
+
+```sh
+git pull origin main
+
+# Assuming you have latest main...
 yarn version --<major | minor | patch>
 yarn publish
 git push && git push --tags
 ```
 
-#### Drafting a Release
-
-Once you have succesfully published to `npm`, please consider [drafting a release](https://github.com/FormidableLabs/reason-urql/releases). We like to follow the format outlined by [Keep a Changleog](https://keepachangelog.com/en/1.0.0/). In addition to drafting a release, please also update the CHANGELOG after publishing with the same copy you used to draft the release.
+Once the release is published, make sure you copy the CHANGELOG update to [the formal releases page](https://github.com/FormidableLabs/rescript-urql/releases).

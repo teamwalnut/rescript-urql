@@ -1,7 +1,6 @@
-open ReasonUrql
+open ReScriptUrql
 
-module GetPokemon = %graphql(
-  `
+module GetPokemon = %graphql(`
   query pokemon($name: String!) {
     pokemon(name: $name) {
       name
@@ -15,8 +14,7 @@ module GetPokemon = %graphql(
       image
     }
   }
-`
-)
+`)
 
 @react.component
 let make = (~pokemon: string) => {

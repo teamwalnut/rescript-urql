@@ -82,7 +82,7 @@ type operationResult<'data> = {
   stale: option<bool>,
 }
 
-let operationResultToReason: (
+let operationResultToReScript: (
   ~response: operationResultJs<'dataJs>,
   ~parse: 'dataJs => 'data,
 ) => operationResult<'data>
@@ -138,7 +138,7 @@ module Hooks: {
     stale: bool,
   }
 
-  let hookResponseToReason: (
+  let hookResponseToReScript: (
     ~response: hookResponseJs<'dataJs>,
     ~parse: 'dataJs => 'data,
   ) => hookResponse<'data>

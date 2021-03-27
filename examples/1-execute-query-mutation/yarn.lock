@@ -75,6 +75,10 @@
     "@graphql-typed-document-node/core" "^3.1.0"
     wonka "^4.0.14"
 
+"@urql/rescript@link:../..":
+  version "0.0.0"
+  uid ""
+
 "@webassemblyjs/ast@1.9.0":
   version "1.9.0"
   resolved "https://registry.yarnpkg.com/@webassemblyjs/ast/-/ast-1.9.0.tgz#bd850604b4042459a5a41cd7d338cbed695ed964"
@@ -2589,10 +2593,6 @@ readdirp@^2.2.1:
     graceful-fs "^4.1.11"
     micromatch "^3.1.10"
     readable-stream "^2.0.2"
-
-"reason-urql@link:../..":
-  version "0.0.0"
-  uid ""
 
 regex-not@^1.0.0, regex-not@^1.0.2:
   version "1.0.2"

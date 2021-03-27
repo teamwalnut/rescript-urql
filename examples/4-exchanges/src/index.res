@@ -1,6 +1,6 @@
-open ReasonUrql
+open ReScriptUrql
 
-/* This is the native debugExchange that ships with `urql`, re-implemented in Reason.
+/* This is the native debugExchange that ships with `urql`, re-implemented in ReScript.
      Typically, you'd just add Exchanges.debugExchange to the Client's exchange array.
  */
 let debugExchange = ({Client.Exchanges.forward: forward}, . ops) =>

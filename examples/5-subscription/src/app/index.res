@@ -1,4 +1,4 @@
-open ReasonUrql
+open ReScriptUrql
 
 let subscriptionClient = SubscriptionsTransportWS.make(
   ~url="ws://localhost:4001/graphql",

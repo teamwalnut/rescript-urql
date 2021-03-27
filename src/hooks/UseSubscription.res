@@ -36,7 +36,7 @@ type executeSubscription = (
 
 type useSubscriptionResponse<'response> = (Types.Hooks.hookResponse<'response>, executeSubscription)
 
-let subscriptionResponseToReason = (response: Types.Hooks.hookResponseJs<'ret>) => {
+let subscriptionResponseToReScript = (response: Types.Hooks.hookResponseJs<'ret>) => {
   let {Types.Hooks.operation: operation, fetching, error, extensions, stale} = response
 
   let data = response.data->Js.Nullable.toOption
@@ -124,7 +124,7 @@ let useSubscription = (
 
   let (responseJs, executeSubscriptionJs) = useSubscriptionJs(args, Some(h))
 
-  let state = React.useMemo1(() => subscriptionResponseToReason(responseJs), [responseJs])
+  let state = React.useMemo1(() => subscriptionResponseToReScript(responseJs), [responseJs])
 
   let executeSubscription = React.useMemo1(
     (

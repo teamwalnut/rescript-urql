@@ -16,8 +16,7 @@
     }
   ],
   "suffix": ".bs.js",
-  "bs-dependencies": ["reason-urql", "@rescript/react", "wonka"],
-  "refmt": 3,
+  "bs-dependencies": ["@urql/rescript", "@rescript/react", "wonka"],
   "warnings": {
     "error": "+5"
   },

@@ -93,7 +93,10 @@ type operationResult<'data> = {
   stale: option<bool>,
 }
 
-let operationResultToReason = (~response: operationResultJs<'dataJs>, ~parse: 'dataJs => 'data) => {
+let operationResultToReScript = (
+  ~response: operationResultJs<'dataJs>,
+  ~parse: 'dataJs => 'data,
+) => {
   let {error, extensions, stale}: operationResultJs<'dataJs> = response
   let data = response.data->Js.Nullable.toOption->Belt.Option.map(parse)
 
@@ -159,9 +162,9 @@ module Hooks = {
 
   @ocaml.doc("
    * A function for converting the response to an urql hook from its
-   * JavaScript representation to a typed Reason record.
+   * JavaScript representation to a typed ReScript record.
    ")
-  let hookResponseToReason:
+  let hookResponseToReScript:
     type dataJs data. (
       ~response: hookResponseJs<dataJs>,
       ~parse: dataJs => data,
