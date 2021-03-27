@@ -89,7 +89,7 @@ Formatting will be handled automatically for you by [`rescript-vscode`](https://
 
 ### Publishing
 
-Prior to publishing to `npm`, please consider drafting a release. We like follow the format outlined by [Keep a Changleog](https://keepachangelog.com/en/1.0.0/). To draft a release, add a new entry to CHANGELOG.md. Commit this change in a separate commit following the format:
+Prior to publishing to `npm`, please consider drafting a release. We like to follow the format outlined by [Keep a Changelog](https://keepachangelog.com/en/1.0.0/). To draft a release, add a new entry to CHANGELOG.md. Commit this change in a separate commit following the format:
 
 ```sh
 git commit -m "Prepare vX.X.X release."
@@ -109,4 +109,4 @@ yarn publish
 git push && git push --tags
 ```
 
-Once the release is published, make sure you copy the CHANGELOG update to [the formal releases page](https://github.com/FormidableLabs/rescript-urql/releases).
+Once the release is published, make sure you copy the CHANGELOG update to [the formal Releases page](https://github.com/FormidableLabs/rescript-urql/releases).

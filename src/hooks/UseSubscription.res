@@ -1,8 +1,8 @@
-@@ocaml.doc("
-* The handler type used to type the optional accumulator function
-* returned by useSubscription. handler is a GADT used to support
-* proper type inference for useSubscription.
-")
+/*
+ * The handler type used to type the optional accumulator function
+ * returned by useSubscription. handler is a GADT used to support
+ * proper type inference for useSubscription.
+ */
 type rec handler<'acc, 'response, 'ret> =
   | Handler((option<'acc>, 'response) => 'acc): handler<'acc, 'response, 'acc>
   | NoHandler: handler<'response, 'response, 'response>

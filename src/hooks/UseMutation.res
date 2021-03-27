@@ -28,9 +28,7 @@ type useMutationResponse<'variables, 'data> = (
 @module("urql")
 external useMutationJs: string => useMutationResponseJs<'dataJs> = "useMutation"
 
-@ocaml.doc("
- * The useMutation hook.
- ")
+// The useMutation hook.
 let useMutation:
   type data variables. (
     ~mutation: module(Types.Operation with type t = data and type t_variables = variables),

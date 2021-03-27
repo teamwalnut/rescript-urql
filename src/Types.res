@@ -160,10 +160,10 @@ module Hooks = {
     stale: bool,
   }
 
-  @ocaml.doc("
+  /*
    * A function for converting the response to an urql hook from its
    * JavaScript representation to a typed ReScript record.
-   ")
+   */
   let hookResponseToReScript:
     type dataJs data. (
       ~response: hookResponseJs<dataJs>,

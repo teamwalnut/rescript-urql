@@ -135,7 +135,7 @@ let ssrCache = Client.Exchanges.ssrExchange(~ssrExchangeParams, ());
 let extractedData = Client.Exchanges.restoreData(~exchange=ssrCache, ~restore=urqlData);
 ```
 
-This part of the API is still quite experimental, as server-side rendering in ReScript with Next.js is still in its infancy. Use with caution. For more information, read `urql`'s server-side rendering guide [here](https://github.com/FormidableLabs/urql/blob/master/docs/basics.md#server-side-rendering). To see an example of server-side rendering with `rescript-urql`, check out our [SSR example](https://github.com/parkerziegler/rescript-urql-ssr).
+This part of the API is still quite experimental, as server-side rendering in ReScript with Next.js is still in its infancy. Use with caution. For more information, read `urql`'s server-side rendering guide [here](https://github.com/FormidableLabs/urql/blob/master/docs/basics.md#server-side-rendering). To see an example of server-side rendering with `rescript-urql`, check out our [SSR example](https://github.com/parkerziegler/reason-urql-ssr).
 
 ### `composeExchanges`
 
@@ -388,7 +388,7 @@ let debugExchange = (Client.Exchanges.{forward}) =>
        );
 ```
 
-That's it! We've successfully re-implemented `urql`'s `debugExchange` in ReScript. Because the `Wonka` library used for much of `urql`'s exchange architecture is written in ReScript itself, writing our own exchanges is often more ergonomic than the JS experience. When you've written your exchange, just supply it to your client like so:
+That's it! We've successfully re-implemented `urql`'s `debugExchange` in ReScript. Because the `Wonka` library used for much of `urql`'s exchange architecture is written in Reason, writing our own exchanges is often more ergonomic than the JS experience. When you've written your exchange, just supply it to your client like so:
 
 ```reason
 open ReScriptUrql;
