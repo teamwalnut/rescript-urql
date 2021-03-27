@@ -1,4 +1,4 @@
-open ReasonUrql
+open ReScriptUrql
 
 let client = Client.make(~url="https://formidadog-ql.netlify.app/graphql", ())
 

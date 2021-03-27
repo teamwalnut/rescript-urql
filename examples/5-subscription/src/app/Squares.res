@@ -1,4 +1,4 @@
-open ReasonUrql
+open ReScriptUrql
 
 module SubscribeRandomFloat = %graphql(`
   subscription subscribeFloat {

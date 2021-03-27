@@ -1,7 +1,6 @@
-open ReasonUrql
+open ReScriptUrql
 
-module GetAllDogs = %graphql(
-  `
+module GetAllDogs = %graphql(`
   query dogs {
     dogs {
       key
@@ -10,19 +9,16 @@ module GetAllDogs = %graphql(
       likes
     }
   }
-`
-)
+`)
 
-module LikeDog = %graphql(
-  `
+module LikeDog = %graphql(`
   mutation likeDog($key: ID!) {
     likeDog(key: $key) {
       name
       likes
     }
   }
-  `
-)
+  `)
 
 @react.component
 let make = (~client) => {
@@ -32,33 +28,36 @@ let make = (~client) => {
       {unsubscribe: () => ()}
     })
 
-    let subscription =
-      Client.executeQuery(~client, ~query=module(GetAllDogs), ()) |> Wonka.subscribe((. data) =>
-        switch {
-          open Types
-          data.response
-        } {
-        | Data(d) => Js_global.setInterval(() => {
+    let subscription = Client.executeQuery(
+      ~client,
+      ~query=module(GetAllDogs),
+      (),
+    ) |> Wonka.subscribe((. data) =>
+      switch {
+        open Types
+        data.response
+      } {
+      | Data(d) => Js_global.setInterval(() => {
+          {
+            open GetAllDogs
+            d.dogs
+          }->Belt.Array.shuffleInPlace
+
+          let mutationSubscription = Client.executeMutation(
+            ~client,
+            ~mutation=module(LikeDog),
             {
-              open GetAllDogs
-              d.dogs
-            }->Belt.Array.shuffleInPlace
+              open LikeDog
+              {key: d.dogs[0].key}
+            },
+          ) |> Wonka.subscribe((. response) => Js.log(response))
 
-            let mutationSubscription = Client.executeMutation(
-              ~client,
-              ~mutation=module(LikeDog),
-              {
-                open LikeDog
-                {key: d.dogs[0].key}
-              },
-            ) |> Wonka.subscribe((. response) => Js.log(response))
-
-            mutSub := mutationSubscription
-            ()
-          }, 5000) |> ignore
-        | _ => ()
-        }
-      )
+          mutSub := mutationSubscription
+          ()
+        }, 5000) |> ignore
+      | _ => ()
+      }
+    )
 
     Some(
       () => {

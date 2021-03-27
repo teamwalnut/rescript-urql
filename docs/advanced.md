@@ -1,10 +1,10 @@
 # Advanced
 
-Curious to know more about the internals of `reason-urql`? You've come to the right place!
+Curious to know more about the internals of `rescript-urql`? You've come to the right place!
 
 ## The `response` variant
 
-`reason-urql` uses a special `variant` called `response` to make pattern matching on the results you get from your GraphQL API as easy as possible. In JS land, users have to do something like the following:
+`rescript-urql` uses a special `variant` called `response` to make pattern matching on the results you get from your GraphQL API as easy as possible. In JS land, users have to do something like the following:
 
 ```js
 // Inside a React component
@@ -19,7 +19,7 @@ if (result.fetching) {
 return <Data data={result.data} />; // Some data UI.
 ```
 
-This is fine and works great for JS users, but we have pattern matching in Reason! Enter `reason-urql`'s `response` variant. `response` is a single variant with five constructors:
+This is fine and works great for JS users, but we have pattern matching in ReScript! Enter `rescript-urql`'s `response` variant. `response` is a single variant with five constructors:
 
 ```reason
 type response('response) {
@@ -31,7 +31,7 @@ type response('response) {
 }
 ```
 
-This variant is always available on the record returned by `reason-urql`'s hooks. Let's go over what each constructor (or "tag") means and when you'd want to pattern match on each.
+This variant is always available on the record returned by `rescript-urql`'s hooks. Let's go over what each constructor (or "tag") means and when you'd want to pattern match on each.
 
 ### The `Fetching` constructor
 
@@ -51,4 +51,4 @@ This variant is always available on the record returned by `reason-urql`'s hooks
 
 ### The `Empty` constructor
 
-The `Empty` constructor is reserved for the rare case where `reason-urql` has made a request to your GraphQL API but neither `data` nor `errors` were returned. In practice, this case is very rare. It may occur if your user goes offline unexpectedly or if your GraphQL API returns `undefined` in cases where no data matches a particular resolver. Think of it as your fallback case.
+The `Empty` constructor is reserved for the rare case where `rescript-urql` has made a request to your GraphQL API but neither `data` nor `errors` were returned. In practice, this case is very rare. It may occur if your user goes offline unexpectedly or if your GraphQL API returns `undefined` in cases where no data matches a particular resolver. Think of it as your fallback case.

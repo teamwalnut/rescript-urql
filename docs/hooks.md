@@ -1,8 +1,8 @@
 # Hooks
 
-In this section, we cover the main mechanism for requesting data in `reason-urql` – hooks!
+In this section, we cover the main mechanism for requesting data in `rescript-urql` – hooks!
 
-`reason-urql` comes with a set of custom hooks to use in your ReasonReact components, including `useQuery`, `useMutation`, and `useSubscription`. These are fully type safe and will automatically infer the type of your GraphQL response if using `graphql_ppx_re` or `graphql_ppx`.
+`rescript-urql` comes with a set of custom hooks to use in your `rescript-react` components, including `useQuery`, `useMutation`, and `useSubscription`. These are fully type safe and will automatically infer the type of your GraphQL response if using `graphql_ppx_re` or `graphql_ppx`.
 
 ## `useQuery`
 
@@ -35,7 +35,7 @@ In this section, we cover the main mechanism for requesting data in `reason-urql
 ### Example
 
 ```reason
-open ReasonUrql;
+open ReScriptUrql;
 
 module GetPokémon = [%graphql
   {|
@@ -103,7 +103,7 @@ Check out `examples/2-query` to see an example of using the `useQuery` hook.
 ### Example
 
 ```reason
-open ReasonUrql;
+open ReScriptUrql;
 
 module LikeDog = [%graphql
     {|
@@ -161,7 +161,7 @@ If using the `useSubscription` hook, be sure your client is configured with the 
 ### Example
 
 ```reason
-open ReasonUrql;
+open ReScriptUrql;
 
 module SubscribeRandomInt = [%graphql
   {|
@@ -225,7 +225,7 @@ Check out `examples/5-subscription` to see an example of using the `useSubscript
 ### Example
 
 ```reason
-open ReasonUrql;
+open ReScriptUrql;
 
 module GetAllDogs = [%graphql {|
   query dogs {

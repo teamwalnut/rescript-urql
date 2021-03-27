@@ -1,44 +1,36 @@
-open ReasonUrql
+open ReScriptUrql
 
-module LikeDog = %graphql(
-  `
+module LikeDog = %graphql(`
     mutation likeDog($key: ID!) {
       likeDog(key: $key) {
         likes
       }
     }
-  `
-)
+  `)
 
-module TreatDog = %graphql(
-  `
+module TreatDog = %graphql(`
     mutation treatDog($key: ID!) {
       treatDog(key: $key) {
         treats
       }
     }
-  `
-)
+  `)
 
-module PatDog = %graphql(
-  `
+module PatDog = %graphql(`
     mutation patDog($key: ID!) {
       patDog(key: $key) {
         pats
       }
     }
-  `
-)
+  `)
 
-module BellyscratchDog = %graphql(
-  `
+module BellyscratchDog = %graphql(`
     mutation bellyscratchDog($key: ID!) {
       bellyscratchDog(key: $key) {
         bellyscratches
       }
     }
-  `
-)
+  `)
 
 @react.component
 let make = (

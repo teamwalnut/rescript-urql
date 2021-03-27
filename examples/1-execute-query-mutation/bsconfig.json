@@ -17,12 +17,11 @@
   ],
   "suffix": ".bs.js",
   "bs-dependencies": [
-    "reason-urql",
+    "@urql/rescript",
     "@rescript/react",
     "wonka",
     "@reasonml-community/graphql-ppx"
   ],
-  "refmt": 3,
   "warnings": {
     "error": "+5"
   },

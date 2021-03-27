@@ -17,7 +17,8 @@
     "rescript",
     "bucklescript",
     "graphql",
-    "urql"
+    "urql",
+    "react"
   ],
   "author": "Parker Ziegler <parker.ziegler@formidable.com>",
   "contributors": [

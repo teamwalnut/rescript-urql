@@ -1,4 +1,4 @@
-open ReasonUrql
+open ReScriptUrql
 
 type subscriptionClientOptions = {
   timeout: option<int>,

@@ -1,7 +1,7 @@
 {
   "name": "2-query",
   "version": "0.1.0",
-  "description": "An example of how to use the useQuery hook in reason-urql.",
+  "description": "An example of how to use the useQuery hook in rescript-urql.",
   "main": "src/index.bs.js",
   "author": "Kara Stubbs <kara.stubbs@formidable.com>, Parker Ziegler <parker.ziegler@formidable.com>",
   "license": "MIT",
@@ -14,10 +14,10 @@
   "dependencies": {
     "@reasonml-community/graphql-ppx": "^1.0.1",
     "@rescript/react": "^0.10.1",
+    "@urql/rescript": "link:../../",
     "graphql": "^15.4.0",
     "react": "^16.8.0",
     "react-dom": "^16.8.0",
-    "reason-urql": "link:../../",
     "urql": "^2.0.0"
   },
   "devDependencies": {

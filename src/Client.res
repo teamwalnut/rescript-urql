@@ -206,7 +206,7 @@ type clientOptions<'fetchOptions, 'fetchImpl> = {
 external client: clientOptions<'fetchOptions, 'fetchImpl> => t = "Client"
 
 /* `make` is equivalent to urql's `createClient`.
- We opt to use `make` here to adhere to standards in the Reason community. */
+ We opt to use `make` here to adhere to standards in the ReScript community. */
 let make = (
   ~url,
   ~fetchOptions=?,
@@ -292,7 +292,7 @@ let executeQuery:
     )
 
     executeQueryJs(~client, ~query=req, ~opts=optsJs, ()) |> Wonka.map((. response) =>
-      Types.operationResultToReason(~response, ~parse=Query.parse)
+      Types.operationResultToReScript(~response, ~parse=Query.parse)
     )
   }
 
@@ -353,7 +353,7 @@ let executeMutation:
     )
 
     executeMutationJs(~client, ~mutation=req, ~opts=optsJs, ()) |> Wonka.map((. response) =>
-      Types.operationResultToReason(~response, ~parse=Mutation.parse)
+      Types.operationResultToReScript(~response, ~parse=Mutation.parse)
     )
   }
 
@@ -414,7 +414,7 @@ let executeSubscription:
     )
 
     executeSubscriptionJs(~client, ~subscription=req, ~opts=optsJs, ()) |> Wonka.map((. response) =>
-      Types.operationResultToReason(~response, ~parse=Subscription.parse)
+      Types.operationResultToReScript(~response, ~parse=Subscription.parse)
     )
   }
 

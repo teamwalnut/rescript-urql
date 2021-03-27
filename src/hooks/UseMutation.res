@@ -28,9 +28,7 @@ type useMutationResponse<'variables, 'data> = (
 @module("urql")
 external useMutationJs: string => useMutationResponseJs<'dataJs> = "useMutation"
 
-@ocaml.doc("
- * The useMutation hook.
- ")
+// The useMutation hook.
 let useMutation:
   type data variables. (
     ~mutation: module(Types.Operation with type t = data and type t_variables = variables),
@@ -42,7 +40,7 @@ let useMutation:
     let (stateJs, executeMutationJs) = useMutationJs(query)
 
     let state = React.useMemo2(
-      () => Types.Hooks.hookResponseToReason(~response=stateJs, ~parse),
+      () => Types.Hooks.hookResponseToReScript(~response=stateJs, ~parse),
       (stateJs, parse),
     )
 
@@ -79,7 +77,7 @@ let useMutation:
           ctx,
         )->{
           open Js.Promise
-          then_(response => Types.operationResultToReason(~response, ~parse)->resolve, _)
+          then_(response => Types.operationResultToReScript(~response, ~parse)->resolve, _)
         }
       },
       [executeMutationJs],
