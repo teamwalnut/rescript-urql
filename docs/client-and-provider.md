@@ -16,12 +16,15 @@ You can access the `Provider` component by referencing `Context.Provider` after 
 
 ### Example
 
-```reason
-open ReScriptUrql;
+```rescript
+open ReScriptUrql
 
-let client = Client.make(~url="https://localhost:3000/graphql", ());
+let client = Client.make(~url="https://localhost:3000/graphql", ())
 
-ReactDOMRe.renderToElementWithId(<Context.Provider value=client><App /></Context.Provider>, "root");
+switch ReactDOM.querySelector("#root") {
+| Some(el) => ReactDOM.render(<Context.Provider value=client><App /></Context.Provider>, el)
+| None => ()
+}
 ```
 
 ## Client
@@ -32,10 +35,10 @@ The client executes all requests in `rescript-urql` and delegates all incoming r
 
 Create an instance of an `urql` client.
 
-```reason
-open ReScriptUrql;
+```rescript
+open ReScriptUrql
 
-let client = Client.make(~url="https://localhost:3000/graphql", ());
+let client = Client.make(~url="https://localhost:3000/graphql", ())
 ```
 
 `Client.make` accepts the following arguments:
@@ -57,53 +60,57 @@ let client = Client.make(~url="https://localhost:3000/graphql", ());
 
 **Create a client with just a `url`.**
 
-```reason
+```rescript
 open ReScriptUrql;
 
-let client = Client.make(~url="https://localhost:3000/graphql", ());
+let client = Client.make(~url="https://localhost:3000/graphql", ())
 ```
 
 **Create a client with `fetchOptions`.**
 
-```reason
-open ReScriptUrql;
+```rescript
+open ReScriptUrql
 
-let fetchOptions =
-  Client.FetchOpts(Fetch.RequestInit.make(
-    ~headers=Fetch.HeadersInit.make({"Content-Type": "application/json"}),
-    (),
-  ));
+let fetchOptions = Fetch.RequestInit.make(
+  ~method_=Post,
+  ~headers=Fetch.HeadersInit.make({"Content-Type": "application/json"}),
+  (),
+)
 
-let client = Client.make(~url="https://localhost:3000/graphql", ~fetchOptions, ());
+let client = Client.make(
+  ~url="https://localhost:3000",
+  ~fetchOptions=Client.FetchOpts(fetchOptions),
+  (),
+)
 ```
 
 **Create a client with `exchanges`.**
 
-```reason
-open ReScriptUrql;
+```rescript
+open ReScriptUrql
 
-let client = Client.(
-  make(
-    ~url="https://localhost:3000/graphql",
-    ~exchanges=[|
-      Exchanges.debugExchange,
-      Exchanges.dedupExchange,
-      Exchanges.cacheExchange,
-      Exchanges.fetchExchange
-    |],
-    ()
-  )
-);
+let client = Client.make(
+  ~url="https://localhost:3000/graphql",
+  ~exchanges=[
+    Client.Exchanges.debugExchange,
+    Client.Exchanges.dedupExchange,
+    Client.Exchanges.cacheExchange,
+    Client.Exchanges.fetchExchange
+  ],
+  ()
+)
 ```
 
 **Create a client with a non-default requestPolicy.**
 
-```reason
+```rescript
+open ReScriptUrql
+
 let client = Client.make(
   ~url="https://localhost:3000/graphql",
-  ~requestPolicy=`CacheAndNetwork,
+  ~requestPolicy=#CacheAndNetwork,
   ()
-);
+)
 ```
 
 ### `Client.executeQuery`
@@ -131,31 +138,32 @@ Imperatively execute a GraphQL query operation.
 
 #### Example
 
-```reason
-open ReScriptUrql;
+```rescript
+open ReScriptUrql
 
-let client = Client.make(~url="https://localhost:3000/graphql", ());
+let client = Client.make(~url="https://localhost:3000/graphql", ())
 
-module GetAllDogs = [%graphql
-  {|
-  query dogs {
+module GetAllDogs = %graphql(`
+  {
     dogs {
       name
       breed
       likes
     }
   }
-|}
-];
+`)
 
 Client.executeQuery(~client, ~query=(module GetAllDogs), ())
   |> Wonka.subscribe((. data) => {
-    switch(Types.(data.response)) {
-      | Data(d) => /* Access data returned from executing the request. */
-      | Error(e) => /* Access any errors returned from executing the request. */
-      | Empty => /* Fallback if neither Data nor Error return information. */
+    switch({
+      open Types
+      data.response
+    }) {
+    | Data(d) => /* Access data returned from executing the request. */
+    | Error(e) => /* Access any errors returned from executing the request. */
+    | _ => /* Fallback if neither Data nor Error return information. */
     }
-  });
+  })
 ```
 
 ### `Client.query`
@@ -168,29 +176,30 @@ The same as `Client.executeQuery`, but returns a `Js.Promise.t` rather than a `w
 
 #### Example
 
-```reason
-open ReScriptUrql;
+```rescript
+open ReScriptUrql
 
 let client = Client.make(~url="https://localhost:3000/graphql", ());
 
-module GetAllDogs = [%graphql
-  {|
-  query dogs {
+module GetAllDogs = %graphql(`
+  {
     dogs {
       name
       breed
       likes
     }
   }
-|}
-];
+`)
 
 Client.query(~client, ~query=(module GetAllDogs), ())
   |> Js.Promise.then_(data => {
-    switch(Types.(data.response)) {
-      | Data(d) => /* Access data returned from executing the request. */
-      | Error(e) => /* Access any errors returned from executing the request. */
-      | Empty => /* Fallback if neither Data nor Error return information. */
+    switch({
+      open Types
+      data.response
+    }) {
+    | Data(d) => /* Access data returned from executing the request. */
+    | Error(e) => /* Access any errors returned from executing the request. */
+    | _ => /* Fallback if neither Data nor Error return information. */
     }
   });
 ```
@@ -220,13 +229,12 @@ Execute a GraphQL mutation operation.
 
 #### Example
 
-```reason
-open ReScriptUrql;
+```rescript
+open ReScriptUrql
 
-let client = Client.make(~url="https://localhost:3000/graphql", ());
+let client = Client.make(~url="https://localhost:3000/graphql", ())
 
-module LikeDog = [%graphql
-  {|
+module LikeDog = %graphql(`
   mutation likeDog($key: ID!) {
     likeDog(key: $key) {
       name
@@ -234,15 +242,23 @@ module LikeDog = [%graphql
       likes
     }
   }
-|}
-];
+`);
 
-Client.executeMutation(~client, ~mutation=(module LikeDog), LikeDog.{ key: "VmeRTX7j-" })
-  |> Wonka.subscribe((. data) => {
-    switch(Types.(data.response)) {
-      | Data(d) => /* Access data returned from executing the request. */
-      | Error(e) => /* Access any errors returned from executing the request. */
-      | Empty => /* Fallback if neither Data nor Error return information. */
+Client.executeMutation(
+  ~client,
+  ~mutation=(module LikeDog),
+  {
+    open LikeDog
+    { key: "VmeRTX7j-" }
+  }
+) |> Wonka.subscribe((. data) => {
+    switch {
+      open Types
+      data.response
+    } {
+    | Data(d) => /* Access data returned from executing the request. */
+    | Error(e) => /* Access any errors returned from executing the request. */
+    | _ => /* Fallback if neither Data nor Error return information. */
     }
   });
 ```
@@ -257,13 +273,12 @@ The same as `Client.executeMutation`, but returns a `Js.Promise.t` rather than a
 
 #### Example
 
-```reason
-open ReScriptUrql;
+```rescript
+open ReScriptUrql
 
-let client = Client.make(~url="https://localhost:3000/graphql", ());
+let client = Client.make(~url="https://localhost:3000/graphql", ())
 
-module LikeDog = [%graphql
-  {|
+module LikeDog = %graphql(`
   mutation likeDog($key: ID!) {
     likeDog(key: $key) {
       name
@@ -271,15 +286,23 @@ module LikeDog = [%graphql
       likes
     }
   }
-|}
-];
+`);
 
-Client.mutation(~client, ~mutation=(module LikeDog), LikeDog.{ key: "VmeRTX7j-" })
-  |> Js.Promise.then_(data => {
-    switch (Types.(data.response)) {
-      | Data(d) => /* Access data returned from executing the request. */
-      | Error(e) => /* Access any errors returned from executing the request. */
-      | Empty => /* Fallback if neither Data nor Error return information. */
+Client.mutation(
+  ~client,
+  ~mutation=(module LikeDog),
+  {
+    open LikeDog
+    { key: "VmeRTX7j-" }
+  }
+) |> Js.Promise.then_(data => {
+    switch {
+      open Types
+      data.response
+    } {
+    | Data(d) => /* Access data returned from executing the request. */
+    | Error(e) => /* Access any errors returned from executing the request. */
+    | _ => /* Fallback if neither Data nor Error return information. */
     }
   });
 ```
@@ -307,26 +330,27 @@ Execute a GraphQL subscription operation. If using the `executeSubscription` met
 
 #### Example
 
-```reason
-open ReScriptUrql;
+```rescript
+open ReScriptUrql
 
-module SubscribeMessages = [%graphql
-  {|
+module SubscribeMessages = %graphql(`
   subscription subscribeMessages {
     newMessage {
       id
       message
     }
   }
-|}
-];
+`)
 
 Client.executeSubscription(~client, ~subscription=(module SubscribeMessages), ())
   |> Wonka.subscribe((. data) => {
-    switch(Types.(data.response)) {
+    switch({
+      open Types
+      data.response
+    }) {
       | Data(d) => /* Access data returned from executing the request. */
       | Error(e) => /* Access any errors returned from executing the request. */
-      | Empty => /* Fallback if neither Data nor Error return information. */
+      | _ => /* Fallback if neither Data nor Error return information. */
     }
   });
 ```

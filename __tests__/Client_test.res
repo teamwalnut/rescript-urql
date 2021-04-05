@@ -195,19 +195,23 @@ describe("Client", () => {
     })
   })
 
-  describe("with preferGetMethod", () => it("respects the preferGetMethod flag", () => {
+  describe("with preferGetMethod", () =>
+    it("respects the preferGetMethod flag", () => {
       let client = Client.make(~url="https://localhost:3000", ~preferGetMethod=true, ())
 
       open Expect
       expect(client) |> toMatchSnapshot
-    }))
+    })
+  )
 
-  describe("with maskTypename", () => it("respects the maskTypename flag", () => {
+  describe("with maskTypename", () =>
+    it("respects the maskTypename flag", () => {
       let client = Client.make(~url="https://localhost:3000", ~maskTypename=true, ())
 
       open Expect
       expect(client) |> toMatchSnapshot
-    }))
+    })
+  )
 
   describe("Ecosystem exchanges", () => {
     describe("persistedFetchExchange", () => {

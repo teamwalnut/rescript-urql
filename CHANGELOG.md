@@ -21,7 +21,7 @@ yarn add @urql/rescript
 
 ### Changed
 
-- `reason-urql` is now available as `@urql/rescript`. PR by @parkerziegler [here]().
+- `reason-urql` is now available as `@urql/rescript`. PR by @parkerziegler [here](https://github.com/FormidableLabs/rescript-urql/pull/255).
 - `@urql/rescript` is now compatible with `urql@2.0.0`, `bs-platform@9.0.0`, and `@rescript/react`. You must upgrade to `@rescript/react` from `reason-react` to use v4.0.0. PR by @parkerziegler [here](https://github.com/FormidableLabs/reason-urql/pull/254).
 - The `pollInterval` API was removed from all hooks and Client methods, in accordance with the upstream deprecation of this API in `urql@2.0.0`. PR by @parkerziegler [here](https://github.com/FormidableLabs/reason-urql/pull/254). More information on this deprecation can be found in [the `urql` CHANGELOG](https://github.com/FormidableLabs/urql/releases/tag/urql%402.0.0).
 
