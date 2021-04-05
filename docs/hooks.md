@@ -34,11 +34,10 @@ In this section, we cover the main mechanism for requesting data in `rescript-ur
 
 ### Example
 
-```reason
-open ReScriptUrql;
+```rescript
+open ReScriptUrql
 
-module GetPokémon = [%graphql
-  {|
+module GetPokémon = %graphql(`
   query pokémon($name: String!) {
     pokemon(name: $name) {
       name
@@ -46,15 +45,14 @@ module GetPokémon = [%graphql
       image
     }
   }
-|}
-];
+`)
 
-[@react.component]
+@react.component
 let make = () => {
-  let (Hooks.{response}, reexecuteQuery) =
-    Hooks.useQuery(~query=(module GetPokemon), {name: "Butterfree"});
+  let ({Hooks.response: response}, reexecuteQuery) =
+    Hooks.useQuery(~query=(module GetPokemon), {name: "Butterfree"})
 
-  switch (response) {
+  switch response {
     | Fetching => <div> "Loading"->React.string </div>
     | Data(d)
     | PartialData(d, _e) =>
@@ -65,12 +63,12 @@ let make = () => {
          <button
           onClick={_e =>
             reexecuteQuery(
-              ~requestPolicy=`NetworkOnly,
+              ~requestPolicy=#NetworkOnly,
               ()
             )
           }
          >
-          {j|Refetch data for $d.pokemon.name|j} -> React.string
+          `Refetch data for $d.pokemon.name`->React.string
          </button>
       </div>
     | Error(_e) => <div> "Error"->React.string </div>
@@ -102,22 +100,20 @@ Check out `examples/2-query` to see an example of using the `useQuery` hook.
 
 ### Example
 
-```reason
-open ReScriptUrql;
+```rescript
+open ReScriptUrql
 
-module LikeDog = [%graphql
-    {|
-    mutation likeDog($key: ID!) {
-      likeDog(key: $key) {
-        likes
-      }
+module LikeDog = %graphql(`
+  mutation likeDog($key: ID!) {
+    likeDog(key: $key) {
+      likes
     }
-  |}
-  ];
+  }
+`)
 
-[@react.component]
+@react.component
 let make = (~id) => {
-  let (_, executeMutation) = Hooks.useMutation(~mutation=(module LikeDog));
+  let (_, executeMutation) = Hooks.useMutation(~mutation=(module LikeDog))
 
   <button onClick={_e => executeMutation({key: id}) |> ignore}>
     "Like This Dog!"->React.string
@@ -160,35 +156,33 @@ If using the `useSubscription` hook, be sure your client is configured with the 
 
 ### Example
 
-```reason
-open ReScriptUrql;
+```rescript
+open ReScriptUrql
 
-module SubscribeRandomInt = [%graphql
-  {|
+module SubscribeRandomInt = %graphql(`
   subscription subscribeNumbers {
     newNumber
   }
-|}
-];
+`)
 
 /* Accumulate subscriptions as new values arrive from your GraphQL endpoint. */
 let handler = (prevSubscriptions, subscription) => {
-  switch (prevSubscriptions) {
-  | Some(subs) => Array.append(subs, [|subscription|])
-  | None => [|subscription|]
-  };
-};
+  switch prevSubscriptions {
+  | Some(subs) => Array.append(subs, [subscription])
+  | None => [subscription]
+  }
+}
 
-[@react.component]
+@react.component
 let make = () => {
-  let (Hooks.{response}) =
+  let ({Hooks.response: response}) =
     Hooks.useSubscription(
       ~request=(module SubscribeRandomInt),
       ~handler=Handler(handler),
       ()
-    );
+    )
 
-  switch (response) {
+  switch response {
     | Fetching => <text> "Loading"->React.string </text>
     | Data(d)
     | PartialData(d, _e) =>
@@ -224,10 +218,10 @@ Check out `examples/5-subscription` to see an example of using the `useSubscript
 
 ### Example
 
-```reason
-open ReScriptUrql;
+```rescript
+open ReScriptUrql
 
-module GetAllDogs = [%graphql {|
+module GetAllDogs = %graphql(`
   query dogs {
     dogs {
       name
@@ -235,18 +229,18 @@ module GetAllDogs = [%graphql {|
       likes
     }
   }
-|}];
+`)
 
-[@react.component]
+@react.component
 let make = () => {
-  let client = Hooks.useClient();
+  let client = Hooks.useClient()
 
   React.useEffect1(() => {
     let subscription = Client.executeQuery(~client, ~query=(module GetDogs), ())
-      |> Wonka.subscribe((. result) => Js.log(result));
+      |> Wonka.subscribe((. result) => Js.log(result))
 
     Some(subscription.unsubscribe);
-  }, [|client|]);
+  }, [client]);
 
   <div> "You can now use your client!"->React.string </div>
 }

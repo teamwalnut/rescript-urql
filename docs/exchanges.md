@@ -24,21 +24,19 @@ The `fetchExchange` is responsible for actually sending your request to your Gra
 
 The above three exchanges make up `urql`'s `defaultExchanges`. When you create a client in `rescript-urql` these exchanges are already applied by default. If you specify an `exchanges` array, be sure to include the specific exchanges you need. You almost always want the `defaultExchanges`, so make sure to include them using `Array.concat` or `Array.append`.
 
-```reason
-open ReScriptUrql;
+```rescript
+open ReScriptUrql
 
-let client = Client.(
-  make(
-    ~url="https://mygraphql.com/api",
-    ~exchanges=[|
-      myCustomExchange,
-      Exchanges.dedupExchange,
-      Exchanges.cacheExchange,
-      Exchanges.fetchExchange
-    |],
-    ()
-  )
-);
+let client = Client.make(
+  ~url="https://mygraphql.com/api",
+  ~exchanges=[
+    myCustomExchange,
+    Client.Exchanges.dedupExchange,
+    Client.Exchanges.cacheExchange,
+    Client.Exchanges.fetchExchange
+  ],
+  ()
+)
 ```
 
 ### `debugExchange`
@@ -51,7 +49,7 @@ The `subscriptionExchange` should be used in the event that you intend to suppor
 
 In order to use the `subscriptionExchange`, you'll need to do a little bit of setup. Specifically, you'll need to configure a subscription client of some kind that will handle the websocket connection to your GraphQL API. In `examples/5-subscription` we have some simple bindings to `subscriptions-transport-ws` that allow us to use this protocol (which is supported by Apollo). Here's an example of how to set everything up:
 
-```reason
+```rescript
 /* Create the subscriptionClient using APIs from your subscription client of choice.
 In this case we use custom bindings to SubscriptionsTransportWS. */
 let subscriptionClient =
@@ -59,28 +57,23 @@ let subscriptionClient =
     ~url="ws://localhost:4001/graphql",
     ~subscriptionClientConfig=SubscriptionsTransportWS.makeClientOptions(),
     (),
-  );
+  )
 
 /* Implement the forwardSubscription function. This tells rescript-urql how to handle
 incoming operations of operationType 'subscription'. */
-let forwardSubscription = operation => subscriptionClient##request(operation);
-
-/* Confirgure options for rescript-urql's subscriptionExchange. */
-let subscriptionExchangeOpts =
-  Client.Exchanges.{forwardSubscription: forwardSubscription};
-
-/* Create the subcription exchange. */
-let subscriptionExchange =
-  Client.Exchanges.subscriptionExchange(subscriptionExchangeOpts);
+let forwardSubscription = operation => subscriptionClient["request"](operation)
 
 /* Include the subscriptionExchange in your client's exchanges array. */
 let client = Client.(
   make(
     ~url="https://localhost:3000/graphql",
-    ~exchanges=Array.append(Exchanges.defaultExchanges, [|subscriptionExchange|]),
+    ~exchanges=Array.append(
+      Exchanges.defaultExchanges,
+      [Client.Exchanges.subscriptionExchange(~forwardSubscription, ())]
+    ),
     ()
   )
-);
+)
 ```
 
 ### `ssrExchange`
@@ -92,47 +85,45 @@ The `ssrExchange` accepts a single optional argument, `~ssrExchangeParams`, a re
 
 If using the `ssrExchange`, it should be placed after any caching exchanges, like `cacheExchange`, but before any asynchronous exchanges, like `fetchExchange`.
 
-```reason
-open ReScriptUrql;
+```rescript
+open ReScriptUrql
 
-let ssrCache = Exchanges.ssrExchange();
+let ssrCache = Exchanges.ssrExchange()
 
-let client = Client.(
-  make(
-    ~url="http://localhost:3000",
-    ~exchanges=[|
-      Exchanges.dedupExchange,
-      Exchanges.cacheExchange,
-      ssrCache,
-      Exchanges.fetchExchange
-    |],
-    ()
-  )
-);
+let client = Client.Client.make(
+  ~url="http://localhost:3000",
+  ~exchanges=[
+    Client.Exchanges.dedupExchange,
+    Client.Exchanges.cacheExchange,
+    ssrCache,
+    Client.Exchanges.fetchExchange
+  ],
+  ()
+)
 ```
 
 The resulting data structure returned from creating the `ssrExchange` can be accessed using two getters:
 
 - `extractData` – this is typically used on the server-side to extract data returned from your GraphQL requests after they've been executed on the server.
 
-```reason
-open ReScriptUrql;
+```rescript
+open ReScriptUrql
 
-let ssrCache = Client.Exchanges.ssrExchange(~ssrExchangeParams, ());
+let ssrCache = Client.Exchanges.ssrExchange(~ssrExchangeParams, ())
 
 /* Extract data from the ssrCache. (Server-side) */
-let extractedData = Client.Exchanges.extractData(~exchange=ssrCache);
+let extractedData = Client.Exchanges.extractData(~exchange=ssrCache)
 ```
 
 - `restoreData` is typically used to rehydrate the client with data from the server. The `restore` argument is what allows you to reference the data returned from the server to the client.
 
-```reason
-open ReScriptUrql;
+```rescript
+open ReScriptUrql
 
-let ssrCache = Client.Exchanges.ssrExchange(~ssrExchangeParams, ());
+let ssrCache = Client.Exchanges.ssrExchange(~ssrExchangeParams, ())
 
 /* Extract data from the ssrCache. */
-let extractedData = Client.Exchanges.restoreData(~exchange=ssrCache, ~restore=urqlData);
+let extractedData = Client.Exchanges.restoreData(~exchange=ssrCache, ~restore=urqlData)
 ```
 
 This part of the API is still quite experimental, as server-side rendering in ReScript with Next.js is still in its infancy. Use with caution. For more information, read `urql`'s server-side rendering guide [here](https://github.com/FormidableLabs/urql/blob/master/docs/basics.md#server-side-rendering). To see an example of server-side rendering with `rescript-urql`, check out our [SSR example](https://github.com/parkerziegler/reason-urql-ssr).
@@ -347,11 +338,11 @@ Read more on the `retryExchange` [here](https://formidable.com/open-source/urql/
 
 The signature of an exchange in `rescript-urql` is:
 
-```reason
-type t =
-  exchangeInput =>
-  (. Wonka.Types.sourceT(Types.operation)) =>
-  Wonka.Types.sourceT(Types.operationResult);
+```rescript
+type t = (
+  exchangeInput,
+  . Wonka.Types.sourceT<Types.operation>,
+) => Wonka.Types.sourceT<Types.operationResultJs<Js.Json.t>>
 ```
 
 `exchangeInput` here is a record containing two fields:
@@ -365,58 +356,40 @@ Let's look at an example to see how to implement our own exchanges.
 
 To see how we can write our own custom exchange, we'll reimplement the `urql`'s native `debugExchange` in ReScript:
 
-```reason
-open ReScriptUrql;
+```rescript
+open ReScriptUrql
 
-/* This is the native debugExchange that ships with `urql`, re-implemented in ReScript.
-     Typically, you'd just add Exchanges.debugExchange to the Client's exchange array.
-   */
-let debugExchange = (Client.Exchanges.{forward}) =>
-  /* Notice this function is uncurried using BuckleScript's uncurrying syntax.
-  We want to ensure that our exchange returns a function that accepts operations. */
-  (. ops) =>
-    ops
-    /* Execute the supplied callback as an operation is sent out. */
-    |> Wonka.tap((. op) =>
-         Js.log2("[debugExchange]: Outgoing operation: ", op)
-       )
-    /* Forward the operation on to the next exchange. */
-    |> forward
-    /* Execute the supplied callback as an operation comes back in (i.e. an API request resolves). */
-    |> Wonka.tap((. res) =>
-         Js.log2("[debugExchange]: Completed operation: ", res)
-       );
+// This is the native debugExchange that ships with `urql`, re-implemented in ReScript.
+// Typically, you'd just add Exchanges.debugExchange to the Client's exchange array.
+let debugExchange = ({Client.Exchanges.forward: forward}, . ops) =>
+  ops
+  // Execute the supplied callback as an operation is sent out.
+  |> Wonka.tap((. op) => Js.log2("[debugExchange]: Incoming operation: ", op))
+  // Forward the operation on to the next exchange.
+  |> forward
+  // Execute the supplied callback as an operation comes back in (i.e. an API request resolves).
+  |> Wonka.tap((. res) => Js.log2("[debugExchange]: Completed operation: ", res))
 ```
 
 That's it! We've successfully re-implemented `urql`'s `debugExchange` in ReScript. Because the `Wonka` library used for much of `urql`'s exchange architecture is written in Reason, writing our own exchanges is often more ergonomic than the JS experience. When you've written your exchange, just supply it to your client like so:
 
-```reason
-open ReScriptUrql;
+```rescript
+open ReScriptUrql
 
-/* This is the native debugExchange that ships with `urql`, re-implemented in ReScript.
-     Typically, you'd just add Exchanges.debugExchange to the Client's exchange array.
-   */
-let debugExchange = (Client.Exchanges.{forward}) =>
-  (. ops) =>
-    ops
-    |> Wonka.tap((. op) =>
-         Js.log2("[debugExchange]: Outgoing operation: ", op)
-       )
-    |> forward
-    |> Wonka.tap((. res) =>
-         Js.log2("[debugExchange]: Completed operation: ", res)
-       );
+let debugExchange = ({Client.Exchanges.forward: forward}, . ops) =>
+  ops
+  |> Wonka.tap((. op) => Js.log2("[debugExchange]: Incoming operation: ", op))
+  |> forward
+  |> Wonka.tap((. res) => Js.log2("[debugExchange]: Completed operation: ", res))
 
-let client = Client.(
-  make(
-    ~url="https://my-graphql-endpoint.com/graphql",
-    ~exchanges=[|
-      debugExchange,
-      Exchanges.dedupExchange,
-      Exchanges.cacheExchange,
-      Exchanges.fetchExchange
-    |],
-  (),
-  )
-);
+let client = Client.make(
+  ~url="https://my-graphql-endpoint.com/graphql",
+  ~exchanges=[
+    debugExchange,
+    Exchanges.dedupExchange,
+    Exchanges.cacheExchange,
+    Exchanges.fetchExchange
+  ],
+(),
+)
 ```

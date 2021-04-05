@@ -21,14 +21,13 @@ return <Data data={result.data} />; // Some data UI.
 
 This is fine and works great for JS users, but we have pattern matching in ReScript! Enter `rescript-urql`'s `response` variant. `response` is a single variant with five constructors:
 
-```reason
-type response('response) {
+```rescript
+type response<'data> =
   | Fetching
-  | Data('response)
-  | PartialData('response, GraphQLError.t)
+  | Data('data)
+  | PartialData('data, GraphQLError.t)
   | Error(CombinedError.t)
-  | Empty;
-}
+  | Empty
 ```
 
 This variant is always available on the record returned by `rescript-urql`'s hooks. Let's go over what each constructor (or "tag") means and when you'd want to pattern match on each.
