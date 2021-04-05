@@ -179,7 +179,7 @@ The same as `Client.executeQuery`, but returns a `Js.Promise.t` rather than a `w
 ```rescript
 open ReScriptUrql
 
-let client = Client.make(~url="https://localhost:3000/graphql", ());
+let client = Client.make(~url="https://localhost:3000/graphql", ())
 
 module GetAllDogs = %graphql(`
   {
@@ -286,7 +286,7 @@ module LikeDog = %graphql(`
       likes
     }
   }
-`);
+`)
 
 Client.mutation(
   ~client,
@@ -302,7 +302,7 @@ Client.mutation(
     } {
     | Data(d) => /* Access data returned from executing the request. */
     | Error(e) => /* Access any errors returned from executing the request. */
-    | _ => /* Fallback if neither Data nor Error return information. */
+    | Empty => /* Fallback if neither Data nor Error return information. */
     }
   });
 ```

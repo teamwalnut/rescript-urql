@@ -109,7 +109,7 @@ let make = (~key: string) => {
   let (_, executeMutation) =
     Hooks.useMutation(~mutation=(module LikeDogMutation))
 
-  <button onClick={_e => executeMutation({key: key}) |> ignore}>
+  <button onClick={_e => executeMutation({key}) |> ignore}>
     "Execute the Mutation (and Reward a Good Dog)"->React.string
   </button>
 }
@@ -129,7 +129,7 @@ let make = (~key: string) => {
     = Hooks.useMutation(~mutation=(module LikeDogMutation))
 
   let button = React.useMemo1(() =>
-    <button onClick={_e => executeMutation({key: key}) |> ignore}>
+    <button onClick={_e => executeMutation({key}) |> ignore}>
       "Execute the Mutation (and Reward a Good Dog)"->React.string
     </button>,
     [executeMutation]
