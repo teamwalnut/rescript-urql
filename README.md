@@ -178,6 +178,4 @@ This project follows the [all contributors spec](https://github.com/kentcdodds/a
 
 ## Maintenance Status
 
-**Experimental:** This project is quite new. We're not sure what our ongoing maintenance plan for this project will be. Bug reports, feature requests and pull requests are welcome. If you like this project, let us know!
-
-[maintenance-image]: https://img.shields.io/badge/maintenance-experimental-blueviolet.svg
+**Archived:** This project is no longer maintained by Formidable. We are no longer responding to issues or pull requests unless they relate to security concerns. We encourage interested developers to fork this project and make it their own!
