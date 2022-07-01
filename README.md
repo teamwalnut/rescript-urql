@@ -7,6 +7,8 @@
 
 ReScript bindings for Formidable's Universal React Query Library, [`urql`](https://github.com/FormidableLabs/urql).
 
+> 📣  Please note these bindings were previously maintained by Formidable, but have since been taken over by the ReScript Brazil community.
+
 ## ✨Features
 
 - ⚛️ A fully featured GraphQL client for `rescript-react`.
@@ -175,7 +177,3 @@ This project follows the [all contributors spec](https://github.com/kentcdodds/a
 <!-- prettier-ignore-end -->
 
 <!-- ALL-CONTRIBUTORS-LIST:END -->
-
-## Maintenance Status
-
-**Archived:** This project is no longer maintained by Formidable. We are no longer responding to issues or pull requests unless they relate to security concerns. We encourage interested developers to fork this project and make it their own!
