@@ -8,22 +8,22 @@ describe("Client", () => {
 
     it("should instantiate a client instance", () => {
       open Expect
-      expect(client) |> toMatchSnapshot
+      expect(client) -> toMatchSnapshot
     })
 
     it("should expose an executeQuery method", () => {
       open ExpectJs
-      expect(Client.executeQuery) |> toBeTruthy
+      expect(Client.executeQuery) -> toBeTruthy
     })
 
     it("should expose an executeMutation method", () => {
       open ExpectJs
-      expect(Client.executeMutation) |> toBeTruthy
+      expect(Client.executeMutation) -> toBeTruthy
     })
 
     it("should expose an executeSubscription method", () => {
       open ExpectJs
-      expect(Client.executeSubscription) |> toBeTruthy
+      expect(Client.executeSubscription) -> toBeTruthy
     })
   })
 
@@ -42,7 +42,7 @@ describe("Client", () => {
       )
 
       open Expect
-      expect(client) |> toMatchSnapshot
+      expect(client) -> toMatchSnapshot
     })
 
     it("should instantiate a client instance with fetchOptions provided as FetchFn", () => {
@@ -53,7 +53,7 @@ describe("Client", () => {
       )
 
       open Expect
-      expect(client) |> toMatchSnapshot
+      expect(client) -> toMatchSnapshot
     })
   })
 
@@ -62,7 +62,7 @@ describe("Client", () => {
       let client = Client.make(~url="https://localhost:3000", ~requestPolicy=#CacheAndNetwork, ())
 
       open Expect
-      expect(client) |> toMatchSnapshot
+      expect(client) -> toMatchSnapshot
     })
   )
 
@@ -71,7 +71,7 @@ describe("Client", () => {
       let client = Client.make(~url="https://localhost:3000", ~suspense=true, ())
 
       open Expect
-      expect(client) |> toMatchSnapshot
+      expect(client) -> toMatchSnapshot
     })
   )
 
@@ -84,7 +84,7 @@ describe("Client", () => {
       )
 
       open Expect
-      expect(client) |> toMatchSnapshot
+      expect(client) -> toMatchSnapshot
     })
 
     it("should allow a user to compose exchanges into a single exchange", () => {
@@ -94,10 +94,10 @@ describe("Client", () => {
           Client.Exchanges.debugExchange,
           Client.Exchanges.cacheExchange,
           Client.Exchanges.fetchExchange,
-        ] |> Client.Exchanges.composeExchanges
+        ] -> Client.Exchanges.composeExchanges
       )
-      |> not_
-      |> toThrow
+      -> not_
+      -> toThrow
     })
 
     it("should return a single exchange from compose exchanges", () => {
@@ -107,15 +107,15 @@ describe("Client", () => {
           Client.Exchanges.debugExchange,
           Client.Exchanges.cacheExchange,
           Client.Exchanges.fetchExchange,
-        ] |> Client.Exchanges.composeExchanges,
-      ]) |> toHaveLength(1)
+        ] -> Client.Exchanges.composeExchanges,
+      ]) -> toHaveLength(1)
     })
   })
 
   describe("ssrExchange", () => {
     it("should exist and be callable", () => {
       open Expect
-      expect(Client.Exchanges.ssrExchange()) |> toMatchSnapshot
+      expect(Client.Exchanges.ssrExchange()) -> toMatchSnapshot
     })
 
     it("should accept an initialState for passing data extracted during SSR prepass", () => {
@@ -139,14 +139,14 @@ describe("Client", () => {
       }
 
       open Expect
-      expect(() => Client.Exchanges.ssrExchange(~ssrExchangeParams, ())) |> not_ |> toThrow
+      expect(() => Client.Exchanges.ssrExchange(~ssrExchangeParams, ())) -> not_ -> toThrow
     })
 
     it("should expose an extractData method for extracting server-side rendered data", () => {
       let ssrCache = Client.Exchanges.ssrExchange()
 
       open Expect
-      expect(() => Client.Exchanges.extractData(~exchange=ssrCache)) |> not_ |> toThrow
+      expect(() => Client.Exchanges.extractData(~exchange=ssrCache)) -> not_ -> toThrow
     })
 
     it(
@@ -160,8 +160,8 @@ describe("Client", () => {
 
         open Expect
         expect(() => Client.Exchanges.restoreData(~exchange=ssrCache, ~restore=data))
-        |> not_
-        |> toThrow
+        -> not_
+        -> toThrow
       },
     )
   })
@@ -175,7 +175,7 @@ describe("Client", () => {
         (),
       )
       open Expect
-      expect(client) |> toMatchSnapshot
+      expect(client) -> toMatchSnapshot
     })
 
     it("should work with a fetcher using Fetch.request", () => {
@@ -191,7 +191,7 @@ describe("Client", () => {
         (),
       )
       open Expect
-      expect(client) |> toMatchSnapshot
+      expect(client) -> toMatchSnapshot
     })
   })
 
@@ -200,7 +200,7 @@ describe("Client", () => {
       let client = Client.make(~url="https://localhost:3000", ~preferGetMethod=true, ())
 
       open Expect
-      expect(client) |> toMatchSnapshot
+      expect(client) -> toMatchSnapshot
     })
   )
 
@@ -209,7 +209,7 @@ describe("Client", () => {
       let client = Client.make(~url="https://localhost:3000", ~maskTypename=true, ())
 
       open Expect
-      expect(client) |> toMatchSnapshot
+      expect(client) -> toMatchSnapshot
     })
   )
 
@@ -219,7 +219,7 @@ describe("Client", () => {
         let persistedFetchExchangeOptions = Client.Exchanges.makePersistedFetchExchangeOptions()
 
         open Expect
-        expect(persistedFetchExchangeOptions) |> toEqual({
+        expect(persistedFetchExchangeOptions) -> toEqual({
           Client.Exchanges.preferGetForPersistedQueries: None,
           generateHash: None,
         })
@@ -235,7 +235,7 @@ describe("Client", () => {
         )
 
         open Expect
-        expect(persistedFetchExchangeOptions) |> toEqual({
+        expect(persistedFetchExchangeOptions) -> toEqual({
           Client.Exchanges.preferGetForPersistedQueries: Some(true),
           generateHash: Some(hashFn),
         })
@@ -247,7 +247,7 @@ describe("Client", () => {
         let requestPolicyExchangeOptions = Client.Exchanges.makeRequestPolicyExchangeOptions()
 
         open Expect
-        expect(requestPolicyExchangeOptions) |> toEqual({
+        expect(requestPolicyExchangeOptions) -> toEqual({
           Client.Exchanges.shouldUpgrade: None,
           ttl: None,
         })
@@ -264,7 +264,7 @@ describe("Client", () => {
         )
 
         open Expect
-        expect(requestPolicyExchangeOptions) |> toEqual({
+        expect(requestPolicyExchangeOptions) -> toEqual({
           Client.Exchanges.shouldUpgrade: Some(shouldUpgrade),
           ttl: Some(2000),
         })
@@ -276,7 +276,7 @@ describe("Client", () => {
         let retryExchangeOptions = Client.Exchanges.makeRetryExchangeOptions()
 
         open Expect
-        expect(retryExchangeOptions) |> toEqual({
+        expect(retryExchangeOptions) -> toEqual({
           Client.Exchanges.initialDelayMs: None,
           maxDelayMs: None,
           maxNumberAttempts: None,
@@ -293,7 +293,7 @@ describe("Client", () => {
         )
 
         open Expect
-        expect(retryExchangeOptions) |> toEqual({
+        expect(retryExchangeOptions) -> toEqual({
           Client.Exchanges.initialDelayMs: Some(200),
           maxDelayMs: None,
           maxNumberAttempts: None,

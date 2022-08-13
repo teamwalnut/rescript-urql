@@ -6,6 +6,7 @@ npm-debug.log
 /lib/ocaml/
 /node_modules/
 *.bs.js
+*.mjs
 example/build/
 .graphql_ppx_cache
 /.vscode/

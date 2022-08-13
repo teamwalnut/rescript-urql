@@ -44,7 +44,7 @@ describe("Types", () =>
         let result = Types.Hooks.hookResponseToReScript(~response, ~parse)
 
         open Expect
-        expect(result.response) |> toEqual(Types.Hooks.Fetching)
+        expect(result.response) -> toEqual(Types.Hooks.Fetching)
       },
     )
 
@@ -64,7 +64,7 @@ describe("Types", () =>
       let result = Types.Hooks.hookResponseToReScript(~response, ~parse)
 
       open Expect
-      expect(result.response) |> toEqual(Types.Hooks.Data(Some("Hello")))
+      expect(result.response) -> toEqual(Types.Hooks.Data(Some("Hello")))
     })
 
     it(
@@ -112,7 +112,7 @@ describe("Types", () =>
         let result = Types.Hooks.hookResponseToReScript(~response, ~parse)
 
         open Expect
-        expect(result.response) |> toEqual(
+        expect(result.response) -> toEqual(
           Types.Hooks.PartialData(Some("Hello"), error.graphQLErrors),
         )
       },
@@ -160,7 +160,7 @@ describe("Types", () =>
       let result = Types.Hooks.hookResponseToReScript(~response, ~parse)
 
       open Expect
-      expect(result.response) |> toEqual(Types.Hooks.Error(error))
+      expect(result.response) -> toEqual(Types.Hooks.Error(error))
     })
 
     it("should return Empty constructor if none of the above apply", () => {
@@ -179,7 +179,7 @@ describe("Types", () =>
       let result = Types.Hooks.hookResponseToReScript(~response, ~parse)
 
       open Expect
-      expect(result.response) |> toEqual(Types.Hooks.Empty)
+      expect(result.response) -> toEqual(Types.Hooks.Empty)
     })
   })
 )
