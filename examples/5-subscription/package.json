@@ -26,7 +26,7 @@
     "apollo-server-express": "^2.14.2",
     "bs-platform": "9.0.2",
     "cors": "^2.8.5",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "faker": "^4.1.0",
     "fakergem": "^2.1.0",
     "graphql-subscriptions": "^1.1.0",
