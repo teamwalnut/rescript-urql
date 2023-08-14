@@ -5,6 +5,7 @@ type requestPolicy = [#CacheFirst | #CacheOnly | #NetworkOnly | #CacheAndNetwork
 
 /* OperationType for the active operation.
  Use with operationTypeToJs for proper conversion to strings. */
+@deriving(jsConverter)
 type operationType = [#Query | #Mutation | #Subscription | #Teardown]
 
 /* Cache outcomes for operations. */
