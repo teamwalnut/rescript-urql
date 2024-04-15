@@ -1,10 +1,10 @@
 /* RequestPolicy to be used for queries. */
 @deriving(jsConverter)
 type requestPolicy = [
-  | @as("cache-first") #CacheFirst
-  | @as("cache-only") #CacheOnly
-  | @as("network-only") #NetworkOnly
-  | @as("cache-and-network") #CacheAndNetwork
+  | #"cache-first"
+  | #"cache-only"
+  | #"network-only"
+  | #"cache-and-network"
 ]
 
 /* OperationType for the active operation.

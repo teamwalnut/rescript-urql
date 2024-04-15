@@ -1,7 +1,7 @@
 /* RequestPolicy to be used for queries.
  Use with requestPolicyToJs for proper conversion to string. */
 @deriving(jsConverter)
-type requestPolicy = [#CacheFirst | #CacheOnly | #NetworkOnly | #CacheAndNetwork]
+type requestPolicy = [#"cache-first" | #"cache-only" | #"network-only" | #"cache-and-network"]
 
 /* OperationType for the active operation.
  Use with operationTypeToJs for proper conversion to strings. */

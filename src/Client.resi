@@ -7,27 +7,27 @@ type t = {
 }
 
 type rec fetchOptions<'a> =
-  | FetchOpts(Fetch.requestInit): fetchOptions<Fetch.requestInit>
-  | FetchFn(unit => Fetch.requestInit): fetchOptions<unit => Fetch.requestInit>
+  | FetchOpts(Fetch.Request.init): fetchOptions<Fetch.Request.init>
+  | FetchFn(unit => Fetch.Request.init): fetchOptions<unit => Fetch.Request.init>
 
 type rec fetchImpl<'a> =
-  | FetchWithUrl(string => Js.Promise.t<Fetch.response>): fetchImpl<
-      string => Js.Promise.t<Fetch.response>,
+  | FetchWithUrl(string => Js.Promise.t<Fetch.Response.t>): fetchImpl<
+      string => Js.Promise.t<Fetch.Response.t>,
     >
-  | FetchWithUrlOptions((string, Fetch.requestInit) => Js.Promise.t<Fetch.response>): fetchImpl<
-      (string, Fetch.requestInit) => Js.Promise.t<Fetch.response>,
+  | FetchWithUrlOptions((string, Fetch.Request.init) => Js.Promise.t<Fetch.Response.t>): fetchImpl<
+      (string, Fetch.Request.init) => Js.Promise.t<Fetch.Response.t>,
     >
-  | FetchWithRequest(Fetch.request => Js.Promise.t<Fetch.response>): fetchImpl<
-      Fetch.request => Js.Promise.t<Fetch.response>,
+  | FetchWithRequest(Fetch.Request.t => Js.Promise.t<Fetch.Response.t>): fetchImpl<
+      Fetch.Request.t => Js.Promise.t<Fetch.Response.t>,
     >
   | FetchWithRequestOptions(
-      (Fetch.request, Fetch.requestInit) => Js.Promise.t<Fetch.response>,
-    ): fetchImpl<(Fetch.request, Fetch.requestInit) => Js.Promise.t<Fetch.response>>
+      (Fetch.Request.t, Fetch.Request.init) => Js.Promise.t<Fetch.Response.t>,
+    ): fetchImpl<(Fetch.Request.t, Fetch.Request.init) => Js.Promise.t<Fetch.Response.t>>
 
 module Exchanges: {
   type client = t
 
-  type exchangeIO = Wonka.Types.sourceT<Types.operation> => Wonka.Types.sourceT<
+  type exchangeIO = Wonka.Source.t<Types.operation> => Wonka.Source.t<
     Types.operationResultJs<Js.Json.t>,
   >
 
@@ -38,8 +38,8 @@ module Exchanges: {
 
   type t = (
     exchangeInput,
-    . Wonka.Types.sourceT<Types.operation>,
-  ) => Wonka.Types.sourceT<Types.operationResultJs<Js.Json.t>>
+    . Wonka.Source.t<Types.operation>,
+  ) => Wonka.Source.t<Types.operationResultJs<Js.Json.t>>
 
   @module("urql") external cacheExchange: t = "cacheExchange"
   @module("urql") external debugExchange: t = "debugExchange"
@@ -176,15 +176,15 @@ let executeQuery: (
     and type Raw.t_variables = 'variablesJs
   ),
   ~additionalTypenames: array<string>=?,
-  ~fetchOptions: Fetch.requestInit=?,
-  ~fetch: (string, Fetch.requestInit) => Js.Promise.t<Fetch.response>=?,
+  ~fetchOptions: Fetch.Request.init=?,
+  ~fetch: (string, Fetch.Request.init) => Js.Promise.t<Fetch.Response.t>=?,
   ~requestPolicy: Types.requestPolicy=?,
   ~url: string=?,
   ~meta: Types.operationDebugMeta=?,
   ~suspense: bool=?,
   ~preferGetMethod: bool=?,
   'variables,
-) => Wonka.Types.sourceT<Types.operationResult<'data>>
+) => Wonka.Source.t<Types.operationResult<'data>>
 
 let executeMutation: (
   ~client: t,
@@ -194,15 +194,15 @@ let executeMutation: (
     and type Raw.t_variables = 'variablesJs
   ),
   ~additionalTypenames: array<string>=?,
-  ~fetchOptions: Fetch.requestInit=?,
-  ~fetch: (string, Fetch.requestInit) => Js.Promise.t<Fetch.response>=?,
+  ~fetchOptions: Fetch.Request.init=?,
+  ~fetch: (string, Fetch.Request.init) => Js.Promise.t<Fetch.Response.t>=?,
   ~requestPolicy: Types.requestPolicy=?,
   ~url: string=?,
   ~meta: Types.operationDebugMeta=?,
   ~suspense: bool=?,
   ~preferGetMethod: bool=?,
   'variables,
-) => Wonka.Types.sourceT<Types.operationResult<'data>>
+) => Wonka.Source.t<Types.operationResult<'data>>
 
 let executeSubscription: (
   ~client: t,
@@ -212,15 +212,15 @@ let executeSubscription: (
     and type Raw.t_variables = 'variablesJs
   ),
   ~additionalTypenames: array<string>=?,
-  ~fetchOptions: Fetch.requestInit=?,
-  ~fetch: (string, Fetch.requestInit) => Js.Promise.t<Fetch.response>=?,
+  ~fetchOptions: Fetch.Request.init=?,
+  ~fetch: (string, Fetch.Request.init) => Js.Promise.t<Fetch.Response.t>=?,
   ~requestPolicy: Types.requestPolicy=?,
   ~url: string=?,
   ~meta: Types.operationDebugMeta=?,
   ~suspense: bool=?,
   ~preferGetMethod: bool=?,
   'variables,
-) => Wonka.Types.sourceT<Types.operationResult<'data>>
+) => Wonka.Source.t<Types.operationResult<'data>>
 
 let query: (
   ~client: t,
@@ -230,8 +230,8 @@ let query: (
     and type Raw.t_variables = 'variablesJs
   ),
   ~additionalTypenames: array<string>=?,
-  ~fetchOptions: Fetch.requestInit=?,
-  ~fetch: (string, Fetch.requestInit) => Js.Promise.t<Fetch.response>=?,
+  ~fetchOptions: Fetch.Request.init=?,
+  ~fetch: (string, Fetch.Request.init) => Js.Promise.t<Fetch.Response.t>=?,
   ~requestPolicy: Types.requestPolicy=?,
   ~url: string=?,
   ~meta: Types.operationDebugMeta=?,
@@ -248,8 +248,8 @@ let mutation: (
     and type Raw.t_variables = 'variablesJs
   ),
   ~additionalTypenames: array<string>=?,
-  ~fetchOptions: Fetch.requestInit=?,
-  ~fetch: (string, Fetch.requestInit) => Js.Promise.t<Fetch.response>=?,
+  ~fetchOptions: Fetch.Request.init=?,
+  ~fetch: (string, Fetch.Request.init) => Js.Promise.t<Fetch.Response.t>=?,
   ~requestPolicy: Types.requestPolicy=?,
   ~url: string=?,
   ~meta: Types.operationDebugMeta=?,
@@ -266,15 +266,15 @@ let subscription: (
     and type Raw.t_variables = 'variablesJs
   ),
   ~additionalTypenames: array<string>=?,
-  ~fetchOptions: Fetch.requestInit=?,
-  ~fetch: (string, Fetch.requestInit) => Js.Promise.t<Fetch.response>=?,
+  ~fetchOptions: Fetch.Request.init=?,
+  ~fetch: (string, Fetch.Request.init) => Js.Promise.t<Fetch.Response.t>=?,
   ~requestPolicy: Types.requestPolicy=?,
   ~url: string=?,
   ~meta: Types.operationDebugMeta=?,
   ~suspense: bool=?,
   ~preferGetMethod: bool=?,
   'variables,
-) => Wonka.Types.sourceT<Types.operationResult<'data>>
+) => Wonka.Source.t<Types.operationResult<'data>>
 
 let readQuery: (
   ~client: t,
@@ -284,8 +284,8 @@ let readQuery: (
     and type Raw.t_variables = 'variablesJs
   ),
   ~additionalTypenames: array<string>=?,
-  ~fetchOptions: Fetch.requestInit=?,
-  ~fetch: (string, Fetch.requestInit) => Js.Promise.t<Fetch.response>=?,
+  ~fetchOptions: Fetch.Request.init=?,
+  ~fetch: (string, Fetch.Request.init) => Js.Promise.t<Fetch.Response.t>=?,
   ~requestPolicy: Types.requestPolicy=?,
   ~url: string=?,
   ~meta: Types.operationDebugMeta=?,

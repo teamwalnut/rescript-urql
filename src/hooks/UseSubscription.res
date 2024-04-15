@@ -24,8 +24,8 @@ external useSubscriptionJs: (
 
 type executeSubscription = (
   ~additionalTypenames: array<string>=?,
-  ~fetchOptions: Fetch.requestInit=?,
-  ~fetch: (string, Fetch.requestInit) => Js.Promise.t<Fetch.response>=?,
+  ~fetchOptions: Fetch.Request.init=?,
+  ~fetch: (string, Fetch.Request.init) => Js.Promise.t<Fetch.Response.t>=?,
   ~requestPolicy: Types.requestPolicy=?,
   ~url: string=?,
   ~meta: Types.operationDebugMeta=?,

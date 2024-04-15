@@ -262,8 +262,8 @@ let subscription = Client.executeQuery(~query, ~requestPolicy=`CacheFirst, ~poll
 ```reason
 type t =
   exchangeInput =>
-  (. Wonka.Types.sourceT(UrqlClientTypes.operation)) =>
-  Wonka.Types.sourceT(UrqlClientTypes.operationResult);
+  (. Wonka.Source.t(UrqlClientTypes.operation)) =>
+  Wonka.Source.t(UrqlClientTypes.operationResult);
 ```
 
 - Local binding of `graphQLError` is now a record type rather than a `[@bs.deriving abstract]` and has its own module `GraphQLError`.

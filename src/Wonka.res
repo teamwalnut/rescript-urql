@@ -23,10 +23,10 @@ module Sink = {
 }
 
 @module("wonka")
-external subscribe: ('a => unit) => Subscription.Consumer.t<'a> = "subscribe"
+external subscribe: ((. 'a) => unit) => Subscription.Consumer.t<'a> = "subscribe"
 
 @module("wonka")
-external map: ('a => 'b) => Operator.t<'a, 'b> = "map"
+external map: ((. 'a) => 'b) => Operator.t<'a, 'b> = "map"
 
 @module("wonka")
 external take: int => Operator.t<'a, 'a> = "take"

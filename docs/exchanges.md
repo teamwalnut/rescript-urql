@@ -341,8 +341,8 @@ The signature of an exchange in `rescript-urql` is:
 ```rescript
 type t = (
   exchangeInput,
-  . Wonka.Types.sourceT<Types.operation>,
-) => Wonka.Types.sourceT<Types.operationResultJs<Js.Json.t>>
+  . Wonka.Source.t<Types.operation>,
+) => Wonka.Source.t<Types.operationResultJs<Js.Json.t>>
 ```
 
 `exchangeInput` here is a record containing two fields:

@@ -178,7 +178,7 @@ describe("Client", () => {
       expect(client) |> toMatchSnapshot
     })
 
-    it("should work with a fetcher using Fetch.request", () => {
+    it("should work with a fetcher using Fetch.Request.t", () => {
       let fetcher = request =>
         switch Fetch.Request.type_(request) {
         | Audio => Fetch.fetchWithRequest(Fetch.Request.make("/audio/graphql"))
