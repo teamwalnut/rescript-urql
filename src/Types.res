@@ -11,15 +11,15 @@ type requestPolicy = [
  Use with operationTypeToJs for proper conversion to strings. */
 @deriving(jsConverter)
 type operationType = [
-  | @as("query") #Query
-  | @as("mutation") #Mutation
-  | @as("subscription") #Subscription
-  | @as("teardown") #Teardown
+  | #query
+  | #mutation
+  | #subscription
+  | #teardown
 ]
 
 /* Cache outcomes for operations. */
 @deriving(jsConverter)
-type cacheOutcome = [@as("miss") #Miss | @as("partial") #Partial | @as("hit") #Hit]
+type cacheOutcome = [ #miss |  #partial |  #hit ]
 
 /* Debug information on operations. */
 type operationDebugMeta = {

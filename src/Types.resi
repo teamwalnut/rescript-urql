@@ -5,10 +5,10 @@ type requestPolicy = [#"cache-first" | #"cache-only" | #"network-only" | #"cache
 
 /* OperationType for the active operation.
  Use with operationTypeToJs for proper conversion to strings. */
-type operationType = [#Query | #Mutation | #Subscription | #Teardown]
+type operationType = [#query | #mutation | #subscription | #teardown]
 
 /* Cache outcomes for operations. */
-type cacheOutcome = [#Miss | #Partial | #Hit]
+type cacheOutcome = [#miss | #partial | #hit]
 
 /* Debug information on operations. */
 type operationDebugMeta = {
