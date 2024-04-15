@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [master] - 2024-04-15
+
+Given that Wonka has been converted to typescript, we don't rely on the Reason version. (ReScript 11 also doesn't support Reason syntax anymore). This has been replaced with the Wonka module that just binds to JavaScript. We had to depend on the GitHub version of @glennsl/rescript-fetch, but we fix that once it's released on NPM. Also note that we are not supporting uncurried mode yet, given that graphql-ppx doesn't support it yet, it's not relevant yet. But we will fix it once we are able to!
+
 ## [4.0.0] - 2021-03-21
 
 This release adds support for several major version upgrades of dependencies, including:

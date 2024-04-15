@@ -32,8 +32,8 @@ type operationDebugMeta = {
 /* The operation context object for a request. */
 type operationContext = {
   additionalTypenames: option<array<string>>,
-  fetch: option<(string, Fetch.requestInit) => Js.Promise.t<Fetch.response>>,
-  fetchOptions: option<Fetch.requestInit>,
+  fetch: option<(string, Fetch.Request.init) => Js.Promise.t<Fetch.Response.t>>,
+  fetchOptions: option<Fetch.Request.init>,
   requestPolicy: requestPolicy,
   url: string,
   meta: option<operationDebugMeta>,
@@ -46,9 +46,9 @@ type partialOperationContext = {
   @optional
   additionalTypenames: array<string>,
   @optional
-  fetch: (string, Fetch.requestInit) => Js.Promise.t<Fetch.response>,
+  fetch: (string, Fetch.Request.init) => Js.Promise.t<Fetch.Response.t>,
   @optional
-  fetchOptions: Fetch.requestInit,
+  fetchOptions: Fetch.Request.init,
   @optional
   requestPolicy: string,
   @optional
@@ -106,7 +106,7 @@ let operationResultToReScript = (
   | (None, None) => Empty
   }
 
-  {data: data, error: error, extensions: extensions, stale: stale, response: response}
+  {data, error, extensions, stale, response}
 }
 
 /* The GraphQL request object.
@@ -183,13 +183,13 @@ module Hooks = {
       }
 
       {
-        operation: operation,
-        fetching: fetching,
-        data: data,
-        error: error,
-        response: response,
-        extensions: extensions,
-        stale: stale,
+        operation,
+        fetching,
+        data,
+        error,
+        response,
+        extensions,
+        stale,
       }
     }
 }

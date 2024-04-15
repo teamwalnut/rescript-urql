@@ -30,17 +30,16 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "bs-fetch": "^0.6.2"
+    "@glennsl/rescript-fetch": "glennsl/rescript-fetch"
   },
   "devDependencies": {
     "@babel/plugin-transform-modules-commonjs": "^7.12.1",
-    "@glennsl/bs-jest": "^0.6.0",
+    "@glennsl/rescript-jest": "^0.10.0",
     "@reasonml-community/graphql-ppx": "^1.0.1",
     "@rescript/react": "^0.10.1",
     "all-contributors-cli": "^6.19.0",
     "babel-jest": "^26.6.3",
-    "bs-platform": "^9.0.2",
-    "gentype": "^3.44.0",
+    "rescript": "^11.0.1",
     "graphql": "^15.4.0",
     "npm-run-all": "^4.1.5",
     "react": "^16.8.0",
