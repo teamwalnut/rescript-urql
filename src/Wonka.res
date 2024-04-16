@@ -37,4 +37,8 @@ external toPromise: Source.t<'a> => Js.Promise.t<'a> = "toPromise"
 @module("wonka")
 external fromValue: 'a => Source.t<'a> = "fromValue"
 
+@module("wonka")
+external fromPromise: Js.Promise.t<'a> => Source.t<'a> = "fromPromise"
+
+@module("wonka")
 external never: Sink.t<'a> => unit = "never"
