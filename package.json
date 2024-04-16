@@ -1,6 +1,6 @@
 {
   "name": "rescript-urql",
-  "version": "4.0.4",
+  "version": "4.0.5",
   "scripts": {
     "build": "bsb -make-world",
     "clean": "bsb -clean-world",

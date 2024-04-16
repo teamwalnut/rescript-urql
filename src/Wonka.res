@@ -41,7 +41,7 @@ external fromValue: 'a => Source.t<'a> = "fromValue"
 external fromPromise: Js.Promise.t<'a> => Source.t<'a> = "fromPromise"
 
 @module("wonka")
-external never: Sink.t<'a> => unit = "never"
+external never: Source.t<'a> = "never"
 
 @module("wonka")
 external switchMap: ((. 'a) => Source.t<'b>) => Operator.t<'a, 'b> = "switchMap"
