@@ -34,4 +34,7 @@ external take: int => Operator.t<'a, 'a> = "take"
 @module("wonka")
 external toPromise: Source.t<'a> => Js.Promise.t<'a> = "toPromise"
 
+@module("wonka")
+external fromValue: 'a => Source.t<'a> = "fromValue"
+
 external never: Sink.t<'a> => unit = "never"
