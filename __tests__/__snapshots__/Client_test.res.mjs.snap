@@ -86,9 +86,7 @@ Client {
     "headers": Object {
       "Content-Type": "application/json",
     },
-    "integrity": "",
     "method": "POST",
-    "referrerPolicy": "",
   },
   "maskTypename": false,
   "operations$": [Function],
