@@ -42,7 +42,7 @@ describe("Client", () => {
   describe("Client with fetchOptions provided", () => {
     let fetchOptions: Fetch.Request.init = {
       method: #POST,
-      headers: Fetch.Headers.fromObject({"Content-Type": "application/json"}),
+      headers: Obj.magic({"Content-Type": "application/json"}),
     }
 
     it(

@@ -9,7 +9,7 @@
     "coverage": "yarn test --coverage",
     "preversion": "run-s clean build test",
     "start": "rescript build -w",
-    "test": "jest"
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
   },
   "keywords": [
     "reason",
@@ -30,19 +30,19 @@
   ],
   "license": "MIT",
   "dependencies": {
+    "@babel/preset-react": "^7.24.1",
     "@glennsl/rescript-fetch": "glennsl/rescript-fetch"
   },
   "devDependencies": {
     "@babel/plugin-transform-modules-commonjs": "^7.12.1",
-    "@glennsl/rescript-jest": "^0.10.0",
     "@reasonml-community/graphql-ppx": "^1.0.1",
     "@rescript/react": "^0.10.1",
     "all-contributors-cli": "^6.19.0",
-    "babel-jest": "^26.6.3",
-    "rescript": "^11.0.1",
+    "babel-jest": "^27.3.1",
     "graphql": "^15.4.0",
     "npm-run-all": "^4.1.5",
     "react": "^16.8.0",
+    "rescript": "^11.1.0",
     "urql": "^2.0.0"
   },
   "peerDependencies": {
@@ -56,11 +56,10 @@
     "wonka": "5.0.0-rc.1"
   },
   "jest": {
+    "moduleFileExtensions": ["js", "mjs", "res.mjs"],
     "testEnvironment": "node",
-    "testMatch": ["<rootDir>/__tests__/*_test.bs.js"],
-    "transform": {
-      "\\.jsx?$": "<rootDir>/scripts/jest-transform-esm.js"
-    },
+    "testMatch": ["<rootDir>/__tests__/*_test.res.mjs"],
+    "transform": {},
     "transformIgnorePatterns": [
       "node_modules/(?!(@glennsl/bs-jest|bs-fetch|wonka|bs-platform)/)"
     ]

@@ -22,9 +22,9 @@
     }
   ],
   "uncurried": false,
-  "suffix": ".bs.js",
+  "suffix": ".res.mjs",
   "bs-dependencies": ["@rescript/react", "@glennsl/rescript-fetch"],
-  "bs-dev-dependencies": ["@glennsl/rescript-jest"],
+  "bs-dev-dependencies": [],
   "warnings": {
     "error": "+5"
   }

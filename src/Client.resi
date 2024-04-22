@@ -41,15 +41,15 @@ module Exchanges: {
     . Wonka.Source.t<Types.operation>,
   ) => Wonka.Source.t<Types.operationResultJs<Js.Json.t>>
 
-  @module("urql") external cacheExchange: t = "cacheExchange"
-  @module("urql") external debugExchange: t = "debugExchange"
-  @module("urql") external dedupExchange: t = "dedupExchange"
-  @module("urql")
+  @module("@urql/core") external cacheExchange: t = "cacheExchange"
+  @module("@urql/core") external debugExchange: t = "debugExchange"
+  @module("@urql/core") external dedupExchange: t = "dedupExchange"
+  @module("@urql/core")
   external fallbackExchangeIO: exchangeIO = "fallbackExchangeIO"
-  @module("urql") external fetchExchange: t = "fetchExchange"
-  @module("urql")
+  @module("@urql/core") external fetchExchange: t = "fetchExchange"
+  @module("@urql/core")
   external composeExchanges: array<t> => t = "composeExchanges"
-  @module("urql")
+  @module("@urql/core")
   external defaultExchanges: array<t> = "defaultExchanges"
 
   /* Specific types for the subscriptionExchange. */
@@ -97,7 +97,7 @@ module Exchanges: {
   @send
   external restoreData: (~exchange: t, ~restore: Js.Json.t) => Js.Json.t = "restoreData"
   @send external extractData: (~exchange: t) => Js.Json.t = "extractData"
-  @module("urql")
+  @module("@urql/core")
   external ssrExchange: (~ssrExchangeParams: ssrExchangeParams=?, unit) => t = "ssrExchange"
 
   /* Ecosystem exchanges. */
