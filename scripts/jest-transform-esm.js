@@ -1,5 +1,24 @@
-const { createTransformer } = require("babel-jest");
-
-module.exports = createTransformer({
-  plugins: [require.resolve("@babel/plugin-transform-modules-commonjs")],
+module.exports = require("babel-jest").default.createTransformer({
+  presets: [
+    [
+      "@babel/preset-react",
+      {
+        runtime: "automatic",
+      },
+    ],
+  ],
+  plugins: [
+    [
+      "@babel/plugin-transform-modules-commonjs",
+      {
+        importInterop: (specifier) => {
+          if (specifier == "jest-fail-on-console") {
+            return "babel";
+          } else {
+            return "none";
+          }
+        },
+      },
+    ],
+  ],
 });

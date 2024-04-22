@@ -4,7 +4,6 @@
   "reason": {
     "react-jsx": 3
   },
-  "bsc-flags": ["-bs-super-errors"],
   "sources": [
     {
       "dir": "src",
@@ -22,9 +21,10 @@
       "in-source": true
     }
   ],
-  "suffix": ".bs.js",
-  "bs-dependencies": ["@rescript/react", "wonka", "bs-fetch"],
-  "bs-dev-dependencies": ["@glennsl/bs-jest"],
+  "uncurried": false,
+  "suffix": ".res.mjs",
+  "bs-dependencies": ["@rescript/react", "@glennsl/rescript-fetch"],
+  "bs-dev-dependencies": [],
   "warnings": {
     "error": "+5"
   }

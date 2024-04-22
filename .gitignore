@@ -2,10 +2,9 @@
 .merlin
 .bsb.lock
 npm-debug.log
-/lib/bs/
-/lib/ocaml/
+/lib
 /node_modules/
-*.bs.js
+*.res.mjs
 example/build/
 .graphql_ppx_cache
 /.vscode/

@@ -8,8 +8,8 @@ type t = {
 
 /* Helpers for supporting polymorphic fetchOptions. */
 type rec fetchOptions<'a> =
-  | FetchOpts(Fetch.requestInit): fetchOptions<Fetch.requestInit>
-  | FetchFn(unit => Fetch.requestInit): fetchOptions<unit => Fetch.requestInit>
+  | FetchOpts(Fetch.Request.init): fetchOptions<Fetch.Request.init>
+  | FetchFn(unit => Fetch.Request.init): fetchOptions<unit => Fetch.Request.init>
 
 let unwrapFetchOptions = (type a, fetchOptions: option<fetchOptions<a>>): option<a> =>
   switch fetchOptions {
@@ -20,18 +20,18 @@ let unwrapFetchOptions = (type a, fetchOptions: option<fetchOptions<a>>): option
 
 /* Helpers for supporting a user-supplied fetch function. */
 type rec fetchImpl<'a> =
-  | FetchWithUrl(string => Js.Promise.t<Fetch.response>): fetchImpl<
-      string => Js.Promise.t<Fetch.response>,
+  | FetchWithUrl(string => Js.Promise.t<Fetch.Response.t>): fetchImpl<
+      string => Js.Promise.t<Fetch.Response.t>,
     >
-  | FetchWithUrlOptions((string, Fetch.requestInit) => Js.Promise.t<Fetch.response>): fetchImpl<
-      (string, Fetch.requestInit) => Js.Promise.t<Fetch.response>,
+  | FetchWithUrlOptions((string, Fetch.Request.init) => Js.Promise.t<Fetch.Response.t>): fetchImpl<
+      (string, Fetch.Request.init) => Js.Promise.t<Fetch.Response.t>,
     >
-  | FetchWithRequest(Fetch.request => Js.Promise.t<Fetch.response>): fetchImpl<
-      Fetch.request => Js.Promise.t<Fetch.response>,
+  | FetchWithRequest(Fetch.Request.t => Js.Promise.t<Fetch.Response.t>): fetchImpl<
+      Fetch.Request.t => Js.Promise.t<Fetch.Response.t>,
     >
   | FetchWithRequestOptions(
-      (Fetch.request, Fetch.requestInit) => Js.Promise.t<Fetch.response>,
-    ): fetchImpl<(Fetch.request, Fetch.requestInit) => Js.Promise.t<Fetch.response>>
+      (Fetch.Request.t, Fetch.Request.init) => Js.Promise.t<Fetch.Response.t>,
+    ): fetchImpl<(Fetch.Request.t, Fetch.Request.init) => Js.Promise.t<Fetch.Response.t>>
 
 let unwrapFetchImpl = (type a, fetch: option<fetchImpl<a>>): option<a> =>
   switch fetch {
@@ -45,7 +45,7 @@ let unwrapFetchImpl = (type a, fetch: option<fetchImpl<a>>): option<a> =>
 module Exchanges = {
   type client = t
 
-  type exchangeIO = Wonka.Types.sourceT<Types.operation> => Wonka.Types.sourceT<
+  type exchangeIO = Wonka.Source.t<Types.operation> => Wonka.Source.t<
     Types.operationResultJs<Js.Json.t>,
   >
 
@@ -54,20 +54,19 @@ module Exchanges = {
     client: client,
   }
 
-  type t = (
-    exchangeInput,
-    . Wonka.Types.sourceT<Types.operation>,
-  ) => Wonka.Types.sourceT<Types.operationResultJs<Js.Json.t>>
+  type t = exchangeInput => (
+    . Wonka.Source.t<Types.operation>,
+  ) => Wonka.Source.t<Types.operationResultJs<Js.Json.t>>
 
-  @module("urql") external cacheExchange: t = "cacheExchange"
-  @module("urql") external debugExchange: t = "debugExchange"
-  @module("urql") external dedupExchange: t = "dedupExchange"
-  @module("urql")
+  @module("@urql/core") external cacheExchange: t = "cacheExchange"
+  @module("@urql/core") external debugExchange: t = "debugExchange"
+  @module("@urql/core") external dedupExchange: t = "dedupExchange"
+  @module("@urql/core")
   external fallbackExchangeIO: exchangeIO = "fallbackExchangeIO"
-  @module("urql") external fetchExchange: t = "fetchExchange"
-  @module("urql")
+  @module("@urql/core") external fetchExchange: t = "fetchExchange"
+  @module("@urql/core")
   external composeExchanges: array<t> => t = "composeExchanges"
-  @module("urql")
+  @module("@urql/core")
   external defaultExchanges: array<t> = "defaultExchanges"
 
   /* Specific types for the subscriptionExchange. */
@@ -95,13 +94,13 @@ module Exchanges = {
     enableAllOperations: option<bool>,
   }
 
-  @module("urql")
+  @module("@urql/core")
   external subscriptionExchangeJS: subscriptionExchangeOpts => t = "subscriptionExchange"
 
   let subscriptionExchange = (~forwardSubscription, ~enableAllOperations=?, ()) =>
     subscriptionExchangeJS({
-      forwardSubscription: forwardSubscription,
-      enableAllOperations: enableAllOperations,
+      forwardSubscription,
+      enableAllOperations,
     })
 
   /* Specific types for the ssrExchange. */
@@ -124,7 +123,7 @@ module Exchanges = {
   external restoreData: (~exchange: t, ~restore: Js.Json.t) => Js.Json.t = "restoreData"
   @send external extractData: (~exchange: t) => Js.Json.t = "extractData"
 
-  @module("urql")
+  @module("@urql/core")
   external ssrExchange: (~ssrExchangeParams: ssrExchangeParams=?, unit) => t = "ssrExchange"
 
   /* Ecosystem exchanges. */
@@ -141,8 +140,8 @@ module Exchanges = {
     ~generateHash=?,
     (),
   ) => {
-    preferGetForPersistedQueries: preferGetForPersistedQueries,
-    generateHash: generateHash,
+    preferGetForPersistedQueries,
+    generateHash,
   }
 
   @module("@urql/exchange-persisted-fetch")
@@ -157,8 +156,8 @@ module Exchanges = {
   }
 
   let makeRequestPolicyExchangeOptions = (~shouldUpgrade=?, ~ttl=?, ()) => {
-    shouldUpgrade: shouldUpgrade,
-    ttl: ttl,
+    shouldUpgrade,
+    ttl,
   }
 
   @module("@urql/exchange-request-policy")
@@ -180,11 +179,11 @@ module Exchanges = {
     ~retryIf=?,
     (),
   ) => {
-    initialDelayMs: initialDelayMs,
-    maxDelayMs: maxDelayMs,
-    randomDelay: randomDelay,
-    maxNumberAttempts: maxNumberAttempts,
-    retryIf: retryIf,
+    initialDelayMs,
+    maxDelayMs,
+    randomDelay,
+    maxNumberAttempts,
+    retryIf,
   }
 
   @module("@urql/exchange-retry")
@@ -202,7 +201,7 @@ type clientOptions<'fetchOptions, 'fetchImpl> = {
   maskTypename: bool,
 }
 
-@new @module("urql")
+@new @module("@urql/core")
 external client: clientOptions<'fetchOptions, 'fetchImpl> => t = "Client"
 
 /* `make` is equivalent to urql's `createClient`.
@@ -213,20 +212,20 @@ let make = (
   ~fetch=?,
   ~exchanges=Exchanges.defaultExchanges,
   ~suspense=false,
-  ~requestPolicy=#CacheFirst,
+  ~requestPolicy=#"cache-first",
   ~preferGetMethod=false,
   ~maskTypename=false,
   (),
 ) => {
   let options = {
-    url: url,
+    url,
     fetchOptions: fetchOptions->unwrapFetchOptions,
     fetch: fetch->unwrapFetchImpl,
-    exchanges: exchanges,
-    suspense: suspense,
+    exchanges,
+    suspense,
     requestPolicy: requestPolicy->Types.requestPolicyToJs,
-    preferGetMethod: preferGetMethod,
-    maskTypename: maskTypename,
+    preferGetMethod,
+    maskTypename,
   }
 
   client(options)
@@ -240,7 +239,7 @@ external executeQueryJs: (
   ~query: Types.graphqlRequest,
   ~opts: Types.partialOperationContext=?,
   unit,
-) => Wonka.Types.sourceT<Types.operationResultJs<'data>> = "executeQuery"
+) => Wonka.Source.t<Types.operationResultJs<'data>> = "executeQuery"
 
 let executeQuery:
   type variables variablesJs data. (
@@ -251,15 +250,15 @@ let executeQuery:
       and type t = data
     ),
     ~additionalTypenames: array<string>=?,
-    ~fetchOptions: Fetch.requestInit=?,
-    ~fetch: (string, Fetch.requestInit) => Js.Promise.t<Fetch.response>=?,
+    ~fetchOptions: Fetch.Request.init=?,
+    ~fetch: (string, Fetch.Request.init) => Js.Promise.t<Fetch.Response.t>=?,
     ~requestPolicy: Types.requestPolicy=?,
     ~url: string=?,
     ~meta: Types.operationDebugMeta=?,
     ~suspense: bool=?,
     ~preferGetMethod: bool=?,
     variables,
-  ) => Wonka.Types.sourceT<Types.operationResult<data>> =
+  ) => Wonka.Source.t<Types.operationResult<data>> =
   (
     ~client,
     ~query as module(Query),
@@ -302,7 +301,7 @@ external executeMutationJs: (
   ~mutation: Types.graphqlRequest,
   ~opts: Types.partialOperationContext=?,
   unit,
-) => Wonka.Types.sourceT<Types.operationResultJs<'data>> = "executeMutation"
+) => Wonka.Source.t<Types.operationResultJs<'data>> = "executeMutation"
 
 let executeMutation:
   type variables variablesJs data. (
@@ -313,15 +312,15 @@ let executeMutation:
       and type t = data
     ),
     ~additionalTypenames: array<string>=?,
-    ~fetchOptions: Fetch.requestInit=?,
-    ~fetch: (string, Fetch.requestInit) => Js.Promise.t<Fetch.response>=?,
+    ~fetchOptions: Fetch.Request.init=?,
+    ~fetch: (string, Fetch.Request.init) => Js.Promise.t<Fetch.Response.t>=?,
     ~requestPolicy: Types.requestPolicy=?,
     ~url: string=?,
     ~meta: Types.operationDebugMeta=?,
     ~suspense: bool=?,
     ~preferGetMethod: bool=?,
     variables,
-  ) => Wonka.Types.sourceT<Types.operationResult<data>> =
+  ) => Wonka.Source.t<Types.operationResult<data>> =
   (
     ~client: t,
     ~mutation as module(Mutation),
@@ -363,7 +362,7 @@ external executeSubscriptionJs: (
   ~subscription: Types.graphqlRequest,
   ~opts: Types.partialOperationContext=?,
   unit,
-) => Wonka.Types.sourceT<Types.operationResultJs<'data>> = "executeSubscription"
+) => Wonka.Source.t<Types.operationResultJs<'data>> = "executeSubscription"
 
 let executeSubscription:
   type variables variablesJs data. (
@@ -374,15 +373,15 @@ let executeSubscription:
       and type t = data
     ),
     ~additionalTypenames: array<string>=?,
-    ~fetchOptions: Fetch.requestInit=?,
-    ~fetch: (string, Fetch.requestInit) => Js.Promise.t<Fetch.response>=?,
+    ~fetchOptions: Fetch.Request.init=?,
+    ~fetch: (string, Fetch.Request.init) => Js.Promise.t<Fetch.Response.t>=?,
     ~requestPolicy: Types.requestPolicy=?,
     ~url: string=?,
     ~meta: Types.operationDebugMeta=?,
     ~suspense: bool=?,
     ~preferGetMethod: bool=?,
     variables,
-  ) => Wonka.Types.sourceT<Types.operationResult<data>> =
+  ) => Wonka.Source.t<Types.operationResult<data>> =
   (
     ~client: t,
     ~subscription as module(Subscription),

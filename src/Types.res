@@ -1,25 +1,25 @@
 /* RequestPolicy to be used for queries. */
 @deriving(jsConverter)
 type requestPolicy = [
-  | @as("cache-first") #CacheFirst
-  | @as("cache-only") #CacheOnly
-  | @as("network-only") #NetworkOnly
-  | @as("cache-and-network") #CacheAndNetwork
+  | #"cache-first"
+  | #"cache-only"
+  | #"network-only"
+  | #"cache-and-network"
 ]
 
 /* OperationType for the active operation.
  Use with operationTypeToJs for proper conversion to strings. */
 @deriving(jsConverter)
 type operationType = [
-  | @as("query") #Query
-  | @as("mutation") #Mutation
-  | @as("subscription") #Subscription
-  | @as("teardown") #Teardown
+  | #query
+  | #mutation
+  | #subscription
+  | #teardown
 ]
 
 /* Cache outcomes for operations. */
 @deriving(jsConverter)
-type cacheOutcome = [@as("miss") #Miss | @as("partial") #Partial | @as("hit") #Hit]
+type cacheOutcome = [ #miss |  #partial |  #hit ]
 
 /* Debug information on operations. */
 type operationDebugMeta = {
@@ -32,8 +32,8 @@ type operationDebugMeta = {
 /* The operation context object for a request. */
 type operationContext = {
   additionalTypenames: option<array<string>>,
-  fetch: option<(string, Fetch.requestInit) => Js.Promise.t<Fetch.response>>,
-  fetchOptions: option<Fetch.requestInit>,
+  fetch: option<(string, Fetch.Request.init) => Js.Promise.t<Fetch.Response.t>>,
+  fetchOptions: option<Fetch.Request.init>,
   requestPolicy: requestPolicy,
   url: string,
   meta: option<operationDebugMeta>,
@@ -46,9 +46,9 @@ type partialOperationContext = {
   @optional
   additionalTypenames: array<string>,
   @optional
-  fetch: (string, Fetch.requestInit) => Js.Promise.t<Fetch.response>,
+  fetch: (string, Fetch.Request.init) => Js.Promise.t<Fetch.Response.t>,
   @optional
-  fetchOptions: Fetch.requestInit,
+  fetchOptions: Fetch.Request.init,
   @optional
   requestPolicy: string,
   @optional
@@ -106,7 +106,7 @@ let operationResultToReScript = (
   | (None, None) => Empty
   }
 
-  {data: data, error: error, extensions: extensions, stale: stale, response: response}
+  {data, error, extensions, stale, response}
 }
 
 /* The GraphQL request object.
@@ -183,13 +183,13 @@ module Hooks = {
       }
 
       {
-        operation: operation,
-        fetching: fetching,
-        data: data,
-        error: error,
-        response: response,
-        extensions: extensions,
-        stale: stale,
+        operation,
+        fetching,
+        data,
+        error,
+        response,
+        extensions,
+        stale,
       }
     }
 }

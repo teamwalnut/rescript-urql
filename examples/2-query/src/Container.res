@@ -20,7 +20,7 @@ let flattenPokemon = pokemons => {
 let make = () => {
   let ({Hooks.response: response}, _) = Hooks.useQuery(
     ~query=module(GetAllPokemons),
-    ~requestPolicy=#CacheFirst,
+    ~requestPolicy=#"cache-first",
     {first: 151},
   )
 

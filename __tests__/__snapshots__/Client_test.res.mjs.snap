@@ -86,9 +86,7 @@ Client {
     "headers": Object {
       "Content-Type": "application/json",
     },
-    "integrity": "",
     "method": "POST",
-    "referrerPolicy": "",
   },
   "maskTypename": false,
   "operations$": [Function],
@@ -177,7 +175,7 @@ Client {
 }
 `;
 
-exports[`Client with custom fetch implementation should work with a fetcher using Fetch.request 1`] = `
+exports[`Client with custom fetch implementation should work with a fetcher using Fetch.Request.t 1`] = `
 Client {
   "activeOperations": Object {},
   "createOperationContext": [Function],

@@ -15,7 +15,7 @@
       "in-source": true
     }
   ],
-  "suffix": ".bs.js",
+  "suffix": ".res.mjs",
   "bs-dependencies": [
     "@urql/rescript",
     "@rescript/react",
