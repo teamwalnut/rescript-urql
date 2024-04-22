@@ -4,7 +4,7 @@
 npm-debug.log
 /lib
 /node_modules/
-*.bs.js
+*.res.mjs
 example/build/
 .graphql_ppx_cache
 /.vscode/
