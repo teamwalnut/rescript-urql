@@ -711,13 +711,6 @@
   version "0.2.0"
   resolved "https://codeload.github.com/glennsl/rescript-fetch/tar.gz/fa73c0299fecff8a58788de9bb489dcd987e98ea"
 
-"@glennsl/rescript-jest@^0.10.0":
-  version "0.10.0"
-  resolved "https://registry.yarnpkg.com/@glennsl/rescript-jest/-/rescript-jest-0.10.0.tgz#8b8ddb768ac65a1d9792bd0a9243a55999625678"
-  integrity sha512-rUhCuyNi8Em0N7ubrmdz2ZEXo95SvSxkPPVIHpj/UcxAayxr5uo/hoBs0XRVjpAbuCXcoHtvhWt314lcAhwZ8g==
-  dependencies:
-    jest "^27.3.1"
-
 "@graphql-typed-document-node/core@^3.1.0":
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/@graphql-typed-document-node/core/-/core-3.1.0.tgz#0eee6373e11418bfe0b5638f654df7a4ca6a3950"
@@ -750,7 +743,7 @@
     jest-util "^27.5.1"
     slash "^3.0.0"
 
-"@jest/core@^27.5.1":
+"@jest/core@^27.3.1", "@jest/core@^27.5.1":
   version "27.5.1"
   resolved "https://registry.yarnpkg.com/@jest/core/-/core-27.5.1.tgz#267ac5f704e09dc52de2922cbf3af9edcd64b626"
   integrity sha512-AK6/UTrvQD0Cd24NSqmIA6rKsu0tKIxfiCducZvqxYdmMisOYAsdItspT+fQDQYARPf8XgjAFZi0ogW2agH5nQ==
@@ -2121,7 +2114,7 @@ jest-circus@^27.5.1:
     stack-utils "^2.0.3"
     throat "^6.0.1"
 
-jest-cli@^27.5.1:
+jest-cli@^27.3.1:
   version "27.5.1"
   resolved "https://registry.yarnpkg.com/jest-cli/-/jest-cli-27.5.1.tgz#278794a6e6458ea8029547e6c6cbf673bd30b145"
   integrity sha512-Hc6HOOwYq4/74/c62dEE3r5elx8wjYqxY0r0G/nFrLDPMFRu6RA/u8qINOIkvhxG7mMQ5EJsOGfRpI8L6eFUVw==
@@ -2483,14 +2476,14 @@ jest-worker@^27.5.1:
     merge-stream "^2.0.0"
     supports-color "^8.0.0"
 
-jest@^27.3.1:
-  version "27.5.1"
-  resolved "https://registry.yarnpkg.com/jest/-/jest-27.5.1.tgz#dadf33ba70a779be7a6fc33015843b51494f63fc"
-  integrity sha512-Yn0mADZB89zTtjkPJEXwrac3LHudkQMR+Paqa8uxJHCBr9agxztUifWCyiYrjhMPBoUVBjyny0I7XH6ozDr7QQ==
+jest@27.3.1:
+  version "27.3.1"
+  resolved "https://registry.yarnpkg.com/jest/-/jest-27.3.1.tgz#b5bab64e8f56b6f7e275ba1836898b0d9f1e5c8a"
+  integrity sha512-U2AX0AgQGd5EzMsiZpYt8HyZ+nSVIh5ujQ9CPp9EQZJMjXIiSZpJNweZl0swatKRoqHWgGKM3zaSwm4Zaz87ng==
   dependencies:
-    "@jest/core" "^27.5.1"
+    "@jest/core" "^27.3.1"
     import-local "^3.0.2"
-    jest-cli "^27.5.1"
+    jest-cli "^27.3.1"
 
 "js-tokens@^3.0.0 || ^4.0.0", js-tokens@^4.0.0:
   version "4.0.0"
