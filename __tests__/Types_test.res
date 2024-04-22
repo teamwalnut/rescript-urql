@@ -19,7 +19,7 @@ let mockOperation = {
     key: 1,
     query: "query {\ndogs {\nname\nlikes\n}\n}",
     variables: None,
-    kind: #Query,
+    kind: #query,
     context: mockOperationContext,
   }
 }
@@ -44,7 +44,7 @@ describe("Types", () =>
         let result = Types.Hooks.hookResponseToReScript(~response, ~parse)
 
         open Expect
-        expect(result.response) |> toEqual(Types.Hooks.Fetching)
+        expect(result.response)->toEqual(Types.Hooks.Fetching)
       },
     )
 
@@ -66,7 +66,7 @@ describe("Types", () =>
         let result = Types.Hooks.hookResponseToReScript(~response, ~parse)
 
         open Expect
-        expect(result.response) |> toEqual(Types.Hooks.Data(Some("Hello")))
+        expect(result.response)->toEqual(Types.Hooks.Data(Some("Hello")))
       },
     )
 
@@ -115,7 +115,7 @@ describe("Types", () =>
         let result = Types.Hooks.hookResponseToReScript(~response, ~parse)
 
         open Expect
-        expect(result.response) |> toEqual(
+        expect(result.response)->toEqual(
           Types.Hooks.PartialData(Some("Hello"), error.graphQLErrors),
         )
       },
@@ -165,7 +165,7 @@ describe("Types", () =>
         let result = Types.Hooks.hookResponseToReScript(~response, ~parse)
 
         open Expect
-        expect(result.response) |> toEqual(Types.Hooks.Error(error))
+        expect(result.response)->toEqual(Types.Hooks.Error(error))
       },
     )
 
@@ -187,7 +187,7 @@ describe("Types", () =>
         let result = Types.Hooks.hookResponseToReScript(~response, ~parse)
 
         open Expect
-        expect(result.response) |> toEqual(Types.Hooks.Empty)
+        expect(result.response)->toEqual(Types.Hooks.Empty)
       },
     )
   })

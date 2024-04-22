@@ -2,13 +2,13 @@
   "name": "rescript-urql",
   "version": "4.0.5",
   "scripts": {
-    "build": "bsb -make-world",
-    "clean": "bsb -clean-world",
+    "build": "rescript build",
+    "clean": "rescript clean",
     "contributors:add": "all-contributors add",
     "contributors:generate": "all-contributors generate",
     "coverage": "yarn test --coverage",
     "preversion": "run-s clean build test",
-    "start": "bsb -make-world -w",
+    "start": "rescript build -w",
     "test": "jest"
   },
   "keywords": [
@@ -57,9 +57,7 @@
   },
   "jest": {
     "testEnvironment": "node",
-    "testMatch": [
-      "<rootDir>/__tests__/*_test.bs.js"
-    ],
+    "testMatch": ["<rootDir>/__tests__/*_test.bs.js"],
     "transform": {
       "\\.jsx?$": "<rootDir>/scripts/jest-transform-esm.js"
     },
