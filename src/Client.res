@@ -94,7 +94,7 @@ module Exchanges = {
     enableAllOperations: option<bool>,
   }
 
-  @module("urql")
+  @module("@urql/core")
   external subscriptionExchangeJS: subscriptionExchangeOpts => t = "subscriptionExchange"
 
   let subscriptionExchange = (~forwardSubscription, ~enableAllOperations=?, ()) =>
