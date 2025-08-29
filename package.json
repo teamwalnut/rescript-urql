@@ -1,5 +1,5 @@
 {
-  "name": "rescript-urql",
+  "name": "@urql/rescript",
   "version": "4.0.5",
   "scripts": {
     "build": "rescript build",
